@@ -8,8 +8,8 @@ class App extends React.Component {
   render() {
     return (
       <Lobby
-        gameServer={"http://localhost:8000"}
-        lobbyServer={"http://localhost:8000"}
+        gameServer={"https://server.maple.rs"}
+        lobbyServer={"https://server.maple.rs"}
         gameComponents={[
           {
             game: ITCG,

@@ -5,4 +5,4 @@ const server = Server({
   games: [ITCG],
 });
 
-server.run(8000);
+server.run(18000);
