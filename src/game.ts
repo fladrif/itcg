@@ -41,8 +41,8 @@ export interface GameState {
   player: Dictionary<PlayerState>;
 }
 
-function drawCard(G: GameState, _ctx: Ctx, id: PlayerID) {
-  const player = G.player[id];
+function drawCard(G: GameState, ctx: Ctx) {
+  const player = G.player[ctx.currentPlayer];
   if (!player || player.deck.length <= 0) return INVALID_MOVE;
 
   player.hand.push(player.deck.pop()!);
@@ -91,6 +91,10 @@ export const ITCG = {
   moves: {
     drawCard,
     shuffleDeck,
+  },
+
+  turn: {
+    moveLimit: 1,
   },
 
   minPlayers: 2,
