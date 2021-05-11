@@ -83,10 +83,26 @@ export function setup(_ctx: Ctx, setupData: SetupData): GameState {
   return state;
 }
 
+export function playerView(
+  G: GameState,
+  _ctx: Ctx,
+  playerID: PlayerID
+): GameState {
+  const opponentID = Object.keys(G.player).filter((id) => id !== playerID)[0];
+
+  G.player[opponentID].deck = Array(G.player[opponentID].deck.length);
+  G.player[opponentID].hand = Array(G.player[opponentID].hand.length);
+  G.player[playerID].deck = Array(G.player[playerID].deck.length);
+
+  return G;
+}
+
 export const ITCG = {
   name: "ITCG",
 
   setup: preConfigSetup,
+
+  playerView,
 
   moves: {
     drawCard,
