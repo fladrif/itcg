@@ -102,8 +102,6 @@ export const ITCG = {
 
   setup: preConfigSetup,
 
-  playerView,
-
   moves: {
     drawCard,
     shuffleDeck,
