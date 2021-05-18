@@ -1,8 +1,7 @@
 import React from "react";
 import { BoardProps } from "boardgame.io/react";
-import { PlayerID } from "boardgame.io";
 
-import { GameState, PlayerState } from "./game";
+import { GameState } from "./game";
 
 import { ITCGCard } from "./card";
 
