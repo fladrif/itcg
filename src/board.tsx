@@ -1,58 +1,79 @@
 import React from "react";
-import { PlayerID } from "boardgame.io";
 import { BoardProps } from "boardgame.io/react";
+import { PlayerID } from "boardgame.io";
 
-import { GameState } from "./game";
+import { GameState, PlayerState } from "./game";
+
+import { ITCGCard } from "./card";
+
+const containerStyle: React.CSSProperties = {
+  display: "grid",
+  gridTemplateColumns: "20% 50% 30%",
+  gridTemplateRows: "20% 60% 20%",
+  height: "100vh",
+  gridTemplateAreas: "'h h .' '. b b' 'f f d'",
+  backgroundColor: "#A3FFB4",
+};
+
+const podStyle1: React.CSSProperties = {
+  display: "flex",
+  backgroundColor: "#36896e",
+  gridArea: "h",
+};
+
+const podStyle2: React.CSSProperties = {
+  display: "flex",
+  backgroundColor: "#c9def2",
+  gridArea: "b",
+};
+
+const podStyle3: React.CSSProperties = {
+  display: "flex",
+  backgroundColor: "#b4f9e6",
+  gridArea: "f",
+};
+
+const podStyle4: React.CSSProperties = {
+  display: "flex",
+  backgroundColor: "#ffd700",
+  gridArea: "d",
+};
 
 export class ITCGBoard extends React.Component<BoardProps<GameState>> {
-  onClick(id: PlayerID) {
-    this.props.moves.drawCard(id);
+  playerID: PlayerID;
+  opponentID: PlayerID;
+  playerState: Dictionary<PlayerState>;
+
+  constructor(props: BoardProps<GameState>) {
+    super(props);
+
+    this.playerID = props.playerID!;
+    this.opponentID = Object.keys(props.G.player).filter(
+      (id) => id != this.playerID
+    )[0];
+    this.playerState = props.G.player;
   }
 
   render() {
-    const cellStyle: React.CSSProperties = {
-      border: "1px solid #555",
-      width: "50px",
-      height: "50px",
-      lineHeight: "50px",
-      textAlign: "center",
-    };
-
-    const playerID = this.props.playerID!;
-    const opponentID = Object.keys(this.props.G.player).filter(
-      (id) => id != playerID
-    )[0];
-
-    let opponentLine = new Array(this.props.G.player[opponentID].hand.length);
-    opponentLine.fill(
-      <td style={cellStyle} key="card">
-        itcg
-      </td>
+    const opponentLine = new Array(
+      this.playerState[this.opponentID].hand.length
     );
-    opponentLine = [<td></td>, ...opponentLine];
+    opponentLine.fill(<ITCGCard card="back" />);
+    const player = this.playerState[this.playerID];
 
-    let playerLine = [];
-    playerLine.push(
-      <button onClick={() => this.props.moves.drawCard(playerID)}>Deck</button>
-    );
-    const player = this.props.G.player[playerID];
-
+    const playerLine = [];
     for (const card of player.hand) {
-      playerLine.push(
-        <td style={cellStyle} key={card.id}>
-          {card.id}
-        </td>
-      );
+      playerLine.push(<ITCGCard card={card.card} />);
     }
-    let tbody = [];
-    tbody.push(<tr>{opponentLine}</tr>);
-    tbody.push(<tr>{playerLine}</tr>);
 
     return (
-      <div>
-        <table id="board">
-          <tbody>{tbody}</tbody>
-        </table>
+      <div style={containerStyle}>
+        <div style={podStyle1}>{opponentLine}</div>
+        <div style={podStyle2}></div>
+        <div style={podStyle3}>{playerLine}</div>
+        <div style={podStyle4}>
+          <button onClick={() => this.props.moves.drawCard()}>Deck</button>
+        </div>
       </div>
     );
   }
