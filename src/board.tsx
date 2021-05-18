@@ -40,26 +40,17 @@ const podStyle4: React.CSSProperties = {
 };
 
 export class ITCGBoard extends React.Component<BoardProps<GameState>> {
-  playerID: PlayerID;
-  opponentID: PlayerID;
-  playerState: Dictionary<PlayerState>;
-
-  constructor(props: BoardProps<GameState>) {
-    super(props);
-
-    this.playerID = props.playerID!;
-    this.opponentID = Object.keys(props.G.player).filter(
-      (id) => id != this.playerID
-    )[0];
-    this.playerState = props.G.player;
-  }
-
   render() {
-    const opponentLine = new Array(
-      this.playerState[this.opponentID].hand.length
-    );
+    const playerID = this.props.playerID!;
+    const opponentID = Object.keys(this.props.G.player).filter(
+      (id) => id != playerID
+    )[0];
+    const playerState = this.props.G.player;
+
+    const opponentLine = new Array(playerState[opponentID].hand.length);
+
     opponentLine.fill(<ITCGCard card="back" />);
-    const player = this.playerState[this.playerID];
+    const player = playerState[playerID];
 
     const playerLine = [];
     for (const card of player.hand) {
@@ -72,7 +63,7 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
         <div style={podStyle2}></div>
         <div style={podStyle3}>{playerLine}</div>
         <div style={podStyle4}>
-          <button onClick={() => this.props.moves.drawCard()}>Deck</button>
+          <button onClick={() => this.props.moves.drawCard()}>Draw Card</button>
         </div>
       </div>
     );
