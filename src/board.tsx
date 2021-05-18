@@ -4,6 +4,7 @@ import { BoardProps } from "boardgame.io/react";
 import { GameState } from "./game";
 
 import { ITCGCard } from "./card";
+import { cardback } from "./cardList";
 
 const containerStyle: React.CSSProperties = {
   display: "grid",
@@ -48,12 +49,12 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
 
     const opponentLine = new Array(playerState[opponentID].hand.length);
 
-    opponentLine.fill(<ITCGCard card="back" />);
+    opponentLine.fill(<ITCGCard card={cardback} />);
     const player = playerState[playerID];
 
     const playerLine = [];
     for (const card of player.hand) {
-      playerLine.push(<ITCGCard card={card.card} />);
+      playerLine.push(<ITCGCard card={card} />);
     }
 
     return (

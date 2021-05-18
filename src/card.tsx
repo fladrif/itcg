@@ -1,9 +1,8 @@
 import React from "react";
-import back from "./images/cardback.jpg";
-import front from "./images/Slime.jpg";
+import { Card } from "./cardList";
 
 interface CardProp {
-  card: "back" | "front";
+  card: Card;
 }
 
 const miniCardStyle: React.CSSProperties = {
@@ -13,11 +12,13 @@ const miniCardStyle: React.CSSProperties = {
 
 export class ITCGCard extends React.Component<CardProp> {
   render() {
-    const propCard = this.props.card;
-    const source = propCard === "front" ? front : back;
     return (
       <div>
-        <img style={miniCardStyle} src={source} alt="card" />
+        <img
+          style={miniCardStyle}
+          src={this.props.card.image}
+          alt={this.props.card.name}
+        />
       </div>
     );
   }
