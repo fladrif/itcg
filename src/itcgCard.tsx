@@ -21,7 +21,7 @@ interface CardProp {
   card: Card;
 }
 
-const cardImages: Dictionary<any> = {
+const cardImages: Record<string, any> = {
   Slime,
   Fairy,
   JrNecki,

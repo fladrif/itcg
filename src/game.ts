@@ -3,13 +3,7 @@ import { INVALID_MOVE } from "boardgame.io/core";
 import lodash from "lodash";
 
 import * as cards from "./cards";
-import { Card, Character, NonCharacter } from "./card";
-
-declare global {
-  interface Dictionary<T> {
-    [Key: string]: T;
-  }
-}
+import { Character, NonCharacter } from "./card";
 
 const SAMPLE_DECK: NonCharacter[] = [
   cards.slime,
@@ -33,7 +27,7 @@ interface Deck {
 
 export interface PlayerState {
   deck: Deck;
-  hand: Card[];
+  hand: NonCharacter[];
 }
 
 export interface SetupData {
@@ -41,7 +35,7 @@ export interface SetupData {
 }
 
 export interface GameState {
-  player: Dictionary<PlayerState>;
+  player: Record<PlayerID, PlayerState>;
 }
 
 function drawCard(G: GameState, ctx: Ctx) {
