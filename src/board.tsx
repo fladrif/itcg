@@ -3,40 +3,52 @@ import { BoardProps } from "boardgame.io/react";
 
 import { GameState } from "./game";
 
-import { ITCGCard } from "./card";
-import { cardback } from "./cardList";
+import { ITCGCard } from "./itcgCard";
+import { cardback } from "./card";
 
 const containerStyle: React.CSSProperties = {
   display: "grid",
-  gridTemplateColumns: "20% 50% 30%",
-  gridTemplateRows: "20% 60% 20%",
+  gridTemplateColumns: "15% 70% 15%",
+  gridTemplateRows: "20% 5% 50% 5% 20%",
   height: "100vh",
-  gridTemplateAreas: "'h h .' '. b b' 'f f d'",
+  gridTemplateAreas: "'. oh oh' '. ostat .' '. m .' '. stat .' 'h h d'",
   backgroundColor: "#A3FFB4",
 };
 
-const podStyle1: React.CSSProperties = {
+const handStyle: React.CSSProperties = {
   display: "flex",
   backgroundColor: "#36896e",
   gridArea: "h",
 };
 
-const podStyle2: React.CSSProperties = {
+const oppHandStyle: React.CSSProperties = {
+  display: "flex",
+  backgroundColor: "#36896e",
+  gridArea: "oh",
+};
+
+const mapStyle: React.CSSProperties = {
   display: "flex",
   backgroundColor: "#c9def2",
-  gridArea: "b",
+  gridArea: "m",
 };
 
-const podStyle3: React.CSSProperties = {
-  display: "flex",
-  backgroundColor: "#b4f9e6",
-  gridArea: "f",
-};
-
-const podStyle4: React.CSSProperties = {
+const deckStyle: React.CSSProperties = {
   display: "flex",
   backgroundColor: "#ffd700",
   gridArea: "d",
+};
+
+const statStyle: React.CSSProperties = {
+  display: "flex",
+  backgroundColor: "#ff0000",
+  gridArea: "stat",
+};
+
+const oppStatStyle: React.CSSProperties = {
+  display: "flex",
+  backgroundColor: "#ff0000",
+  gridArea: "ostat",
 };
 
 export class ITCGBoard extends React.Component<BoardProps<GameState>> {
@@ -59,10 +71,12 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
 
     return (
       <div style={containerStyle}>
-        <div style={podStyle1}>{opponentLine}</div>
-        <div style={podStyle2}></div>
-        <div style={podStyle3}>{playerLine}</div>
-        <div style={podStyle4}>
+        <div style={oppHandStyle}>{opponentLine}</div>
+        <div style={oppStatStyle}></div>
+        <div style={mapStyle}></div>
+        <div style={statStyle}></div>
+        <div style={handStyle}>{playerLine}</div>
+        <div style={deckStyle}>
           <button onClick={() => this.props.moves.drawCard()}>Draw Card</button>
         </div>
       </div>

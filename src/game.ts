@@ -2,8 +2,8 @@ import { Ctx, PlayerID } from "boardgame.io";
 import { INVALID_MOVE } from "boardgame.io/core";
 import lodash from "lodash";
 
-import * as cards from "./cardList";
-import { Card } from "./cardList";
+import * as cards from "./card";
+import { Card } from "./card";
 
 declare global {
   interface Dictionary<T> {

@@ -1,5 +1,5 @@
 import React from "react";
-import { Card } from "./cardList";
+import { Card } from "./card";
 
 import Slime from "./images/Slime.jpg";
 import Fairy from "./images/Fairy.jpg";
