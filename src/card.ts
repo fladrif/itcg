@@ -1,69 +1,54 @@
+export enum CardTypes {
+  Tactic,
+  Item,
+  Monster,
+  Character,
+}
+
+export enum CardClasses {
+  Bowman,
+  Magician,
+  Thief,
+  Warrior,
+}
+
 export interface Card {
   name: string;
+  type: CardTypes;
+  class: CardClasses;
   image: string;
 }
 
-export const slime: Card = {
-  name: "slime",
-  image: "Slime",
-};
+export interface Character extends Card {
+  health: number;
+  skills: Skill[];
+}
 
-export const fairy: Card = {
-  name: "fairy",
-  image: "Fairy",
-};
+export interface NonCharacter extends Exclude<Card, Character> {
+  level: number;
+  skill: Skill;
+}
 
-export const jrnecki: Card = {
-  name: "jrnecki",
-  image: "JrNecki",
-};
+export interface Monster extends NonCharacter {
+  attack: number;
+  health: number;
+  ability: Ability;
+}
 
-export const octopus: Card = {
-  name: "octopus",
-  image: "Octopus",
-};
+export interface Tactic extends NonCharacter {
+  ability: Ability;
+}
 
-export const redsnail: Card = {
-  name: "redsnail",
-  image: "RedSnail",
-};
+export interface Item extends NonCharacter {
+  ability: Ability;
+}
 
-export const wildboar: Card = {
-  name: "wildboar",
-  image: "WildBoar",
-};
-
-export const magicclaw: Card = {
-  name: "magicclaw",
-  image: "MagicClaw",
-};
-
-export const ribbonpig: Card = {
-  name: "ribbonpig",
-  image: "RibbonPig",
-};
-
-export const darkaxestump: Card = {
-  name: "darkaxestump",
-  image: "DarkAxeStump",
-};
-
-export const greenmushroom: Card = {
-  name: "greenmushroom",
-  image: "GreenMushroom",
-};
-
-export const orangemushroom: Card = {
-  name: "orangemushroom",
-  image: "OrangeMushroom",
-};
-
-export const emeraldearrings: Card = {
-  name: "emeraldearrings",
-  image: "EmeraldEarrings",
-};
+export interface Skill {}
+export interface Ability {}
 
 export const cardback: Card = {
   name: "cardback",
   image: "Cardback",
+  type: CardTypes.Character,
+  class: CardClasses.Warrior,
 };

@@ -13,6 +13,8 @@ import DarkAxeStump from "./images/DarkAxeStump.jpg";
 import GreenMushroom from "./images/GreenMushroom.jpg";
 import OrangeMushroom from "./images/OrangeMushroom.jpg";
 import EmeraldEarrings from "./images/EmeraldEarrings.jpg";
+import Sherman from "./images/Sherman.jpg";
+import Nixie from "./images/Nixie.jpg";
 import Cardback from "./images/cardback.jpg";
 
 interface CardProp {
@@ -20,19 +22,21 @@ interface CardProp {
 }
 
 const cardImages: Dictionary<any> = {
-  Slime: Slime,
-  Fairy: Fairy,
-  JrNecki: JrNecki,
-  Octopus: Octopus,
-  RedSnail: RedSnail,
-  WildBoar: WildBoar,
-  MagicClaw: MagicClaw,
-  RibbonPig: RibbonPig,
-  DarkAxeStump: DarkAxeStump,
-  GreenMushroom: GreenMushroom,
-  OrangeMushroom: OrangeMushroom,
-  EmeraldEarrings: EmeraldEarrings,
-  Cardback: Cardback,
+  Slime,
+  Fairy,
+  JrNecki,
+  Octopus,
+  RedSnail,
+  WildBoar,
+  MagicClaw,
+  RibbonPig,
+  DarkAxeStump,
+  GreenMushroom,
+  OrangeMushroom,
+  EmeraldEarrings,
+  Sherman,
+  Nixie,
+  Cardback,
 };
 
 const miniCardStyle: React.CSSProperties = {

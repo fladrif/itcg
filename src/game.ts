@@ -2,8 +2,8 @@ import { Ctx, PlayerID } from "boardgame.io";
 import { INVALID_MOVE } from "boardgame.io/core";
 import lodash from "lodash";
 
-import * as cards from "./card";
-import { Card } from "./card";
+import * as cards from "./cards";
+import { Card, Character, NonCharacter } from "./card";
 
 declare global {
   interface Dictionary<T> {
@@ -11,7 +11,7 @@ declare global {
   }
 }
 
-const SAMPLE_DECK: Card[] = [
+const SAMPLE_DECK: NonCharacter[] = [
   cards.slime,
   cards.fairy,
   cards.jrnecki,
@@ -27,8 +27,8 @@ const SAMPLE_DECK: Card[] = [
 ];
 
 interface Deck {
-  character: Card;
-  deck: Card[];
+  character: Character;
+  deck: NonCharacter[];
 }
 
 export interface PlayerState {
@@ -37,7 +37,7 @@ export interface PlayerState {
 }
 
 export interface SetupData {
-  players: [{ id: PlayerID; deck: Card[] }];
+  players: [{ id: PlayerID; deck: Deck }];
 }
 
 export interface GameState {
@@ -63,7 +63,7 @@ function preConfigSetup(): GameState {
 
   state.player["0"] = {
     deck: {
-      character: cards.slime,
+      character: cards.sherman,
       deck: lodash(SAMPLE_DECK).shuffle().value(),
     },
     hand: [],
@@ -71,7 +71,7 @@ function preConfigSetup(): GameState {
 
   state.player["1"] = {
     deck: {
-      character: cards.slime,
+      character: cards.nixie,
       deck: lodash(SAMPLE_DECK).shuffle().value(),
     },
     hand: [],
@@ -85,7 +85,7 @@ export function setup(_ctx: Ctx, setupData: SetupData): GameState {
 
   for (const player of setupData.players) {
     state.player[player.id] = {
-      deck: { character: cards.slime, deck: player.deck },
+      deck: { character: cards.sherman, deck: player.deck.deck },
       hand: [],
     };
   }
