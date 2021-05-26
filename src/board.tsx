@@ -2,9 +2,10 @@ import React from "react";
 import { BoardProps } from "boardgame.io/react";
 
 import { GameState } from "./game";
+import { cardback } from "./card";
 
 import { ITCGCard } from "./itcgCard";
-import { cardback } from "./card";
+import { ITCGStats } from "./itcgStats";
 
 const containerStyle: React.CSSProperties = {
   display: "grid",
@@ -100,9 +101,13 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
         </div>
         <div style={oppHandStyle}>{opponentLine}</div>
         <div style={oppCharStyle}>{oppCharacter}</div>
-        <div style={oppStatStyle}></div>
+        <div style={oppStatStyle}>
+          <ITCGStats playerState={playerState[opponentID]} />
+        </div>
         <div style={mapStyle}></div>
-        <div style={statStyle}></div>
+        <div style={statStyle}>
+          <ITCGStats playerState={playerState[playerID]} />
+        </div>
         <div style={charStyle}>{character}</div>
         <div style={handStyle}>{playerLine}</div>
         <div style={deckStyle}>

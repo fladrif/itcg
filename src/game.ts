@@ -28,6 +28,10 @@ interface Deck {
 export interface PlayerState {
   deck: Deck;
   hand: NonCharacter[];
+  learnedSkills: NonCharacter[];
+  hp: number;
+  maxHP: number;
+  level: number;
 }
 
 export interface SetupData {
@@ -61,6 +65,10 @@ function preConfigSetup(): GameState {
       deck: lodash(SAMPLE_DECK).shuffle().value(),
     },
     hand: [],
+    learnedSkills: [],
+    hp: cards.sherman.health,
+    maxHP: cards.sherman.health,
+    level: 0,
   };
 
   state.player["1"] = {
@@ -69,6 +77,10 @@ function preConfigSetup(): GameState {
       deck: lodash(SAMPLE_DECK).shuffle().value(),
     },
     hand: [],
+    learnedSkills: [],
+    hp: cards.nixie.health,
+    maxHP: cards.nixie.health,
+    level: 0,
   };
 
   return state;
@@ -81,6 +93,10 @@ export function setup(_ctx: Ctx, setupData: SetupData): GameState {
     state.player[player.id] = {
       deck: { character: cards.sherman, deck: player.deck.deck },
       hand: [],
+      learnedSkills: [],
+      hp: cards.sherman.health,
+      maxHP: cards.sherman.health,
+      level: 0,
     };
   }
   return state;
