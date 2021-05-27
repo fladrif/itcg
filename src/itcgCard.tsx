@@ -48,7 +48,7 @@ const styles = {
   leveledCardStyle: {
     objectFit: "cover",
     objectPosition: "0 100%",
-    height: "35px",
+    height: "10%",
     width: "70%",
   } as React.CSSProperties,
   characterStyle: {
