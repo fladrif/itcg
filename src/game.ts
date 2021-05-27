@@ -1,4 +1,4 @@
-import { Ctx, PlayerID, StageConfig, StageMap } from "boardgame.io";
+import { Ctx, PlayerID } from "boardgame.io";
 import lodash from "lodash";
 
 import * as cards from "./cards";
