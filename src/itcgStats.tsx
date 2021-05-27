@@ -15,7 +15,7 @@ const levelStyle: React.CSSProperties = {
   alignItems: "center",
   paddingLeft: "0.25em",
   paddingRight: "0.25em",
-  backgroundColor: "#d3d3d3",
+  background: "linear-gradient(#d3d3d3, 80%, #5c5c5c)",
   border: "solid",
   borderRadius: "0.5em",
   textAlign: "center",
@@ -43,6 +43,7 @@ interface ProgressBarProps {
 }
 
 const barStyle: React.CSSProperties = {
+  background: "linear-gradient(#d3d3d3, 80%, #5c5c5c)",
   marginLeft: "0.1em",
   border: "solid",
   borderRadius: "0.5em",
@@ -53,7 +54,7 @@ const barStyle: React.CSSProperties = {
 const defaultFillerStyle: React.CSSProperties = {
   display: "flex",
   alignItems: "center",
-  background: "#00ff00",
+  background: "linear-gradient(#ff0000, 80%, #5c5c5c)",
   transition: "width .2s ease-in",
   height: "100%",
   whiteSpace: "nowrap",
@@ -70,7 +71,7 @@ class ProgressBar extends React.Component<ProgressBarProps> {
     return (
       <div style={barStyle}>
         <div style={fillerStyle}>
-          HP: {this.props.hp}/{this.props.maxHP}
+          HP:[{this.props.hp}/{this.props.maxHP}]
         </div>
       </div>
     );

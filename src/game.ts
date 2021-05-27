@@ -1,9 +1,9 @@
-import { Ctx, PlayerID } from "boardgame.io";
-import { INVALID_MOVE } from "boardgame.io/core";
+import { Ctx, PlayerID, StageConfig, StageMap } from "boardgame.io";
 import lodash from "lodash";
 
 import * as cards from "./cards";
 import { Character, NonCharacter } from "./card";
+import { drawCard, shuffleDeck, levelUp } from "./moves";
 
 const SAMPLE_DECK: NonCharacter[] = [
   cards.slime,
@@ -42,20 +42,6 @@ export interface GameState {
   player: Record<PlayerID, PlayerState>;
 }
 
-function drawCard(G: GameState, ctx: Ctx) {
-  const player = G.player[ctx.currentPlayer];
-  if (!player || player.deck.deck.length <= 0) return INVALID_MOVE;
-
-  player.hand.push(player.deck.deck.pop()!);
-}
-
-function shuffleDeck(G: GameState, _ctx: Ctx, id: PlayerID) {
-  const player = G.player[id];
-  if (!player) return INVALID_MOVE;
-
-  player.deck.deck = lodash(player.deck.deck).shuffle().value();
-}
-
 function preConfigSetup(): GameState {
   const state = { player: {} } as GameState;
 
@@ -83,6 +69,17 @@ function preConfigSetup(): GameState {
     level: 0,
   };
 
+  state.player["0"].hand.push(state.player["0"].deck.deck.pop()!);
+  state.player["0"].hand.push(state.player["0"].deck.deck.pop()!);
+  state.player["0"].hand.push(state.player["0"].deck.deck.pop()!);
+  state.player["0"].hand.push(state.player["0"].deck.deck.pop()!);
+
+  state.player["1"].hand.push(state.player["1"].deck.deck.pop()!);
+  state.player["1"].hand.push(state.player["1"].deck.deck.pop()!);
+  state.player["1"].hand.push(state.player["1"].deck.deck.pop()!);
+  state.player["1"].hand.push(state.player["1"].deck.deck.pop()!);
+  state.player["1"].hand.push(state.player["1"].deck.deck.pop()!);
+
   return state;
 }
 
@@ -107,13 +104,27 @@ export const ITCG = {
 
   setup: preConfigSetup,
 
+  stage: [],
+
   moves: {
     drawCard,
     shuffleDeck,
+    levelUp,
   },
 
   turn: {
-    moveLimit: 1,
+    onBegin: (_G: GameState, ctx: Ctx) => {
+      ctx.events!.setActivePlayers!({ currentPlayer: "level" });
+    },
+    stages: {
+      level: {
+        moves: { levelUp },
+        next: "activate",
+      },
+      activate: {
+        moves: { drawCard },
+      },
+    },
   },
 
   minPlayers: 2,

@@ -1,4 +1,5 @@
 import React from "react";
+
 import { Card } from "./card";
 
 import Slime from "./images/Slime.jpg";
@@ -17,7 +18,11 @@ import Sherman from "./images/Sherman.jpg";
 import Nixie from "./images/Nixie.jpg";
 import Cardback from "./images/cardback.jpg";
 
+type Styles = keyof typeof styles;
+
 interface CardProp {
+  style?: Styles;
+  onClick?: () => void;
   card: Card;
 }
 
@@ -39,21 +44,33 @@ const cardImages: Record<string, any> = {
   Cardback,
 };
 
-const miniCardStyle: React.CSSProperties = {
-  height: "110px",
-  width: "79px",
+const styles = {
+  leveledCardStyle: {
+    objectFit: "cover",
+    objectPosition: "0 100%",
+    height: "35px",
+    width: "70%",
+  } as React.CSSProperties,
+  characterStyle: {
+    width: "70%",
+  } as React.CSSProperties,
+  miniCardStyle: {
+    height: "110px",
+    width: "79px",
+  } as React.CSSProperties,
 };
 
 export class ITCGCard extends React.Component<CardProp> {
   render() {
+    const style = this.props.style ?? "miniCardStyle";
+
     return (
-      <div>
-        <img
-          style={miniCardStyle}
-          src={cardImages[this.props.card.image]}
-          alt={this.props.card.name}
-        />
-      </div>
+      <img
+        onClick={this.props.onClick}
+        style={styles[style]}
+        src={cardImages[this.props.card.image]}
+        alt={this.props.card.name}
+      />
     );
   }
 }

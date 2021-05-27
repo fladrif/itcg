@@ -2,7 +2,7 @@ import React from "react";
 import { Lobby } from "boardgame.io/react";
 
 import { ITCG } from "./game";
-import { ITCGBoard } from "./board";
+import { ITCGBoard } from "./itcgBoard";
 
 class App extends React.Component {
   render() {
