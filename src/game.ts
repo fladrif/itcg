@@ -3,7 +3,7 @@ import lodash from "lodash";
 
 import * as cards from "./cards";
 import { Character, NonCharacter } from "./card";
-import { drawCard, shuffleDeck, levelUp } from "./moves";
+import { shuffleDeck, levelUp, activateSkill } from "./moves";
 
 const SAMPLE_DECK: NonCharacter[] = [
   cards.slime,
@@ -32,6 +32,7 @@ export interface PlayerState {
   hp: number;
   maxHP: number;
   level: number;
+  activationPos: number;
 }
 
 export interface SetupData {
@@ -55,6 +56,7 @@ function preConfigSetup(): GameState {
     hp: cards.sherman.health,
     maxHP: cards.sherman.health,
     level: 0,
+    activationPos: 0,
   };
 
   state.player["1"] = {
@@ -67,6 +69,7 @@ function preConfigSetup(): GameState {
     hp: cards.nixie.health,
     maxHP: cards.nixie.health,
     level: 0,
+    activationPos: 0,
   };
 
   state.player["0"].hand.push(state.player["0"].deck.deck.pop()!);
@@ -94,6 +97,7 @@ export function setup(_ctx: Ctx, setupData: SetupData): GameState {
       hp: cards.sherman.health,
       maxHP: cards.sherman.health,
       level: 0,
+      activationPos: 0,
     };
   }
   return state;
@@ -107,9 +111,9 @@ export const ITCG = {
   stage: [],
 
   moves: {
-    drawCard,
     shuffleDeck,
     levelUp,
+    activateSkill,
   },
 
   turn: {
@@ -122,8 +126,10 @@ export const ITCG = {
         next: "activate",
       },
       activate: {
-        moves: { drawCard },
+        moves: { activateSkill },
+        next: "attack",
       },
+      attack: {},
     },
   },
 

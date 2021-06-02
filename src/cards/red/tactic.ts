@@ -1,4 +1,5 @@
 import { Tactic, CardTypes, CardClasses } from "../../card";
+import { SAMPLE_SKILL } from "../../card";
 
 const defaultTypes = {
   type: CardTypes.Tactic,
@@ -9,7 +10,7 @@ export const magicclaw: Tactic = {
   name: "Magic Claw",
   image: "MagicClaw",
   level: 20,
-  skill: [{}],
+  skill: SAMPLE_SKILL,
   ability: {},
   ...defaultTypes,
 };

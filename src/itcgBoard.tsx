@@ -2,9 +2,8 @@ import React from "react";
 import { BoardProps } from "boardgame.io/react";
 
 import { GameState } from "./game";
-import { cardback } from "./card";
 
-import { ITCGCard } from "./itcgCard";
+import { ITCGCard, ITCGCardback } from "./itcgCard";
 import { ITCGStats } from "./itcgStats";
 import { ITCGCharacter } from "./itcgCharacter";
 
@@ -80,24 +79,25 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
 
     const opponentLine = new Array(playerState[opponentID].hand.length);
 
-    opponentLine.fill(<ITCGCard card={cardback} />);
+    opponentLine.fill(<ITCGCardback />);
     const player = playerState[playerID];
 
     const playerLine = [];
     for (const card of player.hand) {
-      playerLine.push(
-        <ITCGCard onClick={() => this.props.moves.levelUp(card)} card={card} />
-      );
+      playerLine.push(<ITCGCard move={this.props.moves.levelUp} card={card} />);
     }
 
     return (
       <div style={containerStyle}>
         <div style={oppDeckStyle}>
-          <ITCGCard card={cardback} />
+          <ITCGCardback />
         </div>
         <div style={oppHandStyle}>{opponentLine}</div>
         <div style={oppCharStyle}>
-          <ITCGCharacter playerState={playerState[opponentID]} />
+          <ITCGCharacter
+            playerState={playerState[opponentID]}
+            move={this.props.moves.activateSkill}
+          />
         </div>
         <div style={oppStatStyle}>
           <ITCGStats playerState={playerState[opponentID]} />
@@ -107,12 +107,15 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
           <ITCGStats playerState={playerState[playerID]} />
         </div>
         <div style={charStyle}>
-          <ITCGCharacter playerState={playerState[playerID]} />
+          <ITCGCharacter
+            playerState={playerState[playerID]}
+            move={this.props.moves.activateSkill}
+          />
         </div>
         <div style={handStyle}>{playerLine}</div>
         <div style={deckStyle}>
           <button onClick={() => this.props.moves.drawCard()}>
-            <ITCGCard card={cardback} />
+            <ITCGCardback />
           </button>
         </div>
       </div>

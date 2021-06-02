@@ -1,3 +1,10 @@
+import { Actions } from "./moveTemplates";
+
+export const SAMPLE_SKILL: Skill = {
+  requirements: { level: 100 },
+  action: "quest",
+};
+
 export enum CardTypes {
   Tactic,
   Item,
@@ -43,12 +50,13 @@ export interface Item extends NonCharacter {
   ability: Ability;
 }
 
-export interface Skill {}
-export interface Ability {}
+export interface SkillRequirements {
+  level: number;
+  class?: Record<CardClasses, number>;
+}
 
-export const cardback: Card = {
-  name: "cardback",
-  image: "Cardback",
-  type: CardTypes.Character,
-  class: CardClasses.Warrior,
-};
+export interface Skill {
+  requirements: SkillRequirements;
+  action: Actions;
+}
+export interface Ability {}

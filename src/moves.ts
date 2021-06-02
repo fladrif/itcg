@@ -1,26 +1,25 @@
 import { Ctx, PlayerID } from "boardgame.io";
 import { INVALID_MOVE } from "boardgame.io/core";
-import lodash from "lodash";
 
 import { GameState } from "./game";
-import { NonCharacter } from "./card";
+import { NonCharacter, Character } from "./card";
+import { actions } from "./moveTemplates";
 
-export function shuffleDeck(G: GameState, _ctx: Ctx, id: PlayerID) {
+export function shuffleDeck(G: GameState, ctx: Ctx, id: PlayerID) {
   const player = G.player[id];
   if (!player) return INVALID_MOVE;
 
-  player.deck.deck = lodash(player.deck.deck).shuffle().value();
+  player.deck.deck = ctx.random!.Shuffle(player.deck.deck);
 }
 
-export function drawCard(G: GameState, ctx: Ctx) {
-  const player = G.player[ctx.currentPlayer];
-  if (!player || player.deck.deck.length <= 0) return INVALID_MOVE;
+export function levelUp(
+  G: GameState,
+  ctx: Ctx,
+  card: Character | NonCharacter,
+  _position?: number
+) {
+  if ("skills" in card) return INVALID_MOVE;
 
-  player.hand.push(player.deck.deck.pop()!);
-  ctx.events!.endTurn!();
-}
-
-export function levelUp(G: GameState, ctx: Ctx, card: NonCharacter) {
   const player = G.player[ctx.currentPlayer];
 
   const handIndex = player.hand.findIndex(
@@ -34,7 +33,36 @@ export function levelUp(G: GameState, ctx: Ctx, card: NonCharacter) {
 
   player.level += 10;
   player.hp += 20;
-  player.maxHP += 20;
 
   ctx.events!.endStage!();
+}
+
+export function activateSkill(
+  G: GameState,
+  ctx: Ctx,
+  card: Character | NonCharacter,
+  position?: number
+) {
+  if (
+    position === undefined ||
+    G.player[ctx.currentPlayer].activationPos > position
+  ) {
+    return INVALID_MOVE;
+  }
+
+  if ("skills" in card) {
+    const skillPos = position ?? 0;
+    if (
+      card.skills[skillPos].requirements.level >
+      G.player[ctx.currentPlayer].level
+    ) {
+      return INVALID_MOVE;
+    }
+
+    actions[card.skills[skillPos].action](G, ctx);
+    G.player[ctx.currentPlayer].activationPos = position + 1;
+  } else {
+    actions[card.skill.action](G, ctx);
+    G.player[ctx.currentPlayer].activationPos = position + 1;
+  }
 }

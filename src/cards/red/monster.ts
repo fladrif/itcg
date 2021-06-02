@@ -1,4 +1,5 @@
 import { Monster, CardTypes, CardClasses } from "../../card";
+import { SAMPLE_SKILL } from "../../card";
 
 const defaultTypes = {
   type: CardTypes.Monster,
@@ -11,7 +12,7 @@ export const darkaxestump: Monster = {
   level: 22,
   attack: 10,
   health: 40,
-  skill: [{}],
+  skill: SAMPLE_SKILL,
   ability: {},
   ...defaultTypes,
 };
@@ -22,7 +23,7 @@ export const jrnecki: Monster = {
   level: 21,
   attack: 30,
   health: 30,
-  skill: [{}],
+  skill: SAMPLE_SKILL,
   ability: {},
   ...defaultTypes,
 };
@@ -33,7 +34,7 @@ export const octopus: Monster = {
   level: 12,
   attack: 10,
   health: 10,
-  skill: [{}],
+  skill: SAMPLE_SKILL,
   ability: {},
   ...defaultTypes,
 };

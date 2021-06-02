@@ -1,4 +1,5 @@
 import { Monster, CardTypes, CardClasses } from "../../card";
+import { SAMPLE_SKILL } from "../../card";
 
 const defaultTypes = {
   type: CardTypes.Monster,
@@ -11,7 +12,7 @@ export const wildboar: Monster = {
   level: 25,
   attack: 30,
   health: 30,
-  skill: [{}],
+  skill: SAMPLE_SKILL,
   ability: {},
   ...defaultTypes,
 };
@@ -22,7 +23,7 @@ export const slime: Monster = {
   level: 6,
   attack: 10,
   health: 10,
-  skill: [{}],
+  skill: SAMPLE_SKILL,
   ability: {},
   ...defaultTypes,
 };
@@ -33,7 +34,7 @@ export const greenmushroom: Monster = {
   level: 15,
   attack: 10,
   health: 40,
-  skill: [{}],
+  skill: SAMPLE_SKILL,
   ability: {},
   ...defaultTypes,
 };
@@ -44,7 +45,7 @@ export const ribbonpig: Monster = {
   level: 10,
   attack: 20,
   health: 20,
-  skill: [{}],
+  skill: SAMPLE_SKILL,
   ability: {},
   ...defaultTypes,
 };
