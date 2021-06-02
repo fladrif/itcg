@@ -1,61 +1,37 @@
 import React from "react";
 
-import { Card } from "./card";
-
-import Slime from "./images/Slime.jpg";
-import Fairy from "./images/Fairy.jpg";
-import JrNecki from "./images/JrNecki.jpg";
-import Octopus from "./images/Octopus.jpg";
-import RedSnail from "./images/RedSnail.jpg";
-import WildBoar from "./images/WildBoar.jpg";
-import MagicClaw from "./images/MagicClaw.jpg";
-import RibbonPig from "./images/RibbonPig.jpg";
-import DarkAxeStump from "./images/DarkAxeStump.jpg";
-import GreenMushroom from "./images/GreenMushroom.jpg";
-import OrangeMushroom from "./images/OrangeMushroom.jpg";
-import EmeraldEarrings from "./images/EmeraldEarrings.jpg";
-import Sherman from "./images/Sherman.jpg";
-import Nixie from "./images/Nixie.jpg";
-import Cardback from "./images/cardback.jpg";
+import { Character, NonCharacter, CardTypes } from "./card";
+import { cardImages, cardback } from "./itcgCardImages";
 
 type Styles = keyof typeof styles;
 
 interface CardProp {
+  card: Character | NonCharacter;
+  move: (card: Character | NonCharacter, position?: number) => any;
   style?: Styles;
-  onClick?: () => void;
-  card: Card;
+  skillPos?: number;
 }
 
-const cardImages: Record<string, any> = {
-  Slime,
-  Fairy,
-  JrNecki,
-  Octopus,
-  RedSnail,
-  WildBoar,
-  MagicClaw,
-  RibbonPig,
-  DarkAxeStump,
-  GreenMushroom,
-  OrangeMushroom,
-  EmeraldEarrings,
-  Sherman,
-  Nixie,
-  Cardback,
+interface CardbackProp {
+  style?: Styles;
+}
+
+const baseStyle: React.CSSProperties = {
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
 };
 
 const styles = {
   leveledCardStyle: {
     objectFit: "cover",
     objectPosition: "0 100%",
-    height: "10%",
     width: "70%",
   } as React.CSSProperties,
   characterStyle: {
     width: "70%",
   } as React.CSSProperties,
   miniCardStyle: {
-    height: "110px",
     width: "79px",
   } as React.CSSProperties,
 };
@@ -63,14 +39,65 @@ const styles = {
 export class ITCGCard extends React.Component<CardProp> {
   render() {
     const style = this.props.style ?? "miniCardStyle";
+    const isCharacter = this.props.card.type === CardTypes.Character;
+    const isLevelCard = this.props.style === "leveledCardStyle";
+
+    const card = [];
+
+    if (isLevelCard) {
+      card.push(
+        <img
+          style={styles[style]}
+          onClick={() => this.props.move(this.props.card, this.props.skillPos)}
+          src={cardImages[this.props.card.image].skill}
+          alt={this.props.card.name}
+        />
+      );
+    } else {
+      card.push(
+        <img
+          style={styles[style]}
+          onClick={() => this.props.move(this.props.card)}
+          src={cardImages[this.props.card.image].top}
+          alt={this.props.card.name}
+        />,
+        <img
+          onClick={() => this.props.move(this.props.card, 0)}
+          style={styles[style]}
+          src={cardImages[this.props.card.image].skill}
+          alt={this.props.card.name}
+        />
+      );
+
+      if (isCharacter) {
+        card.push(
+          <img
+            onClick={() => this.props.move(this.props.card, 1)}
+            style={styles[style]}
+            src={cardImages[this.props.card.image].skill2}
+            alt={this.props.card.name}
+          />,
+          <img
+            onClick={() => this.props.move(this.props.card, 2)}
+            style={styles[style]}
+            src={cardImages[this.props.card.image].skill3}
+            alt={this.props.card.name}
+          />
+        );
+      }
+    }
+    return <div style={baseStyle}>{card}</div>;
+  }
+}
+
+export class ITCGCardback extends React.Component<CardbackProp> {
+  render() {
+    const style = this.props.style ?? "miniCardStyle";
 
     return (
-      <img
-        onClick={this.props.onClick}
-        style={styles[style]}
-        src={cardImages[this.props.card.image]}
-        alt={this.props.card.name}
-      />
+      <div style={baseStyle}>
+        <img style={styles[style]} alt="cardback" src={cardback} />{" "}
+      </div>
     );
   }
 }
