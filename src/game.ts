@@ -108,8 +108,6 @@ export const ITCG = {
 
   setup: preConfigSetup,
 
-  stage: [],
-
   moves: {
     shuffleDeck,
     levelUp,

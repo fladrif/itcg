@@ -2,8 +2,9 @@ import { Ctx, PlayerID } from "boardgame.io";
 import { INVALID_MOVE } from "boardgame.io/core";
 
 import { GameState } from "./game";
-import { NonCharacter, Character } from "./card";
-import { actions } from "./moveTemplates";
+import { NonCharacter, Character, Skill } from "./card";
+import { actions } from "./actions";
+import { endLevelStage, endActivateStage, meetsSkillReq } from "./hook";
 
 export function shuffleDeck(G: GameState, ctx: Ctx, id: PlayerID) {
   const player = G.player[id];
@@ -34,7 +35,7 @@ export function levelUp(
   player.level += 10;
   player.hp += 20;
 
-  ctx.events!.endStage!();
+  endLevelStage(G, ctx);
 }
 
 export function activateSkill(
@@ -43,26 +44,25 @@ export function activateSkill(
   card: Character | NonCharacter,
   position?: number
 ) {
-  if (
-    position === undefined ||
-    G.player[ctx.currentPlayer].activationPos > position
-  ) {
+  const player = G.player[ctx.currentPlayer];
+  if (position === undefined || player.activationPos > position) {
     return INVALID_MOVE;
   }
 
-  if ("skills" in card) {
-    const skillPos = position ?? 0;
-    if (
-      card.skills[skillPos].requirements.level >
-      G.player[ctx.currentPlayer].level
-    ) {
-      return INVALID_MOVE;
-    }
+  let skill: Skill;
 
-    actions[card.skills[skillPos].action](G, ctx);
-    G.player[ctx.currentPlayer].activationPos = position + 1;
+  if ("skills" in card) {
+    skill = card.skills[position!];
   } else {
-    actions[card.skill.action](G, ctx);
-    G.player[ctx.currentPlayer].activationPos = position + 1;
+    skill = card.skill;
   }
+
+  if (!meetsSkillReq(skill.requirements, player)) {
+    return INVALID_MOVE;
+  }
+
+  actions[skill.action](G, ctx);
+  player.activationPos = position + 1;
+
+  endActivateStage(G, ctx);
 }
