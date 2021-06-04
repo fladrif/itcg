@@ -1,7 +1,9 @@
 import { Ctx } from "boardgame.io";
 
-import { GameState, PlayerState } from "./game";
-import { Skill, SkillRequirements } from "./card";
+import { GameState } from "./game";
+import { Skill } from "./card";
+import { meetsSkillReq } from "./utils";
+import { actions } from "./actions";
 
 export function endLevelStage(G: GameState, ctx: Ctx) {
   G.player[ctx.currentPlayer].activationPos = 0;
@@ -24,8 +26,15 @@ export function endActivateStage(G: GameState, ctx: Ctx) {
   }
 }
 
-export function meetsSkillReq(req: SkillRequirements, P: PlayerState): boolean {
-  if (req.level > P.level) return false;
+// TODO: Add stack rewind for false confirmation
+export function resolveSkill(G: GameState, ctx: Ctx, confirmation?: boolean) {
+  const stack = G.stack;
+  if (!stack) return;
 
-  return true;
+  if (stack.activeTargets.length == 0 && confirmation) {
+    actions[stack.action](G, ctx);
+
+    G.stack = undefined;
+    endActivateStage(G, ctx);
+  }
 }

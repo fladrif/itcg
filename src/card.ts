@@ -1,9 +1,9 @@
-import { Actions } from "./actions";
+import { Actions, ActionTargets } from "./actions";
 
 export const SAMPLE_SKILL: Skill = {
   requirements: { level: 100 },
   action: "quest",
-  // targets: [{}],
+  targets: [{}],
 };
 
 export enum CardTypes {
@@ -59,6 +59,6 @@ export interface SkillRequirements {
 export interface Skill {
   requirements: SkillRequirements;
   action: Actions;
-  // targets: ActionTargets[];
+  targets: ActionTargets[];
 }
 export interface Ability {}

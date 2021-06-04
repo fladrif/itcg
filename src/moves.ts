@@ -3,8 +3,8 @@ import { INVALID_MOVE } from "boardgame.io/core";
 
 import { GameState } from "./game";
 import { NonCharacter, Character, Skill } from "./card";
-import { actions } from "./actions";
-import { endLevelStage, endActivateStage, meetsSkillReq } from "./hook";
+import { endLevelStage, endActivateStage, resolveSkill } from "./hook";
+import { meetsSkillReq } from "./utils";
 
 export function shuffleDeck(G: GameState, ctx: Ctx, id: PlayerID) {
   const player = G.player[id];
@@ -61,8 +61,42 @@ export function activateSkill(
     return INVALID_MOVE;
   }
 
-  actions[skill.action](G, ctx);
-  player.activationPos = position + 1;
+  if (!G.stack) {
+    G.stack = {
+      action: skill.action,
+      targets: skill.targets,
+      activeTargets: skill.targets,
+    };
+  }
 
-  endActivateStage(G, ctx);
+  player.activationPos = position + 1;
+  // TODO: Add setActivePlayers nested stages
+  // include stage for confirmation
+}
+
+export function selectTarget(
+  G: GameState,
+  _ctx: Ctx,
+  card: Character | NonCharacter,
+  _position?: number
+) {
+  G.targetSel.targets[G.targetSel.position].push(card);
+}
+
+export function confirmSkill(
+  G: GameState,
+  ctx: Ctx,
+  _card: Character | NonCharacter,
+  _position?: number
+) {
+  resolveSkill(G, ctx, true);
+}
+
+export function declineSkill(
+  G: GameState,
+  ctx: Ctx,
+  _card: Character | NonCharacter,
+  _position?: number
+) {
+  resolveSkill(G, ctx, false);
 }

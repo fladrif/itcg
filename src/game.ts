@@ -3,7 +3,15 @@ import lodash from "lodash";
 
 import * as cards from "./cards";
 import { Character, NonCharacter } from "./card";
-import { shuffleDeck, levelUp, activateSkill } from "./moves";
+import {
+  shuffleDeck,
+  levelUp,
+  activateSkill,
+  selectTarget,
+  confirmSkill,
+  declineSkill,
+} from "./moves";
+import { Actions, ActionTargets } from "./actions";
 
 const SAMPLE_DECK: NonCharacter[] = [
   cards.slime,
@@ -39,8 +47,21 @@ export interface SetupData {
   players: [{ id: PlayerID; deck: Deck }];
 }
 
+export interface TargetSelection {
+  position: number;
+  targets: (Character | NonCharacter)[][];
+}
+
+export interface Stack {
+  action: Actions;
+  targets: ActionTargets[];
+  activeTargets: ActionTargets[];
+}
+
 export interface GameState {
   player: Record<PlayerID, PlayerState>;
+  targetSel: TargetSelection;
+  stack?: Stack;
 }
 
 function preConfigSetup(): GameState {
@@ -87,7 +108,10 @@ function preConfigSetup(): GameState {
 }
 
 export function setup(_ctx: Ctx, setupData: SetupData): GameState {
-  const state: GameState = { player: {} };
+  const state: GameState = {
+    player: {},
+    targetSel: { position: 0, targets: [[]] },
+  };
 
   for (const player of setupData.players) {
     state.player[player.id] = {
@@ -128,6 +152,12 @@ export const ITCG = {
         next: "attack",
       },
       attack: {},
+      select: {
+        moves: { selectTarget },
+      },
+      confirmation: {
+        moves: { confirmSkill, declineSkill },
+      },
     },
   },
 

@@ -17,6 +17,7 @@ export interface ActionTargets {
   level?: number;
   type?: CardTypes;
   quantity?: number;
+  quantityUpTo?: boolean;
   location?: Location;
 }
 
@@ -33,19 +34,19 @@ export function checkReqs(
 function quest(G: GameState, ctx: Ctx): any {
   const player = G.player[ctx.currentPlayer];
 
-  if (!player || player.deck.deck.length <= 0) return INVALID_MOVE;
+  if (player.deck.deck.length <= 0) return INVALID_MOVE;
 
-  player.hand.push(player.deck.deck.pop()!);
+  player.hand.push(player.deck.deck.shift()!);
 }
 
-// function spawn(G: GameState, ctx: Ctx, targets: ActionTargets[]): any {
-//   const player = G.player[ctx.currentPlayer];
-//   if (targets.level && opts.level
-// }
+function spawn(G: GameState, ctx: Ctx): any {
+  const player = G.player[ctx.currentPlayer];
+  player;
+}
 
 export const actions = {
   quest,
-  // spawn,
+  spawn,
 };
 
 export type Actions = keyof typeof actions;
