@@ -11,7 +11,7 @@ import {
   confirmSkill,
   declineSkill,
 } from "./moves";
-import { Actions, ActionTargets } from "./actions";
+import { Stack } from "./stack";
 
 const SAMPLE_DECK: NonCharacter[] = [
   cards.slime,
@@ -50,12 +50,6 @@ export interface SetupData {
 export interface TargetSelection {
   position: number;
   targets: (Character | NonCharacter)[][];
-}
-
-export interface Stack {
-  action: Actions;
-  targets: ActionTargets[];
-  activeTargets: ActionTargets[];
 }
 
 export interface GameState {

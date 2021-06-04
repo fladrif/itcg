@@ -3,7 +3,6 @@ import { Ctx } from "boardgame.io";
 import { GameState } from "./game";
 import { Skill } from "./card";
 import { meetsSkillReq } from "./utils";
-import { actions } from "./actions";
 
 export function endLevelStage(G: GameState, ctx: Ctx) {
   G.player[ctx.currentPlayer].activationPos = 0;
@@ -23,18 +22,5 @@ export function endActivateStage(G: GameState, ctx: Ctx) {
 
   if (player.activationPos > skills.length || availableSkills.length == 0) {
     ctx.events!.endStage!();
-  }
-}
-
-// TODO: Add stack rewind for false confirmation
-export function resolveSkill(G: GameState, ctx: Ctx, confirmation?: boolean) {
-  const stack = G.stack;
-  if (!stack) return;
-
-  if (stack.activeTargets.length == 0 && confirmation) {
-    actions[stack.action](G, ctx);
-
-    G.stack = undefined;
-    endActivateStage(G, ctx);
   }
 }

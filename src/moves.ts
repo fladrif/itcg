@@ -3,7 +3,8 @@ import { INVALID_MOVE } from "boardgame.io/core";
 
 import { GameState } from "./game";
 import { NonCharacter, Character, Skill } from "./card";
-import { endLevelStage, endActivateStage, resolveSkill } from "./hook";
+import { endLevelStage } from "./hook";
+import { resolveSkill } from "./stack";
 import { meetsSkillReq } from "./utils";
 
 export function shuffleDeck(G: GameState, ctx: Ctx, id: PlayerID) {
