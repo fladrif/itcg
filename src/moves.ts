@@ -119,7 +119,7 @@ export function noLevel(
 }
 
 export function noActivate(
-  G: GameState,
+  _G: GameState,
   ctx: Ctx,
   _card: Character | NonCharacter,
   _position?: number
