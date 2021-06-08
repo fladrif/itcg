@@ -24,3 +24,7 @@ export function endActivateStage(G: GameState, ctx: Ctx) {
     ctx.events!.endStage!();
   }
 }
+
+export function endAttackStage(_G: GameState, ctx: Ctx) {
+  ctx.events!.endTurn!();
+}

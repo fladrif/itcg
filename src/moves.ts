@@ -3,8 +3,8 @@ import { INVALID_MOVE } from "boardgame.io/core";
 
 import { GameState } from "./game";
 import { NonCharacter, Character, Skill } from "./card";
-import { endLevelStage } from "./hook";
-import { resolveSkill } from "./stack";
+import { endLevelStage, endAttackStage } from "./hook";
+import { resolveStack, buildStack } from "./stack";
 import { meetsSkillReq } from "./utils";
 
 export function shuffleDeck(G: GameState, ctx: Ctx, id: PlayerID) {
@@ -28,6 +28,7 @@ export function levelUp(
     (searchCard) => searchCard.name === card.name
   );
 
+  // TODO: Handle in more graceful way
   if (handIndex === -1) return INVALID_MOVE;
 
   player.hand.splice(handIndex, 1);
@@ -62,26 +63,23 @@ export function activateSkill(
     return INVALID_MOVE;
   }
 
-  if (!G.stack) {
-    G.stack = {
-      action: skill.action,
-      targets: skill.targets,
-      activeTargets: skill.targets,
-    };
-  }
-
   player.activationPos = position + 1;
-  // TODO: Add setActivePlayers nested stages
-  // include stage for confirmation
+  buildStack(G, ctx, skill);
 }
 
 export function selectTarget(
   G: GameState,
-  _ctx: Ctx,
+  ctx: Ctx,
   card: Character | NonCharacter,
   _position?: number
 ) {
-  G.targetSel.targets[G.targetSel.position].push(card);
+  if (!G.stack) return;
+  // TODO: temp exclude Character from select targets, should be character skills (including nonchar skills)
+  if ("skills" in card) return;
+
+  G.stack.selection.targets[G.stack.selection.position].push(card);
+
+  resolveStack(G, ctx);
 }
 
 export function confirmSkill(
@@ -90,7 +88,7 @@ export function confirmSkill(
   _card: Character | NonCharacter,
   _position?: number
 ) {
-  resolveSkill(G, ctx, true);
+  resolveStack(G, ctx, true);
 }
 
 export function declineSkill(
@@ -99,5 +97,14 @@ export function declineSkill(
   _card: Character | NonCharacter,
   _position?: number
 ) {
-  resolveSkill(G, ctx, false);
+  resolveStack(G, ctx, false);
+}
+
+export function noAttacks(
+  G: GameState,
+  ctx: Ctx,
+  _card: Character | NonCharacter,
+  _position?: number
+) {
+  endAttackStage(G, ctx);
 }

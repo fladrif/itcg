@@ -2,6 +2,7 @@ import React from "react";
 import { BoardProps } from "boardgame.io/react";
 
 import { GameState } from "./game";
+import { getOpponentID } from "./utils";
 
 import { ITCGCard, ITCGCardback } from "./itcgCard";
 import { ITCGStats } from "./itcgStats";
@@ -72,19 +73,29 @@ const oppCharStyle: React.CSSProperties = {
 export class ITCGBoard extends React.Component<BoardProps<GameState>> {
   render() {
     const playerID = this.props.playerID!;
-    const opponentID = Object.keys(this.props.G.player).filter(
-      (id) => id != playerID
-    )[0];
-    const playerState = this.props.G.player;
+    const opponentID = getOpponentID(this.props.G, this.props.ctx, playerID);
+    const playerState = this.props.G.player[playerID];
+    const opponentState = this.props.G.player[opponentID];
 
-    const opponentLine = new Array(playerState[opponentID].hand.length);
+    const opponentLine = new Array(opponentState.hand.length);
 
     opponentLine.fill(<ITCGCardback />);
-    const player = playerState[playerID];
+    const player = playerState;
 
     const playerLine = [];
     for (const card of player.hand) {
-      playerLine.push(<ITCGCard move={this.props.moves.levelUp} card={card} />);
+      if (
+        !!this.props.ctx.activePlayers &&
+        this.props.ctx.activePlayers[playerID] === "select"
+      ) {
+        playerLine.push(
+          <ITCGCard move={this.props.moves.selectTarget} card={card} />
+        );
+      } else {
+        playerLine.push(
+          <ITCGCard move={this.props.moves.levelUp} card={card} />
+        );
+      }
     }
 
     return (
@@ -95,26 +106,53 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
         <div style={oppHandStyle}>{opponentLine}</div>
         <div style={oppCharStyle}>
           <ITCGCharacter
-            playerState={playerState[opponentID]}
+            playerState={opponentState}
             move={this.props.moves.activateSkill}
           />
         </div>
         <div style={oppStatStyle}>
-          <ITCGStats playerState={playerState[opponentID]} />
+          <ITCGStats
+            playerState={opponentState}
+            stage={
+              this.props.ctx.activePlayers
+                ? this.props.ctx.activePlayers[opponentID]
+                : ""
+            }
+          />
         </div>
-        <div style={mapStyle}></div>
+        <div style={mapStyle}>
+          <div>
+            {opponentState.board.map((card) => (
+              <ITCGCard move={this.props.moves.selectTarget} card={card} />
+            ))}
+          </div>
+          <div>
+            {playerState.board.map((card) => (
+              <ITCGCard move={this.props.moves.selectTarget} card={card} />
+            ))}
+          </div>
+        </div>
         <div style={statStyle}>
-          <ITCGStats playerState={playerState[playerID]} />
+          <ITCGStats
+            playerState={playerState}
+            confMove={this.props.moves.confirmSkill}
+            declMove={this.props.moves.declineSkill}
+            stage={
+              this.props.ctx.activePlayers
+                ? this.props.ctx.activePlayers[playerID]
+                : ""
+            }
+          />
         </div>
         <div style={charStyle}>
           <ITCGCharacter
-            playerState={playerState[playerID]}
+            playerState={playerState}
             move={this.props.moves.activateSkill}
           />
         </div>
         <div style={handStyle}>{playerLine}</div>
         <div style={deckStyle}>
-          <button onClick={() => this.props.moves.drawCard()}>
+          <button onClick={() => this.props.moves.noAttacks()}>
             <ITCGCardback />
           </button>
         </div>

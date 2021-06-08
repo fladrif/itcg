@@ -13,14 +13,17 @@ export const nixie: Character = {
     {
       requirements: { level: 10 },
       action: "quest",
+      targets: [],
     },
     {
       requirements: { level: 20 },
       action: "quest",
+      targets: [],
     },
     {
       requirements: { level: 30 },
       action: "quest",
+      targets: [],
     },
   ],
   ...defaultTypes,

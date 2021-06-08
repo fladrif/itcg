@@ -26,10 +26,10 @@ const styles = {
   leveledCardStyle: {
     objectFit: "cover",
     objectPosition: "0 100%",
-    width: "70%",
+    width: "80%",
   } as React.CSSProperties,
   characterStyle: {
-    width: "70%",
+    width: "80%",
   } as React.CSSProperties,
   miniCardStyle: {
     width: "79px",

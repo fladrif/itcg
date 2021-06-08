@@ -3,7 +3,7 @@ import { Actions, ActionTargets } from "./actions";
 export const SAMPLE_SKILL: Skill = {
   requirements: { level: 100 },
   action: "quest",
-  targets: [{}],
+  targets: [],
 };
 
 export enum CardTypes {

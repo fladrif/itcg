@@ -10,6 +10,7 @@ import {
   selectTarget,
   confirmSkill,
   declineSkill,
+  noAttacks,
 } from "./moves";
 import { Stack } from "./stack";
 
@@ -37,6 +38,7 @@ export interface PlayerState {
   deck: Deck;
   hand: NonCharacter[];
   learnedSkills: NonCharacter[];
+  board: NonCharacter[];
   hp: number;
   maxHP: number;
   level: number;
@@ -47,14 +49,8 @@ export interface SetupData {
   players: [{ id: PlayerID; deck: Deck }];
 }
 
-export interface TargetSelection {
-  position: number;
-  targets: (Character | NonCharacter)[][];
-}
-
 export interface GameState {
   player: Record<PlayerID, PlayerState>;
-  targetSel: TargetSelection;
   stack?: Stack;
 }
 
@@ -68,6 +64,7 @@ function preConfigSetup(): GameState {
     },
     hand: [],
     learnedSkills: [],
+    board: [],
     hp: cards.sherman.health,
     maxHP: cards.sherman.health,
     level: 0,
@@ -81,6 +78,7 @@ function preConfigSetup(): GameState {
     },
     hand: [],
     learnedSkills: [],
+    board: [],
     hp: cards.nixie.health,
     maxHP: cards.nixie.health,
     level: 0,
@@ -104,7 +102,6 @@ function preConfigSetup(): GameState {
 export function setup(_ctx: Ctx, setupData: SetupData): GameState {
   const state: GameState = {
     player: {},
-    targetSel: { position: 0, targets: [[]] },
   };
 
   for (const player of setupData.players) {
@@ -112,6 +109,7 @@ export function setup(_ctx: Ctx, setupData: SetupData): GameState {
       deck: { character: cards.sherman, deck: player.deck.deck },
       hand: [],
       learnedSkills: [],
+      board: [],
       hp: cards.sherman.health,
       maxHP: cards.sherman.health,
       level: 0,
@@ -145,7 +143,7 @@ export const ITCG = {
         moves: { activateSkill },
         next: "attack",
       },
-      attack: {},
+      attack: { moves: { noAttacks } },
       select: {
         moves: { selectTarget },
       },

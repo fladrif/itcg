@@ -3,6 +3,7 @@ import { INVALID_MOVE } from "boardgame.io/core";
 
 import { GameState } from "./game";
 import { CardTypes, SkillRequirements } from "./card";
+import { rmCard } from "./utils";
 
 export enum Location {
   Hand,
@@ -18,7 +19,7 @@ export interface ActionTargets {
   type?: CardTypes;
   quantity?: number;
   quantityUpTo?: boolean;
-  location?: Location;
+  location: Location;
 }
 
 export function checkReqs(
@@ -40,8 +41,16 @@ function quest(G: GameState, ctx: Ctx): any {
 }
 
 function spawn(G: GameState, ctx: Ctx): any {
+  if (!G.stack) return;
+  if (G.stack.selection.targets.length !== 1) return;
+
   const player = G.player[ctx.currentPlayer];
-  player;
+  G.stack.selection.targets.map((arry) =>
+    arry.map((card) => {
+      player.board.push(card);
+      rmCard(G, ctx, card, G.stack!.targets[0].location);
+    })
+  );
 }
 
 export const actions = {

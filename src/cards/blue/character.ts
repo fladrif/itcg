@@ -1,4 +1,5 @@
 import { Character, CardTypes, CardClasses } from "../../card";
+import { Location } from "../../actions";
 
 const defaultTypes = {
   type: CardTypes.Character,
@@ -13,14 +14,24 @@ export const sherman: Character = {
     {
       requirements: { level: 10 },
       action: "quest",
+      targets: [],
     },
     {
-      requirements: { level: 20 },
-      action: "quest",
+      requirements: { level: 10 },
+      action: "spawn",
+      targets: [
+        {
+          level: 30,
+          type: CardTypes.Monster,
+          quantity: 1,
+          location: Location.Hand,
+        },
+      ],
     },
     {
       requirements: { level: 30 },
       action: "quest",
+      targets: [],
     },
   ],
   ...defaultTypes,
