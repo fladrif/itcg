@@ -46,6 +46,7 @@ const stageModalStyle: React.CSSProperties = {
 
 const currentStageModalStyle: React.CSSProperties = {
   color: "yellow",
+  fontSize: "150%",
 };
 
 export class ITCGStats extends React.Component<StatProp> {

@@ -77,6 +77,10 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
     const playerState = this.props.G.player[playerID];
     const opponentState = this.props.G.player[opponentID];
 
+    const currentPlayerStage = this.props.ctx.activePlayers
+      ? this.props.ctx.activePlayers[playerID]
+      : "";
+
     const opponentLine = new Array(opponentState.hand.length);
 
     opponentLine.fill(<ITCGCardback />);
@@ -97,6 +101,27 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
         );
       }
     }
+
+    const button =
+      currentPlayerStage == "level" ? (
+        <div>
+          <button onClick={() => this.props.moves.noLevel()}>
+            Skip Level Stage
+          </button>
+        </div>
+      ) : currentPlayerStage == "activate" ? (
+        <div>
+          <button onClick={() => this.props.moves.noActivate()}>
+            Go to Attack Stage
+          </button>
+        </div>
+      ) : (
+        <div>
+          <button onClick={() => this.props.moves.noAttacks()}>
+            Pass Turn
+          </button>
+        </div>
+      );
 
     return (
       <div style={containerStyle}>
@@ -151,11 +176,7 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
           />
         </div>
         <div style={handStyle}>{playerLine}</div>
-        <div style={deckStyle}>
-          <button onClick={() => this.props.moves.noAttacks()}>
-            <ITCGCardback />
-          </button>
-        </div>
+        <div style={deckStyle}>{button}</div>
       </div>
     );
   }

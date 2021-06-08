@@ -6,7 +6,9 @@ import { Character, NonCharacter } from "./card";
 import {
   shuffleDeck,
   levelUp,
+  noLevel,
   activateSkill,
+  noActivate,
   selectTarget,
   confirmSkill,
   declineSkill,
@@ -136,11 +138,11 @@ export const ITCG = {
     },
     stages: {
       level: {
-        moves: { levelUp },
+        moves: { levelUp, noLevel },
         next: "activate",
       },
       activate: {
-        moves: { activateSkill },
+        moves: { activateSkill, noActivate },
         next: "attack",
       },
       attack: { moves: { noAttacks } },

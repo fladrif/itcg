@@ -108,3 +108,21 @@ export function noAttacks(
 ) {
   endAttackStage(G, ctx);
 }
+
+export function noLevel(
+  G: GameState,
+  ctx: Ctx,
+  _card: Character | NonCharacter,
+  _position?: number
+) {
+  endLevelStage(G, ctx);
+}
+
+export function noActivate(
+  G: GameState,
+  ctx: Ctx,
+  _card: Character | NonCharacter,
+  _position?: number
+) {
+  ctx.events!.endStage!();
+}
