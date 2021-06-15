@@ -16,6 +16,7 @@ import {
 } from "./moves";
 import { Stack } from "./stack";
 
+// TODO: Decks need to clone objects, currently referenced
 const SAMPLE_DECK: NonCharacter[] = [
   cards.slime,
   cards.fairy,
@@ -147,7 +148,7 @@ export const ITCG = {
       },
       attack: { moves: { noAttacks } },
       select: {
-        moves: { selectTarget },
+        moves: { selectTarget, confirmSkill, declineSkill },
       },
       confirmation: {
         moves: { confirmSkill, declineSkill },

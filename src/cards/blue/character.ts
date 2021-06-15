@@ -4,6 +4,7 @@ import { Location } from "../../actions";
 const defaultTypes = {
   type: CardTypes.Character,
   class: CardClasses.Warrior,
+  selected: false,
 };
 
 export const sherman: Character = {
@@ -14,24 +15,20 @@ export const sherman: Character = {
     {
       requirements: { level: 10 },
       action: "quest",
-      targets: [],
     },
     {
       requirements: { level: 10 },
       action: "spawn",
-      targets: [
-        {
-          level: 30,
-          type: CardTypes.Monster,
-          quantity: 1,
-          location: Location.Hand,
-        },
-      ],
+      targets: {
+        level: 30,
+        type: CardTypes.Monster,
+        quantity: 1,
+        location: Location.Hand,
+      },
     },
     {
       requirements: { level: 30 },
       action: "quest",
-      targets: [],
     },
   ],
   ...defaultTypes,

@@ -4,6 +4,7 @@ import { SAMPLE_SKILL } from "../../card";
 const defaultTypes = {
   type: CardTypes.Item,
   class: CardClasses.Thief,
+  selected: false,
 };
 
 export const emeraldearrings: Item = {

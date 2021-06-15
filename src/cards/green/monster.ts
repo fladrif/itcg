@@ -4,6 +4,7 @@ import { SAMPLE_SKILL } from "../../card";
 const defaultTypes = {
   type: CardTypes.Monster,
   class: CardClasses.Bowman,
+  selected: false,
 };
 
 export const fairy: Monster = {

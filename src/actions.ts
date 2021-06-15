@@ -2,29 +2,47 @@ import { Ctx } from "boardgame.io";
 import { INVALID_MOVE } from "boardgame.io/core";
 
 import { GameState } from "./game";
-import { CardTypes, SkillRequirements } from "./card";
+import { CardTypes, CardClasses, SkillRequirements } from "./card";
 import { rmCard } from "./utils";
 
 export enum Location {
+  Board,
   Hand,
   Deck,
   CharAction,
+  OppBoard,
   OppHand,
   OppDeck,
   OppCharAction,
 }
 
-export interface ActionTargets {
-  level?: number;
-  type?: CardTypes;
-  quantity?: number;
-  quantityUpTo?: boolean;
+export type CurrentLevel = "CurrentLevel";
+export type LevelSelector = number | CurrentLevel;
+
+export interface TargetFilter {
   location: Location;
+  quantity: number;
+  quantityUpTo?: boolean;
+  level?: LevelSelector;
+  type?: CardTypes;
+  class?: CardClasses[];
+
+  and?: never;
+  xor?: never;
 }
 
-export function checkReqs(
-  reqs: SkillRequirements
-): (G: GameState, ctx: Ctx) => boolean {
+interface AddActionTarget {
+  and: ActionTargets[];
+  xor?: never;
+}
+interface XorActionTarget {
+  xor: ActionTargets[];
+  and?: never;
+}
+
+export type ActionTargets = TargetFilter | AddActionTarget | XorActionTarget;
+
+export function checkReqs(reqs: SkillRequirements): (G: GameState, ctx: Ctx) => boolean {
   return (G: GameState, ctx: Ctx) => {
     if (reqs.level < G.player[ctx.currentPlayer].level) return false;
 
@@ -58,4 +76,4 @@ export const actions = {
   spawn,
 };
 
-export type Actions = keyof typeof actions;
+export type Action = keyof typeof actions;

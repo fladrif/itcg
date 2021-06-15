@@ -1,22 +1,24 @@
 import { Ctx } from "boardgame.io";
 
 import { GameState } from "./game";
-import { actions, Actions, ActionTargets } from "./actions";
+import { actions, Action, ActionTargets, Location } from "./actions";
 import { endActivateStage } from "./hook";
-import { Skill, NonCharacter } from "./card";
+import { Skill, Character, NonCharacter } from "./card";
+
+export type Selection = Partial<Record<Location, (Character | NonCharacter)[]>>;
+
+export interface Decision {
+  action: Action;
+  selection: Selection;
+  target?: ActionTargets;
+  choice?: boolean;
+}
 
 // TODO: Genericize targets for actionable interrupts
 export interface Stack {
-  action: Actions;
-  targets: ActionTargets[];
-  activeTargets: ActionTargets[];
-  selection: TargetSelection;
-}
-
-// TODO: May need to handle skills (character actions) as targets
-export interface TargetSelection {
-  position: number;
-  targets: NonCharacter[][];
+  decisions: Decision[];
+  activeDecisions?: Decision[];
+  prevActivatePos: number;
 }
 
 interface SetActiveStage {
@@ -34,9 +36,9 @@ function stage(stg: string, prev?: SetActiveStage): SetActiveStage {
   return stageOutput;
 }
 
-function setStages(ctx: Ctx, targets: ActionTargets[]) {
-  const endStages = stage("confirmation", stage("activate"));
-  const otherStages = targets.reduce((acc) => stage("select", acc), endStages);
+function setStages(ctx: Ctx, targets?: ActionTargets) {
+  const loopbackStage = stage("activate");
+  const otherStages = !!targets ? stage("select", loopbackStage) : loopbackStage;
 
   ctx.events!.setActivePlayers!(otherStages);
 }
@@ -67,17 +69,42 @@ export function resolveStack(G: GameState, ctx: Ctx, confirmation?: boolean) {
   }
 }
 
-export function buildStack(G: GameState, ctx: Ctx, skill: Skill) {
+export function buildStack(
+  G: GameState,
+  ctx: Ctx,
+  skill: Skill,
+  prevActivatePos: number
+) {
   G.stack = {
-    action: skill.action,
-    targets: skill.targets,
-    activeTargets: skill.targets,
-    selection: {
-      position: 0,
-      targets: [[]],
-    },
+    decisions: [
+      {
+        action: skill.action,
+        target: skill.targets,
+        selection: {},
+      },
+    ],
+    prevActivatePos,
   };
+  G.stack.activeDecisions = G.stack.decisions;
 
   setStages(ctx, skill.targets);
-  if (skill.targets.length == 0) resolveStack(G, ctx, true);
+  if (!skill.targets) resolveStack(G, ctx, true);
+}
+
+export function selectCard(G: GameState, card: [Location, Character | NonCharacter]) {
+  if (!G.stack) return;
+
+  const cardLoc = card[0];
+  const selCard = card[1];
+  if (!G.stack.selection[cardLoc]) G.stack.selection[cardLoc] = [];
+
+  if (!selCard.selected) {
+    G.stack.selection[cardLoc]!.push(selCard);
+    selCard.selected = true;
+  } else {
+    selCard.selected = false;
+    G.stack.selection[cardLoc] = G.stack.selection[cardLoc]!.filter(
+      (card) => card.selected !== false
+    );
+  }
 }
