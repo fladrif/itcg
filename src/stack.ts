@@ -64,6 +64,7 @@ export function resolveStack(G: GameState, ctx: Ctx, confirmation?: boolean) {
   if (stack.activeDecisions.length == 0) {
     stack.decisions.map((decision) => {
       actions[decision.action](G, ctx, decision.selection);
+      pruneSelection(G, ctx, decision.selection, decision.selection);
     });
 
     G.stack = undefined;

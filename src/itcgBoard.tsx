@@ -111,6 +111,10 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
       }
     }
 
+    const curDecisionFinished = this.props.G.stack
+      ? this.props.G.stack.activeDecisions[0].finished
+      : false;
+
     const button =
       currentPlayerStage == 'level' ? (
         <div>
@@ -122,15 +126,17 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
             Go to Attack Stage
           </button>
         </div>
-      ) : currentPlayerStage == 'select' ? (
+      ) : currentPlayerStage == 'attack' ? (
+        <div>
+          <button onClick={() => this.props.moves.noAttacks()}>Pass Turn</button>
+        </div>
+      ) : currentPlayerStage == 'select' && curDecisionFinished == true ? (
         <div>
           <button onClick={() => this.props.moves.confirmSkill()}>Confirm</button>
           <button onClick={() => this.props.moves.declineSkill()}>Decline</button>
         </div>
       ) : (
-        <div>
-          <button onClick={() => this.props.moves.noAttacks()}>Pass Turn</button>
-        </div>
+        <div>nothing</div>
       );
 
     return (
