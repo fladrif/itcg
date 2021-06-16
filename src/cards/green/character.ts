@@ -1,4 +1,4 @@
-import { Character, CardTypes, CardClasses } from "../../card";
+import { Character, CardTypes, CardClasses } from '../../card';
 
 const defaultTypes = {
   type: CardTypes.Character,
@@ -7,21 +7,21 @@ const defaultTypes = {
 };
 
 export const nixie: Character = {
-  name: "Nixie",
-  image: "Nixie",
+  name: 'Nixie',
+  image: 'Nixie',
   health: 200,
   skills: [
     {
       requirements: { level: 10 },
-      action: "quest",
+      action: 'quest',
     },
     {
       requirements: { level: 20 },
-      action: "quest",
+      action: 'quest',
     },
     {
       requirements: { level: 30 },
-      action: "quest",
+      action: 'quest',
     },
   ],
   ...defaultTypes,

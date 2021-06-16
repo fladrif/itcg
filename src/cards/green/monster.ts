@@ -1,5 +1,5 @@
-import { Monster, CardTypes, CardClasses } from "../../card";
-import { SAMPLE_SKILL } from "../../card";
+import { Monster, CardTypes, CardClasses } from '../../card';
+import { SAMPLE_SKILL } from '../../card';
 
 const defaultTypes = {
   type: CardTypes.Monster,
@@ -8,8 +8,8 @@ const defaultTypes = {
 };
 
 export const fairy: Monster = {
-  name: "Fairy",
-  image: "Fairy",
+  name: 'Fairy',
+  image: 'Fairy',
   level: 30,
   attack: 30,
   health: 20,

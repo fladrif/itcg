@@ -1,5 +1,5 @@
-import { Character, CardTypes, CardClasses } from "../../card";
-import { Location } from "../../actions";
+import { Character, CardTypes, CardClasses } from '../../card';
+import { Location } from '../../actions';
 
 const defaultTypes = {
   type: CardTypes.Character,
@@ -8,17 +8,17 @@ const defaultTypes = {
 };
 
 export const sherman: Character = {
-  name: "Sherman",
-  image: "Sherman",
+  name: 'Sherman',
+  image: 'Sherman',
   health: 240,
   skills: [
     {
       requirements: { level: 10 },
-      action: "quest",
+      action: 'quest',
     },
     {
       requirements: { level: 10 },
-      action: "spawn",
+      action: 'spawn',
       targets: {
         level: 30,
         type: CardTypes.Monster,
@@ -28,7 +28,7 @@ export const sherman: Character = {
     },
     {
       requirements: { level: 30 },
-      action: "quest",
+      action: 'quest',
     },
   ],
   ...defaultTypes,

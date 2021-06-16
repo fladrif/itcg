@@ -1,7 +1,7 @@
-import { Client } from "boardgame.io/react";
-import { Local } from "boardgame.io/multiplayer";
-import { ITCG } from "./game";
-import { ITCGBoard } from "./itcgBoard";
+import { Client } from 'boardgame.io/react';
+import { Local } from 'boardgame.io/multiplayer';
+import { ITCG } from './game';
+import { ITCGBoard } from './itcgBoard';
 
 const App = Client({
   game: ITCG,

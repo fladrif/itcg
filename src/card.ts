@@ -1,8 +1,8 @@
-import { Action, ActionTargets } from "./actions";
+import { Action, ActionTargets } from './actions';
 
 export const SAMPLE_SKILL: Skill = {
   requirements: { level: 100 },
-  action: "quest",
+  action: 'quest',
 };
 
 export enum CardTypes {

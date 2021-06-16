@@ -1,5 +1,5 @@
-import { Monster, CardTypes, CardClasses } from "../../card";
-import { SAMPLE_SKILL } from "../../card";
+import { Monster, CardTypes, CardClasses } from '../../card';
+import { SAMPLE_SKILL } from '../../card';
 
 const defaultTypes = {
   type: CardTypes.Monster,
@@ -8,8 +8,8 @@ const defaultTypes = {
 };
 
 export const redsnail: Monster = {
-  name: "Red Snail",
-  image: "RedSnail",
+  name: 'Red Snail',
+  image: 'RedSnail',
   level: 4,
   attack: 10,
   health: 20,
@@ -19,8 +19,8 @@ export const redsnail: Monster = {
 };
 
 export const orangemushroom: Monster = {
-  name: "Orange Mushroom",
-  image: "OrangeMushroom",
+  name: 'Orange Mushroom',
+  image: 'OrangeMushroom',
   level: 8,
   attack: 30,
   health: 10,

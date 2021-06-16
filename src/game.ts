@@ -1,8 +1,8 @@
-import { Ctx, PlayerID } from "boardgame.io";
-import lodash from "lodash";
+import { Ctx, PlayerID } from 'boardgame.io';
+import lodash from 'lodash';
 
-import * as cards from "./cards";
-import { Character, NonCharacter } from "./card";
+import * as cards from './cards';
+import { Character, NonCharacter } from './card';
 import {
   shuffleDeck,
   levelUp,
@@ -13,8 +13,8 @@ import {
   confirmSkill,
   declineSkill,
   noAttacks,
-} from "./moves";
-import { Stack } from "./stack";
+} from './moves';
+import { Stack } from './stack';
 
 // TODO: Decks need to clone objects, currently referenced
 const SAMPLE_DECK: NonCharacter[] = [
@@ -61,7 +61,7 @@ export interface GameState {
 function preConfigSetup(): GameState {
   const state = { player: {} } as GameState;
 
-  state.player["0"] = {
+  state.player['0'] = {
     deck: lodash(SAMPLE_DECK).shuffle().value(),
     character: cards.sherman,
     hand: [],
@@ -73,7 +73,7 @@ function preConfigSetup(): GameState {
     activationPos: 0,
   };
 
-  state.player["1"] = {
+  state.player['1'] = {
     deck: lodash(SAMPLE_DECK).shuffle().value(),
     character: cards.nixie,
     hand: [],
@@ -85,16 +85,16 @@ function preConfigSetup(): GameState {
     activationPos: 0,
   };
 
-  state.player["0"].hand.push(state.player["0"].deck.pop()!);
-  state.player["0"].hand.push(state.player["0"].deck.pop()!);
-  state.player["0"].hand.push(state.player["0"].deck.pop()!);
-  state.player["0"].hand.push(state.player["0"].deck.pop()!);
+  state.player['0'].hand.push(state.player['0'].deck.pop()!);
+  state.player['0'].hand.push(state.player['0'].deck.pop()!);
+  state.player['0'].hand.push(state.player['0'].deck.pop()!);
+  state.player['0'].hand.push(state.player['0'].deck.pop()!);
 
-  state.player["1"].hand.push(state.player["1"].deck.pop()!);
-  state.player["1"].hand.push(state.player["1"].deck.pop()!);
-  state.player["1"].hand.push(state.player["1"].deck.pop()!);
-  state.player["1"].hand.push(state.player["1"].deck.pop()!);
-  state.player["1"].hand.push(state.player["1"].deck.pop()!);
+  state.player['1'].hand.push(state.player['1'].deck.pop()!);
+  state.player['1'].hand.push(state.player['1'].deck.pop()!);
+  state.player['1'].hand.push(state.player['1'].deck.pop()!);
+  state.player['1'].hand.push(state.player['1'].deck.pop()!);
+  state.player['1'].hand.push(state.player['1'].deck.pop()!);
 
   return state;
 }
@@ -121,7 +121,7 @@ export function setup(_ctx: Ctx, setupData: SetupData): GameState {
 }
 
 export const ITCG = {
-  name: "ITCG",
+  name: 'ITCG',
 
   setup: preConfigSetup,
 
@@ -133,16 +133,16 @@ export const ITCG = {
 
   turn: {
     onBegin: (_G: GameState, ctx: Ctx) => {
-      ctx.events!.setActivePlayers!({ currentPlayer: "level" });
+      ctx.events!.setActivePlayers!({ currentPlayer: 'level' });
     },
     stages: {
       level: {
         moves: { levelUp, noLevel },
-        next: "activate",
+        next: 'activate',
       },
       activate: {
         moves: { activateSkill, noActivate },
-        next: "attack",
+        next: 'attack',
       },
       attack: { moves: { noAttacks } },
       select: {

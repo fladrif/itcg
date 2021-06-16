@@ -1,8 +1,8 @@
-import React from "react";
+import React from 'react';
 
-import { Character, NonCharacter, CardTypes } from "./card";
-import { Location } from "./actions";
-import { cardImages, cardback } from "./itcgCardImages";
+import { Character, NonCharacter, CardTypes } from './card';
+import { Location } from './actions';
+import { cardImages, cardback } from './itcgCardImages';
 
 type Styles = keyof typeof styles;
 
@@ -19,39 +19,39 @@ interface CardbackProp {
 }
 
 const selectedBorder: React.CSSProperties = {
-  border: "solid",
-  borderColor: "red",
+  border: 'solid',
+  borderColor: 'red',
 };
 
 const baseStyle: React.CSSProperties = {
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "center",
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
 };
 
 const styles = {
   leveledCardStyle: {
-    objectFit: "cover",
-    objectPosition: "0 100%",
-    width: "80%",
+    objectFit: 'cover',
+    objectPosition: '0 100%',
+    width: '80%',
   } as React.CSSProperties,
   characterStyle: {
-    width: "80%",
+    width: '80%',
   } as React.CSSProperties,
   miniCardStyle: {
-    width: "79px",
+    width: '79px',
   } as React.CSSProperties,
 };
 
 export class ITCGCard extends React.Component<CardProp> {
   render() {
-    const style = this.props.style ?? "miniCardStyle";
+    const style = this.props.style ?? 'miniCardStyle';
     const finalStyle = this.props.card.selected
       ? { ...styles[style], ...selectedBorder }
       : styles[style];
 
     const isCharacter = this.props.card.type === CardTypes.Character;
-    const isLevelCard = this.props.style === "leveledCardStyle";
+    const isLevelCard = this.props.style === 'leveledCardStyle';
 
     const card = [];
 
@@ -105,11 +105,11 @@ export class ITCGCard extends React.Component<CardProp> {
 
 export class ITCGCardback extends React.Component<CardbackProp> {
   render() {
-    const style = this.props.style ?? "miniCardStyle";
+    const style = this.props.style ?? 'miniCardStyle';
 
     return (
       <div style={baseStyle}>
-        <img style={styles[style]} alt="cardback" src={cardback} />{" "}
+        <img style={styles[style]} alt="cardback" src={cardback} />{' '}
       </div>
     );
   }

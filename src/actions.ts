@@ -1,23 +1,23 @@
-import { Ctx } from "boardgame.io";
-import { INVALID_MOVE } from "boardgame.io/core";
+import { Ctx } from 'boardgame.io';
+import { INVALID_MOVE } from 'boardgame.io/core';
 
-import { GameState } from "./game";
-import { CardTypes, CardClasses, NonCharacter, SkillRequirements } from "./card";
-import { Selection } from "./stack";
-import { rmCard } from "./utils";
+import { GameState } from './game';
+import { CardTypes, CardClasses, NonCharacter, SkillRequirements } from './card';
+import { Selection } from './stack';
+import { rmCard } from './utils';
 
 export enum Location {
-  Board = "Board",
-  Hand = "Hand",
-  Deck = "Deck",
-  CharAction = "CharAction",
-  OppBoard = "OppBoard",
-  OppHand = "OppHand",
-  OppDeck = "OppDeck",
-  OppCharAction = "OppCharAction",
+  Board = 'Board',
+  Hand = 'Hand',
+  Deck = 'Deck',
+  CharAction = 'CharAction',
+  OppBoard = 'OppBoard',
+  OppHand = 'OppHand',
+  OppDeck = 'OppDeck',
+  OppCharAction = 'OppCharAction',
 }
 
-export type CurrentLevel = "CurrentLevel";
+export type CurrentLevel = 'CurrentLevel';
 export type LevelSelector = number | CurrentLevel;
 
 export interface TargetFilter {

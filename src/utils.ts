@@ -1,8 +1,8 @@
-import { Ctx, PlayerID } from "boardgame.io";
+import { Ctx, PlayerID } from 'boardgame.io';
 
-import { GameState, PlayerState } from "./game";
-import { Card, Character, NonCharacter, SkillRequirements } from "./card";
-import { Location } from "./actions";
+import { GameState, PlayerState } from './game';
+import { Card, Character, NonCharacter, SkillRequirements } from './card';
+import { Location } from './actions';
 
 export function meetsSkillReq(req: SkillRequirements, P: PlayerState): boolean {
   if (req.level > P.level) return false;

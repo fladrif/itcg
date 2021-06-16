@@ -1,7 +1,7 @@
-import { ActionTargets, Location } from "./actions";
-import { Character, NonCharacter } from "./card";
-import { Selection } from "./stack";
-import { deepCardComp } from "./utils";
+import { ActionTargets, Location } from './actions';
+import { Character, NonCharacter } from './card';
+import { Selection } from './stack';
+import { deepCardComp } from './utils';
 
 interface FilterResponse {
   selection: Selection;
@@ -14,7 +14,7 @@ export function filterSelections(
   selection: Selection,
   recent: [Location, Character | NonCharacter]
 ): FilterResponse {
-  if ("location" in filter) {
+  if ('location' in filter) {
     const locSelection = selection[filter.location];
     if (!locSelection) {
       return { selection, finished: false, usedRecent: false };
@@ -51,7 +51,7 @@ export function filterSelections(
     return { selection, finished, usedRecent };
   }
 
-  if ("and" in filter) {
+  if ('and' in filter) {
     let finished = true;
     let recency = false;
 
@@ -64,7 +64,7 @@ export function filterSelections(
     return { selection, finished, usedRecent: recency };
   }
 
-  if ("xor" in filter) {
+  if ('xor' in filter) {
     let leastSel = JSON.parse(JSON.stringify(selection));
     let finished = false;
     let usedRecent = false;

@@ -1,11 +1,11 @@
-import { Ctx } from "boardgame.io";
+import { Ctx } from 'boardgame.io';
 
-import { GameState } from "./game";
-import { actions, Action, ActionTargets, Location } from "./actions";
-import { endActivateStage } from "./hook";
-import { Skill, Character, NonCharacter } from "./card";
-import { filterSelections } from "./target";
-import { deepCardComp, getLocation } from "./utils";
+import { GameState } from './game';
+import { actions, Action, ActionTargets, Location } from './actions';
+import { endActivateStage } from './hook';
+import { Skill, Character, NonCharacter } from './card';
+import { filterSelections } from './target';
+import { deepCardComp, getLocation } from './utils';
 
 export type Selection = Partial<Record<Location, (Character | NonCharacter)[]>>;
 
@@ -42,14 +42,14 @@ function stage(stg: string, prev?: SetActiveStage): SetActiveStage {
 }
 
 function setStages(ctx: Ctx, decisions: Decision[]) {
-  const loopbackStage = stage("activate");
+  const loopbackStage = stage('activate');
   const otherStages = decisions.reduce((acc, decision) => {
     //TODO: Need to add modal option
     const stageName = !!decision.target
-      ? "select"
+      ? 'select'
       : decision.choice !== undefined
-      ? "confirmation"
-      : "confirmation";
+      ? 'confirmation'
+      : 'confirmation';
 
     return stage(stageName, acc);
   }, loopbackStage);

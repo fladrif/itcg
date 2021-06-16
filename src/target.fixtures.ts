@@ -1,4 +1,4 @@
-import { ActionTargets, Location } from "./actions";
+import { ActionTargets, Location } from './actions';
 
 export const complexFilterFinished: ActionTargets = {
   xor: [

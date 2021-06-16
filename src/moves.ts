@@ -1,12 +1,12 @@
-import { Ctx, PlayerID } from "boardgame.io";
-import { INVALID_MOVE } from "boardgame.io/core";
+import { Ctx, PlayerID } from 'boardgame.io';
+import { INVALID_MOVE } from 'boardgame.io/core';
 
-import { GameState } from "./game";
-import { NonCharacter, Character, Skill } from "./card";
-import { endLevelStage, endAttackStage } from "./hook";
-import { resolveStack, buildStack, selectCard } from "./stack";
-import { meetsSkillReq } from "./utils";
-import { Location } from "./actions";
+import { GameState } from './game';
+import { NonCharacter, Character, Skill } from './card';
+import { endLevelStage, endAttackStage } from './hook';
+import { resolveStack, buildStack, selectCard } from './stack';
+import { meetsSkillReq } from './utils';
+import { Location } from './actions';
 
 export function shuffleDeck(G: GameState, ctx: Ctx, id: PlayerID) {
   const player = G.player[id];
@@ -25,7 +25,7 @@ export function levelUp(
   const cardLoc = card[0];
   const selCard = card[1];
 
-  if (cardLoc !== Location.Hand || "skills" in selCard) return INVALID_MOVE;
+  if (cardLoc !== Location.Hand || 'skills' in selCard) return INVALID_MOVE;
 
   const handIndex = player.hand.findIndex(
     (searchCard) => searchCard.name === selCard.name
@@ -63,7 +63,7 @@ export function activateSkill(
 
   let skill: Skill;
 
-  if ("skills" in selCard) {
+  if ('skills' in selCard) {
     skill = selCard.skills[position!];
   } else {
     skill = selCard.skill;

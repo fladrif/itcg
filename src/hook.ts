@@ -1,8 +1,8 @@
-import { Ctx } from "boardgame.io";
+import { Ctx } from 'boardgame.io';
 
-import { GameState } from "./game";
-import { Skill } from "./card";
-import { meetsSkillReq } from "./utils";
+import { GameState } from './game';
+import { Skill } from './card';
+import { meetsSkillReq } from './utils';
 
 export function endLevelStage(G: GameState, ctx: Ctx) {
   G.player[ctx.currentPlayer].activationPos = 0;
