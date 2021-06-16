@@ -1,7 +1,7 @@
 import { Ctx, PlayerID } from "boardgame.io";
 
 import { GameState, PlayerState } from "./game";
-import { Card, SkillRequirements } from "./card";
+import { Card, Character, NonCharacter, SkillRequirements } from "./card";
 import { Location } from "./actions";
 
 export function meetsSkillReq(req: SkillRequirements, P: PlayerState): boolean {
@@ -39,7 +39,11 @@ export function getOpponentState(G: GameState, ctx: Ctx): PlayerState {
   return G.player[getOpponentID(G, ctx)];
 }
 
-export function getLocation(G: GameState, ctx: Ctx, location: Location): Card[] {
+export function getLocation(
+  G: GameState,
+  ctx: Ctx,
+  location: Location
+): (Character | NonCharacter)[] {
   const player = G.player[ctx.currentPlayer];
   const opponent = getOpponentState(G, ctx);
 
@@ -49,7 +53,7 @@ export function getLocation(G: GameState, ctx: Ctx, location: Location): Card[] 
     case Location.Board:
       return player.board;
     case Location.Deck:
-      return player.deck.deck;
+      return player.deck;
     case Location.CharAction:
       return player.learnedSkills;
     case Location.OppHand:
@@ -57,15 +61,16 @@ export function getLocation(G: GameState, ctx: Ctx, location: Location): Card[] 
     case Location.OppBoard:
       return opponent.board;
     case Location.OppDeck:
-      return opponent.deck.deck;
+      return opponent.deck;
     case Location.OppCharAction:
       return opponent.learnedSkills;
   }
 }
 
 export function deepCardComp(first: Card, second: Card): boolean {
-  if (first.name !== second.name) return false;
-  if (first.selected !== second.selected) return false;
-
-  return true;
+  return first.name == second.name && first.selected == second.selected;
+  // if (first.name !== second.name) return false;
+  // if (first.selected !== second.selected) return false;
+  //
+  // return true;
 }

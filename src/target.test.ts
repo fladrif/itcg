@@ -4,7 +4,7 @@ import { Selection } from "./stack";
 import { filterSelections } from "./target";
 import { Location } from "./actions";
 
-import { redsnail, ribbonpig, slime } from "./cards";
+import { redsnail, ribbonpig, slime, magicclaw } from "./cards";
 import * as fix from "./target.fixtures";
 
 describe("filterSelections", () => {
@@ -19,8 +19,11 @@ describe("filterSelections", () => {
       ribbonpig,
     ]);
 
-    expect(response).toHaveProperty("0", { [Location.Hand]: [], [Location.Board]: [] });
-    expect(response).toHaveProperty("1", true);
+    expect(response).toHaveProperty("selection", {
+      [Location.Hand]: [],
+      [Location.Board]: [],
+    });
+    expect(response).toHaveProperty("finished", true);
   });
 
   it("no overflow, not finished ", () => {
@@ -34,8 +37,11 @@ describe("filterSelections", () => {
       slime,
     ]);
 
-    expect(response).toHaveProperty("0", { [Location.Hand]: [], [Location.Board]: [] });
-    expect(response).toHaveProperty("1", false);
+    expect(response).toHaveProperty("selection", {
+      [Location.Hand]: [],
+      [Location.Board]: [],
+    });
+    expect(response).toHaveProperty("finished", false);
   });
 
   it("overflow, not finished ", () => {
@@ -49,11 +55,11 @@ describe("filterSelections", () => {
       ribbonpig,
     ]);
 
-    expect(response).toHaveProperty("0", {
+    expect(response).toHaveProperty("selection", {
       [Location.Hand]: [],
       [Location.Board]: [slime],
     });
-    expect(response).toHaveProperty("1", false);
+    expect(response).toHaveProperty("finished", false);
   });
 
   it("overflow, finished", () => {
@@ -67,11 +73,11 @@ describe("filterSelections", () => {
       slime,
     ]);
 
-    expect(response).toHaveProperty("0", {
+    expect(response).toHaveProperty("selection", {
       [Location.Hand]: [],
       [Location.Board]: [ribbonpig],
     });
-    expect(response).toHaveProperty("1", true);
+    expect(response).toHaveProperty("finished", true);
   });
 
   it("overflow, finished, recency", () => {
@@ -85,11 +91,11 @@ describe("filterSelections", () => {
       slime,
     ]);
 
-    expect(response).toHaveProperty("0", {
+    expect(response).toHaveProperty("selection", {
       [Location.Hand]: [redsnail],
       [Location.Board]: [],
     });
-    expect(response).toHaveProperty("1", true);
+    expect(response).toHaveProperty("finished", true);
   });
 
   it("overflow, not finished, recency", () => {
@@ -103,10 +109,28 @@ describe("filterSelections", () => {
       slime,
     ]);
 
-    expect(response).toHaveProperty("0", {
+    expect(response).toHaveProperty("selection", {
       [Location.Hand]: [redsnail],
       [Location.Board]: [],
     });
-    expect(response).toHaveProperty("1", false);
+    expect(response).toHaveProperty("finished", false);
+  });
+
+  it("overflow outside of filter, not finished", () => {
+    const complexSelection: Selection = {
+      [Location.Hand]: [magicclaw],
+      [Location.Board]: [],
+    };
+
+    const response = filterSelections(fix.complexFilterRecent, complexSelection, [
+      Location.Board,
+      magicclaw,
+    ]);
+
+    expect(response).toHaveProperty("selection", {
+      [Location.Hand]: [magicclaw],
+      [Location.Board]: [],
+    });
+    expect(response).toHaveProperty("finished", false);
   });
 });

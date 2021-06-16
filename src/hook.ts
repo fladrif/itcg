@@ -13,7 +13,7 @@ export function endActivateStage(G: GameState, ctx: Ctx) {
   const player = G.player[ctx.currentPlayer];
   const skills: Skill[] = [];
 
-  skills.push(...player.deck.character.skills);
+  skills.push(...player.character.skills);
   player.learnedSkills.map((card) => skills.push(card.skill));
 
   const availableSkills = skills.slice(player.activationPos).filter((skill) => {

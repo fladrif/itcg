@@ -12,7 +12,7 @@ export function shuffleDeck(G: GameState, ctx: Ctx, id: PlayerID) {
   const player = G.player[id];
   if (!player) return INVALID_MOVE;
 
-  player.deck.deck = ctx.random!.Shuffle(player.deck.deck);
+  player.deck = ctx.random!.Shuffle(player.deck);
 }
 
 export function levelUp(
@@ -81,13 +81,13 @@ export function activateSkill(
 
 export function selectTarget(
   G: GameState,
-  _ctx: Ctx,
+  ctx: Ctx,
   card: [Location, Character | NonCharacter],
   _position?: number
 ) {
   // TODO: temp exclude Character from select targets, should be character skills (including nonchar skills)
 
-  selectCard(G, card);
+  selectCard(G, ctx, card);
 }
 
 export function confirmSkill(

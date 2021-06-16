@@ -64,32 +64,20 @@ export class ITCGStats extends React.Component<StatProp> {
     );
 
     const levelModal = (
-      <div
-        style={
-          this.props.stage == "level" ? currentStageModalStyle : stageModalStyle
-        }
-      >
+      <div style={this.props.stage == "level" ? currentStageModalStyle : stageModalStyle}>
         level
       </div>
     );
     const activateModal = (
       <div
-        style={
-          this.props.stage == "activate"
-            ? currentStageModalStyle
-            : stageModalStyle
-        }
+        style={this.props.stage == "activate" ? currentStageModalStyle : stageModalStyle}
       >
         activate
       </div>
     );
     const attackModal = (
       <div
-        style={
-          this.props.stage == "attack"
-            ? currentStageModalStyle
-            : stageModalStyle
-        }
+        style={this.props.stage == "attack" ? currentStageModalStyle : stageModalStyle}
       >
         attack
       </div>
@@ -101,9 +89,7 @@ export class ITCGStats extends React.Component<StatProp> {
       </div>
     );
 
-    const selectModal = (
-      <div style={confirmationStyle}>Please select a card</div>
-    );
+    const selectModal = <div style={confirmationStyle}>Please select a card</div>;
 
     const modal =
       this.props.stage == "confirmation"

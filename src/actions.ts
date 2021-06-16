@@ -2,18 +2,19 @@ import { Ctx } from "boardgame.io";
 import { INVALID_MOVE } from "boardgame.io/core";
 
 import { GameState } from "./game";
-import { CardTypes, CardClasses, SkillRequirements } from "./card";
+import { CardTypes, CardClasses, NonCharacter, SkillRequirements } from "./card";
+import { Selection } from "./stack";
 import { rmCard } from "./utils";
 
 export enum Location {
-  Board,
-  Hand,
-  Deck,
-  CharAction,
-  OppBoard,
-  OppHand,
-  OppDeck,
-  OppCharAction,
+  Board = "Board",
+  Hand = "Hand",
+  Deck = "Deck",
+  CharAction = "CharAction",
+  OppBoard = "OppBoard",
+  OppHand = "OppHand",
+  OppDeck = "OppDeck",
+  OppCharAction = "OppCharAction",
 }
 
 export type CurrentLevel = "CurrentLevel";
@@ -50,25 +51,23 @@ export function checkReqs(reqs: SkillRequirements): (G: GameState, ctx: Ctx) => 
   };
 }
 
-function quest(G: GameState, ctx: Ctx): any {
+function quest(G: GameState, ctx: Ctx, _sel?: Selection): any {
   const player = G.player[ctx.currentPlayer];
 
-  if (player.deck.deck.length <= 0) return INVALID_MOVE;
+  if (player.deck.length <= 0) return INVALID_MOVE;
 
-  player.hand.push(player.deck.deck.shift()!);
+  player.hand.push(player.deck.shift()!);
 }
 
-function spawn(G: GameState, ctx: Ctx): any {
+function spawn(G: GameState, ctx: Ctx, sel: Selection): any {
   if (!G.stack) return;
-  if (G.stack.selection.targets.length !== 1) return;
+  if (!sel[Location.Hand]) return;
 
   const player = G.player[ctx.currentPlayer];
-  G.stack.selection.targets.map((arry) =>
-    arry.map((card) => {
-      player.board.push(card);
-      rmCard(G, ctx, card, G.stack!.targets[0].location);
-    })
-  );
+  sel[Location.Hand]!.map((card) => {
+    player.board.push(card as NonCharacter);
+    rmCard(G, ctx, card, Location.Hand);
+  });
 }
 
 export const actions = {

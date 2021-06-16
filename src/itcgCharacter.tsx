@@ -1,5 +1,7 @@
 import React from "react";
+
 import { PlayerState } from "./game";
+import { Location } from "./actions";
 
 import { ITCGCard } from "./itcgCard";
 
@@ -19,22 +21,22 @@ const baseStyle: React.CSSProperties = {
 
 export class ITCGCharacter extends React.Component<CharacterProp> {
   render() {
-    const skillCards = this.props.playerState.learnedSkills.map(
-      (card, index) => (
-        <ITCGCard
-          style={"leveledCardStyle"}
-          card={card}
-          move={this.props.move}
-          skillPos={index + 3}
-        />
-      )
-    );
+    const skillCards = this.props.playerState.learnedSkills.map((card, index) => (
+      <ITCGCard
+        style={"leveledCardStyle"}
+        location={Location.CharAction}
+        card={card}
+        move={this.props.move}
+        skillPos={index + 3}
+      />
+    ));
 
     return (
       <div style={baseStyle}>
         <ITCGCard
           style={"characterStyle"}
-          card={this.props.playerState.deck.character}
+          location={Location.CharAction}
+          card={this.props.playerState.character}
           move={this.props.move}
         />
         {skillCards}

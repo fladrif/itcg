@@ -38,7 +38,8 @@ interface Deck {
 }
 
 export interface PlayerState {
-  deck: Deck;
+  deck: NonCharacter[];
+  character: Character;
   hand: NonCharacter[];
   learnedSkills: NonCharacter[];
   board: NonCharacter[];
@@ -61,10 +62,8 @@ function preConfigSetup(): GameState {
   const state = { player: {} } as GameState;
 
   state.player["0"] = {
-    deck: {
-      character: cards.sherman,
-      deck: lodash(SAMPLE_DECK).shuffle().value(),
-    },
+    deck: lodash(SAMPLE_DECK).shuffle().value(),
+    character: cards.sherman,
     hand: [],
     learnedSkills: [],
     board: [],
@@ -75,10 +74,8 @@ function preConfigSetup(): GameState {
   };
 
   state.player["1"] = {
-    deck: {
-      character: cards.nixie,
-      deck: lodash(SAMPLE_DECK).shuffle().value(),
-    },
+    deck: lodash(SAMPLE_DECK).shuffle().value(),
+    character: cards.nixie,
     hand: [],
     learnedSkills: [],
     board: [],
@@ -88,16 +85,16 @@ function preConfigSetup(): GameState {
     activationPos: 0,
   };
 
-  state.player["0"].hand.push(state.player["0"].deck.deck.pop()!);
-  state.player["0"].hand.push(state.player["0"].deck.deck.pop()!);
-  state.player["0"].hand.push(state.player["0"].deck.deck.pop()!);
-  state.player["0"].hand.push(state.player["0"].deck.deck.pop()!);
+  state.player["0"].hand.push(state.player["0"].deck.pop()!);
+  state.player["0"].hand.push(state.player["0"].deck.pop()!);
+  state.player["0"].hand.push(state.player["0"].deck.pop()!);
+  state.player["0"].hand.push(state.player["0"].deck.pop()!);
 
-  state.player["1"].hand.push(state.player["1"].deck.deck.pop()!);
-  state.player["1"].hand.push(state.player["1"].deck.deck.pop()!);
-  state.player["1"].hand.push(state.player["1"].deck.deck.pop()!);
-  state.player["1"].hand.push(state.player["1"].deck.deck.pop()!);
-  state.player["1"].hand.push(state.player["1"].deck.deck.pop()!);
+  state.player["1"].hand.push(state.player["1"].deck.pop()!);
+  state.player["1"].hand.push(state.player["1"].deck.pop()!);
+  state.player["1"].hand.push(state.player["1"].deck.pop()!);
+  state.player["1"].hand.push(state.player["1"].deck.pop()!);
+  state.player["1"].hand.push(state.player["1"].deck.pop()!);
 
   return state;
 }
@@ -109,7 +106,8 @@ export function setup(_ctx: Ctx, setupData: SetupData): GameState {
 
   for (const player of setupData.players) {
     state.player[player.id] = {
-      deck: { character: cards.sherman, deck: player.deck.deck },
+      deck: player.deck.deck,
+      character: cards.sherman,
       hand: [],
       learnedSkills: [],
       board: [],

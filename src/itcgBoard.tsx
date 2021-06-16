@@ -3,6 +3,7 @@ import { BoardProps } from "boardgame.io/react";
 
 import { GameState } from "./game";
 import { getOpponentID } from "./utils";
+import { Location } from "./actions";
 
 import { ITCGCard, ITCGCardback } from "./itcgCard";
 import { ITCGStats } from "./itcgStats";
@@ -93,11 +94,19 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
         this.props.ctx.activePlayers[playerID] === "select"
       ) {
         playerLine.push(
-          <ITCGCard move={this.props.moves.selectTarget} card={card} />
+          <ITCGCard
+            move={this.props.moves.selectTarget}
+            location={Location.Hand}
+            card={card}
+          />
         );
       } else {
         playerLine.push(
-          <ITCGCard move={this.props.moves.levelUp} card={card} />
+          <ITCGCard
+            move={this.props.moves.levelUp}
+            location={Location.Hand}
+            card={card}
+          />
         );
       }
     }
@@ -105,9 +114,7 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
     const button =
       currentPlayerStage == "level" ? (
         <div>
-          <button onClick={() => this.props.moves.noLevel()}>
-            Skip Level Stage
-          </button>
+          <button onClick={() => this.props.moves.noLevel()}>Skip Level Stage</button>
         </div>
       ) : currentPlayerStage == "activate" ? (
         <div>
@@ -115,11 +122,14 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
             Go to Attack Stage
           </button>
         </div>
+      ) : currentPlayerStage == "select" ? (
+        <div>
+          <button onClick={() => this.props.moves.confirmSkill()}>Confirm</button>
+          <button onClick={() => this.props.moves.declineSkill()}>Decline</button>
+        </div>
       ) : (
         <div>
-          <button onClick={() => this.props.moves.noAttacks()}>
-            Pass Turn
-          </button>
+          <button onClick={() => this.props.moves.noAttacks()}>Pass Turn</button>
         </div>
       );
 
@@ -139,21 +149,27 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
           <ITCGStats
             playerState={opponentState}
             stage={
-              this.props.ctx.activePlayers
-                ? this.props.ctx.activePlayers[opponentID]
-                : ""
+              this.props.ctx.activePlayers ? this.props.ctx.activePlayers[opponentID] : ""
             }
           />
         </div>
         <div style={mapStyle}>
           <div>
             {opponentState.board.map((card) => (
-              <ITCGCard move={this.props.moves.selectTarget} card={card} />
+              <ITCGCard
+                move={this.props.moves.selectTarget}
+                location={Location.OppBoard}
+                card={card}
+              />
             ))}
           </div>
           <div>
             {playerState.board.map((card) => (
-              <ITCGCard move={this.props.moves.selectTarget} card={card} />
+              <ITCGCard
+                move={this.props.moves.selectTarget}
+                location={Location.Board}
+                card={card}
+              />
             ))}
           </div>
         </div>
@@ -163,9 +179,7 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
             confMove={this.props.moves.confirmSkill}
             declMove={this.props.moves.declineSkill}
             stage={
-              this.props.ctx.activePlayers
-                ? this.props.ctx.activePlayers[playerID]
-                : ""
+              this.props.ctx.activePlayers ? this.props.ctx.activePlayers[playerID] : ""
             }
           />
         </div>
