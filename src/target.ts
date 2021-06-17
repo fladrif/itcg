@@ -24,10 +24,15 @@ export function filterSelections(
     const filteredSelection = locSelection.reverse().filter((selection) => {
       if (filter.type && filter.type !== selection.type) return false;
       if (filter.class && !filter.class.includes(selection.class)) return false;
-      if (filter.level && filter.level < (selection as NonCharacter).level) {
-        return false;
+      if (filter.level !== undefined) {
+        if (
+          filter.level !== 'CurrentLevel' &&
+          filter.level < (selection as NonCharacter).level
+        ) {
+          return false;
+        }
+        // TODO: Handle level == current level
       }
-
       return true;
     });
 

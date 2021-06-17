@@ -15,13 +15,14 @@ export const nixie: Character = {
     {
       requirements: { level: 10 },
       action: 'damage',
+      activated: false,
       opts: { damage: 10 },
       targets: {
         xor: [
           {
             type: CardTypes.Monster,
             quantity: 1,
-            location: Location.OppBoard,
+            location: Location.OppField,
           },
           {
             type: CardTypes.Character,
@@ -34,10 +35,12 @@ export const nixie: Character = {
     {
       requirements: { level: 20 },
       action: 'quest',
+      activated: false,
     },
     {
       requirements: { level: 30 },
       action: 'quest',
+      activated: false,
     },
   ],
   ...defaultTypes,

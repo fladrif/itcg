@@ -15,12 +15,14 @@ export const sherman: Character = {
     {
       requirements: { level: 10 },
       action: 'quest',
+      activated: false,
     },
     {
       requirements: { level: 10 },
       action: 'spawn',
+      activated: false,
       targets: {
-        level: 30,
+        level: 15,
         type: CardTypes.Monster,
         quantity: 1,
         location: Location.Hand,
@@ -29,6 +31,7 @@ export const sherman: Character = {
     {
       requirements: { level: 30 },
       action: 'quest',
+      activated: false,
     },
   ],
   ...defaultTypes,

@@ -42,7 +42,7 @@ export interface PlayerState {
   character: Character;
   hand: NonCharacter[];
   learnedSkills: NonCharacter[];
-  board: NonCharacter[];
+  field: NonCharacter[];
   hp: number;
   maxHP: number;
   level: number;
@@ -66,7 +66,7 @@ function preConfigSetup(): GameState {
     character: cards.sherman,
     hand: [],
     learnedSkills: [],
-    board: [],
+    field: [],
     hp: cards.sherman.health,
     maxHP: cards.sherman.health,
     level: 0,
@@ -78,7 +78,7 @@ function preConfigSetup(): GameState {
     character: cards.nixie,
     hand: [],
     learnedSkills: [],
-    board: [],
+    field: [],
     hp: cards.nixie.health,
     maxHP: cards.nixie.health,
     level: 0,
@@ -110,7 +110,7 @@ export function setup(_ctx: Ctx, setupData: SetupData): GameState {
       character: cards.sherman,
       hand: [],
       learnedSkills: [],
-      board: [],
+      field: [],
       hp: cards.sherman.health,
       maxHP: cards.sherman.health,
       level: 0,

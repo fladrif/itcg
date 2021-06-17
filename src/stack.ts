@@ -70,6 +70,7 @@ export function resolveStack(G: GameState, ctx: Ctx, confirmation?: boolean) {
       });
       pruneSelection(G, ctx, decision.selection, decision.selection);
     });
+    resetSkillActivations(G, ctx);
 
     G.stack = undefined;
 
@@ -86,6 +87,7 @@ export function resolveStack(G: GameState, ctx: Ctx, confirmation?: boolean) {
     pruneDecisions(G, ctx, stack.decisions);
     pruneDecisions(G, ctx, stack.activeDecisions);
     G.player[ctx.currentPlayer].activationPos = stack.prevActivatePos;
+    resetSkillActivations(G, ctx);
 
     G.stack = undefined;
     setStages(ctx, []);
@@ -201,4 +203,13 @@ function isDecisionNeeded(dec: Decision): boolean {
   if (dec.modal !== undefined) return true;
 
   return false;
+}
+
+function resetSkillActivations(G: GameState, ctx: Ctx) {
+  (getLocation(G, ctx, Location.Character)[0] as Character).skills.map(
+    (skill) => (skill.activated = false)
+  );
+  (getLocation(G, ctx, Location.CharAction) as NonCharacter[]).map(
+    (card) => (card.skill.activated = false)
+  );
 }

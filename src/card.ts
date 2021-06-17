@@ -3,6 +3,7 @@ import { Action, ActionOpts, ActionTargets } from './actions';
 export const SAMPLE_SKILL: Skill = {
   requirements: { level: 100 },
   action: 'quest',
+  activated: false,
 };
 
 export enum CardTypes {
@@ -59,6 +60,7 @@ export interface SkillRequirements {
 export interface Skill {
   requirements: SkillRequirements;
   action: Action;
+  activated: boolean;
   opts?: ActionOpts;
   targets?: ActionTargets;
 }

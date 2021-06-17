@@ -17,7 +17,7 @@ export const complexFilterFinished: ActionTargets = {
         {
           level: 10,
           quantity: 1,
-          location: Location.Board,
+          location: Location.Field,
         },
       ],
     },
@@ -41,7 +41,7 @@ export const complexFilterNotFinished: ActionTargets = {
         {
           level: 10,
           quantity: 1,
-          location: Location.Board,
+          location: Location.Field,
         },
       ],
     },
@@ -58,7 +58,7 @@ export const complexFilterRecent: ActionTargets = {
     {
       level: 10,
       quantity: 2,
-      location: Location.Board,
+      location: Location.Field,
     },
   ],
 };

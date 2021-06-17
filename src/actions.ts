@@ -7,12 +7,12 @@ import { Selection } from './stack';
 import { deepCardComp, getLocation, getOpponentState, rmCard } from './utils';
 
 export enum Location {
-  Board = 'Board',
+  Field = 'Field',
   Hand = 'Hand',
   Deck = 'Deck',
   CharAction = 'CharAction',
   Character = 'Character',
-  OppBoard = 'OppBoard',
+  OppField = 'OppField',
   OppHand = 'OppHand',
   OppDeck = 'OppDeck',
   OppCharAction = 'OppCharAction',
@@ -71,7 +71,7 @@ function spawn(G: GameState, ctx: Ctx, opts: ActionOpts): any {
 
   const player = G.player[ctx.currentPlayer];
   opts.selection[Location.Hand]!.map((card) => {
-    player.board.push(card as NonCharacter);
+    player.field.push(card as NonCharacter);
     rmCard(G, ctx, card, Location.Hand);
   });
 }

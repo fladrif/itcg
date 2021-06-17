@@ -18,8 +18,28 @@ interface CardbackProp {
   style?: Styles;
 }
 
-const selectedBorder: React.CSSProperties = {
+const activatedBorder: React.CSSProperties = {
   border: 'solid',
+  borderColor: 'yellow',
+};
+
+const selectedBorderTop: React.CSSProperties = {
+  borderTop: 'solid',
+  borderLeft: 'solid',
+  borderRight: 'solid',
+  borderColor: 'red',
+};
+
+const selectedBorderMid: React.CSSProperties = {
+  borderLeft: 'solid',
+  borderRight: 'solid',
+  borderColor: 'red',
+};
+
+const selectedBorderBot: React.CSSProperties = {
+  borderLeft: 'solid',
+  borderRight: 'solid',
+  borderBottom: 'solid',
   borderColor: 'red',
 };
 
@@ -44,62 +64,117 @@ const styles = {
 };
 
 export class ITCGCard extends React.Component<CardProp> {
-  render() {
-    const style = this.props.style ?? 'miniCardStyle';
-    const finalStyle = this.props.card.selected
-      ? { ...styles[style], ...selectedBorder }
-      : styles[style];
+  getCharacter(style: React.CSSProperties) {
+    const card = this.props.card as Character;
 
-    const isCharacter = this.props.card.type === CardTypes.Character;
-    const isLevelCard = this.props.style === 'leveledCardStyle';
+    const topStyle = card.selected ? { ...style, ...selectedBorderTop } : style;
 
-    const card = [];
+    const skill1Style = card.selected
+      ? { ...style, ...selectedBorderMid }
+      : card.skills[0].activated
+      ? { ...style, ...activatedBorder }
+      : style;
 
-    if (isLevelCard) {
-      card.push(
+    const skill2Style = card.selected
+      ? { ...style, ...selectedBorderMid }
+      : card.skills[1].activated
+      ? { ...style, ...activatedBorder }
+      : style;
+
+    const skill3Style = card.selected
+      ? { ...style, ...selectedBorderBot }
+      : card.skills[2].activated
+      ? { ...style, ...activatedBorder }
+      : style;
+
+    return (
+      <div style={baseStyle}>
         <img
-          style={styles[style]}
+          style={topStyle}
+          onClick={() => this.props.move([this.props.location, this.props.card])}
+          src={cardImages[this.props.card.image].top}
+          alt={this.props.card.name}
+        />
+        <img
+          onClick={() => this.props.move([this.props.location, this.props.card], 0)}
+          style={skill1Style}
+          src={cardImages[this.props.card.image].skill}
+          alt={this.props.card.name}
+        />
+        <img
+          onClick={() => this.props.move([this.props.location, this.props.card], 1)}
+          style={skill2Style}
+          src={cardImages[this.props.card.image].skill2}
+          alt={this.props.card.name}
+        />
+        <img
+          onClick={() => this.props.move([this.props.location, this.props.card], 2)}
+          style={skill3Style}
+          src={cardImages[this.props.card.image].skill3}
+          alt={this.props.card.name}
+        />
+      </div>
+    );
+  }
+
+  getLevel(style: React.CSSProperties) {
+    const finalStyle = (this.props.card as NonCharacter).skill.activated
+      ? { ...style, ...activatedBorder }
+      : this.props.card.selected
+      ? { ...style, ...selectedBorderTop, ...selectedBorderBot }
+      : style;
+
+    return (
+      <div style={baseStyle}>
+        <img
+          style={finalStyle}
           onClick={() =>
             this.props.move([this.props.location, this.props.card], this.props.skillPos)
           }
           src={cardImages[this.props.card.image].skill}
           alt={this.props.card.name}
         />
-      );
-    } else {
-      card.push(
+      </div>
+    );
+  }
+
+  getCard(style: React.CSSProperties) {
+    const topStyle = this.props.card.selected
+      ? { ...style, ...selectedBorderTop }
+      : style;
+
+    const botStyle = this.props.card.selected
+      ? { ...style, ...selectedBorderBot }
+      : style;
+
+    return (
+      <div style={baseStyle}>
         <img
-          style={finalStyle}
+          style={topStyle}
           onClick={() => this.props.move([this.props.location, this.props.card])}
           src={cardImages[this.props.card.image].top}
           alt={this.props.card.name}
-        />,
+        />
         <img
+          style={botStyle}
           onClick={() => this.props.move([this.props.location, this.props.card], 0)}
-          style={finalStyle}
           src={cardImages[this.props.card.image].skill}
           alt={this.props.card.name}
         />
-      );
+      </div>
+    );
+  }
 
-      if (isCharacter) {
-        card.push(
-          <img
-            onClick={() => this.props.move([this.props.location, this.props.card], 1)}
-            style={finalStyle}
-            src={cardImages[this.props.card.image].skill2}
-            alt={this.props.card.name}
-          />,
-          <img
-            onClick={() => this.props.move([this.props.location, this.props.card], 2)}
-            style={finalStyle}
-            src={cardImages[this.props.card.image].skill3}
-            alt={this.props.card.name}
-          />
-        );
-      }
-    }
-    return <div style={baseStyle}>{card}</div>;
+  render() {
+    const style = this.props.style ?? 'miniCardStyle';
+
+    const isCharacter = this.props.card.type === CardTypes.Character;
+    const isLevelCard = this.props.style === 'leveledCardStyle';
+
+    if (isLevelCard) return this.getLevel(styles[style]);
+    if (isCharacter) return this.getCharacter(styles[style]);
+
+    return this.getCard(styles[style]);
   }
 }
 

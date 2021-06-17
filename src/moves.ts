@@ -5,7 +5,7 @@ import { GameState } from './game';
 import { NonCharacter, Character, Skill } from './card';
 import { endLevelStage, endAttackStage } from './hook';
 import { resolveStack, buildStack, selectCard } from './stack';
-import { meetsSkillReq } from './utils';
+import { deepCardComp, getLocation, meetsSkillReq } from './utils';
 import { Location } from './actions';
 
 export function shuffleDeck(G: GameState, ctx: Ctx, id: PlayerID) {
@@ -51,7 +51,7 @@ export function activateSkill(
 ) {
   const player = G.player[ctx.currentPlayer];
   const cardLoc = card[0];
-  const selCard = card[1];
+  const selCard = getLocation(G, ctx, cardLoc).filter((c) => deepCardComp(c, card[1]))[0];
 
   if (
     (cardLoc !== Location.Character && cardLoc !== Location.CharAction) ||
@@ -61,13 +61,7 @@ export function activateSkill(
     return INVALID_MOVE;
   }
 
-  let skill: Skill;
-
-  if ('skills' in selCard) {
-    skill = selCard.skills[position!];
-  } else {
-    skill = selCard.skill;
-  }
+  const skill = 'skills' in selCard ? selCard.skills[position] : selCard.skill;
 
   if (!meetsSkillReq(skill.requirements, player)) {
     return INVALID_MOVE;
@@ -75,6 +69,7 @@ export function activateSkill(
 
   const prevPos = player.activationPos;
   player.activationPos = position + 1;
+  skill.activated = true;
 
   buildStack(G, ctx, skill, prevPos);
 }
@@ -85,8 +80,6 @@ export function selectTarget(
   card: [Location, Character | NonCharacter],
   _position?: number
 ) {
-  // TODO: temp exclude Character from select targets, should be character skills (including nonchar skills)
-
   selectCard(G, ctx, card);
 }
 

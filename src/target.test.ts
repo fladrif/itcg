@@ -11,7 +11,7 @@ describe('filterSelections', () => {
   it('no overflow, finished ', () => {
     const complexSelection: Selection = {
       [Location.Hand]: [redsnail],
-      [Location.Board]: [ribbonpig],
+      [Location.Field]: [ribbonpig],
     };
 
     const response = filterSelections(fix.complexFilterFinished, complexSelection, [
@@ -21,7 +21,7 @@ describe('filterSelections', () => {
 
     expect(response).toHaveProperty('selection', {
       [Location.Hand]: [],
-      [Location.Board]: [],
+      [Location.Field]: [],
     });
     expect(response).toHaveProperty('finished', true);
   });
@@ -29,7 +29,7 @@ describe('filterSelections', () => {
   it('no overflow, not finished ', () => {
     const complexSelection: Selection = {
       [Location.Hand]: [redsnail],
-      [Location.Board]: [ribbonpig],
+      [Location.Field]: [ribbonpig],
     };
 
     const response = filterSelections(fix.complexFilterNotFinished, complexSelection, [
@@ -39,7 +39,7 @@ describe('filterSelections', () => {
 
     expect(response).toHaveProperty('selection', {
       [Location.Hand]: [],
-      [Location.Board]: [],
+      [Location.Field]: [],
     });
     expect(response).toHaveProperty('finished', false);
   });
@@ -47,7 +47,7 @@ describe('filterSelections', () => {
   it('overflow, not finished ', () => {
     const complexSelection: Selection = {
       [Location.Hand]: [redsnail],
-      [Location.Board]: [slime, ribbonpig],
+      [Location.Field]: [slime, ribbonpig],
     };
 
     const response = filterSelections(fix.complexFilterNotFinished, complexSelection, [
@@ -57,7 +57,7 @@ describe('filterSelections', () => {
 
     expect(response).toHaveProperty('selection', {
       [Location.Hand]: [],
-      [Location.Board]: [slime],
+      [Location.Field]: [slime],
     });
     expect(response).toHaveProperty('finished', false);
   });
@@ -65,17 +65,17 @@ describe('filterSelections', () => {
   it('overflow, finished', () => {
     const complexSelection: Selection = {
       [Location.Hand]: [redsnail],
-      [Location.Board]: [ribbonpig, slime],
+      [Location.Field]: [ribbonpig, slime],
     };
 
     const response = filterSelections(fix.complexFilterFinished, complexSelection, [
-      Location.Board,
+      Location.Field,
       slime,
     ]);
 
     expect(response).toHaveProperty('selection', {
       [Location.Hand]: [],
-      [Location.Board]: [ribbonpig],
+      [Location.Field]: [ribbonpig],
     });
     expect(response).toHaveProperty('finished', true);
   });
@@ -83,17 +83,17 @@ describe('filterSelections', () => {
   it('overflow, finished, recency', () => {
     const complexSelection: Selection = {
       [Location.Hand]: [redsnail],
-      [Location.Board]: [ribbonpig, slime],
+      [Location.Field]: [ribbonpig, slime],
     };
 
     const response = filterSelections(fix.complexFilterRecent, complexSelection, [
-      Location.Board,
+      Location.Field,
       slime,
     ]);
 
     expect(response).toHaveProperty('selection', {
       [Location.Hand]: [redsnail],
-      [Location.Board]: [],
+      [Location.Field]: [],
     });
     expect(response).toHaveProperty('finished', true);
   });
@@ -101,17 +101,17 @@ describe('filterSelections', () => {
   it('overflow, not finished, recency', () => {
     const complexSelection: Selection = {
       [Location.Hand]: [redsnail],
-      [Location.Board]: [slime],
+      [Location.Field]: [slime],
     };
 
     const response = filterSelections(fix.complexFilterRecent, complexSelection, [
-      Location.Board,
+      Location.Field,
       slime,
     ]);
 
     expect(response).toHaveProperty('selection', {
       [Location.Hand]: [redsnail],
-      [Location.Board]: [],
+      [Location.Field]: [],
     });
     expect(response).toHaveProperty('finished', false);
   });
@@ -119,17 +119,17 @@ describe('filterSelections', () => {
   it('overflow outside of filter, not finished', () => {
     const complexSelection: Selection = {
       [Location.Hand]: [magicclaw],
-      [Location.Board]: [],
+      [Location.Field]: [],
     };
 
     const response = filterSelections(fix.complexFilterRecent, complexSelection, [
-      Location.Board,
+      Location.Field,
       magicclaw,
     ]);
 
     expect(response).toHaveProperty('selection', {
       [Location.Hand]: [magicclaw],
-      [Location.Board]: [],
+      [Location.Field]: [],
     });
     expect(response).toHaveProperty('finished', false);
   });

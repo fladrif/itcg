@@ -50,8 +50,8 @@ export function getLocation(
   switch (location) {
     case Location.Hand:
       return player.hand;
-    case Location.Board:
-      return player.board;
+    case Location.Field:
+      return player.field;
     case Location.Deck:
       return player.deck;
     case Location.CharAction:
@@ -60,8 +60,8 @@ export function getLocation(
       return [player.character];
     case Location.OppHand:
       return opponent.hand;
-    case Location.OppBoard:
-      return opponent.board;
+    case Location.OppField:
+      return opponent.field;
     case Location.OppDeck:
       return opponent.deck;
     case Location.OppCharAction:
