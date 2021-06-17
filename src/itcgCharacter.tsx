@@ -7,7 +7,10 @@ import { ITCGCard } from './itcgCard';
 
 export interface CharacterProp {
   playerState: PlayerState;
-  move: () => any;
+  currentPlayer: boolean;
+  stage: string;
+  activate: () => any;
+  select: () => any;
 }
 
 const baseStyle: React.CSSProperties = {
@@ -21,12 +24,14 @@ const baseStyle: React.CSSProperties = {
 
 export class ITCGCharacter extends React.Component<CharacterProp> {
   render() {
+    const move = this.props.stage == 'activate' ? this.props.activate : this.props.select;
+
     const skillCards = this.props.playerState.learnedSkills.map((card, index) => (
       <ITCGCard
         style={'leveledCardStyle'}
         location={Location.CharAction}
         card={card}
-        move={this.props.move}
+        move={move}
         skillPos={index + 3}
       />
     ));
@@ -35,9 +40,9 @@ export class ITCGCharacter extends React.Component<CharacterProp> {
       <div style={baseStyle}>
         <ITCGCard
           style={'characterStyle'}
-          location={Location.CharAction}
+          location={this.props.currentPlayer ? Location.Character : Location.OppCharacter}
           card={this.props.playerState.character}
-          move={this.props.move}
+          move={move}
         />
         {skillCards}
       </div>

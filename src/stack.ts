@@ -1,7 +1,7 @@
 import { Ctx } from 'boardgame.io';
 
 import { GameState } from './game';
-import { actions, Action, ActionTargets, Location } from './actions';
+import { actions, Action, ActionOpts, ActionTargets, Location } from './actions';
 import { endActivateStage } from './hook';
 import { Skill, Character, NonCharacter } from './card';
 import { filterSelections } from './target';
@@ -13,6 +13,7 @@ export interface Decision {
   action: Action;
   selection: Selection;
   finished: boolean;
+  opts?: ActionOpts;
   target?: ActionTargets;
   choice?: boolean;
   // TODO: future multiple choice
@@ -63,7 +64,10 @@ export function resolveStack(G: GameState, ctx: Ctx, confirmation?: boolean) {
 
   if (stack.activeDecisions.length == 0) {
     stack.decisions.map((decision) => {
-      actions[decision.action](G, ctx, decision.selection);
+      actions[decision.action](G, ctx, {
+        ...decision.opts,
+        selection: decision.selection,
+      });
       pruneSelection(G, ctx, decision.selection, decision.selection);
     });
 
@@ -97,6 +101,7 @@ export function buildStack(
 ) {
   const decision = {
     action: skill.action,
+    opts: skill.opts,
     target: skill.targets,
     selection: {},
     finished: false,

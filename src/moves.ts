@@ -54,7 +54,7 @@ export function activateSkill(
   const selCard = card[1];
 
   if (
-    cardLoc !== Location.CharAction ||
+    (cardLoc !== Location.Character && cardLoc !== Location.CharAction) ||
     position === undefined ||
     player.activationPos > position
   ) {

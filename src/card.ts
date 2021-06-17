@@ -1,4 +1,4 @@
-import { Action, ActionTargets } from './actions';
+import { Action, ActionOpts, ActionTargets } from './actions';
 
 export const SAMPLE_SKILL: Skill = {
   requirements: { level: 100 },
@@ -21,7 +21,6 @@ export enum CardClasses {
 
 export interface Card {
   name: string;
-  // TODO: Move type to static property in interface
   type: CardTypes;
   class: CardClasses;
   image: string;
@@ -60,6 +59,8 @@ export interface SkillRequirements {
 export interface Skill {
   requirements: SkillRequirements;
   action: Action;
+  opts?: ActionOpts;
   targets?: ActionTargets;
 }
+
 export interface Ability {}

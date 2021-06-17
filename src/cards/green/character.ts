@@ -1,4 +1,5 @@
 import { Character, CardTypes, CardClasses } from '../../card';
+import { Location } from '../../actions';
 
 const defaultTypes = {
   type: CardTypes.Character,
@@ -13,7 +14,22 @@ export const nixie: Character = {
   skills: [
     {
       requirements: { level: 10 },
-      action: 'quest',
+      action: 'damage',
+      opts: { damage: 10 },
+      targets: {
+        xor: [
+          {
+            type: CardTypes.Monster,
+            quantity: 1,
+            location: Location.OppBoard,
+          },
+          {
+            type: CardTypes.Character,
+            quantity: 1,
+            location: Location.OppCharacter,
+          },
+        ],
+      },
     },
     {
       requirements: { level: 20 },

@@ -135,6 +135,10 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
           <button onClick={() => this.props.moves.confirmSkill()}>Confirm</button>
           <button onClick={() => this.props.moves.declineSkill()}>Decline</button>
         </div>
+      ) : currentPlayerStage == 'select' && curDecisionFinished == false ? (
+        <div>
+          <button onClick={() => this.props.moves.declineSkill()}>Decline</button>
+        </div>
       ) : (
         <div>nothing</div>
       );
@@ -148,7 +152,12 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
         <div style={oppCharStyle}>
           <ITCGCharacter
             playerState={opponentState}
-            move={this.props.moves.activateSkill}
+            currentPlayer={false}
+            stage={
+              this.props.ctx.activePlayers ? this.props.ctx.activePlayers[opponentID] : ''
+            }
+            activate={this.props.moves.activateSkill}
+            select={this.props.moves.selectTarget}
           />
         </div>
         <div style={oppStatStyle}>
@@ -192,7 +201,10 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
         <div style={charStyle}>
           <ITCGCharacter
             playerState={playerState}
-            move={this.props.moves.activateSkill}
+            currentPlayer={true}
+            stage={currentPlayerStage}
+            activate={this.props.moves.activateSkill}
+            select={this.props.moves.selectTarget}
           />
         </div>
         <div style={handStyle}>{playerLine}</div>

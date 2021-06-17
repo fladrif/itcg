@@ -56,6 +56,8 @@ export function getLocation(
       return player.deck;
     case Location.CharAction:
       return player.learnedSkills;
+    case Location.Character:
+      return [player.character];
     case Location.OppHand:
       return opponent.hand;
     case Location.OppBoard:
@@ -64,6 +66,8 @@ export function getLocation(
       return opponent.deck;
     case Location.OppCharAction:
       return opponent.learnedSkills;
+    case Location.OppCharacter:
+      return [opponent.character];
   }
 }
 
