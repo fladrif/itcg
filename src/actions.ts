@@ -1,30 +1,55 @@
-import { Ctx } from "boardgame.io";
-import { INVALID_MOVE } from "boardgame.io/core";
+import { Ctx } from 'boardgame.io';
+import { INVALID_MOVE } from 'boardgame.io/core';
 
-import { GameState } from "./game";
-import { CardTypes, SkillRequirements } from "./card";
-import { rmCard } from "./utils";
+import { GameState } from './game';
+import { CardTypes, CardClasses, Monster, NonCharacter, SkillRequirements } from './card';
+import { Selection } from './stack';
+import { deepCardComp, getLocation, getOpponentState, rmCard } from './utils';
 
 export enum Location {
-  Hand,
-  Deck,
-  CharAction,
-  OppHand,
-  OppDeck,
-  OppCharAction,
+  Board = 'Board',
+  Hand = 'Hand',
+  Deck = 'Deck',
+  CharAction = 'CharAction',
+  Character = 'Character',
+  OppBoard = 'OppBoard',
+  OppHand = 'OppHand',
+  OppDeck = 'OppDeck',
+  OppCharAction = 'OppCharAction',
+  OppCharacter = 'OppCharacter',
 }
 
-export interface ActionTargets {
-  level?: number;
-  type?: CardTypes;
-  quantity?: number;
-  quantityUpTo?: boolean;
+export type LevelSelector = number | 'CurrentLevel';
+
+export interface TargetFilter {
   location: Location;
+  quantity: number;
+  quantityUpTo?: boolean;
+  level?: LevelSelector;
+  type?: CardTypes;
+  class?: CardClasses[];
+
+  and?: never;
+  xor?: never;
 }
 
-export function checkReqs(
-  reqs: SkillRequirements
-): (G: GameState, ctx: Ctx) => boolean {
+interface AddActionTarget {
+  and: ActionTargets[];
+  xor?: never;
+}
+interface XorActionTarget {
+  xor: ActionTargets[];
+  and?: never;
+}
+
+export type ActionTargets = TargetFilter | AddActionTarget | XorActionTarget;
+
+export interface ActionOpts {
+  damage?: number;
+  selection?: Selection;
+}
+
+export function checkReqs(reqs: SkillRequirements): (G: GameState, ctx: Ctx) => boolean {
   return (G: GameState, ctx: Ctx) => {
     if (reqs.level < G.player[ctx.currentPlayer].level) return false;
 
@@ -32,30 +57,47 @@ export function checkReqs(
   };
 }
 
-function quest(G: GameState, ctx: Ctx): any {
+function quest(G: GameState, ctx: Ctx, _opts: ActionOpts): any {
   const player = G.player[ctx.currentPlayer];
 
-  if (player.deck.deck.length <= 0) return INVALID_MOVE;
+  if (player.deck.length <= 0) return INVALID_MOVE;
 
-  player.hand.push(player.deck.deck.shift()!);
+  player.hand.push(player.deck.shift()!);
 }
 
-function spawn(G: GameState, ctx: Ctx): any {
+function spawn(G: GameState, ctx: Ctx, opts: ActionOpts): any {
   if (!G.stack) return;
-  if (G.stack.selection.targets.length !== 1) return;
+  if (!opts.selection || !opts.selection[Location.Hand]) return;
 
   const player = G.player[ctx.currentPlayer];
-  G.stack.selection.targets.map((arry) =>
-    arry.map((card) => {
-      player.board.push(card);
-      rmCard(G, ctx, card, G.stack!.targets[0].location);
-    })
-  );
+  opts.selection[Location.Hand]!.map((card) => {
+    player.board.push(card as NonCharacter);
+    rmCard(G, ctx, card, Location.Hand);
+  });
+}
+
+function damage(G: GameState, ctx: Ctx, opts: ActionOpts): any {
+  if (!G.stack) return;
+  if (!opts.selection || opts.damage == undefined) return;
+
+  for (const location of Object.keys(opts.selection) as Location[]) {
+    opts.selection[location]!.map((card) => {
+      if (card.type === CardTypes.Character) {
+        getOpponentState(G, ctx).hp -= opts.damage!;
+      }
+      if (card.type === CardTypes.Monster) {
+        getLocation(G, ctx, location)
+          .filter((c) => deepCardComp(c, card))
+          .map((card) => ((card as Monster).health -= opts.damage!));
+      }
+    });
+  }
 }
 
 export const actions = {
   quest,
   spawn,
+  damage,
 };
 
-export type Actions = keyof typeof actions;
+export type Action = keyof typeof actions;

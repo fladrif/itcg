@@ -1,8 +1,8 @@
-import { Ctx, PlayerID } from "boardgame.io";
-import lodash from "lodash";
+import { Ctx, PlayerID } from 'boardgame.io';
+import lodash from 'lodash';
 
-import * as cards from "./cards";
-import { Character, NonCharacter } from "./card";
+import * as cards from './cards';
+import { Character, NonCharacter } from './card';
 import {
   shuffleDeck,
   levelUp,
@@ -13,9 +13,10 @@ import {
   confirmSkill,
   declineSkill,
   noAttacks,
-} from "./moves";
-import { Stack } from "./stack";
+} from './moves';
+import { Stack } from './stack';
 
+// TODO: Decks need to clone objects, currently referenced
 const SAMPLE_DECK: NonCharacter[] = [
   cards.slime,
   cards.fairy,
@@ -37,7 +38,8 @@ interface Deck {
 }
 
 export interface PlayerState {
-  deck: Deck;
+  deck: NonCharacter[];
+  character: Character;
   hand: NonCharacter[];
   learnedSkills: NonCharacter[];
   board: NonCharacter[];
@@ -59,11 +61,9 @@ export interface GameState {
 function preConfigSetup(): GameState {
   const state = { player: {} } as GameState;
 
-  state.player["0"] = {
-    deck: {
-      character: cards.sherman,
-      deck: lodash(SAMPLE_DECK).shuffle().value(),
-    },
+  state.player['0'] = {
+    deck: lodash(SAMPLE_DECK).shuffle().value(),
+    character: cards.sherman,
     hand: [],
     learnedSkills: [],
     board: [],
@@ -73,11 +73,9 @@ function preConfigSetup(): GameState {
     activationPos: 0,
   };
 
-  state.player["1"] = {
-    deck: {
-      character: cards.nixie,
-      deck: lodash(SAMPLE_DECK).shuffle().value(),
-    },
+  state.player['1'] = {
+    deck: lodash(SAMPLE_DECK).shuffle().value(),
+    character: cards.nixie,
     hand: [],
     learnedSkills: [],
     board: [],
@@ -87,16 +85,16 @@ function preConfigSetup(): GameState {
     activationPos: 0,
   };
 
-  state.player["0"].hand.push(state.player["0"].deck.deck.pop()!);
-  state.player["0"].hand.push(state.player["0"].deck.deck.pop()!);
-  state.player["0"].hand.push(state.player["0"].deck.deck.pop()!);
-  state.player["0"].hand.push(state.player["0"].deck.deck.pop()!);
+  state.player['0'].hand.push(state.player['0'].deck.pop()!);
+  state.player['0'].hand.push(state.player['0'].deck.pop()!);
+  state.player['0'].hand.push(state.player['0'].deck.pop()!);
+  state.player['0'].hand.push(state.player['0'].deck.pop()!);
 
-  state.player["1"].hand.push(state.player["1"].deck.deck.pop()!);
-  state.player["1"].hand.push(state.player["1"].deck.deck.pop()!);
-  state.player["1"].hand.push(state.player["1"].deck.deck.pop()!);
-  state.player["1"].hand.push(state.player["1"].deck.deck.pop()!);
-  state.player["1"].hand.push(state.player["1"].deck.deck.pop()!);
+  state.player['1'].hand.push(state.player['1'].deck.pop()!);
+  state.player['1'].hand.push(state.player['1'].deck.pop()!);
+  state.player['1'].hand.push(state.player['1'].deck.pop()!);
+  state.player['1'].hand.push(state.player['1'].deck.pop()!);
+  state.player['1'].hand.push(state.player['1'].deck.pop()!);
 
   return state;
 }
@@ -108,7 +106,8 @@ export function setup(_ctx: Ctx, setupData: SetupData): GameState {
 
   for (const player of setupData.players) {
     state.player[player.id] = {
-      deck: { character: cards.sherman, deck: player.deck.deck },
+      deck: player.deck.deck,
+      character: cards.sherman,
       hand: [],
       learnedSkills: [],
       board: [],
@@ -122,7 +121,7 @@ export function setup(_ctx: Ctx, setupData: SetupData): GameState {
 }
 
 export const ITCG = {
-  name: "ITCG",
+  name: 'ITCG',
 
   setup: preConfigSetup,
 
@@ -134,20 +133,20 @@ export const ITCG = {
 
   turn: {
     onBegin: (_G: GameState, ctx: Ctx) => {
-      ctx.events!.setActivePlayers!({ currentPlayer: "level" });
+      ctx.events!.setActivePlayers!({ currentPlayer: 'level' });
     },
     stages: {
       level: {
         moves: { levelUp, noLevel },
-        next: "activate",
+        next: 'activate',
       },
       activate: {
         moves: { activateSkill, noActivate },
-        next: "attack",
+        next: 'attack',
       },
       attack: { moves: { noAttacks } },
       select: {
-        moves: { selectTarget },
+        moves: { selectTarget, confirmSkill, declineSkill },
       },
       confirmation: {
         moves: { confirmSkill, declineSkill },

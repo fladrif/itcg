@@ -1,9 +1,8 @@
-import { Actions, ActionTargets } from "./actions";
+import { Action, ActionOpts, ActionTargets } from './actions';
 
 export const SAMPLE_SKILL: Skill = {
   requirements: { level: 100 },
-  action: "quest",
-  targets: [],
+  action: 'quest',
 };
 
 export enum CardTypes {
@@ -25,6 +24,7 @@ export interface Card {
   type: CardTypes;
   class: CardClasses;
   image: string;
+  selected: boolean;
 }
 
 export interface Character extends Card {
@@ -58,7 +58,9 @@ export interface SkillRequirements {
 
 export interface Skill {
   requirements: SkillRequirements;
-  action: Actions;
-  targets: ActionTargets[];
+  action: Action;
+  opts?: ActionOpts;
+  targets?: ActionTargets;
 }
+
 export interface Ability {}

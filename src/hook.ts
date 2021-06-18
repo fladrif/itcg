@@ -1,8 +1,8 @@
-import { Ctx } from "boardgame.io";
+import { Ctx } from 'boardgame.io';
 
-import { GameState } from "./game";
-import { Skill } from "./card";
-import { meetsSkillReq } from "./utils";
+import { GameState } from './game';
+import { Skill } from './card';
+import { meetsSkillReq } from './utils';
 
 export function endLevelStage(G: GameState, ctx: Ctx) {
   G.player[ctx.currentPlayer].activationPos = 0;
@@ -13,7 +13,7 @@ export function endActivateStage(G: GameState, ctx: Ctx) {
   const player = G.player[ctx.currentPlayer];
   const skills: Skill[] = [];
 
-  skills.push(...player.deck.character.skills);
+  skills.push(...player.character.skills);
   player.learnedSkills.map((card) => skills.push(card.skill));
 
   const availableSkills = skills.slice(player.activationPos).filter((skill) => {
