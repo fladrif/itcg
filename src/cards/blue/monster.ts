@@ -7,7 +7,7 @@ const defaultTypes = {
   selected: false,
 };
 
-export const wildboar: Monster = {
+export const wildboar: Omit<Monster, 'key'> = {
   name: 'Wild Boar',
   image: 'WildBoar',
   level: 25,
@@ -18,7 +18,7 @@ export const wildboar: Monster = {
   ...defaultTypes,
 };
 
-export const slime: Monster = {
+export const slime: Omit<Monster, 'key'> = {
   name: 'Slime',
   image: 'Slime',
   level: 6,
@@ -29,7 +29,7 @@ export const slime: Monster = {
   ...defaultTypes,
 };
 
-export const greenmushroom: Monster = {
+export const greenmushroom: Omit<Monster, 'key'> = {
   name: 'Green Mushroom',
   image: 'GreenMushroom',
   level: 15,
@@ -40,7 +40,7 @@ export const greenmushroom: Monster = {
   ...defaultTypes,
 };
 
-export const ribbonpig: Monster = {
+export const ribbonpig: Omit<Monster, 'key'> = {
   name: 'Ribbon Pig',
   image: 'RibbonPig',
   level: 10,

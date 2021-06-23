@@ -7,8 +7,8 @@ const defaultTypes = {
   selected: false,
 };
 
-export const emeraldearrings: Item = {
-  name: 'emeraldearrings',
+export const emeraldearrings: Omit<Item, 'key'> = {
+  name: 'Emerald Earrings',
   image: 'EmeraldEarrings',
   level: 30,
   skill: SAMPLE_SKILL,

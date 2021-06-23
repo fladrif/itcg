@@ -1,3 +1,5 @@
+import { v4 as uuidv4 } from 'uuid';
+
 import { Action, ActionOpts, ActionTargets } from './actions';
 
 export const SAMPLE_SKILL: Skill = {
@@ -26,6 +28,7 @@ export interface Card {
   class: CardClasses;
   image: string;
   selected: boolean;
+  key: string;
 }
 
 export interface Character extends Card {
@@ -66,3 +69,10 @@ export interface Skill {
 }
 
 export interface Ability {}
+
+export function instantiateCard<T extends Card>(card: Omit<T, 'key'>): T {
+  const randomKey = uuidv4().split('-')[0];
+  const key = `${card.name.replace(' ', '').toLowerCase()}-${randomKey}`;
+
+  return { ...(card as T), key };
+}

@@ -7,7 +7,7 @@ const defaultTypes = {
   selected: false,
 };
 
-export const sherman: Character = {
+export const sherman: Omit<Character, 'key'> = {
   name: 'Sherman',
   image: 'Sherman',
   health: 240,

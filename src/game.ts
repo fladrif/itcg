@@ -2,7 +2,7 @@ import { Ctx, PlayerID } from 'boardgame.io';
 import lodash from 'lodash';
 
 import * as cards from './cards';
-import { Character, NonCharacter } from './card';
+import { instantiateCard, Character, NonCharacter } from './card';
 import {
   shuffleDeck,
   levelUp,
@@ -18,18 +18,18 @@ import { Stack } from './stack';
 
 // TODO: Decks need to clone objects, currently referenced
 const SAMPLE_DECK: NonCharacter[] = [
-  cards.slime,
-  cards.fairy,
-  cards.jrnecki,
-  cards.octopus,
-  cards.redsnail,
-  cards.wildboar,
-  cards.magicclaw,
-  cards.ribbonpig,
-  cards.darkaxestump,
-  cards.greenmushroom,
-  cards.orangemushroom,
-  cards.emeraldearrings,
+  instantiateCard(cards.slime),
+  instantiateCard(cards.fairy),
+  instantiateCard(cards.jrnecki),
+  instantiateCard(cards.octopus),
+  instantiateCard(cards.redsnail),
+  instantiateCard(cards.wildboar),
+  instantiateCard(cards.magicclaw),
+  instantiateCard(cards.ribbonpig),
+  instantiateCard(cards.darkaxestump),
+  instantiateCard(cards.greenmushroom),
+  instantiateCard(cards.orangemushroom),
+  instantiateCard(cards.emeraldearrings),
 ];
 
 interface Deck {
@@ -63,7 +63,7 @@ function preConfigSetup(): GameState {
 
   state.player['0'] = {
     deck: lodash(SAMPLE_DECK).shuffle().value(),
-    character: cards.sherman,
+    character: instantiateCard(cards.sherman),
     hand: [],
     learnedSkills: [],
     field: [],
@@ -75,7 +75,7 @@ function preConfigSetup(): GameState {
 
   state.player['1'] = {
     deck: lodash(SAMPLE_DECK).shuffle().value(),
-    character: cards.nixie,
+    character: instantiateCard(cards.nixie),
     hand: [],
     learnedSkills: [],
     field: [],
@@ -107,7 +107,7 @@ export function setup(_ctx: Ctx, setupData: SetupData): GameState {
   for (const player of setupData.players) {
     state.player[player.id] = {
       deck: player.deck.deck,
-      character: cards.sherman,
+      character: instantiateCard(cards.sherman),
       hand: [],
       learnedSkills: [],
       field: [],

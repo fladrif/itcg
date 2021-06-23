@@ -7,7 +7,7 @@ const defaultTypes = {
   selected: false,
 };
 
-export const redsnail: Monster = {
+export const redsnail: Omit<Monster, 'key'> = {
   name: 'Red Snail',
   image: 'RedSnail',
   level: 4,
@@ -18,7 +18,7 @@ export const redsnail: Monster = {
   ...defaultTypes,
 };
 
-export const orangemushroom: Monster = {
+export const orangemushroom: Omit<Monster, 'key'> = {
   name: 'Orange Mushroom',
   image: 'OrangeMushroom',
   level: 8,

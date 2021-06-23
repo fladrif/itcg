@@ -4,10 +4,16 @@ import { Selection } from './stack';
 import { filterSelections } from './target';
 import { Location } from './actions';
 
-import { redsnail, ribbonpig, slime, magicclaw } from './cards';
+import * as cards from './cards';
+import { instantiateCard } from './card';
 import * as fix from './target.fixtures';
 
 describe('filterSelections', () => {
+  const redsnail = instantiateCard(cards.redsnail);
+  const ribbonpig = instantiateCard(cards.ribbonpig);
+  const slime = instantiateCard(cards.slime);
+  const magicclaw = instantiateCard(cards.magicclaw);
+
   it('no overflow, finished ', () => {
     const complexSelection: Selection = {
       [Location.Hand]: [redsnail],

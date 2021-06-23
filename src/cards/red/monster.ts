@@ -7,7 +7,7 @@ const defaultTypes = {
   selected: false,
 };
 
-export const darkaxestump: Monster = {
+export const darkaxestump: Omit<Monster, 'key'> = {
   name: 'Dark Axe Stump',
   image: 'DarkAxeStump',
   level: 22,
@@ -18,7 +18,7 @@ export const darkaxestump: Monster = {
   ...defaultTypes,
 };
 
-export const jrnecki: Monster = {
+export const jrnecki: Omit<Monster, 'key'> = {
   name: 'Jr. Necki',
   image: 'JrNecki',
   level: 21,
@@ -29,7 +29,7 @@ export const jrnecki: Monster = {
   ...defaultTypes,
 };
 
-export const octopus: Monster = {
+export const octopus: Omit<Monster, 'key'> = {
   name: 'Octopus',
   image: 'Octopus',
   level: 12,

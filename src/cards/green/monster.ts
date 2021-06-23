@@ -7,7 +7,7 @@ const defaultTypes = {
   selected: false,
 };
 
-export const fairy: Monster = {
+export const fairy: Omit<Monster, 'key'> = {
   name: 'Fairy',
   image: 'Fairy',
   level: 30,

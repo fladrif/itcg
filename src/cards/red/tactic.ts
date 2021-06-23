@@ -7,7 +7,7 @@ const defaultTypes = {
   selected: false,
 };
 
-export const magicclaw: Tactic = {
+export const magicclaw: Omit<Tactic, 'key'> = {
   name: 'Magic Claw',
   image: 'MagicClaw',
   level: 20,
