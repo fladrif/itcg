@@ -1,8 +1,10 @@
 import React from 'react';
 
+import { PlayerState } from './game';
 import { Character, NonCharacter, CardTypes } from './card';
 import { Location } from './actions';
 import { cardImages, cardback } from './itcgCardImages';
+import { meetsSkillReq } from './utils';
 
 type Styles = keyof typeof styles;
 
@@ -10,6 +12,8 @@ interface CardProp {
   card: Character | NonCharacter;
   location: Location;
   move: (card: [Location, Character | NonCharacter], position?: number) => any;
+  playerstate?: PlayerState;
+  stage?: string;
   style?: Styles;
   skillPos?: number;
 }
@@ -49,6 +53,10 @@ const baseStyle: React.CSSProperties = {
   alignItems: 'center',
 };
 
+const shadeStyle: React.CSSProperties = {
+  filter: 'brightness(50%)',
+};
+
 const styles = {
   leveledCardStyle: {
     objectFit: 'cover',
@@ -73,18 +81,30 @@ export class ITCGCard extends React.Component<CardProp> {
       ? { ...style, ...selectedBorderMid }
       : card.skills[0].activated
       ? { ...style, ...activatedBorder }
+      : this.props.playerstate &&
+        this.props.stage === 'activate' &&
+        !meetsSkillReq(card.skills[0].requirements, this.props.playerstate)
+      ? { ...style, ...shadeStyle }
       : style;
 
     const skill2Style = card.selected
       ? { ...style, ...selectedBorderMid }
       : card.skills[1].activated
       ? { ...style, ...activatedBorder }
+      : this.props.playerstate &&
+        this.props.stage === 'activate' &&
+        !meetsSkillReq(card.skills[1].requirements, this.props.playerstate)
+      ? { ...style, ...shadeStyle }
       : style;
 
     const skill3Style = card.selected
       ? { ...style, ...selectedBorderBot }
       : card.skills[2].activated
       ? { ...style, ...activatedBorder }
+      : this.props.playerstate &&
+        this.props.stage === 'activate' &&
+        !meetsSkillReq(card.skills[2].requirements, this.props.playerstate)
+      ? { ...style, ...shadeStyle }
       : style;
 
     return (
@@ -118,10 +138,16 @@ export class ITCGCard extends React.Component<CardProp> {
   }
 
   getLevel(style: React.CSSProperties) {
-    const finalStyle = (this.props.card as NonCharacter).skill.activated
+    const card = this.props.card as NonCharacter;
+
+    const finalStyle = card.skill.activated
       ? { ...style, ...activatedBorder }
       : this.props.card.selected
       ? { ...style, ...selectedBorderTop, ...selectedBorderBot }
+      : this.props.playerstate &&
+        this.props.stage === 'activate' &&
+        !meetsSkillReq(card.skill.requirements, this.props.playerstate)
+      ? { ...style, ...shadeStyle }
       : style;
 
     return (

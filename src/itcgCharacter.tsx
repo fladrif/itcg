@@ -33,6 +33,8 @@ export class ITCGCharacter extends React.Component<CharacterProp> {
         card={card}
         move={move}
         skillPos={index + 3}
+        playerstate={this.props.playerState}
+        stage={this.props.stage}
       />
     ));
 
@@ -43,6 +45,8 @@ export class ITCGCharacter extends React.Component<CharacterProp> {
           location={this.props.currentPlayer ? Location.Character : Location.OppCharacter}
           card={this.props.playerState.character}
           move={move}
+          playerstate={this.props.playerState}
+          stage={this.props.stage}
         />
         {skillCards}
       </div>
