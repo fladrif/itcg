@@ -70,9 +70,16 @@ export interface Skill {
 
 export interface Ability {}
 
-export function instantiateCard<T extends Card>(card: Omit<T, 'key'>): T {
-  const randomKey = uuidv4().split('-')[0];
-  const key = `${card.name.replace(' ', '').toLowerCase()}-${randomKey}`;
+export function instantiateCard<T extends Card>(card: Omit<T, 'key'>, num?: number): T[] {
+  const name = card.name.replace(' ', '').toLowerCase();
+  const instantiatedCards = [];
 
-  return { ...(card as T), key };
+  num = !num || num < 0 ? 1 : num;
+  for (let i = 0; i < num; i++) {
+    const randomKey = uuidv4().split('-')[0];
+    const key = `${name}-${randomKey}`;
+    instantiatedCards.push({ ...(card as T), key });
+  }
+
+  return instantiatedCards;
 }

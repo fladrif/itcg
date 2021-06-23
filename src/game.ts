@@ -16,20 +16,19 @@ import {
 } from './moves';
 import { Stack } from './stack';
 
-// TODO: Decks need to clone objects, currently referenced
 const SAMPLE_DECK: NonCharacter[] = [
-  instantiateCard(cards.slime),
-  instantiateCard(cards.fairy),
-  instantiateCard(cards.jrnecki),
-  instantiateCard(cards.octopus),
-  instantiateCard(cards.redsnail),
-  instantiateCard(cards.wildboar),
-  instantiateCard(cards.magicclaw),
-  instantiateCard(cards.ribbonpig),
-  instantiateCard(cards.darkaxestump),
-  instantiateCard(cards.greenmushroom),
-  instantiateCard(cards.orangemushroom),
-  instantiateCard(cards.emeraldearrings),
+  ...instantiateCard(cards.slime),
+  ...instantiateCard(cards.fairy),
+  ...instantiateCard(cards.jrnecki),
+  ...instantiateCard(cards.octopus),
+  ...instantiateCard(cards.redsnail),
+  ...instantiateCard(cards.wildboar),
+  ...instantiateCard(cards.magicclaw),
+  ...instantiateCard(cards.ribbonpig),
+  ...instantiateCard(cards.darkaxestump),
+  ...instantiateCard(cards.greenmushroom),
+  ...instantiateCard(cards.orangemushroom),
+  ...instantiateCard(cards.emeraldearrings),
 ];
 
 interface Deck {
@@ -63,7 +62,7 @@ function preConfigSetup(): GameState {
 
   state.player['0'] = {
     deck: lodash(SAMPLE_DECK).shuffle().value(),
-    character: instantiateCard(cards.sherman),
+    character: instantiateCard(cards.sherman)[0],
     hand: [],
     learnedSkills: [],
     field: [],
@@ -75,7 +74,7 @@ function preConfigSetup(): GameState {
 
   state.player['1'] = {
     deck: lodash(SAMPLE_DECK).shuffle().value(),
-    character: instantiateCard(cards.nixie),
+    character: instantiateCard(cards.nixie)[0],
     hand: [],
     learnedSkills: [],
     field: [],
@@ -107,7 +106,7 @@ export function setup(_ctx: Ctx, setupData: SetupData): GameState {
   for (const player of setupData.players) {
     state.player[player.id] = {
       deck: player.deck.deck,
-      character: instantiateCard(cards.sherman),
+      character: instantiateCard(cards.sherman)[0],
       hand: [],
       learnedSkills: [],
       field: [],

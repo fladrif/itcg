@@ -9,10 +9,10 @@ import { instantiateCard } from './card';
 import * as fix from './target.fixtures';
 
 describe('filterSelections', () => {
-  const redsnail = instantiateCard(cards.redsnail);
-  const ribbonpig = instantiateCard(cards.ribbonpig);
-  const slime = instantiateCard(cards.slime);
-  const magicclaw = instantiateCard(cards.magicclaw);
+  const redsnail = instantiateCard(cards.redsnail)[0];
+  const ribbonpig = instantiateCard(cards.ribbonpig)[0];
+  const slime = instantiateCard(cards.slime)[0];
+  const magicclaw = instantiateCard(cards.magicclaw)[0];
 
   it('no overflow, finished ', () => {
     const complexSelection: Selection = {
