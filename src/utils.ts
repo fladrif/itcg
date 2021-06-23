@@ -1,11 +1,23 @@
 import { Ctx, PlayerID } from 'boardgame.io';
 
 import { GameState, PlayerState } from './game';
-import { Card, Character, NonCharacter, SkillRequirements } from './card';
+import { Card, CardClasses, Character, NonCharacter, SkillRequirements } from './card';
 import { Location } from './actions';
 
 export function meetsSkillReq(req: SkillRequirements, P: PlayerState): boolean {
   if (req.level > P.level) return false;
+
+  if (!req.class) return true;
+
+  for (const cardClass of Object.keys(req.class) as CardClasses[]) {
+    if (
+      req.class[cardClass] !== undefined &&
+      req.class[cardClass]! >
+        P.learnedSkills.filter((card) => card.class === cardClass).length
+    ) {
+      return false;
+    }
+  }
 
   return true;
 }

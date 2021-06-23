@@ -4,7 +4,7 @@ import { GameState } from './game';
 import { actions, Action, ActionOpts, ActionTargets, Location } from './actions';
 import { endActivateStage } from './hook';
 import { Skill, Character, NonCharacter } from './card';
-import { filterSelections } from './target';
+import { ensureFilter, filterSelections } from './target';
 import { deepCardComp, getLocation } from './utils';
 
 export type Selection = Partial<Record<Location, (Character | NonCharacter)[]>>;
@@ -126,6 +126,8 @@ export function selectCard(
 ) {
   if (!G.stack) return;
 
+  const playerState = G.player[ctx.currentPlayer];
+
   const cardLoc = card[0];
   const selCard = getLocation(G, ctx, card[0]).filter((c) => deepCardComp(c, card[1]))[0];
 
@@ -143,7 +145,7 @@ export function selectCard(
 
   // TODO: Confirm that target exists when allowing select
   const { selection, finished } = filterSelections(
-    curDecision.target!,
+    ensureFilter(curDecision.target!, playerState),
     JSON.parse(JSON.stringify(curDecision.selection)),
     [card[0], selCard]
   );

@@ -1,3 +1,4 @@
+import { PlayerState } from './game';
 import { ActionTargets, Location } from './actions';
 import { Character, NonCharacter } from './card';
 import { Selection } from './stack';
@@ -7,6 +8,15 @@ interface FilterResponse {
   selection: Selection;
   finished: boolean;
   usedRecent: boolean;
+}
+
+// TODO: Test current level works
+export function ensureFilter(filter: ActionTargets, state: PlayerState): ActionTargets {
+  if ('and' in filter) return { and: filter.and!.map((fil) => ensureFilter(fil, state)) };
+  if ('xor' in filter) return { and: filter.xor!.map((fil) => ensureFilter(fil, state)) };
+
+  const level = filter.level === 'CurrentLevel' ? state.level : filter.level;
+  return { ...filter, level };
 }
 
 export function filterSelections(
@@ -24,14 +34,8 @@ export function filterSelections(
     const filteredSelection = locSelection.reverse().filter((selection) => {
       if (filter.type && filter.type !== selection.type) return false;
       if (filter.class && !filter.class.includes(selection.class)) return false;
-      if (filter.level !== undefined) {
-        if (
-          filter.level !== 'CurrentLevel' &&
-          filter.level < (selection as NonCharacter).level
-        ) {
-          return false;
-        }
-        // TODO: Handle level == current level
+      if (filter.level !== undefined && filter.level !== 'CurrentLevel') {
+        if (filter.level < (selection as NonCharacter).level) return false;
       }
       return true;
     });

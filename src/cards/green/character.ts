@@ -13,7 +13,7 @@ export const nixie: Omit<Character, 'key'> = {
   health: 200,
   skills: [
     {
-      requirements: { level: 10 },
+      requirements: { level: 10, class: { [CardClasses.Bowman]: 1 } },
       action: 'damage',
       activated: false,
       opts: { damage: 10 },
@@ -38,9 +38,24 @@ export const nixie: Omit<Character, 'key'> = {
       activated: false,
     },
     {
-      requirements: { level: 30 },
-      action: 'quest',
+      requirements: { level: 50, class: { [CardClasses.Bowman]: 2 } },
+      action: 'damage',
       activated: false,
+      opts: { damage: 20 },
+      targets: {
+        xor: [
+          {
+            type: CardTypes.Monster,
+            quantity: 1,
+            location: Location.OppField,
+          },
+          {
+            type: CardTypes.Character,
+            quantity: 1,
+            location: Location.OppCharacter,
+          },
+        ],
+      },
     },
   ],
   ...defaultTypes,

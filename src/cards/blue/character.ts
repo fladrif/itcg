@@ -13,25 +13,40 @@ export const sherman: Omit<Character, 'key'> = {
   health: 240,
   skills: [
     {
-      requirements: { level: 10 },
+      requirements: { level: 10, class: { [CardClasses.Warrior]: 1 } },
+      action: 'damage',
+      activated: false,
+      opts: { damage: 10 },
+      targets: {
+        xor: [
+          {
+            type: CardTypes.Monster,
+            quantity: 1,
+            location: Location.OppField,
+          },
+          {
+            type: CardTypes.Character,
+            quantity: 1,
+            location: Location.OppCharacter,
+          },
+        ],
+      },
+    },
+    {
+      requirements: { level: 20 },
       action: 'quest',
       activated: false,
     },
     {
-      requirements: { level: 10 },
+      requirements: { level: 30, class: { [CardClasses.Warrior]: 2 } },
       action: 'spawn',
       activated: false,
       targets: {
-        level: 15,
+        level: 'CurrentLevel',
         type: CardTypes.Monster,
         quantity: 1,
         location: Location.Hand,
       },
-    },
-    {
-      requirements: { level: 30 },
-      action: 'quest',
-      activated: false,
     },
   ],
   ...defaultTypes,

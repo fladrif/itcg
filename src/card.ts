@@ -9,17 +9,17 @@ export const SAMPLE_SKILL: Skill = {
 };
 
 export enum CardTypes {
-  Tactic,
-  Item,
-  Monster,
-  Character,
+  Tactic = 'Tactic',
+  Item = 'Item',
+  Monster = 'Monster',
+  Character = 'Character',
 }
 
 export enum CardClasses {
-  Bowman,
-  Magician,
-  Thief,
-  Warrior,
+  Bowman = 'Bowman',
+  Magician = 'Magician',
+  Thief = 'Thief',
+  Warrior = 'Warrior',
 }
 
 export interface Card {
@@ -57,7 +57,7 @@ export interface Item extends NonCharacter {
 
 export interface SkillRequirements {
   level: number;
-  class?: Record<CardClasses, number>;
+  class?: Partial<Record<CardClasses, number>>;
 }
 
 export interface Skill {
