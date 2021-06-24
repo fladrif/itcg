@@ -1,6 +1,9 @@
 import { ActionTargets, Location } from './actions';
+import { PlayerState } from './game';
+import { instantiateCard } from './card';
+import { nixie } from './cards';
 
-export const complexFilterFinished: ActionTargets = {
+export const filterFinished: ActionTargets = {
   xor: [
     {
       level: 1,
@@ -24,7 +27,7 @@ export const complexFilterFinished: ActionTargets = {
   ],
 };
 
-export const complexFilterNotFinished: ActionTargets = {
+export const filterNotFinished: ActionTargets = {
   xor: [
     {
       level: 1,
@@ -48,7 +51,7 @@ export const complexFilterNotFinished: ActionTargets = {
   ],
 };
 
-export const complexFilterRecent: ActionTargets = {
+export const filterRecent: ActionTargets = {
   xor: [
     {
       level: 10,
@@ -61,4 +64,64 @@ export const complexFilterRecent: ActionTargets = {
       location: Location.Field,
     },
   ],
+};
+
+export const filterCurrentLevelBefore: ActionTargets = {
+  xor: [
+    {
+      level: 10,
+      quantity: 1,
+      location: Location.CharAction,
+    },
+    {
+      and: [
+        {
+          level: 'CurrentLevel',
+          quantity: 1,
+          location: Location.Hand,
+        },
+        {
+          level: 'CurrentLevel',
+          quantity: 1,
+          location: Location.Field,
+        },
+      ],
+    },
+  ],
+};
+
+export const filterCurrentLevelAfter: ActionTargets = {
+  xor: [
+    {
+      level: 10,
+      quantity: 1,
+      location: Location.CharAction,
+    },
+    {
+      and: [
+        {
+          level: 40,
+          quantity: 1,
+          location: Location.Hand,
+        },
+        {
+          level: 40,
+          quantity: 1,
+          location: Location.Field,
+        },
+      ],
+    },
+  ],
+};
+
+export const playerState: PlayerState = {
+  deck: [],
+  character: instantiateCard(nixie)[0],
+  hand: [],
+  learnedSkills: [],
+  field: [],
+  hp: 10,
+  maxHP: 10,
+  level: 40,
+  activationPos: 0,
 };

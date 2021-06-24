@@ -1,7 +1,7 @@
 import 'jest';
 
 import { Selection } from './stack';
-import { filterSelections } from './target';
+import { ensureFilter, filterSelections } from './target';
 import { Location } from './actions';
 
 import * as cards from './cards';
@@ -20,7 +20,7 @@ describe('filterSelections', () => {
       [Location.Field]: [ribbonpig],
     };
 
-    const response = filterSelections(fix.complexFilterFinished, complexSelection, [
+    const response = filterSelections(fix.filterFinished, complexSelection, [
       Location.Hand,
       ribbonpig,
     ]);
@@ -38,7 +38,7 @@ describe('filterSelections', () => {
       [Location.Field]: [ribbonpig],
     };
 
-    const response = filterSelections(fix.complexFilterNotFinished, complexSelection, [
+    const response = filterSelections(fix.filterNotFinished, complexSelection, [
       Location.Hand,
       slime,
     ]);
@@ -56,7 +56,7 @@ describe('filterSelections', () => {
       [Location.Field]: [slime, ribbonpig],
     };
 
-    const response = filterSelections(fix.complexFilterNotFinished, complexSelection, [
+    const response = filterSelections(fix.filterNotFinished, complexSelection, [
       Location.Hand,
       ribbonpig,
     ]);
@@ -74,7 +74,7 @@ describe('filterSelections', () => {
       [Location.Field]: [ribbonpig, slime],
     };
 
-    const response = filterSelections(fix.complexFilterFinished, complexSelection, [
+    const response = filterSelections(fix.filterFinished, complexSelection, [
       Location.Field,
       slime,
     ]);
@@ -92,7 +92,7 @@ describe('filterSelections', () => {
       [Location.Field]: [ribbonpig, slime],
     };
 
-    const response = filterSelections(fix.complexFilterRecent, complexSelection, [
+    const response = filterSelections(fix.filterRecent, complexSelection, [
       Location.Field,
       slime,
     ]);
@@ -110,7 +110,7 @@ describe('filterSelections', () => {
       [Location.Field]: [slime],
     };
 
-    const response = filterSelections(fix.complexFilterRecent, complexSelection, [
+    const response = filterSelections(fix.filterRecent, complexSelection, [
       Location.Field,
       slime,
     ]);
@@ -128,7 +128,7 @@ describe('filterSelections', () => {
       [Location.Field]: [],
     };
 
-    const response = filterSelections(fix.complexFilterRecent, complexSelection, [
+    const response = filterSelections(fix.filterRecent, complexSelection, [
       Location.Field,
       magicclaw,
     ]);
@@ -138,5 +138,13 @@ describe('filterSelections', () => {
       [Location.Field]: [],
     });
     expect(response).toHaveProperty('finished', false);
+  });
+});
+
+describe('ensure filter', () => {
+  it('set correct current level', () => {
+    const ensured = ensureFilter(fix.filterCurrentLevelBefore, fix.playerState);
+
+    expect(ensured).toEqual(fix.filterCurrentLevelAfter);
   });
 });
