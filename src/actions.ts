@@ -33,7 +33,7 @@ export interface TargetFilter {
   xor?: never;
 }
 
-interface AddActionTarget {
+interface AndActionTarget {
   and: ActionTargets[];
   xor?: never;
 }
@@ -42,7 +42,7 @@ interface XorActionTarget {
   and?: never;
 }
 
-export type ActionTargets = TargetFilter | AddActionTarget | XorActionTarget;
+export type ActionTargets = TargetFilter | AndActionTarget | XorActionTarget;
 
 export interface ActionOpts {
   damage?: number;
