@@ -1,13 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
+import App from './Lobby';
 import reportWebVitals from './reportWebVitals';
 
 ReactDOM.render(
   <React.StrictMode>
-    <App playerID="0" />
-    <App playerID="1" />
+    <App />
   </React.StrictMode>,
   document.getElementById('root')
 );
