@@ -2,7 +2,7 @@ import { Ctx, PlayerID } from 'boardgame.io';
 import lodash from 'lodash';
 
 import * as cards from './cards';
-import { instantiateCard, Character, NonCharacter } from './card';
+import { instantiateCard, isMonster, Monster, Character, NonCharacter } from './card';
 import {
   shuffleDeck,
   levelUp,
@@ -12,13 +12,14 @@ import {
   selectTarget,
   confirmSkill,
   declineSkill,
+  attack,
   noAttacks,
 } from './moves';
 import { Stack } from './stack';
 
 const SAMPLE_DECK: NonCharacter[] = [
   ...instantiateCard(cards.slime),
-  ...instantiateCard(cards.fairy),
+  ...instantiateCard(cards.fairy, 4),
   ...instantiateCard(cards.jrnecki),
   ...instantiateCard(cards.octopus),
   ...instantiateCard(cards.redsnail),
@@ -131,8 +132,12 @@ export const ITCG = {
   },
 
   turn: {
-    onBegin: (_G: GameState, ctx: Ctx) => {
+    onBegin: (G: GameState, ctx: Ctx) => {
       ctx.events!.setActivePlayers!({ currentPlayer: 'level' });
+      // TODO: Handle fierce here, or set it as hook
+      G.player[ctx.currentPlayer].field
+        .filter((card) => isMonster(card))
+        .map((card) => ((card as Monster).attacks = 1));
     },
     stages: {
       level: {
@@ -143,7 +148,7 @@ export const ITCG = {
         moves: { activateSkill, noActivate },
         next: 'attack',
       },
-      attack: { moves: { noAttacks } },
+      attack: { moves: { attack, noAttacks } },
       select: {
         moves: { selectTarget, confirmSkill, declineSkill },
       },

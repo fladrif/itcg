@@ -2,7 +2,7 @@ import { Ctx, PlayerID } from 'boardgame.io';
 import { INVALID_MOVE } from 'boardgame.io/core';
 
 import { GameState } from './game';
-import { NonCharacter, Character, Skill } from './card';
+import { NonCharacter, Character, CardTypes, isMonster, Monster, Skill } from './card';
 import { endLevelStage, endAttackStage } from './hook';
 import { resolveStack, buildStack, selectCard } from './stack';
 import { deepCardComp, getLocation, meetsSkillReq } from './utils';
@@ -71,7 +71,48 @@ export function activateSkill(
   player.activationPos = position + 1;
   skill.activated = true;
 
-  buildStack(G, ctx, skill, prevPos);
+  buildStack(G, ctx, skill, 'activate', prevPos);
+}
+
+export function attack(
+  G: GameState,
+  ctx: Ctx,
+  card: [Location, Character | NonCharacter],
+  _position?: number
+) {
+  const cardLoc = card[0];
+  const selCard = getLocation(G, ctx, cardLoc).filter((c) => deepCardComp(c, card[1]))[0];
+
+  if (cardLoc !== Location.Field || !isMonster(selCard) || selCard.attacks <= 0) {
+    return INVALID_MOVE;
+  }
+
+  const attackAction: Skill = {
+    requirements: {
+      level: 0,
+    },
+    action: 'attack',
+    activated: false,
+    targets: {
+      xor: [
+        {
+          location: Location.OppField,
+          type: CardTypes.Monster,
+          quantity: 1,
+        },
+        {
+          location: Location.OppCharacter,
+          type: CardTypes.Character,
+          quantity: 1,
+        },
+      ],
+    },
+    opts: {
+      attacker: selCard,
+    },
+  };
+
+  buildStack(G, ctx, attackAction, 'attack');
 }
 
 export function selectTarget(

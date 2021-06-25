@@ -45,6 +45,8 @@ export interface Monster extends NonCharacter {
   attack: number;
   health: number;
   ability: Ability;
+  attacks: number;
+  damage: number;
 }
 
 export interface Tactic extends NonCharacter {
@@ -82,4 +84,16 @@ export function instantiateCard<T extends Card>(card: Omit<T, 'key'>, num?: numb
   }
 
   return instantiatedCards;
+}
+
+export function isMonster(card: Character | NonCharacter): card is Monster {
+  if (card.type === CardTypes.Monster) return true;
+
+  return false;
+}
+
+export function isCharacter(card: Character | NonCharacter): card is Character {
+  if (card.type === CardTypes.Character) return true;
+
+  return false;
 }

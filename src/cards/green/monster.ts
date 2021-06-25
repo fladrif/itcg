@@ -5,6 +5,8 @@ const defaultTypes = {
   type: CardTypes.Monster,
   class: CardClasses.Bowman,
   selected: false,
+  attacks: 1,
+  damage: 0,
 };
 
 export const fairy: Omit<Monster, 'key'> = {

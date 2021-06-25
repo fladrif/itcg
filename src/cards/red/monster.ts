@@ -5,6 +5,8 @@ const defaultTypes = {
   type: CardTypes.Monster,
   class: CardClasses.Magician,
   selected: false,
+  attacks: 1,
+  damage: 0,
 };
 
 export const darkaxestump: Omit<Monster, 'key'> = {

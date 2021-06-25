@@ -24,7 +24,8 @@ export interface Decision {
 export interface Stack {
   decisions: Decision[];
   activeDecisions: Decision[];
-  prevActivatePos: number;
+  currentStage: string;
+  prevActivatePos?: number;
 }
 
 interface SetActiveStage {
@@ -42,8 +43,10 @@ function stage(stg: string, prev?: SetActiveStage): SetActiveStage {
   return stageOutput;
 }
 
-function setStages(ctx: Ctx, decisions: Decision[]) {
-  const loopbackStage = stage('activate');
+function setStages(G: GameState, ctx: Ctx, decisions: Decision[]) {
+  if (!G.stack) return;
+
+  const loopbackStage = stage(G.stack.currentStage);
   const otherStages = decisions.reduce((acc, decision) => {
     //TODO: Need to add modal option
     const stageName = !!decision.target
@@ -72,9 +75,9 @@ export function resolveStack(G: GameState, ctx: Ctx, confirmation?: boolean) {
     });
     resetSkillActivations(G, ctx);
 
-    G.stack = undefined;
+    if (stack.currentStage == 'activate') endActivateStage(G, ctx);
 
-    endActivateStage(G, ctx);
+    G.stack = undefined;
     return;
   }
 
@@ -86,11 +89,14 @@ export function resolveStack(G: GameState, ctx: Ctx, confirmation?: boolean) {
   } else if (confirmation == false) {
     pruneDecisions(G, ctx, stack.decisions);
     pruneDecisions(G, ctx, stack.activeDecisions);
-    G.player[ctx.currentPlayer].activationPos = stack.prevActivatePos;
-    resetSkillActivations(G, ctx);
 
+    if (stack.prevActivatePos !== undefined) {
+      G.player[ctx.currentPlayer].activationPos = stack.prevActivatePos;
+      resetSkillActivations(G, ctx);
+    }
+
+    setStages(G, ctx, []);
     G.stack = undefined;
-    setStages(ctx, []);
   }
 }
 
@@ -99,7 +105,8 @@ export function buildStack(
   G: GameState,
   ctx: Ctx,
   skill: Skill,
-  prevActivatePos: number
+  currentStage: string,
+  prevActivatePos?: number
 ) {
   const decision = {
     action: skill.action,
@@ -112,10 +119,11 @@ export function buildStack(
   G.stack = {
     decisions: [],
     activeDecisions: [decision],
+    currentStage,
     prevActivatePos,
   };
 
-  setStages(ctx, G.stack.activeDecisions);
+  setStages(G, ctx, G.stack.activeDecisions);
   resolveStack(G, ctx);
 }
 

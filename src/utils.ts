@@ -25,7 +25,7 @@ export function meetsSkillReq(req: SkillRequirements, P: PlayerState): boolean {
 export function rmCard(G: GameState, ctx: Ctx, card: Card, location: Location) {
   const loc = getLocation(G, ctx, location);
 
-  const index = loc.findIndex((searchCard) => searchCard.name === card.name);
+  const index = loc.findIndex((searchCard) => deepCardComp(searchCard, card));
 
   // TODO: Handle in more graceful way, or expect error/verification to occur before
   if (index === -1) return;
@@ -84,7 +84,11 @@ export function getLocation(
 }
 
 export function deepCardComp(first: Card, second: Card): boolean {
-  return first.name == second.name && first.selected == second.selected;
+  return (
+    first.name == second.name &&
+    first.selected == second.selected &&
+    first.key == second.key
+  );
   // if (first.name !== second.name) return false;
   // if (first.selected !== second.selected) return false;
   //

@@ -88,6 +88,9 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
 
     const opponentID = getOpponentID(this.props.G, this.props.ctx, playerID);
     const opponentState = this.props.G.player[opponentID];
+    const opponentStage = this.props.ctx.activePlayers
+      ? this.props.ctx.activePlayers[opponentID]
+      : '';
 
     return (
       <div style={containerStyle}>
@@ -120,12 +123,16 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
           <ITCGField
             state={opponentState}
             location={Location.OppField}
+            stage={opponentStage}
             select={this.props.moves.selectTarget}
+            attack={this.props.moves.attack}
           />
           <ITCGField
             state={playerState}
             location={Location.Field}
             select={this.props.moves.selectTarget}
+            stage={currentPlayerStage}
+            attack={this.props.moves.attack}
           />
         </div>
         <div style={statStyle}>
