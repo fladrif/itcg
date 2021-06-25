@@ -1,7 +1,7 @@
 import React from 'react';
 import { v4 } from 'uuid';
 
-import { ITCGCard, ITCGCardback } from './itcgCard';
+import { Styles, ITCGCard, ITCGCardback } from './itcgCard';
 import { PlayerState } from './game';
 import { Location } from './actions';
 
@@ -25,9 +25,19 @@ export class ITCGHand extends React.Component<HandProp> {
     const playerLine = [];
 
     for (const card of this.props.playerState.hand) {
+      const styles: Styles[] = [];
+      const skill: Styles[] = [];
+
+      if (card.selected) {
+        styles.push('selectedBorderTop');
+        skill.push('selectedBorderBot');
+      }
+
       playerLine.push(
         <ITCGCard
           move={this.props.stage === 'select' ? this.props.select! : this.props.level!}
+          styles={styles}
+          skill0={skill}
           location={Location.Hand}
           card={card}
           key={card.key}

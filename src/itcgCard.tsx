@@ -1,51 +1,23 @@
 import React from 'react';
 
-import { PlayerState } from './game';
 import { Character, NonCharacter, CardTypes } from './card';
 import { Location } from './actions';
 import { cardImages, cardback } from './itcgCardImages';
-import { meetsSkillReq } from './utils';
-
-type Styles = keyof typeof styles;
 
 interface CardProp {
   card: Character | NonCharacter;
   location: Location;
   move: (card: [Location, Character | NonCharacter], position?: number) => any;
-  playerstate?: PlayerState;
-  stage?: string;
-  style?: Styles;
+  styles: Styles[];
+  skill0?: Styles[];
+  skill1?: Styles[];
+  skill2?: Styles[];
   skillPos?: number;
 }
 
 interface CardbackProp {
-  style?: Styles;
+  styles?: Styles;
 }
-
-const activatedBorder: React.CSSProperties = {
-  border: 'solid',
-  borderColor: 'yellow',
-};
-
-const selectedBorderTop: React.CSSProperties = {
-  borderTop: 'solid',
-  borderLeft: 'solid',
-  borderRight: 'solid',
-  borderColor: 'red',
-};
-
-const selectedBorderMid: React.CSSProperties = {
-  borderLeft: 'solid',
-  borderRight: 'solid',
-  borderColor: 'red',
-};
-
-const selectedBorderBot: React.CSSProperties = {
-  borderLeft: 'solid',
-  borderRight: 'solid',
-  borderBottom: 'solid',
-  borderColor: 'red',
-};
 
 const baseStyle: React.CSSProperties = {
   display: 'flex',
@@ -53,83 +25,99 @@ const baseStyle: React.CSSProperties = {
   alignItems: 'center',
 };
 
+const activatedBorderTop: React.CSSProperties = {
+  borderTop: 'solid yellow',
+  borderLeft: 'solid yellow',
+  borderRight: 'solid yellow',
+};
+
+const activatedBorderBot: React.CSSProperties = {
+  borderLeft: 'solid yellow',
+  borderRight: 'solid yellow',
+  borderBottom: 'solid yellow',
+};
+
+const selectedBorderTop: React.CSSProperties = {
+  borderTop: 'solid red',
+  borderLeft: 'solid red',
+  borderRight: 'solid red',
+};
+
+const selectedBorderMid: React.CSSProperties = {
+  borderLeft: 'solid red',
+  borderRight: 'solid red',
+};
+
+const selectedBorderBot: React.CSSProperties = {
+  borderLeft: 'solid red',
+  borderRight: 'solid red',
+  borderBottom: 'solid red',
+};
+
 const shadeStyle: React.CSSProperties = {
   filter: 'brightness(50%)',
 };
 
-const styles = {
-  leveledCardStyle: {
-    objectFit: 'cover',
-    objectPosition: '0 100%',
-    width: '80%',
-  } as React.CSSProperties,
-  characterStyle: {
-    width: '80%',
-  } as React.CSSProperties,
-  miniCardStyle: {
-    width: '79px',
-  } as React.CSSProperties,
+const defaultStyle: React.CSSProperties = {
+  width: '6vw',
 };
 
+const leveledCardStyle: React.CSSProperties = {
+  objectFit: 'cover',
+  objectPosition: '0 100%',
+  width: '80%',
+};
+
+const characterStyle: React.CSSProperties = {
+  width: '80%',
+};
+
+const styles = {
+  selectedBorderTop,
+  selectedBorderMid,
+  selectedBorderBot,
+  activatedBorderTop,
+  activatedBorderBot,
+  leveledCardStyle,
+  characterStyle,
+  shadeStyle,
+};
+
+export type Styles = keyof typeof styles;
+
 export class ITCGCard extends React.Component<CardProp> {
+  static defaultProps = {
+    styles: [],
+  };
+
   getCharacter(style: React.CSSProperties) {
-    const card = this.props.card as Character;
-
-    const topStyle = card.selected ? { ...style, ...selectedBorderTop } : style;
-
-    const skill1Style = card.selected
-      ? { ...style, ...selectedBorderMid }
-      : card.skills[0].activated
-      ? { ...style, ...activatedBorder }
-      : this.props.playerstate &&
-        this.props.stage === 'activate' &&
-        !meetsSkillReq(card.skills[0].requirements, this.props.playerstate)
-      ? { ...style, ...shadeStyle }
-      : style;
-
-    const skill2Style = card.selected
-      ? { ...style, ...selectedBorderMid }
-      : card.skills[1].activated
-      ? { ...style, ...activatedBorder }
-      : this.props.playerstate &&
-        this.props.stage === 'activate' &&
-        !meetsSkillReq(card.skills[1].requirements, this.props.playerstate)
-      ? { ...style, ...shadeStyle }
-      : style;
-
-    const skill3Style = card.selected
-      ? { ...style, ...selectedBorderBot }
-      : card.skills[2].activated
-      ? { ...style, ...activatedBorder }
-      : this.props.playerstate &&
-        this.props.stage === 'activate' &&
-        !meetsSkillReq(card.skills[2].requirements, this.props.playerstate)
-      ? { ...style, ...shadeStyle }
-      : style;
+    const skill0Style = this.props.skill0 ? getStyles(this.props.skill0) : defaultStyle;
+    const skill1Style = this.props.skill1 ? getStyles(this.props.skill1) : defaultStyle;
+    const skill2Style = this.props.skill2 ? getStyles(this.props.skill2) : defaultStyle;
 
     return (
       <div style={baseStyle}>
         <img
-          style={topStyle}
+          style={style}
           onClick={() => this.props.move([this.props.location, this.props.card])}
           src={cardImages[this.props.card.image].top}
           alt={this.props.card.name}
         />
         <img
           onClick={() => this.props.move([this.props.location, this.props.card], 0)}
-          style={skill1Style}
+          style={skill0Style}
           src={cardImages[this.props.card.image].skill}
           alt={this.props.card.name}
         />
         <img
           onClick={() => this.props.move([this.props.location, this.props.card], 1)}
-          style={skill2Style}
+          style={skill1Style}
           src={cardImages[this.props.card.image].skill2}
           alt={this.props.card.name}
         />
         <img
           onClick={() => this.props.move([this.props.location, this.props.card], 2)}
-          style={skill3Style}
+          style={skill2Style}
           src={cardImages[this.props.card.image].skill3}
           alt={this.props.card.name}
         />
@@ -138,22 +126,10 @@ export class ITCGCard extends React.Component<CardProp> {
   }
 
   getLevel(style: React.CSSProperties) {
-    const card = this.props.card as NonCharacter;
-
-    const finalStyle = card.skill.activated
-      ? { ...style, ...activatedBorder }
-      : this.props.card.selected
-      ? { ...style, ...selectedBorderTop, ...selectedBorderBot }
-      : this.props.playerstate &&
-        this.props.stage === 'activate' &&
-        !meetsSkillReq(card.skill.requirements, this.props.playerstate)
-      ? { ...style, ...shadeStyle }
-      : style;
-
     return (
       <div style={baseStyle}>
         <img
-          style={finalStyle}
+          style={style}
           onClick={() =>
             this.props.move([this.props.location, this.props.card], this.props.skillPos)
           }
@@ -165,24 +141,16 @@ export class ITCGCard extends React.Component<CardProp> {
   }
 
   getCard(style: React.CSSProperties) {
-    const topStyle = this.props.card.selected
-      ? { ...style, ...selectedBorderTop }
-      : style;
-
-    const botStyle = this.props.card.selected
-      ? { ...style, ...selectedBorderBot }
-      : style;
-
     return (
       <div style={baseStyle}>
         <img
-          style={topStyle}
+          style={style}
           onClick={() => this.props.move([this.props.location, this.props.card])}
           src={cardImages[this.props.card.image].top}
           alt={this.props.card.name}
         />
         <img
-          style={botStyle}
+          style={getStyles(this.props.skill0 ? this.props.skill0 : [])}
           onClick={() => this.props.move([this.props.location, this.props.card], 0)}
           src={cardImages[this.props.card.image].skill}
           alt={this.props.card.name}
@@ -192,26 +160,40 @@ export class ITCGCard extends React.Component<CardProp> {
   }
 
   render() {
-    const style = this.props.style ?? 'miniCardStyle';
+    const style = this.props.styles ? getStyles(this.props.styles) : defaultStyle;
 
     const isCharacter = this.props.card.type === CardTypes.Character;
-    const isLevelCard = this.props.style === 'leveledCardStyle';
+    const isLevelCard = this.props.styles.includes('leveledCardStyle');
 
-    if (isLevelCard) return this.getLevel(styles[style]);
-    if (isCharacter) return this.getCharacter(styles[style]);
+    if (isLevelCard) return this.getLevel(style);
+    if (isCharacter) return this.getCharacter(style);
 
-    return this.getCard(styles[style]);
+    return this.getCard(style);
   }
 }
 
 export class ITCGCardback extends React.Component<CardbackProp> {
   render() {
-    const style = this.props.style ?? 'miniCardStyle';
+    const style = defaultStyle;
 
     return (
       <div style={baseStyle}>
-        <img style={styles[style]} alt="cardback" src={cardback} />{' '}
+        <img style={style} alt="cardback" src={cardback} />
       </div>
     );
   }
+}
+
+function getStyles(styles: Styles[]): React.CSSProperties {
+  return styles.reduce(
+    (acc, sty) => ({
+      ...acc,
+      ...getStyle(sty),
+    }),
+    defaultStyle
+  );
+}
+
+function getStyle(style: Styles): React.CSSProperties {
+  return styles[style];
 }

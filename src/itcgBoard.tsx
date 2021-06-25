@@ -77,20 +77,21 @@ const oppCharStyle: React.CSSProperties = {
 
 export class ITCGBoard extends React.Component<BoardProps<GameState>> {
   render() {
+    const stack = this.props.G.stack;
+
     const playerID = this.props.playerID!;
     const playerState = this.props.G.player[playerID];
     const currentPlayerStage = this.props.ctx.activePlayers
       ? this.props.ctx.activePlayers[playerID]
       : '';
-    const curDecisionFinished = this.props.G.stack
-      ? this.props.G.stack.activeDecisions[0].finished
-      : false;
 
     const opponentID = getOpponentID(this.props.G, this.props.ctx, playerID);
     const opponentState = this.props.G.player[opponentID];
     const opponentStage = this.props.ctx.activePlayers
       ? this.props.ctx.activePlayers[opponentID]
       : '';
+
+    const curDecisionFinished = stack ? stack.activeDecisions[0].finished : false;
 
     return (
       <div style={containerStyle}>
@@ -126,6 +127,7 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
             stage={opponentStage}
             select={this.props.moves.selectTarget}
             attack={this.props.moves.attack}
+            attacker={stack?.activeDecisions[0].opts?.attacker}
           />
           <ITCGField
             state={playerState}
@@ -133,6 +135,7 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
             select={this.props.moves.selectTarget}
             stage={currentPlayerStage}
             attack={this.props.moves.attack}
+            attacker={stack?.activeDecisions[0].opts?.attacker}
           />
         </div>
         <div style={statStyle}>
