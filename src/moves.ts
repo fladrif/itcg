@@ -2,7 +2,7 @@ import { Ctx, PlayerID } from 'boardgame.io';
 import { INVALID_MOVE } from 'boardgame.io/core';
 
 import { GameState } from './game';
-import { NonCharacter, Character, CardTypes, isMonster, Monster, Skill } from './card';
+import { NonCharacter, Character, CardTypes, isMonster, Skill } from './card';
 import { endLevelStage, endAttackStage } from './hook';
 import { resolveStack, buildStack, selectCard } from './stack';
 import { deepCardComp, getLocation, meetsSkillReq } from './utils';
