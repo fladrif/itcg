@@ -37,7 +37,14 @@ export const octopus: Omit<Monster, 'key'> = {
   level: 12,
   attack: 10,
   health: 10,
-  skill: SAMPLE_SKILL,
+  skill: {
+    action: 'quest',
+    requirements: {
+      level: 0,
+      turn: -1,
+    },
+    activated: false,
+  },
   ability: {},
   ...defaultTypes,
 };

@@ -34,8 +34,16 @@ export function levelUp(
   // TODO: Handle in more graceful way
   if (handIndex === -1) return INVALID_MOVE;
 
+  const turn = selCard.skill.requirements.turn !== undefined ? ctx.turn : undefined;
+
   player.hand.splice(handIndex, 1);
-  player.learnedSkills.push(selCard);
+  player.learnedSkills.push({
+    ...selCard,
+    skill: {
+      ...selCard.skill,
+      requirements: { ...selCard.skill.requirements, turn },
+    },
+  });
 
   player.level += 10;
   player.hp += 20;
@@ -63,7 +71,7 @@ export function activateSkill(
 
   const skill = 'skills' in selCard ? selCard.skills[position] : selCard.skill;
 
-  if (!meetsSkillReq(skill.requirements, player)) {
+  if (!meetsSkillReq(skill.requirements, player, ctx.turn)) {
     return INVALID_MOVE;
   }
 

@@ -4,7 +4,13 @@ import { GameState, PlayerState } from './game';
 import { Card, CardClasses, Character, NonCharacter, SkillRequirements } from './card';
 import { Location } from './actions';
 
-export function meetsSkillReq(req: SkillRequirements, P: PlayerState): boolean {
+export function meetsSkillReq(
+  req: SkillRequirements,
+  P: PlayerState,
+  turn: number
+): boolean {
+  if (req.turn !== undefined) return req.turn === turn;
+
   if (req.level > P.level) return false;
 
   if (!req.class) return true;

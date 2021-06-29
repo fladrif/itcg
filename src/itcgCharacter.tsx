@@ -10,6 +10,7 @@ export interface CharacterProp {
   playerState: PlayerState;
   currentPlayer: boolean;
   stage: string;
+  turn: number;
   activate: () => any;
   select: () => any;
 }
@@ -37,7 +38,7 @@ export class ITCGCharacter extends React.Component<CharacterProp> {
       } else if (
         this.props.playerState &&
         this.props.stage === 'activate' &&
-        !meetsSkillReq(card.skill.requirements, this.props.playerState)
+        !meetsSkillReq(card.skill.requirements, this.props.playerState, this.props.turn)
       ) {
         levelStyles.push('shadeStyle');
       }
@@ -74,7 +75,7 @@ export class ITCGCharacter extends React.Component<CharacterProp> {
         skillStyle[idx].push('activatedBorderTop', 'activatedBorderBot');
       if (
         this.props.stage === 'activate' &&
-        !meetsSkillReq(skill.requirements, this.props.playerState)
+        !meetsSkillReq(skill.requirements, this.props.playerState, this.props.turn)
       ) {
         skillStyle[idx].push('shadeStyle');
       }

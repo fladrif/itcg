@@ -124,6 +124,7 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
             stage={
               this.props.ctx.activePlayers ? this.props.ctx.activePlayers[opponentID] : ''
             }
+            turn={this.props.ctx.turn}
             activate={this.props.moves.activateSkill}
             select={this.props.moves.selectTarget}
           />
@@ -169,6 +170,7 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
             playerState={playerState}
             currentPlayer={true}
             stage={currentPlayerStage}
+            turn={this.props.ctx.turn}
             activate={this.props.moves.activateSkill}
             select={this.props.moves.selectTarget}
           />
