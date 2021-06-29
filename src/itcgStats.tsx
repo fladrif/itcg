@@ -51,11 +51,6 @@ const currentStageModalStyle: React.CSSProperties = {
 
 export class ITCGStats extends React.Component<StatProp> {
   render() {
-    const denom =
-      this.props.playerState.hp > this.props.playerState.maxHP
-        ? this.props.playerState.hp
-        : this.props.playerState.maxHP;
-
     const confModal = (
       <div style={confirmationStyle}>
         <button onClick={() => this.props.confMove!()}>confirm</button>
@@ -101,7 +96,10 @@ export class ITCGStats extends React.Component<StatProp> {
     return (
       <div style={statStyle}>
         <div style={levelStyle}>Lv: {this.props.playerState.level}</div>
-        <ProgressBar hp={this.props.playerState.hp} maxHP={denom} />
+        <ProgressBar
+          hp={this.props.playerState.hp}
+          maxHP={this.props.playerState.maxHP}
+        />
         {modal}
       </div>
     );

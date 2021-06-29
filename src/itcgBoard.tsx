@@ -11,6 +11,7 @@ import { ITCGCharacter } from './itcgCharacter';
 import { ITCGHand } from './itcgHand';
 import { ITCGInteractive } from './itcgInteractive';
 import { ITCGField } from './itcgField';
+import { ITCGGameOver } from './itcgGameOver';
 
 const containerStyle: React.CSSProperties = {
   display: 'grid',
@@ -20,6 +21,13 @@ const containerStyle: React.CSSProperties = {
   gridTemplateAreas:
     "'od oh oh' 'ochar ostat char' 'ochar m char' 'ochar stat char' 'h h d'",
   backgroundColor: '#A3FFB4',
+};
+
+const gameOverStyle: React.CSSProperties = {
+  zIndex: 3,
+  position: 'absolute',
+  marginLeft: '25%',
+  marginTop: '15%',
 };
 
 const handStyle: React.CSSProperties = {
@@ -93,8 +101,15 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
 
     const curDecisionFinished = stack ? stack.activeDecisions[0].finished : false;
 
+    const gameOver = this.props.ctx.gameover ? (
+      <div style={gameOverStyle}>
+        <ITCGGameOver won={this.props.ctx.gameover.winner === playerID} />
+      </div>
+    ) : null;
+
     return (
       <div style={containerStyle}>
+        {gameOver}
         <div style={oppInteractiveStyle}>
           <ITCGCardback />
         </div>

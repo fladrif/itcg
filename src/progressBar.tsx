@@ -25,7 +25,8 @@ const defaultFillerStyle: React.CSSProperties = {
 
 export class ProgressBar extends React.Component<ProgressBarProps> {
   render() {
-    const percentage = (this.props.hp / this.props.maxHP) * 100;
+    const denom = this.props.hp > this.props.maxHP ? this.props.hp : this.props.maxHP;
+    const percentage = (this.props.hp / denom) * 100;
     const fillerStyle = {
       width: `${percentage}%`,
       ...defaultFillerStyle,

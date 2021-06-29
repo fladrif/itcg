@@ -16,6 +16,7 @@ import {
   noAttacks,
 } from './moves';
 import { Stack } from './stack';
+import { getOpponentID } from './utils';
 
 const SAMPLE_DECK: NonCharacter[] = [
   ...instantiateCard(cards.slime),
@@ -156,6 +157,16 @@ export const ITCG = {
         moves: { confirmSkill, declineSkill },
       },
     },
+  },
+
+  endIf: (G: GameState, ctx: Ctx) => {
+    const opponentID = getOpponentID(G, ctx);
+
+    if (G.player[ctx.currentPlayer].hp <= 0) {
+      return { winner: opponentID };
+    } else if (G.player[opponentID].hp <= 0) {
+      return { winner: ctx.currentPlayer };
+    }
   },
 
   minPlayers: 2,
