@@ -18,8 +18,8 @@ interface FieldProps {
 const fieldStyle: React.CSSProperties = {
   display: 'flex',
   flex: '1',
-  flexDirection: 'row',
   alignItems: 'center',
+  maxHeight: '50%',
 };
 
 export class ITCGField extends React.Component<FieldProps> {

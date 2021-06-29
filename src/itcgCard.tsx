@@ -9,9 +9,9 @@ interface CardProp {
   location: Location;
   move: (card: [Location, Character | NonCharacter], position?: number) => any;
   styles: Styles[];
-  skill0?: Styles[];
-  skill1?: Styles[];
-  skill2?: Styles[];
+  skill0: Styles[];
+  skill1: Styles[];
+  skill2: Styles[];
   skillPos?: number;
 }
 
@@ -72,6 +72,11 @@ const characterStyle: React.CSSProperties = {
   width: '80%',
 };
 
+const expandStyle: React.CSSProperties = {
+  width: '100%',
+  zIndex: 1,
+};
+
 const styles = {
   selectedBorderTop,
   selectedBorderMid,
@@ -81,6 +86,7 @@ const styles = {
   leveledCardStyle,
   characterStyle,
   shadeStyle,
+  expandStyle,
 };
 
 export type Styles = keyof typeof styles;
@@ -88,12 +94,29 @@ export type Styles = keyof typeof styles;
 export class ITCGCard extends React.Component<CardProp> {
   static defaultProps = {
     styles: [],
+    skill0: [],
+    skill1: [],
+    skill2: [],
   };
 
+  expandCard() {
+    this.props.styles.push('expandStyle');
+    this.props.skill0.push('expandStyle');
+    this.forceUpdate();
+  }
+
+  unexpandCard() {
+    const index = this.props.styles.findIndex((style) => style === 'expandStyle');
+    if (index !== -1) this.props.styles.splice(index, 1);
+    const skillInd = this.props.skill0.findIndex((style) => style === 'expandStyle');
+    if (skillInd !== -1) this.props.skill0.splice(skillInd, 1);
+    this.forceUpdate();
+  }
+
   getCharacter(style: React.CSSProperties) {
-    const skill0Style = this.props.skill0 ? getStyles(this.props.skill0) : defaultStyle;
-    const skill1Style = this.props.skill1 ? getStyles(this.props.skill1) : defaultStyle;
-    const skill2Style = this.props.skill2 ? getStyles(this.props.skill2) : defaultStyle;
+    const skill0Style = getStyles(this.props.skill0);
+    const skill1Style = getStyles(this.props.skill1);
+    const skill2Style = getStyles(this.props.skill2);
 
     return (
       <div style={baseStyle}>
@@ -148,12 +171,16 @@ export class ITCGCard extends React.Component<CardProp> {
           onClick={() => this.props.move([this.props.location, this.props.card])}
           src={cardImages[this.props.card.image].top}
           alt={this.props.card.name}
+          onMouseEnter={() => this.expandCard()}
+          onMouseLeave={() => this.unexpandCard()}
         />
         <img
-          style={getStyles(this.props.skill0 ? this.props.skill0 : [])}
+          style={getStyles(this.props.skill0)}
           onClick={() => this.props.move([this.props.location, this.props.card], 0)}
           src={cardImages[this.props.card.image].skill}
           alt={this.props.card.name}
+          onMouseEnter={() => this.expandCard()}
+          onMouseLeave={() => this.unexpandCard()}
         />
       </div>
     );

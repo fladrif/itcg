@@ -34,6 +34,7 @@ const handStyle: React.CSSProperties = {
   display: 'flex',
   backgroundColor: '#36896e',
   gridArea: 'h',
+  alignItems: 'flex-end',
 };
 
 const mapStyle: React.CSSProperties = {

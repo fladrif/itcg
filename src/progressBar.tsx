@@ -18,7 +18,7 @@ const defaultFillerStyle: React.CSSProperties = {
   display: 'flex',
   alignItems: 'center',
   background: 'linear-gradient(#ff0000, 80%, #5c5c5c)',
-  transition: 'width .2s ease-in',
+  transition: 'width .4s ease-in',
   height: '100%',
   whiteSpace: 'nowrap',
 };
@@ -35,7 +35,7 @@ export class ProgressBar extends React.Component<ProgressBarProps> {
     return (
       <div style={barStyle}>
         <div style={fillerStyle}>
-          HP:[{this.props.hp}/{this.props.maxHP}]
+          HP:[<b>{this.props.hp}</b>/{this.props.maxHP}]
         </div>
       </div>
     );
