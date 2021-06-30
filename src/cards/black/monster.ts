@@ -1,5 +1,5 @@
 import { Monster, CardTypes, CardClasses } from '../../card';
-import { SAMPLE_SKILL } from '../../card';
+import { Location } from '../../actions';
 
 const defaultTypes = {
   type: CardTypes.Monster,
@@ -15,7 +15,22 @@ export const redsnail: Omit<Monster, 'key'> = {
   level: 4,
   attack: 10,
   health: 20,
-  skill: SAMPLE_SKILL,
+  skill: {
+    action: 'play',
+    activated: false,
+    requirements: {
+      level: 70,
+      class: {
+        [CardClasses.Thief]: 2,
+      },
+    },
+    targets: {
+      level: 90,
+      type: CardTypes.Monster,
+      location: Location.Hand,
+      quantity: 1,
+    },
+  },
   ability: {},
   ...defaultTypes,
 };
@@ -26,7 +41,22 @@ export const orangemushroom: Omit<Monster, 'key'> = {
   level: 8,
   attack: 30,
   health: 10,
-  skill: SAMPLE_SKILL,
+  skill: {
+    action: 'play',
+    activated: false,
+    requirements: {
+      level: 30,
+      class: {
+        [CardClasses.Thief]: 1,
+      },
+    },
+    targets: {
+      level: 40,
+      type: CardTypes.Item,
+      location: Location.Hand,
+      quantity: 1,
+    },
+  },
   ability: {},
   ...defaultTypes,
 };

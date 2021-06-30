@@ -1,5 +1,5 @@
 import { Monster, CardTypes, CardClasses } from '../../card';
-import { SAMPLE_SKILL } from '../../card';
+import { Location } from '../../actions';
 
 const defaultTypes = {
   type: CardTypes.Monster,
@@ -15,7 +15,32 @@ export const wildboar: Omit<Monster, 'key'> = {
   level: 25,
   attack: 30,
   health: 30,
-  skill: SAMPLE_SKILL,
+  skill: {
+    action: 'play',
+    activated: false,
+    requirements: {
+      level: 40,
+      class: {
+        [CardClasses.Warrior]: 2,
+      },
+    },
+    targets: {
+      xor: [
+        {
+          level: 30,
+          type: CardTypes.Tactic,
+          location: Location.Hand,
+          quantity: 1,
+        },
+        {
+          level: 30,
+          type: CardTypes.Item,
+          location: Location.Hand,
+          quantity: 1,
+        },
+      ],
+    },
+  },
   ability: {},
   ...defaultTypes,
 };
@@ -26,7 +51,19 @@ export const slime: Omit<Monster, 'key'> = {
   level: 6,
   attack: 10,
   health: 10,
-  skill: SAMPLE_SKILL,
+  skill: {
+    action: 'refresh',
+    activated: false,
+    requirements: {
+      level: 40,
+      class: {
+        [CardClasses.Warrior]: 2,
+      },
+    },
+    opts: {
+      lifegain: 10,
+    },
+  },
   ability: {},
   ...defaultTypes,
 };
@@ -37,7 +74,32 @@ export const greenmushroom: Omit<Monster, 'key'> = {
   level: 15,
   attack: 10,
   health: 40,
-  skill: SAMPLE_SKILL,
+  skill: {
+    action: 'play',
+    activated: false,
+    requirements: {
+      level: 70,
+      class: {
+        [CardClasses.Warrior]: 2,
+      },
+    },
+    targets: {
+      xor: [
+        {
+          level: 90,
+          type: CardTypes.Monster,
+          location: Location.Hand,
+          quantity: 1,
+        },
+        {
+          level: 90,
+          type: CardTypes.Item,
+          location: Location.Hand,
+          quantity: 1,
+        },
+      ],
+    },
+  },
   ability: {},
   ...defaultTypes,
 };
@@ -48,7 +110,22 @@ export const ribbonpig: Omit<Monster, 'key'> = {
   level: 10,
   attack: 20,
   health: 20,
-  skill: SAMPLE_SKILL,
+  skill: {
+    action: 'play',
+    activated: false,
+    requirements: {
+      level: 10,
+      class: {
+        [CardClasses.Warrior]: 1,
+      },
+    },
+    targets: {
+      level: 20,
+      type: CardTypes.Monster,
+      location: Location.Hand,
+      quantity: 1,
+    },
+  },
   ability: {},
   ...defaultTypes,
 };

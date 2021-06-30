@@ -56,6 +56,7 @@ export interface ActionOpts {
   damage?: number;
   selection?: Selection;
   attacker?: Monster;
+  lifegain?: number;
 }
 
 export function checkReqs(reqs: SkillRequirements): (G: GameState, ctx: Ctx) => boolean {
@@ -74,7 +75,7 @@ function quest(G: GameState, ctx: Ctx, _opts: ActionOpts): any {
   player.hand.push(player.deck.shift()!);
 }
 
-function spawn(G: GameState, ctx: Ctx, opts: ActionOpts): any {
+function play(G: GameState, ctx: Ctx, opts: ActionOpts): any {
   if (!G.stack) return;
   if (!opts.selection || !opts.selection[Location.Hand]) return;
 
@@ -83,6 +84,13 @@ function spawn(G: GameState, ctx: Ctx, opts: ActionOpts): any {
     player.field.push(card as NonCharacter);
     rmCard(G, ctx, card, Location.Hand);
   });
+}
+
+function refresh(G: GameState, ctx: Ctx, opts: ActionOpts): any {
+  if (!G.stack) return;
+  if (opts.lifegain == undefined) return;
+
+  G.player[ctx.currentPlayer].hp += opts.lifegain;
 }
 
 function damage(G: GameState, ctx: Ctx, opts: ActionOpts): any {
@@ -131,8 +139,9 @@ function attack(G: GameState, ctx: Ctx, opts: ActionOpts): any {
 
 export const actions = {
   quest,
-  spawn,
+  play,
   damage,
+  refresh,
   attack,
 };
 

@@ -1,5 +1,5 @@
 import { Monster, CardTypes, CardClasses } from '../../card';
-import { SAMPLE_SKILL } from '../../card';
+import { Location } from '../../actions';
 
 const defaultTypes = {
   type: CardTypes.Monster,
@@ -15,7 +15,22 @@ export const fairy: Omit<Monster, 'key'> = {
   level: 30,
   attack: 30,
   health: 20,
-  skill: SAMPLE_SKILL,
+  skill: {
+    action: 'play',
+    activated: false,
+    requirements: {
+      level: 30,
+      class: {
+        [CardClasses.Bowman]: 2,
+      },
+    },
+    targets: {
+      level: 30,
+      type: CardTypes.Monster,
+      location: Location.Hand,
+      quantity: 1,
+    },
+  },
   ability: {},
   ...defaultTypes,
 };

@@ -39,7 +39,7 @@ export const sherman: Omit<Character, 'key'> = {
     },
     {
       requirements: { level: 30, class: { [CardClasses.Warrior]: 2 } },
-      action: 'spawn',
+      action: 'play',
       activated: false,
       targets: {
         level: 'CurrentLevel',

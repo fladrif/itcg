@@ -1,5 +1,5 @@
 import { Monster, CardTypes, CardClasses } from '../../card';
-import { SAMPLE_SKILL } from '../../card';
+import { Location } from '../../actions';
 
 const defaultTypes = {
   type: CardTypes.Monster,
@@ -15,7 +15,22 @@ export const darkaxestump: Omit<Monster, 'key'> = {
   level: 22,
   attack: 10,
   health: 40,
-  skill: SAMPLE_SKILL,
+  skill: {
+    action: 'play',
+    activated: false,
+    requirements: {
+      level: 40,
+      class: {
+        [CardClasses.Magician]: 2,
+      },
+    },
+    targets: {
+      level: 40,
+      type: CardTypes.Monster,
+      location: Location.Hand,
+      quantity: 1,
+    },
+  },
   ability: {},
   ...defaultTypes,
 };
@@ -26,7 +41,22 @@ export const jrnecki: Omit<Monster, 'key'> = {
   level: 21,
   attack: 30,
   health: 30,
-  skill: SAMPLE_SKILL,
+  skill: {
+    action: 'play',
+    activated: false,
+    requirements: {
+      level: 30,
+      class: {
+        [CardClasses.Magician]: 1,
+      },
+    },
+    targets: {
+      level: 30,
+      type: CardTypes.Monster,
+      location: Location.Hand,
+      quantity: 1,
+    },
+  },
   ability: {},
   ...defaultTypes,
 };
