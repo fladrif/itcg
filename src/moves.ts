@@ -5,7 +5,7 @@ import { GameState } from './game';
 import { NonCharacter, Character, CardTypes, isMonster, Skill } from './card';
 import { endLevelStage, endAttackStage } from './hook';
 import { resolveStack, buildStack, selectCard } from './stack';
-import { deepCardComp, getLocation, meetsSkillReq } from './utils';
+import { deepCardComp, getLocation, meetsSkillReq, rmCard } from './utils';
 import { Location } from './actions';
 
 export function shuffleDeck(G: GameState, ctx: Ctx, id: PlayerID) {
@@ -23,20 +23,13 @@ export function levelUp(
 ) {
   const player = G.player[ctx.currentPlayer];
   const cardLoc = card[0];
-  const selCard = card[1];
+  const selCard = getLocation(G, ctx, cardLoc).filter((c) => deepCardComp(c, card[1]))[0];
 
   if (cardLoc !== Location.Hand || 'skills' in selCard) return INVALID_MOVE;
-
-  const handIndex = player.hand.findIndex(
-    (searchCard) => searchCard.name === selCard.name
-  );
-
-  // TODO: Handle in more graceful way
-  if (handIndex === -1) return INVALID_MOVE;
+  rmCard(G, ctx, selCard, cardLoc);
 
   const turn = selCard.skill.requirements.turn !== undefined ? ctx.turn : undefined;
 
-  player.hand.splice(handIndex, 1);
   player.learnedSkills.push({
     ...selCard,
     skill: {
@@ -45,6 +38,7 @@ export function levelUp(
     },
   });
 
+  // TODO: May want to consider handling level elsewhere, or determining it jit, (consider destroying cards under character)
   player.level += 10;
   player.hp += 20;
 
