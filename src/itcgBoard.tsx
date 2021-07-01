@@ -144,7 +144,7 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
             stage={opponentStage}
             select={this.props.moves.selectTarget}
             attack={this.props.moves.attack}
-            attacker={stack?.activeDecisions[0].opts?.attacker}
+            source={stack?.activeDecisions[0].opts?.source}
           />
           <ITCGField
             state={playerState}
@@ -152,7 +152,7 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
             select={this.props.moves.selectTarget}
             stage={currentPlayerStage}
             attack={this.props.moves.attack}
-            attacker={stack?.activeDecisions[0].opts?.attacker}
+            source={stack?.activeDecisions[0].opts?.source}
           />
         </div>
         <div style={statStyle}>

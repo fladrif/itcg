@@ -65,28 +65,30 @@ export function resolveStack(G: GameState, ctx: Ctx, confirmation?: boolean) {
   const stack = G.stack;
   if (!stack) return;
 
-  if (stack.activeDecisions.length == 0) {
-    stack.decisions.map((decision) => {
-      actions[decision.action](G, ctx, {
-        ...decision.opts,
-        selection: decision.selection,
-      });
-      pruneSelection(G, ctx, decision.selection, decision.selection);
-    });
-    resetSkillActivations(G, ctx);
+  if (stack.activeDecisions.length <= 0) {
+    if (stack.decisions.length <= 0) {
+      resetSkillActivations(G, ctx);
 
-    if (stack.currentStage == 'activate') endActivateStage(G, ctx);
+      if (stack.currentStage == 'activate') endActivateStage(G, ctx);
 
-    G.stack = undefined;
+      G.stack = undefined;
+      return;
+    }
+
+    const decision = stack.decisions.shift()!;
+
+    actions[decision.action](G, ctx, { ...decision.opts, selection: decision.selection });
+    pruneSelection(G, ctx, decision.selection, decision.selection); // Removes select tag from card (ui)
+    resolveStack(G, ctx);
     return;
   }
 
-  if (!isDecisionNeeded(stack.activeDecisions[0]) || confirmation) {
+  if (confirmation !== false && !isDecisionNeeded(stack.activeDecisions[0])) {
     stack.decisions.push(stack.activeDecisions.shift()!);
     ctx.events!.endStage!();
 
     resolveStack(G, ctx);
-  } else if (confirmation == false) {
+  } else if (confirmation === false) {
     pruneDecisions(G, ctx, stack.decisions);
     pruneDecisions(G, ctx, stack.activeDecisions);
 
@@ -125,6 +127,13 @@ export function buildStack(
 
   setStages(G, ctx, G.stack.activeDecisions);
   resolveStack(G, ctx);
+}
+
+export function insertStack(G: GameState, ctx: Ctx, decision: Decision) {
+  if (!G.stack) return;
+
+  G.stack.activeDecisions.push(decision);
+  setStages(G, ctx, G.stack.activeDecisions);
 }
 
 export function selectCard(
@@ -208,9 +217,9 @@ function pruneCardsGame(
 }
 
 function isDecisionNeeded(dec: Decision): boolean {
-  if (dec.target !== undefined) return true;
-  if (dec.choice !== undefined) return true;
-  if (dec.modal !== undefined) return true;
+  if (dec.target !== undefined && dec.finished === false) return true;
+  if (dec.choice !== undefined && dec.finished === false) return true;
+  if (dec.modal !== undefined && dec.finished === false) return true;
 
   return false;
 }

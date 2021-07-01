@@ -93,7 +93,7 @@ export function attack(
     requirements: {
       level: 0,
     },
-    action: 'attack',
+    action: 'damage',
     activated: false,
     targets: {
       xor: [
@@ -110,7 +110,8 @@ export function attack(
       ],
     },
     opts: {
-      attacker: selCard,
+      source: selCard,
+      damage: selCard.attack,
     },
   };
 
@@ -132,7 +133,7 @@ export function confirmSkill(
   _card: [Location, Character | NonCharacter],
   _position?: number
 ) {
-  resolveStack(G, ctx, true);
+  resolveStack(G, ctx);
 }
 
 export function declineSkill(

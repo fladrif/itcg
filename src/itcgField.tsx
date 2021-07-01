@@ -3,7 +3,7 @@ import React from 'react';
 import { Styles, ITCGCard } from './itcgCard';
 import { PlayerState } from './game';
 import { Location } from './actions';
-import { isMonster, Monster } from './card';
+import { isMonster, Monster, Character, NonCharacter } from './card';
 import { deepCardComp } from './utils';
 
 interface FieldProps {
@@ -12,7 +12,7 @@ interface FieldProps {
   stage: string;
   select: () => any;
   attack: () => any;
-  attacker?: Monster;
+  source?: Character | NonCharacter;
 }
 
 const fieldStyle: React.CSSProperties = {
@@ -25,12 +25,11 @@ const fieldStyle: React.CSSProperties = {
 export class ITCGField extends React.Component<FieldProps> {
   render() {
     const field = this.props.state.field.map((card) => {
-      const isAttack = isMonster(card) && this.props.stage == 'attack';
-
-      const move = isAttack ? this.props.attack : this.props.select;
-
       const styles: Styles[] = [];
       const skill: Styles[] = [];
+
+      const isAttack = isMonster(card) && this.props.stage == 'attack';
+      const move = isAttack ? this.props.attack : this.props.select;
 
       if (card.selected) {
         styles.push('selectedBorderTop');
@@ -38,7 +37,7 @@ export class ITCGField extends React.Component<FieldProps> {
       } else if (isAttack && (card as Monster).attacks <= 0) {
         styles.push('shadeStyle');
         skill.push('shadeStyle');
-      } else if (this.props.attacker && deepCardComp(card, this.props.attacker)) {
+      } else if (this.props.source && deepCardComp(card, this.props.source)) {
         styles.push('activatedBorderTop');
         skill.push('activatedBorderBot');
       }

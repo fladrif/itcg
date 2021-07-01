@@ -8,10 +8,11 @@ import {
   Monster,
   isMonster,
   isCharacter,
+  Character,
   NonCharacter,
   SkillRequirements,
 } from './card';
-import { Selection } from './stack';
+import { insertStack, Decision, Selection } from './stack';
 import { deepCardComp, getLocation, getOpponentState, rmCard } from './utils';
 
 export enum Location {
@@ -52,10 +53,11 @@ interface XorActionTarget {
 
 export type ActionTargets = TargetFilter | AndActionTarget | XorActionTarget;
 
+// TODO: split into opts for ea action, wrap up into ActionOpts
 export interface ActionOpts {
   damage?: number;
   selection?: Selection;
-  attacker?: Monster;
+  source?: Character | NonCharacter;
   lifegain?: number;
 }
 
@@ -93,9 +95,32 @@ function refresh(G: GameState, ctx: Ctx, opts: ActionOpts): any {
   G.player[ctx.currentPlayer].hp += opts.lifegain;
 }
 
+function destroy(G: GameState, ctx: Ctx, opts: ActionOpts): any {
+  if (!G.stack) return;
+  if (!opts.selection) return;
+
+  const player = G.player[ctx.currentPlayer];
+
+  for (const location of Object.keys(opts.selection) as Location[]) {
+    const cardsSel = opts.selection[location]!; // .map((card) => {
+    getLocation(G, ctx, location)
+      .filter((c) => !!cardsSel.find((cs) => deepCardComp(c, cs)))
+      .map((card) => {
+        player.discard.push(card as NonCharacter);
+        rmCard(G, ctx, card, location);
+      });
+  }
+}
+
 function damage(G: GameState, ctx: Ctx, opts: ActionOpts): any {
   if (!G.stack) return;
   if (!opts.selection || opts.damage == undefined) return;
+
+  if (G.stack.currentStage == 'attack') {
+    (getLocation(G, ctx, Location.Field).filter((c) =>
+      deepCardComp(c, opts.source!)
+    )[0] as Monster).attacks--;
+  }
 
   for (const location of Object.keys(opts.selection) as Location[]) {
     opts.selection[location]!.map((card) => {
@@ -105,44 +130,37 @@ function damage(G: GameState, ctx: Ctx, opts: ActionOpts): any {
       if (isMonster(card)) {
         getLocation(G, ctx, location)
           .filter((c) => deepCardComp(c, card))
-          .map((card) => ((card as Monster).damage += opts.damage!));
-      }
-    });
-  }
-}
-
-function attack(G: GameState, ctx: Ctx, opts: ActionOpts): any {
-  if (!G.stack) return;
-  if (!opts.selection || !opts.attacker) return;
-
-  const attacker = getLocation(G, ctx, Location.Field).filter((c) =>
-    deepCardComp(c, opts.attacker!)
-  )[0] as Monster;
-
-  for (const location of Object.keys(opts.selection) as Location[]) {
-    opts.selection[location]!.map((card) => {
-      if (isCharacter(card)) {
-        getOpponentState(G, ctx).hp -= attacker.attack;
-      }
-      if (isMonster(card)) {
-        getLocation(G, ctx, location)
-          .filter((c) => deepCardComp(c, card))
           .map((card) => {
-            (card as Monster).damage += attacker.attack;
+            const monster = card as Monster;
+
+            monster.damage += opts.damage!;
+
+            if (monster.damage >= monster.health) {
+              const decision: Decision = {
+                action: 'destroy',
+                opts: {
+                  source: opts.source,
+                },
+                selection: {
+                  [location]: [monster],
+                },
+                finished: true,
+              };
+
+              insertStack(G, ctx, decision);
+            }
           });
       }
     });
   }
-
-  attacker.attacks--;
 }
 
 export const actions = {
   quest,
   play,
   damage,
+  destroy,
   refresh,
-  attack,
 };
 
 export type Action = keyof typeof actions;

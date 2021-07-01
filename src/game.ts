@@ -44,6 +44,7 @@ export interface PlayerState {
   hand: NonCharacter[];
   learnedSkills: NonCharacter[];
   field: NonCharacter[];
+  discard: NonCharacter[];
   hp: number;
   maxHP: number;
   level: number;
@@ -68,6 +69,7 @@ function preConfigSetup(): GameState {
     hand: [],
     learnedSkills: [],
     field: [],
+    discard: [],
     hp: cards.sherman.health,
     maxHP: cards.sherman.health,
     level: 0,
@@ -80,6 +82,7 @@ function preConfigSetup(): GameState {
     hand: [],
     learnedSkills: [],
     field: [],
+    discard: [],
     hp: cards.nixie.health,
     maxHP: cards.nixie.health,
     level: 0,
@@ -112,6 +115,7 @@ export function setup(_ctx: Ctx, setupData: SetupData): GameState {
       hand: [],
       learnedSkills: [],
       field: [],
+      discard: [],
       hp: cards.sherman.health,
       maxHP: cards.sherman.health,
       level: 0,
@@ -138,7 +142,10 @@ export const ITCG = {
       // TODO: Handle fierce here, or set it as hook
       G.player[ctx.currentPlayer].field
         .filter((card) => isMonster(card))
-        .map((card) => ((card as Monster).attacks = 1));
+        .map((card) => {
+          (card as Monster).attacks = 1;
+          (card as Monster).damage = 0;
+        });
     },
     stages: {
       level: {
