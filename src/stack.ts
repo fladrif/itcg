@@ -75,7 +75,7 @@ export function resolveStack(G: GameState, ctx: Ctx, confirmation?: boolean) {
       return;
     }
 
-    const decision = stack.decisions.shift()!;
+    const decision = stack.decisions.pop()!;
 
     actions[decision.action](G, ctx, { ...decision.opts, selection: decision.selection });
     pruneSelection(G, ctx, decision.selection, decision.selection); // Removes select tag from card (ui)
