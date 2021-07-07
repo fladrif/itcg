@@ -11,7 +11,7 @@
     "@types/react": "^17.0.5",
     "@types/react-dom": "^17.0.3",
     "bgio-postgres": "^1.0.13",
-    "boardgame.io": "^0.44.4",
+    "boardgame.io": "^0.43.2",
     "lodash": "^4.17.21",
     "node-persist": "^3.1.0",
     "react": "^17.0.2",

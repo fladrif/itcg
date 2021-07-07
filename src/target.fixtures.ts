@@ -120,7 +120,6 @@ export const playerState: PlayerState = {
   hand: [],
   learnedSkills: [],
   field: [],
-  discard: [],
   hp: 10,
   maxHP: 10,
   level: 40,
