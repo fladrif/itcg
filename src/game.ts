@@ -16,6 +16,7 @@ import {
   noAttacks,
 } from './moves';
 import { Stack } from './stack';
+import { Trigger } from './trigger';
 import { getOpponentID } from './utils';
 
 const SAMPLE_DECK: NonCharacter[] = [
@@ -58,10 +59,11 @@ export interface SetupData {
 export interface GameState {
   player: Record<PlayerID, PlayerState>;
   stack?: Stack;
+  trigger: Trigger[];
 }
 
 function preConfigSetup(): GameState {
-  const state = { player: {} } as GameState;
+  const state: GameState = { player: {}, trigger: [] };
 
   state.player['0'] = {
     deck: lodash(SAMPLE_DECK).shuffle().value(),
@@ -106,6 +108,7 @@ function preConfigSetup(): GameState {
 export function setup(_ctx: Ctx, setupData: SetupData): GameState {
   const state: GameState = {
     player: {},
+    trigger: [],
   };
 
   for (const player of setupData.players) {

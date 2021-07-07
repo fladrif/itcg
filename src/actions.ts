@@ -13,7 +13,14 @@ import {
   SkillRequirements,
 } from './card';
 import { insertStack, Decision, Selection } from './stack';
-import { deepCardComp, getLocation, getOpponentState, rmCard } from './utils';
+import {
+  deepCardComp,
+  getLocation,
+  getOpponentState,
+  getOpponentID,
+  getRandomKey,
+  rmCard,
+} from './utils';
 
 export enum Location {
   Field = 'Field',
@@ -57,6 +64,7 @@ export type ActionTargets = TargetFilter | AndActionTarget | XorActionTarget;
 export interface ActionOpts {
   damage?: number;
   selection?: Selection;
+  decision?: string;
   source?: Character | NonCharacter;
   lifegain?: number;
 }
@@ -145,6 +153,7 @@ function damage(G: GameState, ctx: Ctx, opts: ActionOpts): any {
                   [location]: [monster],
                 },
                 finished: true,
+                key: getRandomKey(),
               };
 
               insertStack(G, ctx, decision);
@@ -155,12 +164,28 @@ function damage(G: GameState, ctx: Ctx, opts: ActionOpts): any {
   }
 }
 
+function shield(G: GameState, ctx: Ctx, opts: ActionOpts): any {
+  if (!G.stack || !opts.decision) return;
+
+  const decision = G.stack.decisions.filter((dec) => dec.key === opts.decision)[0];
+  if (!decision || !decision.opts || !decision.opts.damage) return;
+
+  // TODO: ensure getOpponentID of current player is correct, probably better to check decision's target and calculate # of monsters of player being targeted
+  const numMonsters = G.player[getOpponentID(G, ctx)].field.filter((card) =>
+    isMonster(card)
+  ).length;
+
+  decision.opts.damage -= numMonsters * 10;
+  if (decision.opts.damage < 0) decision.opts.damage = 0;
+}
+
 export const actions = {
-  quest,
-  play,
   damage,
   destroy,
+  play,
+  quest,
   refresh,
+  shield,
 };
 
 export type Action = keyof typeof actions;

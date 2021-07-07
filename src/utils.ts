@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from 'uuid';
 import { Ctx, PlayerID } from 'boardgame.io';
 
 import { GameState, PlayerState } from './game';
@@ -99,4 +100,8 @@ export function deepCardComp(first: Card, second: Card): boolean {
   // if (first.selected !== second.selected) return false;
   //
   // return true;
+}
+
+export function getRandomKey(): string {
+  return uuidv4().split('-')[0];
 }

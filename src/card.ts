@@ -1,6 +1,5 @@
-import { v4 as uuidv4 } from 'uuid';
-
 import { Action, ActionOpts, ActionTargets } from './actions';
+import { getRandomKey } from './utils';
 
 export const SAMPLE_SKILL: Skill = {
   requirements: { level: 100 },
@@ -79,7 +78,7 @@ export function instantiateCard<T extends Card>(card: Omit<T, 'key'>, num?: numb
 
   num = !num || num < 0 ? 1 : num;
   for (let i = 0; i < num; i++) {
-    const randomKey = uuidv4().split('-')[0];
+    const randomKey = getRandomKey();
     const key = `${name}-${randomKey}`;
     instantiatedCards.push({ ...(card as T), key });
   }

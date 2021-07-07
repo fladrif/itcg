@@ -5,14 +5,17 @@ import { actions, Action, ActionOpts, ActionTargets, Location } from './actions'
 import { endActivateStage } from './hook';
 import { Skill, Character, NonCharacter } from './card';
 import { ensureFilter, filterSelections } from './target';
-import { deepCardComp, getLocation } from './utils';
+import { stackTriggers } from './trigger';
+import { deepCardComp, getLocation, getRandomKey } from './utils';
 
+// TODO: Handle choice/modal selections as well
 export type Selection = Partial<Record<Location, (Character | NonCharacter)[]>>;
 
 export interface Decision {
   action: Action;
   selection: Selection;
   finished: boolean;
+  key: string;
   opts?: ActionOpts;
   target?: ActionTargets;
   choice?: boolean;
@@ -20,11 +23,11 @@ export interface Decision {
   modal?: boolean;
 }
 
-// TODO: Genericize targets for actionable interrupts
 export interface Stack {
   decisions: Decision[];
   activeDecisions: Decision[];
   currentStage: string;
+  decisionTriggers: Record<string, string[]>;
   prevActivatePos?: number;
 }
 
@@ -75,15 +78,23 @@ export function resolveStack(G: GameState, ctx: Ctx, confirmation?: boolean) {
       return;
     }
 
+    const nextDecision = stack.decisions[stack.decisions.length - 1];
+    const didAddTrigger = stackTriggers(G, ctx, nextDecision, 'Before');
+
+    if (didAddTrigger) {
+      resolveStack(G, ctx);
+      return;
+    }
+
     const decision = stack.decisions.pop()!;
 
     actions[decision.action](G, ctx, { ...decision.opts, selection: decision.selection });
+
+    stackTriggers(G, ctx, decision, 'After');
+
     pruneSelection(G, ctx, decision.selection, decision.selection); // Removes select tag from card (ui)
     resolveStack(G, ctx);
-    return;
-  }
-
-  if (confirmation !== false && !isDecisionNeeded(stack.activeDecisions[0])) {
+  } else if (confirmation !== false && !isDecisionNeeded(stack.activeDecisions[0])) {
     stack.decisions.push(stack.activeDecisions.shift()!);
     ctx.events!.endStage!();
 
@@ -102,7 +113,6 @@ export function resolveStack(G: GameState, ctx: Ctx, confirmation?: boolean) {
   }
 }
 
-// TODO: check for or accept hooks
 export function buildStack(
   G: GameState,
   ctx: Ctx,
@@ -110,17 +120,19 @@ export function buildStack(
   currentStage: string,
   prevActivatePos?: number
 ) {
-  const decision = {
+  const decision: Decision = {
     action: skill.action,
     opts: skill.opts,
     target: skill.targets,
     selection: {},
     finished: false,
+    key: getRandomKey(),
   };
 
   G.stack = {
     decisions: [],
     activeDecisions: [decision],
+    decisionTriggers: { [decision.key]: [] },
     currentStage,
     prevActivatePos,
   };
@@ -133,6 +145,7 @@ export function insertStack(G: GameState, ctx: Ctx, decision: Decision) {
   if (!G.stack) return;
 
   G.stack.activeDecisions.push(decision);
+  G.stack.decisionTriggers[decision.key] = [];
   setStages(G, ctx, G.stack.activeDecisions);
 }
 
