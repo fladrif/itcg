@@ -138,27 +138,7 @@ function damage(G: GameState, ctx: Ctx, opts: ActionOpts): any {
       if (isMonster(card)) {
         getLocation(G, ctx, location)
           .filter((c) => deepCardComp(c, card))
-          .map((card) => {
-            const monster = card as Monster;
-
-            monster.damage += opts.damage!;
-
-            if (monster.damage >= monster.health) {
-              const decision: Decision = {
-                action: 'destroy',
-                opts: {
-                  source: opts.source,
-                },
-                selection: {
-                  [location]: [monster],
-                },
-                finished: true,
-                key: getRandomKey(),
-              };
-
-              insertStack(G, ctx, decision);
-            }
-          });
+          .map((card) => ((card as Monster).damage += opts.damage!));
       }
     });
   }

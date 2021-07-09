@@ -1,10 +1,9 @@
 import { Ctx } from 'boardgame.io';
 
-import { Action, Location } from './actions';
 import { Card } from './card';
 import { GameState } from './game';
 import { insertStack, Decision } from './stack';
-import { getRandomKey } from './utils';
+import { shieldTrigger, dmgDestroyTrigger } from './triggerList';
 
 export type TriggerOwner = Card | 'Global';
 export type TriggerPrepostion = 'Before' | 'After';
@@ -20,6 +19,8 @@ export interface Trigger {
   ) => boolean;
   createDecision: (G: GameState, ctx: Ctx, decision: Decision) => Decision[];
 }
+
+const triggerList = [shieldTrigger, dmgDestroyTrigger];
 
 export function stackTriggers(
   G: GameState,
@@ -44,42 +45,15 @@ function getTriggers(
   decision: Decision,
   prep: TriggerPrepostion
 ): Decision[] {
-  // TODO: search list of triggers, filter
-  if (!ShieldTrigger.shouldTrigger(G, ctx, decision, prep)) return [];
+  const triggerDecisions: Decision[] = [];
 
-  G.stack!.decisionTriggers[decision.key].push(ShieldTrigger.name);
+  for (const trigger of triggerList) {
+    if (trigger.shouldTrigger(G, ctx, decision, prep)) {
+      G.stack!.decisionTriggers[decision.key].push(trigger.name);
 
-  return ShieldTrigger.createDecision(G, ctx, decision);
-}
-
-// TODO: Currently triggers on the entire damage decision, should split damage decision into constituent parts so shield triggers only on character damage (for damage decisions that affect characters and monsters)
-export const ShieldTrigger: Trigger = {
-  owner: 'Global',
-  name: 'shield',
-  shouldTrigger: (G, _ctx, decision, prep) => {
-    if (
-      !G.stack!.decisionTriggers[decision.key].includes('shield') &&
-      prep === 'Before' &&
-      decision.action === 'damage' &&
-      (!!decision.selection[Location.Character] ||
-        !!decision.selection[Location.OppCharacter])
-    ) {
-      return true;
+      triggerDecisions.push(...trigger.createDecision(G, ctx, decision));
     }
+  }
 
-    return false;
-  },
-  createDecision: (_G, _ctx, decision) => {
-    const newDec: Decision = {
-      action: 'shield',
-      selection: {},
-      finished: false,
-      key: getRandomKey(),
-      opts: {
-        decision: decision.key,
-      },
-    };
-
-    return [newDec];
-  },
-};
+  return triggerDecisions;
+}
