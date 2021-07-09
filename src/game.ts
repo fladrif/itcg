@@ -95,7 +95,9 @@ function preConfigSetup(): GameState {
   state.player['0'].hand.push(state.player['0'].deck.pop()!);
   state.player['0'].hand.push(state.player['0'].deck.pop()!);
   state.player['0'].hand.push(state.player['0'].deck.pop()!);
+  state.player['0'].hand.push(state.player['0'].deck.pop()!);
 
+  state.player['1'].hand.push(state.player['1'].deck.pop()!);
   state.player['1'].hand.push(state.player['1'].deck.pop()!);
   state.player['1'].hand.push(state.player['1'].deck.pop()!);
   state.player['1'].hand.push(state.player['1'].deck.pop()!);
