@@ -38,7 +38,12 @@ export class ITCGCharacter extends React.Component<CharacterProp> {
       } else if (
         this.props.playerState &&
         this.props.stage === 'activate' &&
-        !meetsSkillReq(card.skill.requirements, this.props.playerState, this.props.turn)
+        (!meetsSkillReq(
+          card.skill.requirements,
+          this.props.playerState,
+          this.props.turn
+        ) ||
+          this.props.playerState.activationPos > index + 3)
       ) {
         levelStyles.push('shadeStyle');
       }
@@ -75,7 +80,8 @@ export class ITCGCharacter extends React.Component<CharacterProp> {
         skillStyle[idx].push('activatedBorderTop', 'activatedBorderBot');
       if (
         this.props.stage === 'activate' &&
-        !meetsSkillReq(skill.requirements, this.props.playerState, this.props.turn)
+        (!meetsSkillReq(skill.requirements, this.props.playerState, this.props.turn) ||
+          this.props.playerState.activationPos > idx)
       ) {
         skillStyle[idx].push('shadeStyle');
       }
