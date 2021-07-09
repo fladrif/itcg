@@ -58,6 +58,17 @@ export function getOpponentState(G: GameState, ctx: Ctx): PlayerState {
   return G.player[getOpponentID(G, ctx)];
 }
 
+export function getLocationCard(
+  G: GameState,
+  ctx: Ctx,
+  location: Location,
+  card: Character | NonCharacter
+): Character | NonCharacter {
+  const cards = getLocation(G, ctx, location).filter((c) => deepCardComp(c, card));
+
+  return cards[0];
+}
+
 export function getLocation(
   G: GameState,
   ctx: Ctx,

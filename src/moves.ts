@@ -21,27 +21,25 @@ export function levelUp(
   card: [Location, Character | NonCharacter],
   _position?: number
 ) {
-  const player = G.player[ctx.currentPlayer];
   const cardLoc = card[0];
-  const selCard = getLocation(G, ctx, cardLoc).filter((c) => deepCardComp(c, card[1]))[0];
+  const selCard = card[1];
 
   if (cardLoc !== Location.Hand || 'skills' in selCard) return INVALID_MOVE;
-  rmCard(G, ctx, selCard, cardLoc);
 
-  const turn = selCard.skill.requirements.turn !== undefined ? ctx.turn : undefined;
-
-  player.learnedSkills.push({
-    ...selCard,
-    skill: {
-      ...selCard.skill,
-      requirements: { ...selCard.skill.requirements, turn },
+  const levelAction: Skill = {
+    requirements: {
+      level: 0,
     },
-  });
+    opts: {
+      selection: {
+        [cardLoc]: [selCard],
+      },
+    },
+    action: 'level',
+    activated: false,
+  };
 
-  // TODO: May want to consider handling level elsewhere, or determining it jit, (consider destroying cards under character)
-  player.level += 10;
-  player.hp += 20;
-
+  buildStack(G, ctx, levelAction, 'level');
   endLevelStage(G, ctx);
 }
 

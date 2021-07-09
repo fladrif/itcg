@@ -87,8 +87,16 @@ export function resolveStack(G: GameState, ctx: Ctx, confirmation?: boolean) {
     }
 
     const decision = stack.decisions.pop()!;
+    const actionOpts = { ...decision.opts, selection: decision.selection };
 
-    actions[decision.action](G, ctx, { ...decision.opts, selection: decision.selection });
+    if (decision.opts?.selection) {
+      actionOpts.selection = {
+        ...actionOpts.selection,
+        ...decision.opts.selection,
+      };
+    }
+
+    actions[decision.action](G, ctx, actionOpts);
 
     stackTriggers(G, ctx, decision, 'After');
 

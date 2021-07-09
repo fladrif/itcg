@@ -12,13 +12,13 @@ import {
   NonCharacter,
   SkillRequirements,
 } from './card';
-import { insertStack, Decision, Selection } from './stack';
+import { Selection } from './stack';
 import {
   deepCardComp,
   getLocation,
+  getLocationCard,
   getOpponentState,
   getOpponentID,
-  getRandomKey,
   rmCard,
 } from './utils';
 
@@ -159,9 +159,39 @@ function shield(G: GameState, ctx: Ctx, opts: ActionOpts): any {
   if (decision.opts.damage < 0) decision.opts.damage = 0;
 }
 
+function level(G: GameState, ctx: Ctx, opts: ActionOpts): any {
+  if (!G.stack) return;
+  if (!opts.selection) return;
+
+  const player = G.player[ctx.currentPlayer];
+
+  for (const location of Object.keys(opts.selection) as Location[]) {
+    opts.selection[location]!.map((card) => {
+      const selCard = card as NonCharacter;
+
+      const turn = selCard.skill.requirements.turn !== undefined ? ctx.turn : undefined;
+
+      player.learnedSkills.push({
+        ...selCard,
+        skill: {
+          ...selCard.skill,
+          requirements: { ...selCard.skill.requirements, turn },
+        },
+      });
+
+      rmCard(G, ctx, selCard, location);
+
+      // TODO: May want to consider handling level elsewhere, or determining it jit, (consider destroying cards under character)
+      player.level += 10;
+      player.hp += 20;
+    });
+  }
+}
+
 export const actions = {
   damage,
   destroy,
+  level,
   play,
   quest,
   refresh,
