@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Character, NonCharacter, CardTypes } from './card';
+import { Character, NonCharacter, isMonster, CardTypes } from './card';
 import { Location } from './actions';
 import { cardImages, cardback } from './itcgCardImages';
 
@@ -23,6 +23,16 @@ const baseStyle: React.CSSProperties = {
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
+  position: 'relative',
+};
+
+const damageStyle: React.CSSProperties = {
+  color: 'white',
+  backgroundColor: 'red',
+  position: 'absolute',
+  padding: '0.5em',
+  top: '70%',
+  left: '50%',
 };
 
 const activatedBorderTop: React.CSSProperties = {
@@ -164,6 +174,11 @@ export class ITCGCard extends React.Component<CardProp> {
   }
 
   getCard(style: React.CSSProperties) {
+    const damageMarked =
+      isMonster(this.props.card) && this.props.card.damage > 0 ? (
+        <div style={damageStyle}>{this.props.card.damage}</div>
+      ) : undefined;
+
     return (
       <div style={baseStyle}>
         <img
@@ -182,6 +197,7 @@ export class ITCGCard extends React.Component<CardProp> {
           onMouseEnter={() => this.expandCard()}
           onMouseLeave={() => this.unexpandCard()}
         />
+        {damageMarked}
       </div>
     );
   }

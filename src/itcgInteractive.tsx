@@ -11,6 +11,54 @@ interface InteractiveProp {
 }
 
 export class ITCGInteractive extends React.Component<InteractiveProp> {
+  posMove: () => any;
+  negMove: () => any;
+
+  constructor(props: InteractiveProp) {
+    super(props);
+    this.keydownFn = this.keydownFn.bind(this);
+
+    this.posMove = this.currentPosMove();
+    this.negMove = this.currentNegMove();
+  }
+
+  currentPosMove() {
+    return this.props.stage === 'level'
+      ? this.props.noLevel
+      : this.props.stage === 'activate'
+      ? this.props.noActivate
+      : this.props.stage === 'attack'
+      ? this.props.noAttacks
+      : this.props.stage === 'select' && this.props.decisionFinished === true
+      ? this.props.confirm
+      : () => {};
+  }
+
+  currentNegMove() {
+    return this.props.stage === 'select' ? this.props.decline : () => {};
+  }
+
+  keydownFn(e: KeyboardEvent) {
+    if (e.key === ' ') {
+      this.posMove();
+    } else if (e.key === 'Escape') {
+      this.negMove();
+    }
+  }
+
+  componentDidUpdate() {
+    this.posMove = this.currentPosMove();
+    this.negMove = this.currentNegMove();
+  }
+
+  componentDidMount() {
+    document.addEventListener('keydown', this.keydownFn);
+  }
+
+  componentDidUnMount() {
+    document.removeEventListener('keydown', this.keydownFn);
+  }
+
   render() {
     const button =
       this.props.stage == 'level' ? (
