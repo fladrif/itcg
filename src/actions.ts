@@ -16,7 +16,6 @@ import { Selection } from './stack';
 import {
   deepCardComp,
   getLocation,
-  getLocationCard,
   getOpponentState,
   getOpponentID,
   rmCard,

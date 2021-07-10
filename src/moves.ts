@@ -5,7 +5,7 @@ import { GameState } from './game';
 import { NonCharacter, Character, CardTypes, isMonster, Skill } from './card';
 import { endLevelStage, endAttackStage } from './hook';
 import { resolveStack, buildStack, selectCard } from './stack';
-import { deepCardComp, getLocation, meetsSkillReq, rmCard } from './utils';
+import { deepCardComp, getLocation, meetsSkillReq } from './utils';
 import { Location } from './actions';
 
 export function shuffleDeck(G: GameState, ctx: Ctx, id: PlayerID) {
