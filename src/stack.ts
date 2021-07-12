@@ -2,7 +2,7 @@ import { Ctx } from 'boardgame.io';
 
 import { GameState } from './game';
 import { actions, Action, ActionOpts, ActionTargets, Location } from './actions';
-import { endActivateStage } from './hook';
+import { endActivateStage, endAttackStage } from './hook';
 import { Skill, Character, NonCharacter } from './card';
 import { ensureFilter, filterSelections } from './target';
 import { stackTriggers } from './trigger';
@@ -73,6 +73,7 @@ export function resolveStack(G: GameState, ctx: Ctx, confirmation?: boolean) {
       resetSkillActivations(G, ctx);
 
       if (stack.currentStage == 'activate') endActivateStage(G, ctx);
+      if (stack.currentStage == 'attack') endAttackStage(G, ctx);
 
       G.stack = undefined;
       return;

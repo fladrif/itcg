@@ -12,10 +12,12 @@ import {
   NonCharacter,
   SkillRequirements,
 } from './card';
+import { endAttackStage } from './hook';
 import { Selection } from './stack';
 import {
   deepCardComp,
   getLocation,
+  getLocationCard,
   getOpponentState,
   getOpponentID,
   rmCard,
@@ -124,9 +126,7 @@ function damage(G: GameState, ctx: Ctx, opts: ActionOpts): any {
   if (!opts.selection || opts.damage == undefined) return;
 
   if (G.stack.currentStage == 'attack') {
-    (getLocation(G, ctx, Location.Field).filter((c) =>
-      deepCardComp(c, opts.source!)
-    )[0] as Monster).attacks--;
+    (getLocationCard(G, ctx, Location.Field, opts.source!) as Monster).attacks--;
   }
 
   for (const location of Object.keys(opts.selection) as Location[]) {

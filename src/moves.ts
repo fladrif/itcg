@@ -3,7 +3,7 @@ import { INVALID_MOVE } from 'boardgame.io/core';
 
 import { GameState } from './game';
 import { NonCharacter, Character, CardTypes, isMonster, Skill } from './card';
-import { endLevelStage, endAttackStage } from './hook';
+import { endLevelStage, endActivateStage, endAttackStage } from './hook';
 import { resolveStack, buildStack, selectCard } from './stack';
 import { deepCardComp, getLocation, meetsSkillReq } from './utils';
 import { Location } from './actions';
@@ -149,7 +149,7 @@ export function noAttacks(
   _card: [Location, Character | NonCharacter],
   _position?: number
 ) {
-  endAttackStage(G, ctx);
+  endAttackStage(G, ctx, true);
 }
 
 export function noLevel(
@@ -162,10 +162,10 @@ export function noLevel(
 }
 
 export function noActivate(
-  _G: GameState,
+  G: GameState,
   ctx: Ctx,
   _card: [Location, Character | NonCharacter],
   _position?: number
 ) {
-  ctx.events!.endStage!();
+  endActivateStage(G, ctx, true);
 }
