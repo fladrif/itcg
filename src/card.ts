@@ -1,4 +1,7 @@
+import { PlayerID } from 'boardgame.io';
+
 import { Action, ActionOpts, ActionTargets } from './actions';
+import { TriggerNames } from './triggerStore';
 import { getRandomKey } from './utils';
 
 export const SAMPLE_SKILL: Skill = {
@@ -25,6 +28,7 @@ export interface Card {
   name: string;
   type: CardTypes;
   class: CardClasses;
+  owner: PlayerID;
   image: string;
   selected: boolean;
   key: string;
@@ -41,11 +45,11 @@ export interface NonCharacter extends Exclude<Card, Character> {
 }
 
 export interface Monster extends NonCharacter {
-  attack: number;
   health: number;
   ability: Ability;
   attacks: number;
-  damage: number;
+  attack: number;
+  damageTaken: number;
 }
 
 export interface Tactic extends NonCharacter {
@@ -70,9 +74,16 @@ export interface Skill {
   targets?: ActionTargets;
 }
 
-export interface Ability {}
+export interface Ability {
+  triggers?: TriggerNames[];
+  skills?: Skill[];
+}
 
-export function instantiateCard<T extends Card>(card: Omit<T, 'key'>, num?: number): T[] {
+export function instantiateCard<T extends Card>(
+  card: Omit<T, 'key' | 'owner'>,
+  player: PlayerID,
+  num?: number
+): T[] {
   const name = card.name.replace(' ', '').toLowerCase();
   const instantiatedCards = [];
 
@@ -80,14 +91,26 @@ export function instantiateCard<T extends Card>(card: Omit<T, 'key'>, num?: numb
   for (let i = 0; i < num; i++) {
     const randomKey = getRandomKey();
     const key = `${name}-${randomKey}`;
-    instantiatedCards.push({ ...(card as T), key });
+    instantiatedCards.push({ ...(card as T), key, owner: player });
   }
 
   return instantiatedCards;
 }
 
+export function isItem(card: Character | NonCharacter): card is Item {
+  if (card.type === CardTypes.Item) return true;
+
+  return false;
+}
+
 export function isMonster(card: Character | NonCharacter): card is Monster {
   if (card.type === CardTypes.Monster) return true;
+
+  return false;
+}
+
+export function isTactic(card: Character | NonCharacter): card is Tactic {
+  if (card.type === CardTypes.Tactic) return true;
 
   return false;
 }

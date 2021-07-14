@@ -6,10 +6,10 @@ const defaultTypes = {
   class: CardClasses.Bowman,
   selected: false,
   attacks: 1,
-  damage: 0,
+  damageTaken: 0,
 };
 
-export const fairy: Omit<Monster, 'key'> = {
+export const fairy: Omit<Monster, 'key' | 'owner'> = {
   name: 'Fairy',
   image: 'Fairy',
   level: 30,
@@ -31,6 +31,8 @@ export const fairy: Omit<Monster, 'key'> = {
       quantity: 1,
     },
   },
-  ability: {},
+  ability: {
+    triggers: ['FairyTrigger'],
+  },
   ...defaultTypes,
 };

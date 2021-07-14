@@ -6,10 +6,10 @@ const defaultTypes = {
   class: CardClasses.Thief,
   selected: false,
   attacks: 1,
-  damage: 0,
+  damageTaken: 0,
 };
 
-export const redsnail: Omit<Monster, 'key'> = {
+export const redsnail: Omit<Monster, 'key' | 'owner'> = {
   name: 'Red Snail',
   image: 'RedSnail',
   level: 4,
@@ -35,7 +35,7 @@ export const redsnail: Omit<Monster, 'key'> = {
   ...defaultTypes,
 };
 
-export const orangemushroom: Omit<Monster, 'key'> = {
+export const orangemushroom: Omit<Monster, 'key' | 'owner'> = {
   name: 'Orange Mushroom',
   image: 'OrangeMushroom',
   level: 8,

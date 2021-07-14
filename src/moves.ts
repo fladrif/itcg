@@ -2,10 +2,10 @@ import { Ctx, PlayerID } from 'boardgame.io';
 import { INVALID_MOVE } from 'boardgame.io/core';
 
 import { GameState } from './game';
-import { NonCharacter, Character, CardTypes, isMonster, Skill } from './card';
+import { NonCharacter, Character, CardTypes, isMonster } from './card';
 import { endLevelStage, endActivateStage, endAttackStage } from './hook';
-import { resolveStack, buildStack, selectCard } from './stack';
-import { deepCardComp, getLocation, meetsSkillReq } from './utils';
+import { Decision, upsertStack, selectCard, parseSkill, resolveStack } from './stack';
+import { deepCardComp, getLocation, getRandomKey, meetsSkillReq } from './utils';
 import { Location } from './actions';
 
 export function shuffleDeck(G: GameState, ctx: Ctx, id: PlayerID) {
@@ -26,20 +26,20 @@ export function levelUp(
 
   if (cardLoc !== Location.Hand || 'skills' in selCard) return INVALID_MOVE;
 
-  const levelAction: Skill = {
-    requirements: {
-      level: 0,
-    },
+  const levelDecision: Decision = {
     opts: {
       selection: {
         [cardLoc]: [selCard],
       },
     },
     action: 'level',
-    activated: false,
+    finished: false,
+    selection: {},
+    key: getRandomKey(),
   };
 
-  buildStack(G, ctx, levelAction, 'level');
+  upsertStack(G, ctx, [levelDecision], 'level');
+  resolveStack(G, ctx);
   endLevelStage(G, ctx);
 }
 
@@ -71,7 +71,8 @@ export function activateSkill(
   player.activationPos = position + 1;
   skill.activated = true;
 
-  buildStack(G, ctx, skill, 'activate', prevPos);
+  upsertStack(G, ctx, [parseSkill(skill, selCard)], 'activate', prevPos);
+  resolveStack(G, ctx);
 }
 
 export function attack(
@@ -87,13 +88,9 @@ export function attack(
     return INVALID_MOVE;
   }
 
-  const attackAction: Skill = {
-    requirements: {
-      level: 0,
-    },
+  const attackDecision: Decision = {
     action: 'damage',
-    activated: false,
-    targets: {
+    target: {
       xor: [
         {
           location: Location.OppField,
@@ -111,9 +108,13 @@ export function attack(
       source: selCard,
       damage: selCard.attack,
     },
+    selection: {},
+    finished: false,
+    key: getRandomKey(),
   };
 
-  buildStack(G, ctx, attackAction, 'attack');
+  upsertStack(G, ctx, [attackDecision], 'attack');
+  resolveStack(G, ctx);
 }
 
 export function selectTarget(

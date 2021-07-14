@@ -6,10 +6,10 @@ const defaultTypes = {
   class: CardClasses.Warrior,
   selected: false,
   attacks: 1,
-  damage: 0,
+  damageTaken: 0,
 };
 
-export const wildboar: Omit<Monster, 'key'> = {
+export const wildboar: Omit<Monster, 'key' | 'owner'> = {
   name: 'Wild Boar',
   image: 'WildBoar',
   level: 25,
@@ -45,7 +45,7 @@ export const wildboar: Omit<Monster, 'key'> = {
   ...defaultTypes,
 };
 
-export const slime: Omit<Monster, 'key'> = {
+export const slime: Omit<Monster, 'key' | 'owner'> = {
   name: 'Slime',
   image: 'Slime',
   level: 6,
@@ -68,7 +68,7 @@ export const slime: Omit<Monster, 'key'> = {
   ...defaultTypes,
 };
 
-export const greenmushroom: Omit<Monster, 'key'> = {
+export const greenmushroom: Omit<Monster, 'key' | 'owner'> = {
   name: 'Green Mushroom',
   image: 'GreenMushroom',
   level: 15,
@@ -104,7 +104,7 @@ export const greenmushroom: Omit<Monster, 'key'> = {
   ...defaultTypes,
 };
 
-export const ribbonpig: Omit<Monster, 'key'> = {
+export const ribbonpig: Omit<Monster, 'key' | 'owner'> = {
   name: 'Ribbon Pig',
   image: 'RibbonPig',
   level: 10,

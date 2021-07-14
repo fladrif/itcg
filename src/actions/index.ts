@@ -1,19 +1,21 @@
 import { Ctx } from 'boardgame.io';
 import { INVALID_MOVE } from 'boardgame.io/core';
 
-import { GameState } from './game';
+import { GameState } from '../game';
 import {
   CardTypes,
   CardClasses,
   Monster,
+  isItem,
   isMonster,
+  isTactic,
   isCharacter,
   Character,
   NonCharacter,
   SkillRequirements,
-} from './card';
-import { endAttackStage } from './hook';
-import { Selection } from './stack';
+} from '../card';
+import { Selection } from '../stack';
+import { pruneTriggerStore } from '../triggerStore';
 import {
   deepCardComp,
   getLocation,
@@ -21,7 +23,9 @@ import {
   getOpponentState,
   getOpponentID,
   rmCard,
-} from './utils';
+} from '../utils';
+
+import { handlePlayNonTactic, handlePlayTactic } from './utils';
 
 export enum Location {
   Field = 'Field',
@@ -78,6 +82,23 @@ export function checkReqs(reqs: SkillRequirements): (G: GameState, ctx: Ctx) => 
   };
 }
 
+function bounce(G: GameState, ctx: Ctx, opts: ActionOpts): any {
+  if (!G.stack) return;
+  if (!opts.selection) return;
+
+  for (const location of Object.keys(opts.selection) as Location[]) {
+    opts.selection[location]!.map((card) => {
+      G.player[card.owner].hand.push(
+        getLocationCard(G, ctx, location, card) as NonCharacter
+      );
+
+      pruneTriggerStore(G, ctx, card.key);
+      rmCard(G, ctx, card, location);
+    });
+  }
+}
+
+// TODO: Genericize, shouldn't be only current player to draw
 function quest(G: GameState, ctx: Ctx, _opts: ActionOpts): any {
   const player = G.player[ctx.currentPlayer];
 
@@ -91,8 +112,16 @@ function play(G: GameState, ctx: Ctx, opts: ActionOpts): any {
   if (!opts.selection || !opts.selection[Location.Hand]) return;
 
   const player = G.player[ctx.currentPlayer];
+
   opts.selection[Location.Hand]!.map((card) => {
-    player.field.push(card as NonCharacter);
+    if (isMonster(card) || isItem(card)) {
+      player.field.push(card);
+      handlePlayNonTactic(G, ctx, card);
+    } else if (isTactic(card)) {
+      player.discard.push(card);
+      handlePlayTactic(G, ctx, card);
+    }
+
     rmCard(G, ctx, card, Location.Hand);
   });
 }
@@ -111,11 +140,14 @@ function destroy(G: GameState, ctx: Ctx, opts: ActionOpts): any {
   const player = G.player[ctx.currentPlayer];
 
   for (const location of Object.keys(opts.selection) as Location[]) {
-    const cardsSel = opts.selection[location]!; // .map((card) => {
+    const cardsSel = opts.selection[location]!;
+
     getLocation(G, ctx, location)
       .filter((c) => !!cardsSel.find((cs) => deepCardComp(c, cs)))
       .map((card) => {
         player.discard.push(card as NonCharacter);
+
+        pruneTriggerStore(G, ctx, card.key);
         rmCard(G, ctx, card, location);
       });
   }
@@ -137,7 +169,7 @@ function damage(G: GameState, ctx: Ctx, opts: ActionOpts): any {
       if (isMonster(card)) {
         getLocation(G, ctx, location)
           .filter((c) => deepCardComp(c, card))
-          .map((card) => ((card as Monster).damage += opts.damage!));
+          .map((card) => ((card as Monster).damageTaken += opts.damage!));
       }
     });
   }
@@ -188,6 +220,7 @@ function level(G: GameState, ctx: Ctx, opts: ActionOpts): any {
 }
 
 export const actions = {
+  bounce,
   damage,
   destroy,
   level,

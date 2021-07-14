@@ -2,8 +2,22 @@ import { v4 as uuidv4 } from 'uuid';
 import { Ctx, PlayerID } from 'boardgame.io';
 
 import { GameState, PlayerState } from './game';
-import { Card, CardClasses, Character, NonCharacter, SkillRequirements } from './card';
+import {
+  Card,
+  CardClasses,
+  Item,
+  Monster,
+  Tactic,
+  Character,
+  NonCharacter,
+  SkillRequirements,
+} from './card';
 import { Location } from './actions';
+
+export type MonsterType = Omit<Monster, 'key' | 'owner'>;
+export type CharacterType = Omit<Character, 'key' | 'owner'>;
+export type ItemType = Omit<Item, 'key' | 'owner'>;
+export type TacticType = Omit<Tactic, 'key' | 'owner'>;
 
 export function meetsSkillReq(
   req: SkillRequirements,
@@ -69,6 +83,27 @@ export function getLocationCard(
   return cards[0];
 }
 
+export function getLocationCardByKey(
+  G: GameState,
+  ctx: Ctx,
+  location: Location,
+  key: string
+): Character | NonCharacter {
+  const cards = getLocation(G, ctx, location).filter((card) => card.key === key);
+
+  return cards[0];
+}
+
+export function getCardLocation(G: GameState, ctx: Ctx, key: string): Location {
+  const locations = Object.keys(Location) as Location[];
+
+  const loc = locations.find((location) =>
+    getLocation(G, ctx, location).some((card) => card.key === key)
+  );
+
+  return loc!;
+}
+
 export function getLocation(
   G: GameState,
   ctx: Ctx,
@@ -102,17 +137,13 @@ export function getLocation(
 }
 
 export function deepCardComp(first: Card, second: Card): boolean {
-  return (
-    first.name == second.name &&
-    first.selected == second.selected &&
-    first.key == second.key
-  );
-  // if (first.name !== second.name) return false;
-  // if (first.selected !== second.selected) return false;
-  //
-  // return true;
+  return first.key == second.key;
 }
 
 export function getRandomKey(): string {
   return uuidv4().split('-')[0];
+}
+
+export function getCurrentStage(_G: GameState, ctx: Ctx): string {
+  return ctx.activePlayers ? ctx.activePlayers[ctx.currentPlayer] : '';
 }

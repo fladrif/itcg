@@ -116,7 +116,7 @@ export const filterCurrentLevelAfter: ActionTargets = {
 
 export const playerState: PlayerState = {
   deck: [],
-  character: instantiateCard(nixie)[0],
+  character: instantiateCard(nixie, '0')[0],
   hand: [],
   learnedSkills: [],
   field: [],

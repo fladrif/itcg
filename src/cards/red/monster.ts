@@ -6,10 +6,10 @@ const defaultTypes = {
   class: CardClasses.Magician,
   selected: false,
   attacks: 1,
-  damage: 0,
+  damageTaken: 0,
 };
 
-export const darkaxestump: Omit<Monster, 'key'> = {
+export const darkaxestump: Omit<Monster, 'key' | 'owner'> = {
   name: 'Dark Axe Stump',
   image: 'DarkAxeStump',
   level: 22,
@@ -35,7 +35,7 @@ export const darkaxestump: Omit<Monster, 'key'> = {
   ...defaultTypes,
 };
 
-export const jrnecki: Omit<Monster, 'key'> = {
+export const jrnecki: Omit<Monster, 'key' | 'owner'> = {
   name: 'Jr. Necki',
   image: 'JrNecki',
   level: 21,
@@ -61,7 +61,7 @@ export const jrnecki: Omit<Monster, 'key'> = {
   ...defaultTypes,
 };
 
-export const octopus: Omit<Monster, 'key'> = {
+export const octopus: Omit<Monster, 'key' | 'owner'> = {
   name: 'Octopus',
   image: 'Octopus',
   level: 12,
@@ -75,6 +75,8 @@ export const octopus: Omit<Monster, 'key'> = {
     },
     activated: false,
   },
-  ability: {},
+  ability: {
+    triggers: ['OctopusTrigger'],
+  },
   ...defaultTypes,
 };

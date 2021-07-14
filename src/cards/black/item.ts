@@ -7,7 +7,7 @@ const defaultTypes = {
   selected: false,
 };
 
-export const emeraldearrings: Omit<Item, 'key'> = {
+export const emeraldearrings: Omit<Item, 'key' | 'owner'> = {
   name: 'Emerald Earrings',
   image: 'EmeraldEarrings',
   level: 30,

@@ -6,7 +6,7 @@ import { endActivateStage, endAttackStage } from './hook';
 import { Skill, Character, NonCharacter } from './card';
 import { ensureFilter, filterSelections } from './target';
 import { stackTriggers } from './trigger';
-import { deepCardComp, getLocation, getRandomKey } from './utils';
+import { deepCardComp, getCurrentStage, getLocation, getRandomKey } from './utils';
 
 // TODO: Handle choice/modal selections as well
 export type Selection = Partial<Record<Location, (Character | NonCharacter)[]>>;
@@ -28,6 +28,7 @@ export interface Stack {
   activeDecisions: Decision[];
   currentStage: string;
   decisionTriggers: Record<string, string[]>;
+  queuedDecisions: Decision[];
   prevActivatePos?: number;
 }
 
@@ -71,6 +72,12 @@ export function resolveStack(G: GameState, ctx: Ctx, confirmation?: boolean) {
   if (stack.activeDecisions.length <= 0) {
     if (stack.decisions.length <= 0) {
       resetSkillActivations(G, ctx);
+
+      if (stack.queuedDecisions.length > 0) {
+        upsertStack(G, ctx, [stack.queuedDecisions.shift()!]);
+        resolveStack(G, ctx);
+        return;
+      }
 
       if (stack.currentStage == 'activate') endActivateStage(G, ctx);
       if (stack.currentStage == 'attack') endAttackStage(G, ctx);
@@ -122,39 +129,43 @@ export function resolveStack(G: GameState, ctx: Ctx, confirmation?: boolean) {
   }
 }
 
-export function buildStack(
-  G: GameState,
-  ctx: Ctx,
-  skill: Skill,
-  currentStage: string,
-  prevActivatePos?: number
-) {
-  const decision: Decision = {
+export function parseSkill(skill: Skill, source: Character | NonCharacter): Decision {
+  return {
     action: skill.action,
-    opts: skill.opts,
+    opts: { ...skill.opts, source },
     target: skill.targets,
     selection: {},
     finished: false,
     key: getRandomKey(),
   };
-
-  G.stack = {
-    decisions: [],
-    activeDecisions: [decision],
-    decisionTriggers: { [decision.key]: [] },
-    currentStage,
-    prevActivatePos,
-  };
-
-  setStages(G, ctx, G.stack.activeDecisions);
-  resolveStack(G, ctx);
 }
 
-export function insertStack(G: GameState, ctx: Ctx, decision: Decision) {
-  if (!G.stack) return;
+export function upsertStack(
+  G: GameState,
+  ctx: Ctx,
+  decisions: Decision[],
+  currentStage?: string,
+  prevActivatePos?: number
+) {
+  if (!G.stack) {
+    const stage = currentStage ? currentStage : getCurrentStage(G, ctx);
 
-  G.stack.activeDecisions.push(decision);
-  G.stack.decisionTriggers[decision.key] = [];
+    G.stack = {
+      decisions: [],
+      activeDecisions: decisions,
+      decisionTriggers: {},
+      queuedDecisions: [],
+      currentStage: stage,
+      prevActivatePos,
+    };
+
+    decisions.map((dec) => (G.stack!.decisionTriggers[dec.key] = []));
+  } else {
+    G.stack.activeDecisions.push(...decisions);
+
+    decisions.map((dec) => (G.stack!.decisionTriggers[dec.key] = []));
+  }
+
   setStages(G, ctx, G.stack.activeDecisions);
 }
 

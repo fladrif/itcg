@@ -175,8 +175,8 @@ export class ITCGCard extends React.Component<CardProp> {
 
   getCard(style: React.CSSProperties) {
     const damageMarked =
-      isMonster(this.props.card) && this.props.card.damage > 0 ? (
-        <div style={damageStyle}>{this.props.card.damage}</div>
+      isMonster(this.props.card) && this.props.card.damageTaken > 0 ? (
+        <div style={damageStyle}>{this.props.card.damageTaken}</div>
       ) : undefined;
 
     return (

@@ -16,22 +16,37 @@ import {
   noAttacks,
 } from './moves';
 import { Stack } from './stack';
-import { Trigger } from './trigger';
+import { TriggerStore, defaultTriggers } from './triggerStore';
 import { getOpponentID } from './utils';
 
-const SAMPLE_DECK: NonCharacter[] = [
-  ...instantiateCard(cards.slime),
-  ...instantiateCard(cards.fairy, 4),
-  ...instantiateCard(cards.jrnecki),
-  ...instantiateCard(cards.octopus),
-  ...instantiateCard(cards.redsnail),
-  ...instantiateCard(cards.wildboar),
-  ...instantiateCard(cards.magicclaw),
-  ...instantiateCard(cards.ribbonpig),
-  ...instantiateCard(cards.darkaxestump),
-  ...instantiateCard(cards.greenmushroom),
-  ...instantiateCard(cards.orangemushroom),
-  ...instantiateCard(cards.emeraldearrings),
+const SAMPLE_DECK_0: NonCharacter[] = [
+  ...instantiateCard(cards.slime, '0'),
+  ...instantiateCard(cards.fairy, '0', 4),
+  ...instantiateCard(cards.jrnecki, '0'),
+  ...instantiateCard(cards.octopus, '0'),
+  ...instantiateCard(cards.redsnail, '0'),
+  ...instantiateCard(cards.wildboar, '0'),
+  ...instantiateCard(cards.magicclaw, '0'),
+  ...instantiateCard(cards.ribbonpig, '0'),
+  ...instantiateCard(cards.darkaxestump, '0'),
+  ...instantiateCard(cards.greenmushroom, '0'),
+  ...instantiateCard(cards.orangemushroom, '0'),
+  ...instantiateCard(cards.emeraldearrings, '0'),
+];
+
+const SAMPLE_DECK_1: NonCharacter[] = [
+  ...instantiateCard(cards.slime, '1'),
+  ...instantiateCard(cards.fairy, '1', 4),
+  ...instantiateCard(cards.jrnecki, '1'),
+  ...instantiateCard(cards.octopus, '1'),
+  ...instantiateCard(cards.redsnail, '1'),
+  ...instantiateCard(cards.wildboar, '1'),
+  ...instantiateCard(cards.magicclaw, '1'),
+  ...instantiateCard(cards.ribbonpig, '1'),
+  ...instantiateCard(cards.darkaxestump, '1'),
+  ...instantiateCard(cards.greenmushroom, '1'),
+  ...instantiateCard(cards.orangemushroom, '1'),
+  ...instantiateCard(cards.emeraldearrings, '1'),
 ];
 
 interface Deck {
@@ -59,15 +74,15 @@ export interface SetupData {
 export interface GameState {
   player: Record<PlayerID, PlayerState>;
   stack?: Stack;
-  trigger: Trigger[];
+  triggers: TriggerStore[];
 }
 
 function preConfigSetup(): GameState {
-  const state: GameState = { player: {}, trigger: [] };
+  const state: GameState = { player: {}, triggers: [...defaultTriggers] };
 
   state.player['0'] = {
-    deck: lodash(SAMPLE_DECK).shuffle().value(),
-    character: instantiateCard(cards.sherman)[0],
+    deck: lodash(SAMPLE_DECK_0).shuffle().value(),
+    character: instantiateCard(cards.sherman, '0')[0],
     hand: [],
     learnedSkills: [],
     field: [],
@@ -79,8 +94,8 @@ function preConfigSetup(): GameState {
   };
 
   state.player['1'] = {
-    deck: lodash(SAMPLE_DECK).shuffle().value(),
-    character: instantiateCard(cards.nixie)[0],
+    deck: lodash(SAMPLE_DECK_1).shuffle().value(),
+    character: instantiateCard(cards.nixie, '1')[0],
     hand: [],
     learnedSkills: [],
     field: [],
@@ -110,13 +125,13 @@ function preConfigSetup(): GameState {
 export function setup(_ctx: Ctx, setupData: SetupData): GameState {
   const state: GameState = {
     player: {},
-    trigger: [],
+    triggers: [],
   };
 
   for (const player of setupData.players) {
     state.player[player.id] = {
       deck: player.deck.deck,
-      character: instantiateCard(cards.sherman)[0],
+      character: instantiateCard(cards.sherman, player.id)[0],
       hand: [],
       learnedSkills: [],
       field: [],
@@ -149,7 +164,7 @@ export const ITCG = {
         .filter((card) => isMonster(card))
         .map((card) => {
           (card as Monster).attacks = 1;
-          (card as Monster).damage = 0;
+          (card as Monster).damageTaken = 0;
         });
     },
     stages: {

@@ -1,4 +1,4 @@
-import { Tactic, CardTypes, CardClasses } from '../../card';
+import { CardTypes, CardClasses, Skill, Tactic } from '../../card';
 import { Location } from '../../actions';
 
 const defaultTypes = {
@@ -7,7 +7,29 @@ const defaultTypes = {
   selected: false,
 };
 
-export const magicclaw: Omit<Tactic, 'key'> = {
+const magicclawAbility: Skill = {
+  requirements: { level: 0 },
+  action: 'damage',
+  activated: false,
+  opts: {
+    damage: 20,
+  },
+  targets: {
+    xor: [
+      {
+        quantity: 1,
+        type: CardTypes.Monster,
+        location: Location.OppField,
+      },
+      {
+        quantity: 1,
+        location: Location.OppCharacter,
+      },
+    ],
+  },
+};
+
+export const magicclaw: Omit<Tactic, 'key' | 'owner'> = {
   name: 'Magic Claw',
   image: 'MagicClaw',
   level: 20,
@@ -27,6 +49,8 @@ export const magicclaw: Omit<Tactic, 'key'> = {
       quantity: 1,
     },
   },
-  ability: {},
+  ability: {
+    skills: [magicclawAbility, magicclawAbility],
+  },
   ...defaultTypes,
 };
