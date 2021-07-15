@@ -16,7 +16,7 @@ function endActivate(G: GameState, ctx: Ctx) {
 }
 
 export function endActivateStage(G: GameState, ctx: Ctx, now?: boolean) {
-  if (now) endActivate(G, ctx);
+  if (now) return endActivate(G, ctx);
 
   const player = G.player[ctx.currentPlayer];
   const skills: Skill[] = [];
@@ -33,7 +33,7 @@ export function endActivateStage(G: GameState, ctx: Ctx, now?: boolean) {
 }
 
 export function endAttackStage(G: GameState, ctx: Ctx, now?: boolean) {
-  if (now) ctx.events!.endTurn!();
+  if (now) return ctx.events!.endTurn!();
 
   const currentField = G.player[ctx.currentPlayer].field;
 

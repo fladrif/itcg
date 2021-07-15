@@ -74,6 +74,16 @@ export interface ActionOpts {
   lifegain?: number;
 }
 
+export function isOpponentAction(target: ActionTargets): boolean {
+  if ('location' in target) return target.location === Location.OppHand;
+
+  if ('and' in target) return target.and!.some((tar) => isOpponentAction(tar));
+
+  if ('xor' in target) return target.xor!.some((tar) => isOpponentAction(tar));
+
+  throw new Error(`Filter composed incorrectly: ${target}`);
+}
+
 export function checkReqs(reqs: SkillRequirements): (G: GameState, ctx: Ctx) => boolean {
   return (G: GameState, ctx: Ctx) => {
     if (reqs.level < G.player[ctx.currentPlayer].level) return false;
@@ -96,6 +106,52 @@ function bounce(G: GameState, ctx: Ctx, opts: ActionOpts): any {
       rmCard(G, ctx, card, location);
     });
   }
+}
+
+function damage(G: GameState, ctx: Ctx, opts: ActionOpts): any {
+  if (!G.stack) return;
+  if (!opts.selection || opts.damage == undefined) return;
+
+  if (G.stack.currentStage == 'attack') {
+    (getLocationCard(G, ctx, Location.Field, opts.source!) as Monster).attacks--;
+  }
+
+  for (const location of Object.keys(opts.selection) as Location[]) {
+    opts.selection[location]!.map((card) => {
+      if (isCharacter(card)) {
+        getOpponentState(G, ctx).hp -= opts.damage!;
+      }
+      if (isMonster(card)) {
+        getLocation(G, ctx, location)
+          .filter((c) => deepCardComp(c, card))
+          .map((card) => ((card as Monster).damageTaken += opts.damage!));
+      }
+    });
+  }
+}
+
+function destroy(G: GameState, ctx: Ctx, opts: ActionOpts): any {
+  if (!G.stack) return;
+  if (!opts.selection) return;
+
+  const player = G.player[ctx.currentPlayer];
+
+  for (const location of Object.keys(opts.selection) as Location[]) {
+    const cardsSel = opts.selection[location]!;
+
+    getLocation(G, ctx, location)
+      .filter((c) => !!cardsSel.find((cs) => deepCardComp(c, cs)))
+      .map((card) => {
+        player.discard.push(card as NonCharacter);
+
+        pruneTriggerStore(G, ctx, card.key);
+        rmCard(G, ctx, card, location);
+      });
+  }
+}
+
+function discard(G: GameState, ctx: Ctx, opts: ActionOpts): any {
+  destroy(G, ctx, opts);
 }
 
 // TODO: Genericize, shouldn't be only current player to draw
@@ -131,48 +187,6 @@ function refresh(G: GameState, ctx: Ctx, opts: ActionOpts): any {
   if (opts.lifegain == undefined) return;
 
   G.player[ctx.currentPlayer].hp += opts.lifegain;
-}
-
-function destroy(G: GameState, ctx: Ctx, opts: ActionOpts): any {
-  if (!G.stack) return;
-  if (!opts.selection) return;
-
-  const player = G.player[ctx.currentPlayer];
-
-  for (const location of Object.keys(opts.selection) as Location[]) {
-    const cardsSel = opts.selection[location]!;
-
-    getLocation(G, ctx, location)
-      .filter((c) => !!cardsSel.find((cs) => deepCardComp(c, cs)))
-      .map((card) => {
-        player.discard.push(card as NonCharacter);
-
-        pruneTriggerStore(G, ctx, card.key);
-        rmCard(G, ctx, card, location);
-      });
-  }
-}
-
-function damage(G: GameState, ctx: Ctx, opts: ActionOpts): any {
-  if (!G.stack) return;
-  if (!opts.selection || opts.damage == undefined) return;
-
-  if (G.stack.currentStage == 'attack') {
-    (getLocationCard(G, ctx, Location.Field, opts.source!) as Monster).attacks--;
-  }
-
-  for (const location of Object.keys(opts.selection) as Location[]) {
-    opts.selection[location]!.map((card) => {
-      if (isCharacter(card)) {
-        getOpponentState(G, ctx).hp -= opts.damage!;
-      }
-      if (isMonster(card)) {
-        getLocation(G, ctx, location)
-          .filter((c) => deepCardComp(c, card))
-          .map((card) => ((card as Monster).damageTaken += opts.damage!));
-      }
-    });
-  }
 }
 
 function shield(G: GameState, ctx: Ctx, opts: ActionOpts): any {
@@ -223,6 +237,7 @@ export const actions = {
   bounce,
   damage,
   destroy,
+  discard,
   level,
   play,
   quest,

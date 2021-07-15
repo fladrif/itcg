@@ -1,7 +1,14 @@
 import { Ctx } from 'boardgame.io';
 
 import { GameState } from './game';
-import { actions, Action, ActionOpts, ActionTargets, Location } from './actions';
+import {
+  actions,
+  isOpponentAction,
+  Action,
+  ActionOpts,
+  ActionTargets,
+  Location,
+} from './actions';
 import { endActivateStage, endAttackStage } from './hook';
 import { Skill, Character, NonCharacter } from './card';
 import { ensureFilter, filterSelections } from './target';
@@ -32,15 +39,28 @@ export interface Stack {
   prevActivatePos?: number;
 }
 
-interface SetActiveStage {
-  currentPlayer: string;
+interface OpponentActiveStage {
+  others: string;
+  currentPlayer?: never;
   next?: SetActiveStage;
 }
 
-function stage(stg: string, prev?: SetActiveStage): SetActiveStage {
-  const stageOutput: SetActiveStage = {
-    currentPlayer: stg,
-  };
+interface CurrentActiveStage {
+  currentPlayer: string;
+  others?: never;
+  next?: SetActiveStage;
+}
+
+export type SetActiveStage = CurrentActiveStage | OpponentActiveStage;
+
+function stage(
+  stg: string,
+  opponentAction: boolean,
+  prev?: SetActiveStage
+): SetActiveStage {
+  const stageOutput: SetActiveStage = !opponentAction
+    ? { currentPlayer: stg }
+    : { others: stg };
 
   if (prev) stageOutput.next = prev;
 
@@ -50,8 +70,10 @@ function stage(stg: string, prev?: SetActiveStage): SetActiveStage {
 function setStages(G: GameState, ctx: Ctx, decisions: Decision[]) {
   if (!G.stack) return;
 
-  const loopbackStage = stage(G.stack.currentStage);
+  const loopbackStage = stage(G.stack.currentStage, false);
   const otherStages = decisions.reduce((acc, decision) => {
+    const isOpponent = decision.target ? isOpponentAction(decision.target) : false;
+
     //TODO: Need to add modal option
     const stageName = !!decision.target
       ? 'select'
@@ -59,7 +81,7 @@ function setStages(G: GameState, ctx: Ctx, decisions: Decision[]) {
       ? 'confirmation'
       : 'confirmation';
 
-    return stage(stageName, acc);
+    return stage(stageName, isOpponent, acc);
   }, loopbackStage);
 
   ctx.events!.setActivePlayers!(otherStages);

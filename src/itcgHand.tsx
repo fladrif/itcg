@@ -7,6 +7,7 @@ import { Location } from './actions';
 
 interface HandProp {
   playerState: PlayerState;
+  currentPlayer?: boolean;
   stage?: string;
   select?: () => any;
   level?: () => any;
@@ -38,7 +39,7 @@ export class ITCGHand extends React.Component<HandProp> {
           move={this.props.stage === 'select' ? this.props.select! : this.props.level!}
           styles={styles}
           skill0={skill}
-          location={Location.Hand}
+          location={this.props.currentPlayer ? Location.Hand : Location.OppHand}
           card={card}
           key={card.key}
         />

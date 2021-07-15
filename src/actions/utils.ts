@@ -2,7 +2,7 @@ import { Ctx } from 'boardgame.io';
 
 import { Item, Monster, Tactic } from '../card';
 import { GameState } from '../game';
-import { upsertStack, parseSkill, resolveStack } from '../stack';
+import { upsertStack, parseSkill } from '../stack';
 import { pushTriggerStore } from '../triggerStore';
 
 export function handlePlayNonTactic(G: GameState, ctx: Ctx, card: Monster | Item): any {

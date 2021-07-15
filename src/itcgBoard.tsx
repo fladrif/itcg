@@ -177,8 +177,9 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
         </div>
         <div style={handStyle}>
           <ITCGHand
-            stage={currentPlayerStage}
             playerState={playerState}
+            currentPlayer={this.props.ctx.currentPlayer === this.props.playerID}
+            stage={currentPlayerStage}
             select={this.props.moves.selectTarget}
             level={this.props.moves.levelUp}
           />

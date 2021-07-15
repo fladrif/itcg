@@ -9,6 +9,7 @@ import {
   getCardLocation,
   getLocationCardByKey,
   getLocation,
+  getOpponentID,
   getRandomKey,
 } from './utils';
 
@@ -56,7 +57,50 @@ export abstract class Trigger {
   abstract createDecision(G: GameState, ctx: Ctx, decision: Decision): Decision[];
 }
 
-export class OctopusTrigger extends Trigger {
+export class LootTrigger extends Trigger {
+  constructor(name: string, player: PlayerID) {
+    super(name, 'After', 'play', player);
+  }
+
+  shouldTrigger(G: GameState, ctx: Ctx, decision: Decision, prep: TriggerPrepostion) {
+    const locations = Object.keys(decision.selection) as Location[];
+    const cardIsPlayed = locations.some(
+      (loc) =>
+        decision.selection[loc] &&
+        decision.selection[loc]!.some((card) => card.key === this.name)
+    );
+    const oppHandSize = G.player[getOpponentID(G, ctx, this.owner)].hand.length >= 3;
+
+    if (
+      !G.stack!.decisionTriggers[decision.key].includes(this.name) &&
+      prep === this.prep &&
+      decision.action === this.actionTrigger &&
+      cardIsPlayed &&
+      oppHandSize
+    ) {
+      return true;
+    }
+
+    return false;
+  }
+
+  createDecision(_G: GameState, _ctx: Ctx, _decision: Decision) {
+    const dec: Decision = {
+      action: 'discard',
+      selection: {},
+      finished: false,
+      target: {
+        location: Location.OppHand,
+        quantity: 1,
+      },
+      key: getRandomKey(),
+    };
+
+    return [dec];
+  }
+}
+
+export class GeniusTrigger extends Trigger {
   constructor(name: string, player: PlayerID) {
     super(name, 'After', 'play', player);
   }
@@ -263,7 +307,8 @@ export const triggers = {
   ShieldTrigger,
   DmgDestroyTrigger,
   FairyTrigger,
-  OctopusTrigger,
+  GeniusTrigger,
+  LootTrigger,
 };
 
 export type TriggerNames = keyof typeof triggers;

@@ -57,6 +57,8 @@ export const orangemushroom: Omit<Monster, 'key' | 'owner'> = {
       quantity: 1,
     },
   },
-  ability: {},
+  ability: {
+    triggers: ['LootTrigger'],
+  },
   ...defaultTypes,
 };
