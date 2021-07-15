@@ -10,6 +10,33 @@ interface InteractiveProp {
   decline: () => any;
 }
 
+const baseStyle: React.CSSProperties = {
+  display: 'flex',
+  flex: '1',
+  flexDirection: 'column',
+  overflow: 'hidden',
+};
+
+const buttonStyle: React.CSSProperties = {
+  display: 'flex',
+  flex: '1',
+  color: 'white',
+  textShadow: '1px 1px 2px black',
+  fontSize: '120%',
+  borderRadius: '0.5em',
+  padding: '20%',
+};
+
+const posButtonStyle: React.CSSProperties = {
+  backgroundColor: 'green',
+  ...buttonStyle,
+};
+
+const negButtonStyle: React.CSSProperties = {
+  backgroundColor: 'red',
+  ...buttonStyle,
+};
+
 export class ITCGInteractive extends React.Component<InteractiveProp> {
   posMove: () => any;
   negMove: () => any;
@@ -62,25 +89,37 @@ export class ITCGInteractive extends React.Component<InteractiveProp> {
   render() {
     const button =
       this.props.stage == 'level' ? (
-        <div>
-          <button onClick={() => this.props.noLevel()}>Skip Level Stage</button>
+        <div style={baseStyle}>
+          <button style={posButtonStyle} onClick={() => this.props.noLevel()}>
+            Skip Level Stage
+          </button>
         </div>
       ) : this.props.stage == 'activate' ? (
-        <div>
-          <button onClick={() => this.props.noActivate()}>Go to Attack Stage</button>
+        <div style={baseStyle}>
+          <button style={posButtonStyle} onClick={() => this.props.noActivate()}>
+            Go to Attack Stage
+          </button>
         </div>
       ) : this.props.stage == 'attack' ? (
-        <div>
-          <button onClick={() => this.props.noAttacks()}>Pass Turn</button>
+        <div style={baseStyle}>
+          <button style={posButtonStyle} onClick={() => this.props.noAttacks()}>
+            Pass Turn
+          </button>
         </div>
       ) : this.props.stage == 'select' && this.props.decisionFinished == true ? (
-        <div>
-          <button onClick={() => this.props.confirm()}>Confirm</button>
-          <button onClick={() => this.props.decline()}>Decline</button>
+        <div style={baseStyle}>
+          <button style={posButtonStyle} onClick={() => this.props.confirm()}>
+            Confirm
+          </button>
+          <button style={negButtonStyle} onClick={() => this.props.decline()}>
+            Decline
+          </button>
         </div>
       ) : this.props.stage == 'select' && this.props.decisionFinished == false ? (
-        <div>
-          <button onClick={() => this.props.decline()}>Decline</button>
+        <div style={baseStyle}>
+          <button style={negButtonStyle} onClick={() => this.props.decline()}>
+            Decline
+          </button>
         </div>
       ) : (
         <div>nothing</div>

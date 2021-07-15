@@ -119,6 +119,8 @@ export function getLocation(
       return player.field;
     case Location.Deck:
       return player.deck;
+    case Location.Discard:
+      return player.discard;
     case Location.CharAction:
       return player.learnedSkills;
     case Location.Character:
@@ -129,6 +131,8 @@ export function getLocation(
       return opponent.field;
     case Location.OppDeck:
       return opponent.deck;
+    case Location.OppDiscard:
+      return opponent.discard;
     case Location.OppCharAction:
       return opponent.learnedSkills;
     case Location.OppCharacter:

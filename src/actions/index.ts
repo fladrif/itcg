@@ -31,11 +31,13 @@ export enum Location {
   Field = 'Field',
   Hand = 'Hand',
   Deck = 'Deck',
+  Discard = 'Discard',
   CharAction = 'CharAction',
   Character = 'Character',
   OppField = 'OppField',
   OppHand = 'OppHand',
   OppDeck = 'OppDeck',
+  OppDiscard = 'OppDiscard',
   OppCharAction = 'OppCharAction',
   OppCharacter = 'OppCharacter',
 }

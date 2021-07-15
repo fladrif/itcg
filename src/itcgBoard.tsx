@@ -5,10 +5,10 @@ import { GameState } from './game';
 import { getOpponentID } from './utils';
 import { Location } from './actions';
 
-import { ITCGCardback } from './itcgCard';
 import { ITCGStats } from './itcgStats';
 import { ITCGCharacter } from './itcgCharacter';
 import { ITCGHand } from './itcgHand';
+import { ITCGDiscard } from './itcgDiscard';
 import { ITCGInteractive } from './itcgInteractive';
 import { ITCGField } from './itcgField';
 import { ITCGGameOver } from './itcgGameOver';
@@ -19,7 +19,7 @@ const containerStyle: React.CSSProperties = {
   gridTemplateRows: '20% 5% 50% 5% 20%',
   height: '100vh',
   gridTemplateAreas:
-    "'od oh char' 'ochar ostat char' 'ochar m char' 'ochar stat char' 'ochar h d'",
+    "'ochar ohand odiscard' 'ochar ostat char' 'ochar field char' 'ochar stat char' 'interface hand char'",
   backgroundColor: '#A3FFB4',
 };
 
@@ -33,7 +33,7 @@ const gameOverStyle: React.CSSProperties = {
 const handStyle: React.CSSProperties = {
   display: 'flex',
   backgroundColor: '#36896e',
-  gridArea: 'h',
+  gridArea: 'hand',
   padding: '1em',
   alignItems: 'flex-end',
 };
@@ -42,13 +42,13 @@ const mapStyle: React.CSSProperties = {
   display: 'flex',
   flexDirection: 'column',
   backgroundColor: '#c9def2',
-  gridArea: 'm',
+  gridArea: 'field',
 };
 
 const interactiveStyle: React.CSSProperties = {
   display: 'flex',
   backgroundColor: '#ffd700',
-  gridArea: 'd',
+  gridArea: 'interface',
 };
 
 const statStyle: React.CSSProperties = {
@@ -67,7 +67,7 @@ const oppHandStyle: React.CSSProperties = {
   display: 'flex',
   backgroundColor: '#36896e',
   padding: '1em',
-  gridArea: 'oh',
+  gridArea: 'ohand',
 };
 
 const oppStatStyle: React.CSSProperties = {
@@ -76,10 +76,10 @@ const oppStatStyle: React.CSSProperties = {
   gridArea: 'ostat',
 };
 
-const oppInteractiveStyle: React.CSSProperties = {
+const oppDiscardStyle: React.CSSProperties = {
   display: 'flex',
   backgroundColor: '#ffd700',
-  gridArea: 'od',
+  gridArea: 'odiscard',
 };
 
 const oppCharStyle: React.CSSProperties = {
@@ -115,8 +115,12 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
     return (
       <div style={containerStyle}>
         {gameOver}
-        <div style={oppInteractiveStyle}>
-          <ITCGCardback />
+        <div style={oppDiscardStyle}>
+          <ITCGDiscard
+            playerState={opponentState}
+            currentPlayer={this.props.ctx.currentPlayer === this.props.playerID}
+            select={this.props.moves.selectTarget}
+          />
         </div>
         <div style={oppHandStyle}>
           <ITCGHand playerState={opponentState} />
@@ -189,6 +193,11 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
           />
         </div>
         <div style={interactiveStyle}>
+          <ITCGDiscard
+            playerState={playerState}
+            currentPlayer={this.props.ctx.currentPlayer === this.props.playerID}
+            select={this.props.moves.selectTarget}
+          />
           <ITCGInteractive
             stage={currentPlayerStage}
             decisionFinished={curDecisionFinished}
