@@ -44,7 +44,7 @@ const stageModalStyle: React.CSSProperties = {
   color: 'white',
 };
 
-const currentStageModalStyle: React.CSSProperties = {
+const highlightModalStyle: React.CSSProperties = {
   color: 'yellow',
   fontSize: '150%',
 };
@@ -59,20 +59,20 @@ export class ITCGStats extends React.Component<StatProp> {
     );
 
     const levelModal = (
-      <div style={this.props.stage == 'level' ? currentStageModalStyle : stageModalStyle}>
+      <div style={this.props.stage == 'level' ? highlightModalStyle : stageModalStyle}>
         level
       </div>
     );
     const activateModal = (
       <div
-        style={this.props.stage == 'activate' ? currentStageModalStyle : stageModalStyle}
+        style={this.props.stage == 'activate' ? highlightModalStyle : stageModalStyle}
       >
         activate
       </div>
     );
     const attackModal = (
       <div
-        style={this.props.stage == 'attack' ? currentStageModalStyle : stageModalStyle}
+        style={this.props.stage == 'attack' ? highlightModalStyle : stageModalStyle}
       >
         attack
       </div>
@@ -84,7 +84,7 @@ export class ITCGStats extends React.Component<StatProp> {
       </div>
     );
 
-    const selectModal = <div style={confirmationStyle}>Please select a card</div>;
+    const selectModal = <div style={confirmationStyle}><div style={highlightModalStyle}>Please select a card</div></div>;
 
     const modal =
       this.props.stage == 'confirmation'

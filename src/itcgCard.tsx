@@ -75,11 +75,11 @@ const defaultStyle: React.CSSProperties = {
 const leveledCardStyle: React.CSSProperties = {
   objectFit: 'cover',
   objectPosition: '0 100%',
-  width: '80%',
+  width: '90%',
 };
 
 const characterStyle: React.CSSProperties = {
-  width: '80%',
+  width: '90%',
 };
 
 const expandStyle: React.CSSProperties = {

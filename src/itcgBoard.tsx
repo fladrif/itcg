@@ -19,7 +19,7 @@ const containerStyle: React.CSSProperties = {
   gridTemplateRows: '20% 5% 50% 5% 20%',
   height: '100vh',
   gridTemplateAreas:
-    "'od oh oh' 'ochar ostat char' 'ochar m char' 'ochar stat char' 'h h d'",
+    "'od oh char' 'ochar ostat char' 'ochar m char' 'ochar stat char' 'ochar h d'",
   backgroundColor: '#A3FFB4',
 };
 
@@ -34,6 +34,7 @@ const handStyle: React.CSSProperties = {
   display: 'flex',
   backgroundColor: '#36896e',
   gridArea: 'h',
+  padding: '1em',
   alignItems: 'flex-end',
 };
 
@@ -58,12 +59,14 @@ const statStyle: React.CSSProperties = {
 
 const charStyle: React.CSSProperties = {
   backgroundColor: '#40e0d0',
+  paddingTop: '1em',
   gridArea: 'char',
 };
 
 const oppHandStyle: React.CSSProperties = {
   display: 'flex',
   backgroundColor: '#36896e',
+  padding: '1em',
   gridArea: 'oh',
 };
 
@@ -81,6 +84,7 @@ const oppInteractiveStyle: React.CSSProperties = {
 
 const oppCharStyle: React.CSSProperties = {
   backgroundColor: '#40e0d0',
+  paddingTop: '1em',
   gridArea: 'ochar',
 };
 
