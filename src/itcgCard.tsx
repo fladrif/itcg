@@ -16,7 +16,7 @@ interface CardProp {
 }
 
 interface CardbackProp {
-  styles?: Styles;
+  styles?: Styles[];
 }
 
 const baseStyle: React.CSSProperties = {
@@ -217,7 +217,7 @@ export class ITCGCard extends React.Component<CardProp> {
 
 export class ITCGCardback extends React.Component<CardbackProp> {
   render() {
-    const style = defaultStyle;
+    const style = this.props.styles ? getStyles(this.props.styles) : defaultStyle;
 
     return (
       <div style={baseStyle}>

@@ -5,13 +5,14 @@ import { GameState } from './game';
 import { getOpponentID } from './utils';
 import { Location } from './actions';
 
-import { ITCGStats } from './itcgStats';
 import { ITCGCharacter } from './itcgCharacter';
-import { ITCGHand } from './itcgHand';
 import { ITCGDiscard } from './itcgDiscard';
-import { ITCGInteractive } from './itcgInteractive';
 import { ITCGField } from './itcgField';
 import { ITCGGameOver } from './itcgGameOver';
+import { ITCGHand } from './itcgHand';
+import { ITCGHighlight } from './itcgHighlight';
+import { ITCGInteractive } from './itcgInteractive';
+import { ITCGStats } from './itcgStats';
 
 const containerStyle: React.CSSProperties = {
   display: 'grid',
@@ -38,11 +39,16 @@ const handStyle: React.CSSProperties = {
   alignItems: 'flex-end',
 };
 
-const mapStyle: React.CSSProperties = {
+const fieldStyle: React.CSSProperties = {
   display: 'flex',
-  flexDirection: 'column',
   backgroundColor: '#c9def2',
   gridArea: 'field',
+};
+
+const innerFieldStyle: React.CSSProperties = {
+  display: 'flex',
+  flex: '1',
+  flexDirection: 'column',
 };
 
 const interactiveStyle: React.CSSProperties = {
@@ -145,23 +151,26 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
             }
           />
         </div>
-        <div style={mapStyle}>
-          <ITCGField
-            state={opponentState}
-            location={Location.OppField}
-            stage={opponentStage}
-            select={this.props.moves.selectTarget}
-            attack={this.props.moves.attack}
-            source={stack?.activeDecisions[0].opts?.source}
-          />
-          <ITCGField
-            state={playerState}
-            location={Location.Field}
-            select={this.props.moves.selectTarget}
-            stage={currentPlayerStage}
-            attack={this.props.moves.attack}
-            source={stack?.activeDecisions[0].opts?.source}
-          />
+        <div style={fieldStyle}>
+          <div style={innerFieldStyle}>
+            <ITCGField
+              state={opponentState}
+              location={Location.OppField}
+              stage={opponentStage}
+              select={this.props.moves.selectTarget}
+              attack={this.props.moves.attack}
+              source={stack?.activeDecisions[0].opts?.source}
+            />
+            <ITCGField
+              state={playerState}
+              location={Location.Field}
+              select={this.props.moves.selectTarget}
+              stage={currentPlayerStage}
+              attack={this.props.moves.attack}
+              source={stack?.activeDecisions[0].opts?.source}
+            />
+          </div>
+          <ITCGHighlight state={this.props.G} />
         </div>
         <div style={statStyle}>
           <ITCGStats

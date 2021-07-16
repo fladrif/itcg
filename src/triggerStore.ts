@@ -84,7 +84,7 @@ export class LootTrigger extends Trigger {
     return false;
   }
 
-  createDecision(_G: GameState, _ctx: Ctx, _decision: Decision) {
+  createDecision(G: GameState, ctx: Ctx, _decision: Decision) {
     const dec: Decision = {
       action: 'discard',
       selection: {},
@@ -92,6 +92,9 @@ export class LootTrigger extends Trigger {
       target: {
         location: Location.OppHand,
         quantity: 1,
+      },
+      opts: {
+        source: getCardAtLocation(G, ctx, getCardLocation(G, ctx, this.name), this.name),
       },
       key: getRandomKey(),
     };

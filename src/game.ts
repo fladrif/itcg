@@ -166,6 +166,9 @@ export const ITCG = {
           (card as Monster).attacks = 1;
           (card as Monster).damageTaken = 0;
         });
+      G.player[ctx.currentPlayer].discard
+        .filter((card) => isMonster(card))
+        .map((card) => ((card as Monster).damageTaken = 0));
     },
     stages: {
       level: {
