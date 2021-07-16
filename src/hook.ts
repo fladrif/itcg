@@ -28,7 +28,7 @@ export function endActivateStage(G: GameState, ctx: Ctx, now?: boolean) {
     return meetsSkillReq(skill.requirements, player, ctx.turn);
   });
 
-  const noTargets = player.activationPos > skills.length || availableSkills.length == 0;
+  const noTargets = availableSkills.length == 0;
   if (noTargets) endActivate(G, ctx);
 }
 

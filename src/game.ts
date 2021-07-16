@@ -21,16 +21,16 @@ import { getOpponentID } from './utils';
 
 const SAMPLE_DECK_0: NonCharacter[] = [
   ...instantiateCard(cards.slime, '0'),
-  ...instantiateCard(cards.fairy, '0', 4),
+  ...instantiateCard(cards.fairy, '0'),
   ...instantiateCard(cards.jrnecki, '0'),
   ...instantiateCard(cards.octopus, '0'),
   ...instantiateCard(cards.redsnail, '0'),
   ...instantiateCard(cards.wildboar, '0'),
   ...instantiateCard(cards.magicclaw, '0'),
-  ...instantiateCard(cards.ribbonpig, '0'),
+  ...instantiateCard(cards.ribbonpig, '0', 4),
   ...instantiateCard(cards.darkaxestump, '0'),
   ...instantiateCard(cards.greenmushroom, '0'),
-  ...instantiateCard(cards.orangemushroom, '0'),
+  ...instantiateCard(cards.orangemushroom, '0', 4),
   ...instantiateCard(cards.emeraldearrings, '0'),
 ];
 
