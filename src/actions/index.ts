@@ -19,7 +19,7 @@ import { pruneTriggerStore } from '../triggerStore';
 import {
   deepCardComp,
   getLocation,
-  getLocationCard,
+  getCardAtLocation,
   getOpponentState,
   getOpponentID,
   rmCard,
@@ -101,7 +101,7 @@ function bounce(G: GameState, ctx: Ctx, opts: ActionOpts): any {
   for (const location of Object.keys(opts.selection) as Location[]) {
     opts.selection[location]!.map((card) => {
       G.player[card.owner].hand.push(
-        getLocationCard(G, ctx, location, card) as NonCharacter
+        getCardAtLocation(G, ctx, location, card.key) as NonCharacter
       );
 
       pruneTriggerStore(G, ctx, card.key);
@@ -115,7 +115,7 @@ function damage(G: GameState, ctx: Ctx, opts: ActionOpts): any {
   if (!opts.selection || opts.damage == undefined) return;
 
   if (G.stack.currentStage == 'attack') {
-    (getLocationCard(G, ctx, Location.Field, opts.source!) as Monster).attacks--;
+    (getCardAtLocation(G, ctx, Location.Field, opts.source!.key) as Monster).attacks--;
   }
 
   for (const location of Object.keys(opts.selection) as Location[]) {
@@ -136,15 +136,13 @@ function destroy(G: GameState, ctx: Ctx, opts: ActionOpts): any {
   if (!G.stack) return;
   if (!opts.selection) return;
 
-  const player = G.player[ctx.currentPlayer];
-
   for (const location of Object.keys(opts.selection) as Location[]) {
     const cardsSel = opts.selection[location]!;
 
     getLocation(G, ctx, location)
       .filter((c) => !!cardsSel.find((cs) => deepCardComp(c, cs)))
       .map((card) => {
-        player.discard.push(card as NonCharacter);
+        G.player[card.owner].discard.push(card as NonCharacter);
 
         pruneTriggerStore(G, ctx, card.key);
         rmCard(G, ctx, card, location);

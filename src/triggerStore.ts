@@ -7,7 +7,7 @@ import { Decision } from './stack';
 import {
   deepCardComp,
   getCardLocation,
-  getLocationCardByKey,
+  getCardAtLocation,
   getLocation,
   getOpponentID,
   getRandomKey,
@@ -157,7 +157,7 @@ export class FairyTrigger extends Trigger {
 
   createDecision(G: GameState, ctx: Ctx, _decision: Decision) {
     const cardLoc = getCardLocation(G, ctx, this.name);
-    const card = getLocationCardByKey(G, ctx, cardLoc, this.name);
+    const card = getCardAtLocation(G, ctx, cardLoc, this.name);
 
     const dec: Decision = {
       action: 'bounce',

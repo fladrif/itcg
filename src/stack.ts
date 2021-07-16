@@ -13,7 +13,14 @@ import { endActivateStage, endAttackStage } from './hook';
 import { Skill, Character, NonCharacter } from './card';
 import { ensureFilter, filterSelections } from './target';
 import { stackTriggers } from './trigger';
-import { deepCardComp, getCurrentStage, getLocation, getRandomKey } from './utils';
+import {
+  deepCardComp,
+  getCurrentStage,
+  getCardLocation,
+  getLocation,
+  getCardAtLocation,
+  getRandomKey,
+} from './utils';
 
 // TODO: Handle choice/modal selections as well
 export type Selection = Partial<Record<Location, (Character | NonCharacter)[]>>;
@@ -119,6 +126,7 @@ export function resolveStack(G: GameState, ctx: Ctx, confirmation?: boolean) {
     const decision = stack.decisions.pop()!;
     const actionOpts = { ...decision.opts, selection: decision.selection };
 
+    // TODO: Merge is not perfect, will overwrite selections if they exist in both
     if (decision.opts?.selection) {
       actionOpts.selection = {
         ...actionOpts.selection,
@@ -211,7 +219,7 @@ export function selectCard(
     curDecision.selection[cardLoc]!.push(selCard);
     selCard.selected = true;
   } else {
-    pruneCardsSelection(curDecision.selection, cardLoc, [selCard]);
+    pruneCardsFromSelection(curDecision.selection, cardLoc, [selCard]);
     selCard.selected = false;
   }
 
@@ -240,12 +248,12 @@ function pruneSelection(
   overflow: Selection
 ) {
   for (const location of Object.keys(overflow) as Location[]) {
-    pruneCardsGame(G, ctx, location, overflow[location]!);
-    pruneCardsSelection(selection, location, overflow[location]!);
+    unselectGameCards(G, ctx, location, overflow[location]!);
+    pruneCardsFromSelection(selection, location, overflow[location]!);
   }
 }
 
-function pruneCardsSelection(
+function pruneCardsFromSelection(
   selection: Selection,
   location: Location,
   cards: (Character | NonCharacter)[]
@@ -260,7 +268,7 @@ function pruneCardsSelection(
   selection[location] = selLoc.filter((card) => card.selected !== false);
 }
 
-function pruneCardsGame(
+function unselectGameCards(
   G: GameState,
   ctx: Ctx,
   location: Location,
@@ -269,6 +277,17 @@ function pruneCardsGame(
   getLocation(G, ctx, location)
     .filter((gameCard) => !!cards.find((card) => deepCardComp(gameCard, card)))
     .map((gameCard) => (gameCard.selected = false));
+
+  cards
+    .filter((card) => {
+      return !getLocation(G, ctx, location).find((locCard) =>
+        deepCardComp(locCard, card)
+      );
+    })
+    .map((movedCard) => {
+      const currentLocation = getCardLocation(G, ctx, movedCard.key);
+      getCardAtLocation(G, ctx, currentLocation, movedCard.key).selected = false;
+    });
 }
 
 function isDecisionNeeded(dec: Decision): boolean {
