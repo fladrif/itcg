@@ -170,7 +170,7 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
               source={stack?.activeDecisions[0].opts?.source}
             />
           </div>
-          <ITCGHighlight state={this.props.G} />
+          <ITCGHighlight state={this.props.G} ctx={this.props.ctx} />
         </div>
         <div style={statStyle}>
           <ITCGStats
