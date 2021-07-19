@@ -1,8 +1,9 @@
 import { Ctx } from 'boardgame.io';
 
+import { Location } from './actions';
 import { GameState } from './game';
-import { Skill, isMonster } from './card';
-import { meetsSkillReq } from './utils';
+import { Skill, isMonster, Monster } from './card';
+import { getLocation, meetsSkillReq } from './utils';
 
 export function endLevelStage(G: GameState, ctx: Ctx) {
   G.player[ctx.currentPlayer].activationPos = 0;
@@ -10,8 +11,29 @@ export function endLevelStage(G: GameState, ctx: Ctx) {
   endActivateStage(G, ctx);
 }
 
+export function resetMonsterDamageOnField(G: GameState, ctx: Ctx) {
+  const locations = [Location.Field, Location.OppField];
+
+  locations.map((location) => {
+    getLocation(G, ctx, location)
+      .filter((card) => isMonster(card))
+      .map((card) => ((card as Monster).damageTaken = 0));
+  });
+}
+
+function resetAttacks(G: GameState, ctx: Ctx) {
+  // TODO: Handle fierce here, or set it as hook
+  G.player[ctx.currentPlayer].field
+    .filter((card) => isMonster(card))
+    .map((card) => {
+      (card as Monster).attacks = 1;
+      (card as Monster).damageTaken = 0;
+    });
+}
+
 function endActivate(G: GameState, ctx: Ctx) {
   ctx.events!.endStage!();
+  resetAttacks(G, ctx);
   endAttackStage(G, ctx);
 }
 

@@ -2,7 +2,8 @@ import { Ctx, PlayerID } from 'boardgame.io';
 import lodash from 'lodash';
 
 import * as cards from './cards';
-import { instantiateCard, isMonster, Monster, Character, NonCharacter } from './card';
+import { instantiateCard, Character, NonCharacter } from './card';
+import { resetMonsterDamageOnField } from './hook';
 import {
   shuffleDeck,
   levelUp,
@@ -157,18 +158,11 @@ export const ITCG = {
   },
 
   turn: {
-    onBegin: (G: GameState, ctx: Ctx) => {
+    onBegin: (_G: GameState, ctx: Ctx) => {
       ctx.events!.setActivePlayers!({ currentPlayer: 'level' });
-      // TODO: Handle fierce here, or set it as hook
-      G.player[ctx.currentPlayer].field
-        .filter((card) => isMonster(card))
-        .map((card) => {
-          (card as Monster).attacks = 1;
-          (card as Monster).damageTaken = 0;
-        });
-      G.player[ctx.currentPlayer].discard
-        .filter((card) => isMonster(card))
-        .map((card) => ((card as Monster).damageTaken = 0));
+    },
+    onEnd: (G: GameState, ctx: Ctx) => {
+      resetMonsterDamageOnField(G, ctx);
     },
     stages: {
       level: {

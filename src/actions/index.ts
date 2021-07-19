@@ -15,7 +15,6 @@ import {
   SkillRequirements,
 } from '../card';
 import { Selection } from '../stack';
-import { pruneTriggerStore } from '../triggerStore';
 import {
   deepCardComp,
   getLocation,
@@ -25,7 +24,7 @@ import {
   rmCard,
 } from '../utils';
 
-import { handlePlayNonTactic, handlePlayTactic } from './utils';
+import { handleAbility, handleCardLeaveField } from './utils';
 
 export enum Location {
   Field = 'Field',
@@ -104,8 +103,7 @@ function bounce(G: GameState, ctx: Ctx, opts: ActionOpts): any {
         getCardAtLocation(G, ctx, location, card.key) as NonCharacter
       );
 
-      pruneTriggerStore(G, ctx, card.key);
-      rmCard(G, ctx, card, location);
+      handleCardLeaveField(G, ctx, card as NonCharacter, location);
     });
   }
 }
@@ -144,8 +142,7 @@ function destroy(G: GameState, ctx: Ctx, opts: ActionOpts): any {
       .map((card) => {
         G.player[card.owner].discard.push(card as NonCharacter);
 
-        pruneTriggerStore(G, ctx, card.key);
-        rmCard(G, ctx, card, location);
+        handleCardLeaveField(G, ctx, card as NonCharacter, location);
       });
   }
 }
@@ -172,10 +169,10 @@ function play(G: GameState, ctx: Ctx, opts: ActionOpts): any {
   opts.selection[Location.Hand]!.map((card) => {
     if (isMonster(card) || isItem(card)) {
       player.field.push(card);
-      handlePlayNonTactic(G, ctx, card);
+      handleAbility(G, ctx, card);
     } else if (isTactic(card)) {
       player.discard.push(card);
-      handlePlayTactic(G, ctx, card);
+      handleAbility(G, ctx, card);
     }
 
     rmCard(G, ctx, card, Location.Hand);
