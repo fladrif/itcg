@@ -28,12 +28,12 @@ const buttonStyle: React.CSSProperties = {
 };
 
 const posButtonStyle: React.CSSProperties = {
-  backgroundColor: 'green',
+  background: 'radial-gradient(#F5793A, #934822)',
   ...buttonStyle,
 };
 
 const negButtonStyle: React.CSSProperties = {
-  backgroundColor: 'red',
+  background: 'radial-gradient(#3E4C99, #0D1C73)',
   ...buttonStyle,
 };
 
