@@ -129,3 +129,136 @@ export const ribbonpig: Omit<Monster, 'key' | 'owner'> = {
   ability: {},
   ...defaultTypes,
 };
+
+export const fireboar: Omit<Monster, 'key' | 'owner'> = {
+  name: 'Fire Boar',
+  image: 'FireBoar',
+  level: 32,
+  attack: 10,
+  health: 50,
+  skill: {
+    action: 'play',
+    activated: false,
+    requirements: {
+      level: 30,
+      class: {
+        [CardClasses.Warrior]: 2,
+      },
+    },
+    targets: {
+      level: 40,
+      type: CardTypes.Monster,
+      location: Location.Hand,
+      quantity: 1,
+    },
+  },
+  ability: {},
+  ...defaultTypes,
+};
+
+export const grizzly: Omit<Monster, 'key' | 'owner'> = {
+  name: 'Grizzly',
+  image: 'Grizzly',
+  level: 56,
+  attack: 50,
+  health: 60,
+  skill: {
+    action: 'play',
+    activated: false,
+    requirements: {
+      level: 50,
+      class: {
+        [CardClasses.Warrior]: 3,
+      },
+    },
+    targets: {
+      level: 'CurrentLevel',
+      type: CardTypes.Monster,
+      location: Location.Hand,
+      quantity: 1,
+    },
+  },
+  ability: {},
+  ...defaultTypes,
+};
+
+export const blockgolem: Omit<Monster, 'key' | 'owner'> = {
+  name: 'Block Golem',
+  image: 'BlockGolem',
+  level: 42,
+  attack: 40,
+  health: 40,
+  skill: {
+    action: 'quest', // TODO: scout
+    activated: false,
+    requirements: { level: 0, turn: -1 },
+  },
+  ability: {},
+  ...defaultTypes,
+};
+
+export const stonegolem: Omit<Monster, 'key' | 'owner'> = {
+  name: 'Stone Golem',
+  image: 'StoneGolem',
+  level: 55,
+  attack: 40,
+  health: 70,
+  skill: {
+    action: 'quest', // TODO: scout
+    activated: false,
+    requirements: { level: 0, turn: -1 },
+  },
+  ability: {}, // TODO: relentless
+  ...defaultTypes,
+};
+
+export const tauromacis: Omit<Monster, 'key' | 'owner'> = {
+  name: 'Tauromacis',
+  image: 'Tauromacis',
+  level: 70,
+  attack: 50,
+  health: 40,
+  skill: {
+    action: 'quest', // TODO: train hard
+    activated: false,
+    requirements: { level: 0, turn: -1 },
+  },
+  ability: {}, // TODO: prevail
+  ...defaultTypes,
+};
+
+export const yetipepe: Omit<Monster, 'key' | 'owner'> = {
+  name: 'Yeti & Pepe',
+  image: 'YetiPepe',
+  level: 78,
+  attack: 50,
+  health: 80,
+  skill: {
+    action: 'play',
+    activated: false,
+    requirements: {
+      level: 70,
+      class: {
+        [CardClasses.Warrior]: 3,
+      },
+    },
+    targets: {
+      xor: [
+        {
+          level: 100,
+          type: CardTypes.Item,
+          location: Location.Hand,
+          quantity: 1,
+        },
+        {
+          level: 100,
+          type: CardTypes.Monster,
+          location: Location.Hand,
+          quantity: 1,
+        },
+      ],
+    },
+  },
+  ability: {}, // TODO: fierce, relentless
+  ...defaultTypes,
+};

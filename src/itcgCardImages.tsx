@@ -22,6 +22,24 @@ import TopOrangeMushroom from './images/top-OrangeMushroom.jpg';
 import SkillOrangeMushroom from './images/skill-OrangeMushroom.jpg';
 import TopEmeraldEarrings from './images/top-EmeraldEarrings.jpg';
 import SkillEmeraldEarrings from './images/skill-EmeraldEarrings.jpg';
+import TopFireBoar from './images/top-FireBoar.jpg';
+import SkillFireBoar from './images/skill-FireBoar.jpg';
+import TopGrizzly from './images/top-Grizzly.jpg';
+import SkillGrizzly from './images/skill-Grizzly.jpg';
+import TopBlockGolem from './images/top-BlockGolem.jpg';
+import SkillBlockGolem from './images/skill-BlockGolem.jpg';
+import TopStoneGolem from './images/top-StoneGolem.jpg';
+import SkillStoneGolem from './images/skill-StoneGolem.jpg';
+import TopTauromacis from './images/top-Tauromacis.jpg';
+import SkillTauromacis from './images/skill-Tauromacis.jpg';
+import TopYetiPepe from './images/top-YetiPepe.jpg';
+import SkillYetiPepe from './images/skill-YetiPepe.jpg';
+import TopResting from './images/top-Resting.jpg';
+import SkillResting from './images/skill-Resting.jpg';
+import TopBattleShield from './images/top-BattleShield.jpg';
+import SkillBattleShield from './images/skill-BattleShield.jpg';
+import TopTheNineDragons from './images/top-TheNineDragons.jpg';
+import SkillTheNineDragons from './images/skill-TheNineDragons.jpg';
 import TopSherman from './images/top-Sherman.jpg';
 import SkillSherman from './images/skill1-Sherman.jpg';
 import Skill2Sherman from './images/skill2-Sherman.jpg';
@@ -87,6 +105,42 @@ export const cardImages: Record<string, CardImages> = {
   EmeraldEarrings: {
     top: TopEmeraldEarrings,
     skill: SkillEmeraldEarrings,
+  },
+  FireBoar: {
+    top: TopFireBoar,
+    skill: SkillFireBoar,
+  },
+  Grizzly: {
+    top: TopGrizzly,
+    skill: SkillGrizzly,
+  },
+  BlockGolem: {
+    top: TopBlockGolem,
+    skill: SkillBlockGolem,
+  },
+  StoneGolem: {
+    top: TopStoneGolem,
+    skill: SkillStoneGolem,
+  },
+  Tauromacis: {
+    top: TopTauromacis,
+    skill: SkillTauromacis,
+  },
+  YetiPepe: {
+    top: TopYetiPepe,
+    skill: SkillYetiPepe,
+  },
+  Resting: {
+    top: TopResting,
+    skill: SkillResting,
+  },
+  BattleShield: {
+    top: TopBattleShield,
+    skill: SkillBattleShield,
+  },
+  TheNineDragons: {
+    top: TopTheNineDragons,
+    skill: SkillTheNineDragons,
   },
   Sherman: {
     top: TopSherman,

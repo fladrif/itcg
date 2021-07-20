@@ -1,0 +1,99 @@
+character - bowman - Nixie
+character - bowman - Skyhawk
+character - magician -  Maya
+character - magician -  Stormwind
+character - thief - Ivan
+character - thief - Mistmoon
+character - warrior - Sherman
+character - warrior - Starblade
+
+monster - magician - BellflowerRoot - 53 - 50.2 thinkfast/equip 50
+monster - warrior - BlockGolem - 42 - scout
+monster - thief - Buffy
+monster - bowman - Cerebes
+monster - magician - ChiefGray
+monster - thief - Cico
+monster - thief - Croco
+monster - bowman - CurseEye
+monster - magician - DarkAxeStump
+monster - bowman - Drake
+monster - bowman - Fairy
+monster - warrior - FireBoar - 32 - 30.2 spawn 40
+monster - warrior - GreenMushroom - 15 - 70.2 spawn/equip 90
+monster - bowman - GreenTrixter
+monster - warrior - Grizzly - 56 - 50.3 spawn x
+monster - bowman - Hector
+monster - bowman - HornedMushroom
+monster - bowman - JrBoogie
+monster - magician - JrNecki
+monster - warrior - JrYeti - 50 - 50.2 dmg 20
+monster - thief - Krappy
+monster - thief - Krip
+monster - magician - Lioner
+monster - thief - Lorang
+monster - magician - Lucida
+monster - bowman - LunarPixie
+monster - magician - Octopus
+monster - warrior - OfficerSkeleton - 63 - 50.2 buff 10
+monster - thief - OrangeMushroom
+monster - warrior - Panda - 60 - Revive 50
+monster - magician - PeachMonkey
+monster - warrior - Pepe - 60 - 60.1 spawn/thinkfast 70
+monster - thief - PinkTeddy
+monster - bowman - PlatoonChronos
+monster - thief - Propelly
+monster - thief - RedSnail
+monster - warrior - RibbonPig - 10 - 10.1 spawn 20
+monster - thief - Seacle
+monster - warrior - Sentinel - 30 - scout
+monster - warrior - Slime - 6 - 40.2 refresh 10
+monster - thief - SoulTeddy
+monster - bowman - Stirge
+monster - warrior - StoneGolem - 55 - scout
+monster - warrior - Tauromacis - 70 - ramp
+monster - bowman - Tweeter
+monster - warrior - WildBoar - 25 - 40.2 thinkfast/equip 30
+monster - warrior - YetiPepe - 78 - 70.3 spawn/equip 100
+monster - magician - ZetaGray
+monster - magician - ZombieLupin
+
+tactic - bowman - ArrowBlow
+tactic - thief - Avenger
+tactic - thief - DoubleStrike
+tactic - magician - EnergyBolt
+tactic - bowman - Focus
+tactic - magician - Heal
+tactic - warrior - ItemTrade - 30 - gain life
+tactic - magician - KnowledgeIsPower
+tactic - magician - MagicClaw
+tactic - magician - Meditation
+tactic - magician - MPEater
+tactic - bowman - PowerKnockBack
+tactic - warrior - Pull - 40 - scout
+tactic - bowman - RainOfArrows
+tactic - warrior - Resting - 10 - 70.1 spawn/thinkfast 90
+tactic - bowman - RiskyShot
+tactic - magician - SideQuest
+tactic - bowman - SoulArrow
+tactic - thief - Swipe
+tactic - magician - Teleport
+tactic - magician - ThunderBolt
+
+item - bowman - BattleBow
+item - warrior - BattleShield - 35 - 50.2 thinkfast/equip 40
+item - bowman - BlackRobinHat
+item - thief - BloodSlain
+item - bowman - BlueDiros
+item - thief - BlueNightfox
+item - thief - CoconutKnife
+item - thief - DarkShadow
+item - warrior - Doombringer - 70 - 60.3 dmg
+item - thief - EmeraldEarrings
+item - magician - EvilTale
+item - bowman - GoldenCrow
+item - thief - KumbiThrowingStar
+item - magician - MapleStaff
+item - magician - RedApprenticeHat
+item - thief - RedNight
+item - warrior - SerpentsTongue - 50 - 50.2 dmg 20
+item - warrior - TheNineDragons - 50 - 30.1 equip 30

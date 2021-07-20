@@ -3,6 +3,7 @@ import lodash from 'lodash';
 
 import * as cards from './cards';
 import { instantiateCard, Character, NonCharacter } from './card';
+import { hydrateDeck, shermanBase } from './decks';
 import { resetMonsterDamageOnField } from './hook';
 import {
   shuffleDeck,
@@ -20,21 +21,6 @@ import { Stack } from './stack';
 import { TriggerStore, defaultTriggers } from './triggerStore';
 import { getOpponentID } from './utils';
 
-const SAMPLE_DECK_0: NonCharacter[] = [
-  ...instantiateCard(cards.slime, '0'),
-  ...instantiateCard(cards.fairy, '0'),
-  ...instantiateCard(cards.jrnecki, '0'),
-  ...instantiateCard(cards.octopus, '0'),
-  ...instantiateCard(cards.redsnail, '0'),
-  ...instantiateCard(cards.wildboar, '0'),
-  ...instantiateCard(cards.magicclaw, '0'),
-  ...instantiateCard(cards.ribbonpig, '0', 4),
-  ...instantiateCard(cards.darkaxestump, '0'),
-  ...instantiateCard(cards.greenmushroom, '0'),
-  ...instantiateCard(cards.orangemushroom, '0', 4),
-  ...instantiateCard(cards.emeraldearrings, '0'),
-];
-
 const SAMPLE_DECK_1: NonCharacter[] = [
   ...instantiateCard(cards.slime, '1'),
   ...instantiateCard(cards.fairy, '1', 4),
@@ -50,9 +36,9 @@ const SAMPLE_DECK_1: NonCharacter[] = [
   ...instantiateCard(cards.emeraldearrings, '1'),
 ];
 
-interface Deck {
-  character: Character;
-  deck: NonCharacter[];
+export interface Deck {
+  character: Omit<Character, 'key' | 'owner'>;
+  deck: [Omit<NonCharacter, 'key' | 'owner'>, number][];
 }
 
 export interface PlayerState {
@@ -82,8 +68,8 @@ function preConfigSetup(): GameState {
   const state: GameState = { player: {}, triggers: [...defaultTriggers] };
 
   state.player['0'] = {
-    deck: lodash(SAMPLE_DECK_0).shuffle().value(),
-    character: instantiateCard(cards.sherman, '0')[0],
+    deck: lodash(hydrateDeck(shermanBase, '0')).shuffle().value(),
+    character: instantiateCard(shermanBase.character, '0')[0],
     hand: [],
     learnedSkills: [],
     field: [],
@@ -131,14 +117,14 @@ export function setup(_ctx: Ctx, setupData: SetupData): GameState {
 
   for (const player of setupData.players) {
     state.player[player.id] = {
-      deck: player.deck.deck,
-      character: instantiateCard(cards.sherman, player.id)[0],
+      deck: hydrateDeck(player.deck, player.id),
+      character: instantiateCard(player.deck.character, player.id)[0],
       hand: [],
       learnedSkills: [],
       field: [],
       discard: [],
-      hp: cards.sherman.health,
-      maxHP: cards.sherman.health,
+      hp: player.deck.character.health,
+      maxHP: player.deck.character.health,
       level: 0,
       activationPos: 0,
     };
