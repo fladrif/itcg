@@ -10,21 +10,21 @@ character - warrior - Starblade
 monster - magician - BellflowerRoot - 53 - 50.2 thinkfast/equip 50
 monster - warrior - BlockGolem - 42 - scout
 monster - thief - Buffy
-monster - bowman - Cerebes
+monster - bowman - Cerebes - 72 - 80.2 spawn/equip 120
 monster - magician - ChiefGray
 monster - thief - Cico
 monster - thief - Croco
-monster - bowman - CurseEye
+monster - bowman - CurseEye - 35 - 50.2 spawn/thinkfast 40
 monster - magician - DarkAxeStump
-monster - bowman - Drake
-monster - bowman - Fairy
+monster - bowman - Drake - 50 - 80.3 dmg 30
+monster - bowman - Fairy - 30 - 30.2 spawn 30
 monster - warrior - FireBoar - 32 - 30.2 spawn 40
 monster - warrior - GreenMushroom - 15 - 70.2 spawn/equip 90
-monster - bowman - GreenTrixter
+monster - bowman - GreenTrixter - 28 - 20.1 dmg 10
 monster - warrior - Grizzly - 56 - 50.3 spawn x
-monster - bowman - Hector
-monster - bowman - HornedMushroom
-monster - bowman - JrBoogie
+monster - bowman - Hector - 55 - 60.2 spawn 70
+monster - bowman - HornedMushroom - 22 - 40.2 spawn/equip 30
+monster - bowman - JrBoogie - 35 - revive
 monster - magician - JrNecki
 monster - warrior - JrYeti - 50 - 50.2 dmg 20
 monster - thief - Krappy
@@ -32,7 +32,7 @@ monster - thief - Krip
 monster - magician - Lioner
 monster - thief - Lorang
 monster - magician - Lucida
-monster - bowman - LunarPixie
+monster - bowman - LunarPixie - 45 - revive
 monster - magician - Octopus
 monster - warrior - OfficerSkeleton - 63 - 50.2 buff 10
 monster - thief - OrangeMushroom
@@ -40,7 +40,7 @@ monster - warrior - Panda - 60 - Revive 50
 monster - magician - PeachMonkey
 monster - warrior - Pepe - 60 - 60.1 spawn/thinkfast 70
 monster - thief - PinkTeddy
-monster - bowman - PlatoonChronos
+monster - bowman - PlatoonChronos - 41 - revive
 monster - thief - Propelly
 monster - thief - RedSnail
 monster - warrior - RibbonPig - 10 - 10.1 spawn 20
@@ -48,49 +48,49 @@ monster - thief - Seacle
 monster - warrior - Sentinel - 30 - scout
 monster - warrior - Slime - 6 - 40.2 refresh 10
 monster - thief - SoulTeddy
-monster - bowman - Stirge
+monster - bowman - Stirge - 20 - 60.1 spawn/equip 50
 monster - warrior - StoneGolem - 55 - scout
 monster - warrior - Tauromacis - 70 - ramp
-monster - bowman - Tweeter
+monster - bowman - Tweeter - 39 - 60.2  dmg 20
 monster - warrior - WildBoar - 25 - 40.2 thinkfast/equip 30
 monster - warrior - YetiPepe - 78 - 70.3 spawn/equip 100
 monster - magician - ZetaGray
 monster - magician - ZombieLupin
 
-tactic - bowman - ArrowBlow
+tactic - bowman - ArrowBlow - 10 - 50.1 spawn/thinkfast 40
 tactic - thief - Avenger
 tactic - thief - DoubleStrike
 tactic - magician - EnergyBolt
-tactic - bowman - Focus
+tactic - bowman - Focus - 20 - 40.2 thinkfast 40
 tactic - magician - Heal
 tactic - warrior - ItemTrade - 30 - gain life
 tactic - magician - KnowledgeIsPower
 tactic - magician - MagicClaw
 tactic - magician - Meditation
 tactic - magician - MPEater
-tactic - bowman - PowerKnockBack
+tactic - bowman - PowerKnockBack - 40 - 60.2 dmg 20
 tactic - warrior - Pull - 40 - scout
-tactic - bowman - RainOfArrows
+tactic - bowman - RainOfArrows - 40 - steady hand
 tactic - warrior - Resting - 10 - 70.1 spawn/thinkfast 90
-tactic - bowman - RiskyShot
+tactic - bowman - RiskyShot - 40 - 60.2 thinkfast/equip 50
 tactic - magician - SideQuest
-tactic - bowman - SoulArrow
+tactic - bowman - SoulArrow - 30 - 20.1 dmg 10
 tactic - thief - Swipe
 tactic - magician - Teleport
 tactic - magician - ThunderBolt
 
-item - bowman - BattleBow
+item - bowman - BattleBow - 25 - crit
 item - warrior - BattleShield - 35 - 50.2 thinkfast/equip 40
-item - bowman - BlackRobinHat
+item - bowman - BlackRobinHat - 20 - 60.2 dmg 20
 item - thief - BloodSlain
-item - bowman - BlueDiros
+item - bowman - BlueDiros - 20 - 30.2 equip 30
 item - thief - BlueNightfox
 item - thief - CoconutKnife
 item - thief - DarkShadow
 item - warrior - Doombringer - 70 - 60.3 dmg
 item - thief - EmeraldEarrings
 item - magician - EvilTale
-item - bowman - GoldenCrow
+item - bowman - GoldenCrow - 60 - 50.2 dmg
 item - thief - KumbiThrowingStar
 item - magician - MapleStaff
 item - magician - RedApprenticeHat

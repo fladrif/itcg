@@ -24,6 +24,22 @@ green-
   direct dmg
   monster resist
 
+  deck - 
+    Nixie
+
+    2 Drake
+    4 Fairy
+    4 GreenTrixter
+    4 JrBoogie
+    4 LunarPixie
+    4 Stirge
+    4 Tweeter
+    4 ArrowBlow
+    4 RainOfArrows
+    2 SoulArrow
+    2 PowerKnockBack
+    2 GoldenCrow
+
 black-
   discard
   de-level
