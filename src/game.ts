@@ -3,7 +3,7 @@ import lodash from 'lodash';
 
 import * as cards from './cards';
 import { instantiateCard, Character, NonCharacter } from './card';
-import { hydrateDeck, shermanBase } from './decks';
+import { hydrateDeck, nixieBase, shermanBase } from './decks';
 import { resetMonsterDamageOnField } from './hook';
 import {
   shuffleDeck,
@@ -21,7 +21,7 @@ import { Stack } from './stack';
 import { TriggerStore, defaultTriggers } from './triggerStore';
 import { getOpponentID } from './utils';
 
-const SAMPLE_DECK_1: NonCharacter[] = [
+export const SAMPLE_DECK: NonCharacter[] = [
   ...instantiateCard(cards.slime, '1'),
   ...instantiateCard(cards.fairy, '1', 4),
   ...instantiateCard(cards.jrnecki, '1'),
@@ -74,21 +74,21 @@ function preConfigSetup(): GameState {
     learnedSkills: [],
     field: [],
     discard: [],
-    hp: cards.sherman.health,
-    maxHP: cards.sherman.health,
+    hp: shermanBase.character.health,
+    maxHP: shermanBase.character.health,
     level: 0,
     activationPos: 0,
   };
 
   state.player['1'] = {
-    deck: lodash(SAMPLE_DECK_1).shuffle().value(),
-    character: instantiateCard(cards.nixie, '1')[0],
+    deck: lodash(hydrateDeck(nixieBase, '1')).shuffle().value(),
+    character: instantiateCard(nixieBase.character, '1')[0],
     hand: [],
     learnedSkills: [],
     field: [],
     discard: [],
-    hp: cards.nixie.health,
-    maxHP: cards.nixie.health,
+    hp: nixieBase.character.health,
+    maxHP: nixieBase.character.health,
     level: 0,
     activationPos: 0,
   };

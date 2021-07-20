@@ -40,6 +40,28 @@ import TopBattleShield from './images/top-BattleShield.jpg';
 import SkillBattleShield from './images/skill-BattleShield.jpg';
 import TopTheNineDragons from './images/top-TheNineDragons.jpg';
 import SkillTheNineDragons from './images/skill-TheNineDragons.jpg';
+import TopDrake from './images/top-Drake.jpg';
+import SkillDrake from './images/skill-Drake.jpg';
+import TopGreenTrixter from './images/top-GreenTrixter.jpg';
+import SkillGreenTrixter from './images/skill-GreenTrixter.jpg';
+import TopJrBoogie from './images/top-JrBoogie.jpg';
+import SkillJrBoogie from './images/skill-JrBoogie.jpg';
+import TopLunarPixie from './images/top-LunarPixie.jpg';
+import SkillLunarPixie from './images/skill-LunarPixie.jpg';
+import TopStirge from './images/top-Stirge.jpg';
+import SkillStirge from './images/skill-Stirge.jpg';
+import TopTweeter from './images/top-Tweeter.jpg';
+import SkillTweeter from './images/skill-Tweeter.jpg';
+import TopArrowBlow from './images/top-ArrowBlow.jpg';
+import SkillArrowBlow from './images/skill-ArrowBlow.jpg';
+import TopRainOfArrows from './images/top-RainOfArrows.jpg';
+import SkillRainOfArrows from './images/skill-RainOfArrows.jpg';
+import TopSoulArrow from './images/top-SoulArrow.jpg';
+import SkillSoulArrow from './images/skill-SoulArrow.jpg';
+import TopPowerKnockBack from './images/top-PowerKnockBack.jpg';
+import SkillPowerKnockBack from './images/skill-PowerKnockBack.jpg';
+import TopGoldenCrow from './images/top-GoldenCrow.jpg';
+import SkillGoldenCrow from './images/skill-GoldenCrow.jpg';
 import TopSherman from './images/top-Sherman.jpg';
 import SkillSherman from './images/skill1-Sherman.jpg';
 import Skill2Sherman from './images/skill2-Sherman.jpg';
@@ -141,6 +163,50 @@ export const cardImages: Record<string, CardImages> = {
   TheNineDragons: {
     top: TopTheNineDragons,
     skill: SkillTheNineDragons,
+  },
+  Drake: {
+    top: TopDrake,
+    skill: SkillDrake,
+  },
+  GreenTrixter: {
+    top: TopGreenTrixter,
+    skill: SkillGreenTrixter,
+  },
+  JrBoogie: {
+    top: TopJrBoogie,
+    skill: SkillJrBoogie,
+  },
+  LunarPixie: {
+    top: TopLunarPixie,
+    skill: SkillLunarPixie,
+  },
+  Stirge: {
+    top: TopStirge,
+    skill: SkillStirge,
+  },
+  Tweeter: {
+    top: TopTweeter,
+    skill: SkillTweeter,
+  },
+  ArrowBlow: {
+    top: TopArrowBlow,
+    skill: SkillArrowBlow,
+  },
+  RainOfArrows: {
+    top: TopRainOfArrows,
+    skill: SkillRainOfArrows,
+  },
+  SoulArrow: {
+    top: TopSoulArrow,
+    skill: SkillSoulArrow,
+  },
+  PowerKnockBack: {
+    top: TopPowerKnockBack,
+    skill: SkillPowerKnockBack,
+  },
+  GoldenCrow: {
+    top: TopGoldenCrow,
+    skill: SkillGoldenCrow,
   },
   Sherman: {
     top: TopSherman,

@@ -140,6 +140,44 @@ export class GeniusTrigger extends Trigger {
   }
 }
 
+export class RevengeTrigger extends Trigger {
+  constructor(name: string, player: PlayerID) {
+    super(name, 'After', 'play', player);
+  }
+
+  shouldTrigger(G: GameState, ctx: Ctx, decision: Decision, prep: TriggerPrepostion) {
+    if (
+      !G.stack!.decisionTriggers[decision.key].includes(this.name) &&
+      prep === this.prep &&
+      decision.action === this.actionTrigger &&
+      this.owner !== ctx.currentPlayer
+    ) {
+      return true;
+    }
+
+    return false;
+  }
+
+  createDecision(G: GameState, ctx: Ctx, _decision: Decision) {
+    const cardLoc = getCardLocation(G, ctx, this.name);
+    const card = getCardAtLocation(G, ctx, cardLoc, this.name);
+
+    const dec: Decision = {
+      action: 'damage',
+      selection: {
+        [Location.Character]: [G.player[ctx.currentPlayer].character],
+      },
+      finished: false,
+      opts: {
+        source: card,
+      },
+      key: getRandomKey(),
+    };
+
+    return [dec];
+  }
+}
+
 export class FairyTrigger extends Trigger {
   constructor(name: string, player: PlayerID) {
     super(name, 'After', 'level', player);
@@ -307,11 +345,12 @@ export function pushTriggerStore(
 }
 
 export const triggers = {
-  ShieldTrigger,
   DmgDestroyTrigger,
   FairyTrigger,
   GeniusTrigger,
   LootTrigger,
+  RevengeTrigger,
+  ShieldTrigger,
 };
 
 export type TriggerNames = keyof typeof triggers;

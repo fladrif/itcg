@@ -71,6 +71,7 @@ export interface ActionOpts {
   damage?: number;
   selection?: Selection;
   decision?: string;
+  position?: number;
   source?: Character | NonCharacter;
   lifegain?: number;
 }
@@ -201,6 +202,23 @@ function shield(G: GameState, ctx: Ctx, opts: ActionOpts): any {
   if (decision.opts.damage < 0) decision.opts.damage = 0;
 }
 
+function tuck(G: GameState, ctx: Ctx, opts: ActionOpts): any {
+  if (!G.stack) return;
+  if (!opts.selection || !opts.position) return;
+
+  for (const location of Object.keys(opts.selection) as Location[]) {
+    opts.selection[location]!.map((card) => {
+      G.player[card.owner].deck.splice(
+        opts.position!,
+        0,
+        getCardAtLocation(G, ctx, location, card.key) as NonCharacter
+      );
+
+      handleCardLeaveField(G, ctx, card as NonCharacter, location);
+    });
+  }
+}
+
 function level(G: GameState, ctx: Ctx, opts: ActionOpts): any {
   if (!G.stack) return;
   if (!opts.selection) return;
@@ -240,6 +258,7 @@ export const actions = {
   quest,
   refresh,
   shield,
+  tuck,
 };
 
 export type Action = keyof typeof actions;
