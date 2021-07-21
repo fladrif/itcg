@@ -1,7 +1,7 @@
 import { PlayerID } from 'boardgame.io';
 
 import { Action, ActionOpts, ActionTargets } from './actions';
-import { TriggerNames } from './triggerStore';
+import { TriggerNames, TriggerOptions } from './triggerStore';
 import { getRandomKey } from './utils';
 
 export const SAMPLE_SKILL: Skill = {
@@ -74,8 +74,13 @@ export interface Skill {
   targets?: ActionTargets;
 }
 
+export interface TriggerfRef {
+  name: TriggerNames;
+  opts?: TriggerOptions;
+}
+
 export interface Ability {
-  triggers?: TriggerNames[];
+  triggers?: TriggerfRef[];
   skills?: Skill[];
 }
 

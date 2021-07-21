@@ -10,6 +10,7 @@ import {
   getCardAtLocation,
   getLocation,
   getOpponentID,
+  getOpponentState,
   getRandomKey,
 } from './utils';
 
@@ -20,6 +21,11 @@ export interface TriggerStore {
   name: TriggerNames;
   key: string;
   owner: PlayerID;
+  opts?: TriggerOptions;
+}
+
+export interface TriggerOptions {
+  damage?: number;
 }
 
 export interface TriggerLifetime {
@@ -33,18 +39,21 @@ export abstract class Trigger {
   name: string;
   prep: TriggerPrepostion;
   actionTrigger: Action;
+  opts?: TriggerOptions;
   lifetime?: TriggerLifetime;
 
   constructor(
     name: string,
     preposition: TriggerPrepostion,
     actionTrigger: Action,
+    opts?: TriggerOptions,
     owner?: PlayerID
   ) {
     this.name = name;
     this.owner = owner || 'Global';
     this.prep = preposition;
     this.actionTrigger = actionTrigger;
+    this.opts = opts;
   }
 
   abstract shouldTrigger(
@@ -58,8 +67,8 @@ export abstract class Trigger {
 }
 
 export class LootTrigger extends Trigger {
-  constructor(name: string, player: PlayerID) {
-    super(name, 'After', 'play', player);
+  constructor(name: string, player: PlayerID, _opts?: TriggerOptions) {
+    super(name, 'After', 'play', _opts, player);
   }
 
   shouldTrigger(G: GameState, ctx: Ctx, decision: Decision, prep: TriggerPrepostion) {
@@ -104,8 +113,8 @@ export class LootTrigger extends Trigger {
 }
 
 export class GeniusTrigger extends Trigger {
-  constructor(name: string, player: PlayerID) {
-    super(name, 'After', 'play', player);
+  constructor(name: string, player: PlayerID, opts?: TriggerOptions) {
+    super(name, 'After', 'play', opts, player);
   }
 
   shouldTrigger(G: GameState, _ctx: Ctx, decision: Decision, prep: TriggerPrepostion) {
@@ -141,8 +150,8 @@ export class GeniusTrigger extends Trigger {
 }
 
 export class RevengeTrigger extends Trigger {
-  constructor(name: string, player: PlayerID) {
-    super(name, 'After', 'play', player);
+  constructor(name: string, player: PlayerID, opts?: TriggerOptions) {
+    super(name, 'After', 'play', opts, player);
   }
 
   shouldTrigger(G: GameState, ctx: Ctx, decision: Decision, prep: TriggerPrepostion) {
@@ -179,8 +188,8 @@ export class RevengeTrigger extends Trigger {
 }
 
 export class FairyTrigger extends Trigger {
-  constructor(name: string, player: PlayerID) {
-    super(name, 'After', 'level', player);
+  constructor(name: string, player: PlayerID, opts?: TriggerOptions) {
+    super(name, 'After', 'level', opts, player);
   }
 
   shouldTrigger(G: GameState, ctx: Ctx, decision: Decision, prep: TriggerPrepostion) {
@@ -219,7 +228,7 @@ export class FairyTrigger extends Trigger {
 // TODO: Currently triggers on the entire damage decision, should split damage decision into constituent parts so shield triggers only on character damage (for damage decisions that affect characters and monsters)
 // Perhaps replace decision instead of modifying, creates issue with triggering itself
 export class ShieldTrigger extends Trigger {
-  constructor(_name: string, _player: PlayerID) {
+  constructor(_name: string, _player: PlayerID, _opts?: TriggerOptions) {
     super('shield', 'Before', 'damage');
   }
 
@@ -265,7 +274,7 @@ export class ShieldTrigger extends Trigger {
 }
 
 export class DmgDestroyTrigger extends Trigger {
-  constructor(_name: string, _player: PlayerID) {
+  constructor(_name: string, _player: PlayerID, _opts?: TriggerOptions) {
     super('dmgDestroy', 'After', 'damage');
   }
 
@@ -324,6 +333,74 @@ export class DmgDestroyTrigger extends Trigger {
   }
 }
 
+export class RelentlessTrigger extends Trigger {
+  constructor(name: string, player: PlayerID, opts?: TriggerOptions) {
+    super(name, 'After', 'destroy', opts, player);
+  }
+
+  shouldTrigger(G: GameState, _ctx: Ctx, decision: Decision, prep: TriggerPrepostion) {
+    const alreadyTriggered = G.stack!.decisionTriggers[decision.key].includes(this.name);
+    const rightPrep = prep === this.prep;
+    const rightAction = decision.action === this.actionTrigger;
+    const damageOptsExists = this.opts?.damage;
+
+    const monsterDestroyed = decision.opts?.source
+      ? decision.opts.source.key === this.name
+      : false;
+
+    if (
+      alreadyTriggered ||
+      !rightPrep ||
+      !rightAction ||
+      !monsterDestroyed ||
+      !damageOptsExists
+    )
+      return false;
+    return true;
+  }
+
+  createDecision(G: GameState, ctx: Ctx, decision: Decision) {
+    const validLocations = [Location.Field, Location.OppField];
+    const decisions: Decision[] = [];
+
+    validLocations.map((location) => {
+      if (!decision.selection[location]) return;
+
+      getLocation(G, ctx, location)
+        .filter(
+          (card) => !!decision.selection[location]!.find((c) => deepCardComp(c, card))
+        )
+        .map((card) => {
+          if (isMonster(card)) {
+            const thisCard = getCardAtLocation(
+              G,
+              ctx,
+              getCardLocation(G, ctx, this.name),
+              this.name
+            );
+            const oppCharCard = getOpponentState(G, ctx, this.owner).character;
+            const oppCharLocation = getCardLocation(G, ctx, oppCharCard.key);
+
+            decisions.push({
+              action: 'damage',
+              opts: {
+                damage: this.opts!.damage,
+                source: thisCard,
+              },
+              selection: {
+                [oppCharLocation]: [oppCharCard],
+              },
+              finished: true,
+              key: getRandomKey(),
+            });
+          }
+        });
+    });
+
+    return decisions;
+  }
+}
+
 export function pruneTriggerStore(G: GameState, _ctx: Ctx, key: string) {
   const index = G.triggers.findIndex((trig) => trig.key === key);
   if (index < 0) return;
@@ -335,12 +412,14 @@ export function pushTriggerStore(
   G: GameState,
   _ctx: Ctx,
   triggerRef: TriggerNames,
-  card: NonCharacter
+  card: NonCharacter,
+  opts?: TriggerOptions
 ) {
   G.triggers.push({
     name: triggerRef,
     key: card.key,
     owner: card.owner,
+    opts,
   });
 }
 
@@ -349,6 +428,7 @@ export const triggers = {
   FairyTrigger,
   GeniusTrigger,
   LootTrigger,
+  RelentlessTrigger,
   RevengeTrigger,
   ShieldTrigger,
 };

@@ -32,7 +32,7 @@ export const fairy: Omit<Monster, 'key' | 'owner'> = {
     },
   },
   ability: {
-    triggers: ['FairyTrigger'],
+    triggers: [{ name: 'FairyTrigger' }],
   },
   ...defaultTypes,
 };
@@ -299,7 +299,7 @@ export const tweeter: Omit<Monster, 'key' | 'owner'> = {
     },
   },
   ability: {
-    triggers: ['RevengeTrigger'],
+    triggers: [{ name: 'RevengeTrigger' }],
   },
   ...defaultTypes,
 };

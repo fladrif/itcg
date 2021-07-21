@@ -76,7 +76,7 @@ export const octopus: Omit<Monster, 'key' | 'owner'> = {
     activated: false,
   },
   ability: {
-    triggers: ['GeniusTrigger'],
+    triggers: [{ name: 'GeniusTrigger' }],
   },
   ...defaultTypes,
 };

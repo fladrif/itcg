@@ -208,7 +208,7 @@ export const stonegolem: Omit<Monster, 'key' | 'owner'> = {
     activated: false,
     requirements: { level: 0, turn: -1 },
   },
-  ability: {}, // TODO: relentless
+  ability: { triggers: [{ name: 'RelentlessTrigger', opts: { damage: 40 } }] },
   ...defaultTypes,
 };
 
@@ -259,6 +259,8 @@ export const yetipepe: Omit<Monster, 'key' | 'owner'> = {
       ],
     },
   },
-  ability: {}, // TODO: fierce, relentless
+  ability: {
+    triggers: [{ name: 'RelentlessTrigger', opts: { damage: 20 } }],
+  }, // TODO: fierce
   ...defaultTypes,
 };

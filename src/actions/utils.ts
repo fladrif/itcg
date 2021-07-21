@@ -9,7 +9,9 @@ import { getCardAtLocation, getCardLocation, rmCard } from '../utils';
 
 export function handleAbility(G: GameState, ctx: Ctx, card: Tactic): any {
   if (card.ability.triggers) {
-    card.ability.triggers.map((trigger) => pushTriggerStore(G, ctx, trigger, card));
+    card.ability.triggers.map((trigger) =>
+      pushTriggerStore(G, ctx, trigger.name, card, trigger.opts)
+    );
   }
 
   if (card.ability.skills) {

@@ -68,8 +68,8 @@ export function getOpponentID(G: GameState, ctx: Ctx, player?: PlayerID): Player
   return Object.keys(G.player).filter((id) => id != playerID)[0];
 }
 
-export function getOpponentState(G: GameState, ctx: Ctx): PlayerState {
-  return G.player[getOpponentID(G, ctx)];
+export function getOpponentState(G: GameState, ctx: Ctx, player?: PlayerID): PlayerState {
+  return G.player[getOpponentID(G, ctx, player)];
 }
 
 export function getCardAtLocation(
