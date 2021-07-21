@@ -64,7 +64,7 @@ export const slime: Omit<Monster, 'key' | 'owner'> = {
       lifegain: 10,
     },
   },
-  ability: {},
+  ability: {}, // TODO: destroy item
   ...defaultTypes,
 };
 
@@ -152,7 +152,7 @@ export const fireboar: Omit<Monster, 'key' | 'owner'> = {
       quantity: 1,
     },
   },
-  ability: {},
+  ability: {}, // TODO: fierce
   ...defaultTypes,
 };
 
