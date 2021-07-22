@@ -26,6 +26,7 @@ import {
 
 import { handleAbility, handleCardLeaveField } from './utils';
 
+// TODO: possible refactor, this is always relative to currentPlayer; sometimes needs to be relative to card owner or other context
 export enum Location {
   Field = 'Field',
   Hand = 'Hand',

@@ -1,6 +1,7 @@
 import { PlayerID } from 'boardgame.io';
 
 import { Action, ActionOpts, ActionTargets } from './actions';
+import { GlobalState } from './state';
 import { TriggerNames, TriggerOptions } from './triggerStore';
 import { getRandomKey } from './utils';
 
@@ -42,23 +43,20 @@ export interface Character extends Card {
 export interface NonCharacter extends Exclude<Card, Character> {
   level: number;
   skill: Skill;
+  ability: Ability;
 }
 
 export interface Monster extends NonCharacter {
   health: number;
-  ability: Ability;
   attacks: number;
   attack: number;
   damageTaken: number;
+  keywords?: string[];
 }
 
-export interface Tactic extends NonCharacter {
-  ability: Ability;
-}
+export interface Tactic extends NonCharacter {}
 
-export interface Item extends NonCharacter {
-  ability: Ability;
-}
+export interface Item extends NonCharacter {}
 
 export interface SkillRequirements {
   level: number;
@@ -82,6 +80,7 @@ export interface TriggerfRef {
 export interface Ability {
   triggers?: TriggerfRef[];
   skills?: Skill[];
+  state?: Omit<GlobalState, 'owner' | 'player'>;
 }
 
 export function instantiateCard<T extends Card>(

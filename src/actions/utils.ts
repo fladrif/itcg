@@ -1,13 +1,14 @@
 import { Ctx } from 'boardgame.io';
 
 import { Location } from './index';
-import { isMonster, Monster, NonCharacter, Tactic } from '../card';
+import { isMonster, Monster, NonCharacter } from '../card';
 import { GameState } from '../game';
 import { upsertStack, parseSkill } from '../stack';
+import { removeGlobalState } from '../state';
 import { pruneTriggerStore, pushTriggerStore } from '../triggerStore';
 import { getCardAtLocation, getCardLocation, rmCard } from '../utils';
 
-export function handleAbility(G: GameState, ctx: Ctx, card: Tactic): any {
+export function handleAbility(G: GameState, ctx: Ctx, card: NonCharacter): any {
   if (card.ability.triggers) {
     card.ability.triggers.map((trigger) =>
       pushTriggerStore(G, ctx, trigger.name, card, trigger.opts)
@@ -23,6 +24,15 @@ export function handleAbility(G: GameState, ctx: Ctx, card: Tactic): any {
       }
     });
   }
+
+  if (card.ability.state) {
+    G.state.push({
+      owner: card.key,
+      player: card.owner,
+      targets: card.ability.state.targets,
+      modifier: card.ability.state.modifier,
+    });
+  }
 }
 
 export function handleCardLeaveField(
@@ -34,6 +44,7 @@ export function handleCardLeaveField(
   pruneTriggerStore(G, ctx, card.key);
   rmCard(G, ctx, card, location);
   resetMonsterDamage(G, ctx, card);
+  removeGlobalState(G, ctx, card);
 }
 
 function resetMonsterDamage(G: GameState, ctx: Ctx, card: NonCharacter) {

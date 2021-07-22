@@ -5,6 +5,7 @@ import { GameState } from './game';
 import { NonCharacter, Character, CardTypes, isMonster } from './card';
 import { endLevelStage, endActivateStage, endAttackStage } from './hook';
 import { Decision, upsertStack, selectCard, parseSkill, resolveStack } from './stack';
+import { getMonsterAtt } from './state';
 import { deepCardComp, getLocation, getRandomKey, meetsSkillReq } from './utils';
 import { Location } from './actions';
 
@@ -106,7 +107,7 @@ export function attack(
     },
     opts: {
       source: selCard,
-      damage: selCard.attack,
+      damage: getMonsterAtt(G, ctx, selCard),
     },
     selection: {},
     finished: false,

@@ -1,9 +1,11 @@
 import { Ctx } from 'boardgame.io';
 
 import { Location } from './actions';
-import { GameState } from './game';
 import { Skill, isMonster, Monster } from './card';
-import { getLocation, meetsSkillReq } from './utils';
+import { GameState } from './game';
+import { Decision, upsertStack } from './stack';
+import { getMonsterHealth } from './state';
+import { getCardLocation, getLocation, getRandomKey, meetsSkillReq } from './utils';
 
 export function endLevelStage(G: GameState, ctx: Ctx) {
   G.player[ctx.currentPlayer].activationPos = 0;
@@ -18,6 +20,34 @@ export function resetMonsterDamageOnField(G: GameState, ctx: Ctx) {
     getLocation(G, ctx, location)
       .filter((card) => isMonster(card))
       .map((card) => ((card as Monster).damageTaken = 0));
+  });
+}
+
+export function checkDeadMonstersOnField(G: GameState, ctx: Ctx) {
+  const locations = [Location.Field, Location.OppField];
+
+  locations.map((location) => {
+    const decisions = getLocation(G, ctx, location)
+      .filter((card) => {
+        return (
+          isMonster(card) &&
+          (card as Monster).damageTaken >= getMonsterHealth(G, ctx, card as Monster)
+        );
+      })
+      .map((card) => {
+        const cardLoc = getCardLocation(G, ctx, card.key);
+
+        const decision: Decision = {
+          action: 'destroy',
+          selection: { [cardLoc]: [card] },
+          finished: false,
+          key: getRandomKey(),
+        };
+
+        return decision;
+      });
+
+    upsertStack(G, ctx, decisions);
   });
 }
 

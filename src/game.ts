@@ -1,9 +1,8 @@
 import { Ctx, PlayerID } from 'boardgame.io';
 import lodash from 'lodash';
 
-import * as cards from './cards';
 import { instantiateCard, Character, NonCharacter } from './card';
-import { hydrateDeck, nixieBase, shermanBase } from './decks';
+import { hydrateDeck, nixieSample, shermanBase } from './decks';
 import { resetMonsterDamageOnField } from './hook';
 import {
   shuffleDeck,
@@ -18,23 +17,9 @@ import {
   noAttacks,
 } from './moves';
 import { Stack } from './stack';
+import { GlobalState } from './state';
 import { TriggerStore, defaultTriggers } from './triggerStore';
 import { getOpponentID } from './utils';
-
-export const SAMPLE_DECK: NonCharacter[] = [
-  ...instantiateCard(cards.slime, '1'),
-  ...instantiateCard(cards.fairy, '1', 4),
-  ...instantiateCard(cards.jrnecki, '1'),
-  ...instantiateCard(cards.octopus, '1'),
-  ...instantiateCard(cards.redsnail, '1'),
-  ...instantiateCard(cards.wildboar, '1'),
-  ...instantiateCard(cards.magicclaw, '1'),
-  ...instantiateCard(cards.ribbonpig, '1'),
-  ...instantiateCard(cards.darkaxestump, '1'),
-  ...instantiateCard(cards.greenmushroom, '1'),
-  ...instantiateCard(cards.orangemushroom, '1'),
-  ...instantiateCard(cards.emeraldearrings, '1'),
-];
 
 export interface Deck {
   character: Omit<Character, 'key' | 'owner'>;
@@ -60,12 +45,13 @@ export interface SetupData {
 
 export interface GameState {
   player: Record<PlayerID, PlayerState>;
-  stack?: Stack;
   triggers: TriggerStore[];
+  state: GlobalState[];
+  stack?: Stack;
 }
 
 function preConfigSetup(): GameState {
-  const state: GameState = { player: {}, triggers: [...defaultTriggers] };
+  const state: GameState = { player: {}, triggers: [...defaultTriggers], state: [] };
 
   state.player['0'] = {
     deck: lodash(hydrateDeck(shermanBase, '0')).shuffle().value(),
@@ -81,14 +67,14 @@ function preConfigSetup(): GameState {
   };
 
   state.player['1'] = {
-    deck: lodash(hydrateDeck(nixieBase, '1')).shuffle().value(),
-    character: instantiateCard(nixieBase.character, '1')[0],
+    deck: lodash(hydrateDeck(nixieSample, '1')).shuffle().value(),
+    character: instantiateCard(nixieSample.character, '1')[0],
     hand: [],
     learnedSkills: [],
     field: [],
     discard: [],
-    hp: nixieBase.character.health,
-    maxHP: nixieBase.character.health,
+    hp: nixieSample.character.health,
+    maxHP: nixieSample.character.health,
     level: 0,
     activationPos: 0,
   };
@@ -113,6 +99,7 @@ export function setup(_ctx: Ctx, setupData: SetupData): GameState {
   const state: GameState = {
     player: {},
     triggers: [],
+    state: [],
   };
 
   for (const player of setupData.players) {

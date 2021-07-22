@@ -4,6 +4,7 @@ import { GameState } from './game';
 import { Action, Location } from './actions';
 import { Monster, isMonster, NonCharacter } from './card';
 import { Decision } from './stack';
+import { getMonsterHealth } from './state';
 import {
   deepCardComp,
   getCardLocation,
@@ -293,7 +294,11 @@ export class DmgDestroyTrigger extends Trigger {
             isMonster(card) &&
             getLocation(G, ctx, location)
               .filter((c) => deepCardComp(c, card))
-              .some((card) => (card as Monster).damageTaken >= (card as Monster).health)
+              .some(
+                (card) =>
+                  (card as Monster).damageTaken >=
+                  getMonsterHealth(G, ctx, card as Monster)
+              )
         )
     );
 
@@ -313,11 +318,11 @@ export class DmgDestroyTrigger extends Trigger {
           (card) => !!decision.selection[location]!.find((c) => deepCardComp(c, card))
         )
         .map((card) => {
-          if (isMonster(card) && card.damageTaken >= card.health) {
+          if (isMonster(card) && card.damageTaken >= getMonsterHealth(G, ctx, card)) {
             decisions.push({
               action: 'destroy',
               opts: {
-                source: decision.opts!.source,
+                source: decision.opts?.source,
               },
               selection: {
                 [location]: [card],

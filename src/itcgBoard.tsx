@@ -84,6 +84,7 @@ const oppStatStyle: React.CSSProperties = {
 
 const oppDiscardStyle: React.CSSProperties = {
   display: 'flex',
+  flex: '1',
   backgroundColor: '#ffd700',
   gridArea: 'odiscard',
 };

@@ -37,7 +37,25 @@ export const battleshield: Omit<Item, 'key' | 'owner'> = {
       ],
     },
   },
-  ability: {}, // TODO: buff hp constant trigger
+  ability: {
+    state: {
+      targets: {
+        xor: [
+          {
+            location: Location.OppField,
+            quantity: 1,
+            type: CardTypes.Monster,
+          },
+          {
+            location: Location.Field,
+            quantity: 1,
+            type: CardTypes.Monster,
+          },
+        ],
+      },
+      modifier: { monster: { health: 20 } },
+    },
+  },
   ...defaultTypes,
 };
 
@@ -65,6 +83,24 @@ export const theninedragons: Omit<Item, 'key' | 'owner'> = {
       ],
     },
   },
-  ability: {}, // TODO: buff att constant trigger
+  ability: {
+    state: {
+      targets: {
+        xor: [
+          {
+            location: Location.OppField,
+            quantity: 1,
+            type: CardTypes.Monster,
+          },
+          {
+            location: Location.Field,
+            quantity: 1,
+            type: CardTypes.Monster,
+          },
+        ],
+      },
+      modifier: { monster: { attack: 20 } },
+    },
+  },
   ...defaultTypes,
 };
