@@ -100,7 +100,7 @@ function bounce(G: GameState, ctx: Ctx, opts: ActionOpts): any {
   if (!opts.selection) return;
 
   for (const location of Object.keys(opts.selection) as Location[]) {
-    const cardsSel = opts.selection[location]!;
+    const cardsSel = opts.selection[location] || [];
 
     getLocation(G, ctx, location)
       .filter((c) => !!cardsSel.find((cs) => deepCardComp(c, cs)))
@@ -139,7 +139,7 @@ function destroy(G: GameState, ctx: Ctx, opts: ActionOpts): any {
   if (!opts.selection) return;
 
   for (const location of Object.keys(opts.selection) as Location[]) {
-    const cardsSel = opts.selection[location]!;
+    const cardsSel = opts.selection[location] || [];
 
     getLocation(G, ctx, location)
       .filter((c) => !!cardsSel.find((cs) => deepCardComp(c, cs)))
