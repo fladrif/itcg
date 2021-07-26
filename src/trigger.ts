@@ -11,6 +11,7 @@ export function stackTriggers(
   prep: TriggerPrepostion
 ): boolean {
   // TODO: Maybe should split this into multiple calls, one for ea selection, or split decision, one for ea selection
+  // edit: probably for shield
   const decisions = getTriggers(G, ctx, decision, prep);
 
   upsertStack(G, ctx, decisions);

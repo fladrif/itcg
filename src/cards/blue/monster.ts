@@ -223,7 +223,9 @@ export const tauromacis: Omit<Monster, 'key' | 'owner'> = {
     activated: false,
     requirements: { level: 0, turn: -1 },
   },
-  ability: {}, // TODO: prevail
+  ability: {
+    triggers: [{ name: 'PrevailTrigger' }],
+  },
   ...defaultTypes,
 };
 

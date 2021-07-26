@@ -68,8 +68,8 @@ export abstract class Trigger {
 }
 
 export class LootTrigger extends Trigger {
-  constructor(name: string, player: PlayerID, _opts?: TriggerOptions) {
-    super(name, 'After', 'play', _opts, player);
+  constructor(name: string, player: PlayerID, opts?: TriggerOptions) {
+    super(name, 'After', 'play', opts, player);
   }
 
   shouldTrigger(G: GameState, ctx: Ctx, decision: Decision, prep: TriggerPrepostion) {
@@ -338,6 +338,44 @@ export class DmgDestroyTrigger extends Trigger {
   }
 }
 
+export class PrevailTrigger extends Trigger {
+  constructor(name: string, player: PlayerID, opts?: TriggerOptions) {
+    super(name, 'Before', 'destroy', opts, player);
+  }
+
+  shouldTrigger(G: GameState, _ctx: Ctx, decision: Decision, prep: TriggerPrepostion) {
+    const alreadyTriggered = G.stack!.decisionTriggers[decision.key].includes(this.name);
+    const rightPrep = prep === this.prep;
+    const rightAction = decision.action === this.actionTrigger;
+
+    const locations = Object.keys(decision.selection) as Location[];
+    const monsterDestroyed = locations.some(
+      (location) =>
+        !!decision.selection[location] &&
+        decision.selection[location]!.some((card) => card.key === this.name)
+    );
+
+    if (alreadyTriggered || !rightPrep || !rightAction || !monsterDestroyed) return false;
+    return true;
+  }
+
+  createDecision(G: GameState, ctx: Ctx, _decision: Decision) {
+    const currentLocation = getCardLocation(G, ctx, this.name);
+    const card = getCardAtLocation(G, ctx, currentLocation, this.name);
+
+    const decision: Decision = {
+      action: 'bounce',
+      selection: {
+        [currentLocation]: [card],
+      },
+      finished: false,
+      key: getRandomKey(),
+    };
+
+    return [decision];
+  }
+}
+
 export class RelentlessTrigger extends Trigger {
   constructor(name: string, player: PlayerID, opts?: TriggerOptions) {
     super(name, 'After', 'destroy', opts, player);
@@ -433,6 +471,7 @@ export const triggers = {
   FairyTrigger,
   GeniusTrigger,
   LootTrigger,
+  PrevailTrigger,
   RelentlessTrigger,
   RevengeTrigger,
   ShieldTrigger,

@@ -100,13 +100,15 @@ function bounce(G: GameState, ctx: Ctx, opts: ActionOpts): any {
   if (!opts.selection) return;
 
   for (const location of Object.keys(opts.selection) as Location[]) {
-    opts.selection[location]!.map((card) => {
-      G.player[card.owner].hand.push(
-        getCardAtLocation(G, ctx, location, card.key) as NonCharacter
-      );
+    const cardsSel = opts.selection[location]!;
 
-      handleCardLeaveField(G, ctx, card as NonCharacter, location);
-    });
+    getLocation(G, ctx, location)
+      .filter((c) => !!cardsSel.find((cs) => deepCardComp(c, cs)))
+      .map((card) => {
+        G.player[card.owner].hand.push(card as NonCharacter);
+
+        handleCardLeaveField(G, ctx, card as NonCharacter, location);
+      });
   }
 }
 
