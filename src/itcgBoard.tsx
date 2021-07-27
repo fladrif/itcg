@@ -6,6 +6,7 @@ import { getOpponentID } from './utils';
 import { Location } from './actions';
 
 import { ITCGCharacter } from './itcgCharacter';
+import { ITCGDialog } from './itcgDialog';
 import { ITCGDiscard } from './itcgDiscard';
 import { ITCGField } from './itcgField';
 import { ITCGGameOver } from './itcgGameOver';
@@ -16,6 +17,7 @@ import { ITCGStats } from './itcgStats';
 
 const containerStyle: React.CSSProperties = {
   display: 'grid',
+  position: 'relative',
   gridTemplateColumns: '15% 70% 15%',
   gridTemplateRows: '20% 5% 50% 5% 20%',
   height: '100vh',
@@ -24,11 +26,11 @@ const containerStyle: React.CSSProperties = {
   backgroundColor: '#A3FFB4',
 };
 
-const gameOverStyle: React.CSSProperties = {
+const dialogStyle: React.CSSProperties = {
   zIndex: 3,
   position: 'absolute',
-  marginLeft: '25%',
-  marginTop: '15%',
+  top: '33%',
+  left: '25%',
 };
 
 const handStyle: React.CSSProperties = {
@@ -114,7 +116,7 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
     const curDecisionFinished = stack ? stack.activeDecisions[0].finished : false;
 
     const gameOver = this.props.ctx.gameover ? (
-      <div style={gameOverStyle}>
+      <div style={dialogStyle}>
         <ITCGGameOver won={this.props.ctx.gameover.winner === playerID} />
       </div>
     ) : null;
@@ -122,6 +124,15 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
     return (
       <div style={containerStyle}>
         {gameOver}
+        <div style={dialogStyle}>
+          <ITCGDialog
+            playerState={playerState}
+            select={this.props.moves.selectTarget}
+            stage={
+              this.props.ctx.activePlayers ? this.props.ctx.activePlayers[playerID] : ''
+            }
+          />
+        </div>
         <div style={oppDiscardStyle}>
           <ITCGDiscard
             playerState={opponentState}

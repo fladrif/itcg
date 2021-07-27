@@ -15,6 +15,13 @@ interface CardProp {
   skillPos?: number;
 }
 
+interface CardState {
+  styles: Styles[];
+  skill0: Styles[];
+  skill1: Styles[];
+  skill2: Styles[];
+}
+
 interface CardbackProp {
   styles?: Styles[];
 }
@@ -83,7 +90,7 @@ const characterStyle: React.CSSProperties = {
 };
 
 const expandStyle: React.CSSProperties = {
-  width: '100%',
+  width: '14vw',
   zIndex: 1,
 };
 
@@ -101,7 +108,7 @@ const styles = {
 
 export type Styles = keyof typeof styles;
 
-export class ITCGCard extends React.Component<CardProp> {
+export class ITCGCard extends React.Component<CardProp, CardState> {
   static defaultProps = {
     styles: [],
     skill0: [],
@@ -109,24 +116,45 @@ export class ITCGCard extends React.Component<CardProp> {
     skill2: [],
   };
 
+  constructor(props: CardProp) {
+    super(props);
+    this.state = {
+      styles: [],
+      skill0: [],
+      skill1: [],
+      skill2: [],
+    };
+  }
+
   expandCard() {
-    this.props.styles.push('expandStyle');
-    this.props.skill0.push('expandStyle');
-    this.forceUpdate();
+    this.setState((state) => {
+      const newState = state;
+
+      if (!newState.styles.includes('expandStyle')) newState.styles.push('expandStyle');
+      if (!newState.skill0.includes('expandStyle')) newState.skill0.push('expandStyle');
+
+      return newState;
+    });
   }
 
   unexpandCard() {
-    const index = this.props.styles.findIndex((style) => style === 'expandStyle');
-    if (index !== -1) this.props.styles.splice(index, 1);
-    const skillInd = this.props.skill0.findIndex((style) => style === 'expandStyle');
-    if (skillInd !== -1) this.props.skill0.splice(skillInd, 1);
-    this.forceUpdate();
+    this.setState((state) => {
+      const newState = state;
+
+      const styleInd = newState.styles.findIndex((style) => style === 'expandStyle');
+      if (styleInd !== -1) newState.styles.splice(styleInd, 1);
+
+      const skillInd = newState.skill0.findIndex((style) => style === 'expandStyle');
+      if (skillInd !== -1) newState.skill0.splice(skillInd, 1);
+
+      return newState;
+    });
   }
 
   getCharacter(style: React.CSSProperties) {
-    const skill0Style = getStyles(this.props.skill0);
-    const skill1Style = getStyles(this.props.skill1);
-    const skill2Style = getStyles(this.props.skill2);
+    const skill0Style = getStyles([...this.props.skill0, ...this.state.skill0]);
+    const skill1Style = getStyles([...this.props.skill1, ...this.state.skill1]);
+    const skill2Style = getStyles([...this.props.skill2, ...this.state.skill2]);
 
     return (
       <div style={baseStyle}>
@@ -190,7 +218,7 @@ export class ITCGCard extends React.Component<CardProp> {
           onMouseLeave={() => this.unexpandCard()}
         />
         <img
-          style={getStyles(this.props.skill0)}
+          style={getStyles([...this.props.skill0, ...this.state.skill0])}
           onClick={() => this.props.move([this.props.location, this.props.card], 0)}
           src={cardImages[this.props.card.image].skill}
           alt={this.props.card.name}
@@ -203,7 +231,9 @@ export class ITCGCard extends React.Component<CardProp> {
   }
 
   render() {
-    const style = this.props.styles ? getStyles(this.props.styles) : defaultStyle;
+    const style = this.props.styles
+      ? getStyles([...this.props.styles, ...this.state.styles])
+      : defaultStyle;
 
     const isCharacter = this.props.card.type === CardTypes.Character;
     const isLevelCard = this.props.styles.includes('leveledCardStyle');
