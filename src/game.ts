@@ -5,7 +5,6 @@ import { instantiateCard, Character, NonCharacter } from './card';
 import { hydrateDeck, nixieSample, shermanBase } from './decks';
 import { resetMonsterDamageOnField } from './hook';
 import {
-  shuffleDeck,
   levelUp,
   noLevel,
   activateSkill,
@@ -125,7 +124,6 @@ export const ITCG = {
   setup: preConfigSetup,
 
   moves: {
-    shuffleDeck,
     levelUp,
     activateSkill,
   },

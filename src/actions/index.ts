@@ -105,9 +105,12 @@ function bounce(G: GameState, ctx: Ctx, opts: ActionOpts): any {
     getLocation(G, ctx, location)
       .filter((c) => !!cardsSel.find((cs) => deepCardComp(c, cs)))
       .map((card) => {
-        G.player[card.owner].hand.push(card as NonCharacter);
+        const cardLoc = card as NonCharacter;
+        cardLoc.reveal = true;
 
-        handleCardLeaveField(G, ctx, card as NonCharacter, location);
+        G.player[card.owner].hand.push(cardLoc);
+
+        handleCardLeaveField(G, ctx, cardLoc, location);
       });
   }
 }
@@ -164,6 +167,7 @@ function quest(G: GameState, ctx: Ctx, _opts: ActionOpts): any {
   player.hand.push(player.deck.shift()!);
 }
 
+// TODO: extend to play cards from top of deck
 function play(G: GameState, ctx: Ctx, opts: ActionOpts): any {
   if (!G.stack) return;
   if (!opts.selection || !opts.selection[Location.Hand]) return;
@@ -205,19 +209,38 @@ function shield(G: GameState, ctx: Ctx, opts: ActionOpts): any {
   if (decision.opts.damage < 0) decision.opts.damage = 0;
 }
 
+function scout(G: GameState, ctx: Ctx, _opts: ActionOpts): any {
+  const player = G.player[ctx.currentPlayer];
+
+  if (player.deck.length <= 0) return INVALID_MOVE;
+
+  player.deck[0].reveal = true;
+  if (isMonster(player.deck[0])) player.hand.push(player.deck.shift()!);
+}
+
+function shuffle(G: GameState, ctx: Ctx, _opts: ActionOpts): any {
+  const id = ctx.currentPlayer;
+  const deck = G.player[id].deck;
+
+  deck.map((card) => {
+    if (card.reveal) card.reveal = false;
+  });
+
+  G.player[id].deck = ctx.random!.Shuffle!(deck);
+}
+
 function tuck(G: GameState, ctx: Ctx, opts: ActionOpts): any {
   if (!G.stack) return;
   if (!opts.selection || !opts.position) return;
 
   for (const location of Object.keys(opts.selection) as Location[]) {
     opts.selection[location]!.map((card) => {
-      G.player[card.owner].deck.splice(
-        opts.position!,
-        0,
-        getCardAtLocation(G, ctx, location, card.key) as NonCharacter
-      );
+      const cardLoc = getCardAtLocation(G, ctx, location, card.key) as NonCharacter;
+      cardLoc.reveal = true;
 
-      handleCardLeaveField(G, ctx, card as NonCharacter, location);
+      G.player[card.owner].deck.splice(opts.position!, 0, cardLoc);
+
+      handleCardLeaveField(G, ctx, cardLoc, location);
     });
   }
 }
@@ -260,7 +283,9 @@ export const actions = {
   play,
   quest,
   refresh,
+  scout,
   shield,
+  shuffle,
   tuck,
 };
 

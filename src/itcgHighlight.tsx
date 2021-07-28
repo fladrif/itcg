@@ -4,7 +4,8 @@ import { Ctx } from 'boardgame.io';
 import { ITCGCard } from './itcgCard';
 import { GameState } from './game';
 import { Location } from './actions';
-import { isCharacter, Character, NonCharacter } from './card';
+import { isCharacter } from './card';
+import { nullMove } from './moves';
 import { getCardLocation } from './utils';
 
 interface HighlightProp {
@@ -27,10 +28,6 @@ const highlightStyle: React.CSSProperties = {
 
 export class ITCGHighlight extends React.Component<HighlightProp> {
   render() {
-    const nullMove = (card: [Location, Character | NonCharacter]) => {
-      return card;
-    };
-
     const stack = this.props.state.stack;
     if (!stack || stack.currentStage === 'attack') return null;
 

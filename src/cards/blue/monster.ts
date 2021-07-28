@@ -189,7 +189,7 @@ export const blockgolem: Omit<Monster, 'key' | 'owner'> = {
   attack: 40,
   health: 40,
   skill: {
-    action: 'quest', // TODO: scout
+    action: 'scout',
     activated: false,
     requirements: { level: 0, turn: -1 },
   },
@@ -204,7 +204,7 @@ export const stonegolem: Omit<Monster, 'key' | 'owner'> = {
   attack: 40,
   health: 70,
   skill: {
-    action: 'quest', // TODO: scout
+    action: 'scout',
     activated: false,
     requirements: { level: 0, turn: -1 },
   },

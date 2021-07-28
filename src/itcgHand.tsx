@@ -4,6 +4,7 @@ import { v4 } from 'uuid';
 import { Styles, ITCGCard, ITCGCardback } from './itcgCard';
 import { PlayerState } from './game';
 import { Location } from './actions';
+import { nullMove } from './moves';
 
 interface HandProp {
   playerState: PlayerState;
@@ -18,7 +19,20 @@ export class ITCGHand extends React.Component<HandProp> {
     if (!this.props.select || !this.props.level) {
       const opponentLine = [];
       for (let i = 0; i < this.props.playerState.hand.length; i++) {
-        opponentLine.push(<ITCGCardback key={v4()} />);
+        const card = this.props.playerState.hand[i];
+
+        if (card.reveal) {
+          opponentLine.push(
+            <ITCGCard
+              move={nullMove}
+              location={Location.OppHand}
+              card={card}
+              key={card.key}
+            />
+          );
+        } else {
+          opponentLine.push(<ITCGCardback key={v4()} />);
+        }
       }
       return opponentLine;
     }

@@ -9,13 +9,6 @@ import { getMonsterAtt } from './state';
 import { deepCardComp, getLocation, getRandomKey, meetsSkillReq } from './utils';
 import { Location } from './actions';
 
-export function shuffleDeck(G: GameState, ctx: Ctx, id: PlayerID) {
-  const player = G.player[id];
-  if (!player) return INVALID_MOVE;
-
-  player.deck = ctx.random!.Shuffle(player.deck);
-}
-
 export function levelUp(
   G: GameState,
   ctx: Ctx,
@@ -170,4 +163,7 @@ export function noActivate(
   _position?: number
 ) {
   endActivateStage(G, ctx, true);
+}
+export function nullMove(card: [Location, Character | NonCharacter]) {
+  return card;
 }
