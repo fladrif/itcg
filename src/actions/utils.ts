@@ -1,7 +1,7 @@
 import { Ctx } from 'boardgame.io';
 
-import { Location } from './index';
-import { isMonster, Monster, NonCharacter } from '../card';
+import { ActionTargets, Location } from './index';
+import { isMonster, Monster, NonCharacter, SkillRequirements } from '../card';
 import { GameState } from '../game';
 import { upsertStack, parseSkill } from '../stack';
 import { removeGlobalState } from '../state';
@@ -53,4 +53,22 @@ function resetMonsterDamage(G: GameState, ctx: Ctx, card: NonCharacter) {
   const newLocation = getCardLocation(G, ctx, card.key);
   const c = getCardAtLocation(G, ctx, newLocation, card.key);
   (c as Monster).damageTaken = 0;
+}
+
+export function isOpponentAction(target: ActionTargets): boolean {
+  if ('location' in target) return target.location === Location.OppHand;
+
+  if ('and' in target) return target.and!.some((tar) => isOpponentAction(tar));
+
+  if ('xor' in target) return target.xor!.some((tar) => isOpponentAction(tar));
+
+  throw new Error(`Filter composed incorrectly: ${target}`);
+}
+
+export function checkReqs(reqs: SkillRequirements): (G: GameState, ctx: Ctx) => boolean {
+  return (G: GameState, ctx: Ctx) => {
+    if (reqs.level < G.player[ctx.currentPlayer].level) return false;
+
+    return true;
+  };
 }

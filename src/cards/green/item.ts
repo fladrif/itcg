@@ -15,6 +15,7 @@ export const goldencrow: Omit<Item, 'key' | 'owner'> = {
   skill: {
     action: 'damage',
     activated: false,
+    opts: { damage: 10 },
     requirements: {
       level: 50,
       class: {

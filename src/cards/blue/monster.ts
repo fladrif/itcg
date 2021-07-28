@@ -152,7 +152,7 @@ export const fireboar: Omit<Monster, 'key' | 'owner'> = {
       quantity: 1,
     },
   },
-  ability: {}, // TODO: fierce
+  ability: { keywords: ['fierce'] },
   ...defaultTypes,
 };
 
@@ -219,7 +219,7 @@ export const tauromacis: Omit<Monster, 'key' | 'owner'> = {
   attack: 50,
   health: 40,
   skill: {
-    action: 'quest', // TODO: train hard
+    action: 'trainHard',
     activated: false,
     requirements: { level: 0, turn: -1 },
   },
@@ -262,7 +262,8 @@ export const yetipepe: Omit<Monster, 'key' | 'owner'> = {
     },
   },
   ability: {
+    keywords: ['fierce'],
     triggers: [{ name: 'RelentlessTrigger', opts: { damage: 20 } }],
-  }, // TODO: fierce
+  },
   ...defaultTypes,
 };

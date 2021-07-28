@@ -1,6 +1,7 @@
 import { PlayerID } from 'boardgame.io';
 
 import { Action, ActionOpts, ActionTargets } from './actions';
+import { Keyword } from './keywords';
 import { GlobalState } from './state';
 import { TriggerNames, TriggerOptions } from './triggerStore';
 import { getRandomKey } from './utils';
@@ -52,7 +53,6 @@ export interface Monster extends NonCharacter {
   attacks: number;
   attack: number;
   damageTaken: number;
-  keywords?: string[];
 }
 
 export interface Tactic extends NonCharacter {}
@@ -82,6 +82,7 @@ export interface Ability {
   triggers?: TriggerfRef[];
   skills?: Skill[];
   state?: Omit<GlobalState, 'owner' | 'player'>;
+  keywords?: Keyword[];
 }
 
 export function instantiateCard<T extends Card>(
@@ -122,6 +123,12 @@ export function isTactic(card: Character | NonCharacter): card is Tactic {
 
 export function isCharacter(card: Character | NonCharacter): card is Character {
   if (card.type === CardTypes.Character) return true;
+
+  return false;
+}
+
+export function isWarrior(card: Character | NonCharacter): boolean {
+  if (card.class === CardClasses.Warrior) return true;
 
   return false;
 }

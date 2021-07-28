@@ -31,7 +31,7 @@ export const redsnail: Omit<Monster, 'key' | 'owner'> = {
       quantity: 1,
     },
   },
-  ability: {}, // TODO: tough
+  ability: { keywords: ['tough'] },
   ...defaultTypes,
 };
 

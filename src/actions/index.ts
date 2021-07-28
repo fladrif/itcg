@@ -10,17 +10,18 @@ import {
   isMonster,
   isTactic,
   isCharacter,
+  isWarrior,
   Character,
   NonCharacter,
-  SkillRequirements,
 } from '../card';
-import { Selection } from '../stack';
+import { Decision, Selection, upsertStack } from '../stack';
 import {
   deepCardComp,
   getLocation,
   getCardAtLocation,
   getOpponentState,
   getOpponentID,
+  getRandomKey,
   rmCard,
 } from '../utils';
 
@@ -75,24 +76,6 @@ export interface ActionOpts {
   position?: number;
   source?: Character | NonCharacter;
   lifegain?: number;
-}
-
-export function isOpponentAction(target: ActionTargets): boolean {
-  if ('location' in target) return target.location === Location.OppHand;
-
-  if ('and' in target) return target.and!.some((tar) => isOpponentAction(tar));
-
-  if ('xor' in target) return target.xor!.some((tar) => isOpponentAction(tar));
-
-  throw new Error(`Filter composed incorrectly: ${target}`);
-}
-
-export function checkReqs(reqs: SkillRequirements): (G: GameState, ctx: Ctx) => boolean {
-  return (G: GameState, ctx: Ctx) => {
-    if (reqs.level < G.player[ctx.currentPlayer].level) return false;
-
-    return true;
-  };
 }
 
 function bounce(G: GameState, ctx: Ctx, opts: ActionOpts): any {
@@ -158,93 +141,6 @@ function discard(G: GameState, ctx: Ctx, opts: ActionOpts): any {
   destroy(G, ctx, opts);
 }
 
-// TODO: Genericize, shouldn't be only current player to draw
-function quest(G: GameState, ctx: Ctx, _opts: ActionOpts): any {
-  const player = G.player[ctx.currentPlayer];
-
-  if (player.deck.length <= 0) return INVALID_MOVE;
-
-  player.hand.push(player.deck.shift()!);
-}
-
-// TODO: extend to play cards from top of deck
-function play(G: GameState, ctx: Ctx, opts: ActionOpts): any {
-  if (!G.stack) return;
-  if (!opts.selection || !opts.selection[Location.Hand]) return;
-
-  const player = G.player[ctx.currentPlayer];
-
-  opts.selection[Location.Hand]!.map((card) => {
-    if (isMonster(card) || isItem(card)) {
-      player.field.push(card);
-      handleAbility(G, ctx, card);
-    } else if (isTactic(card)) {
-      player.discard.push(card);
-      handleAbility(G, ctx, card);
-    }
-
-    rmCard(G, ctx, card, Location.Hand);
-  });
-}
-
-function refresh(G: GameState, ctx: Ctx, opts: ActionOpts): any {
-  if (!G.stack) return;
-  if (opts.lifegain == undefined) return;
-
-  G.player[ctx.currentPlayer].hp += opts.lifegain;
-}
-
-function shield(G: GameState, ctx: Ctx, opts: ActionOpts): any {
-  if (!G.stack || !opts.decision) return;
-
-  const decision = G.stack.decisions.filter((dec) => dec.key === opts.decision)[0];
-  if (!decision || !decision.opts || !decision.opts.damage) return;
-
-  // TODO: ensure getOpponentID of current player is correct, probably better to check decision's target and calculate # of monsters of player being targeted
-  const numMonsters = G.player[getOpponentID(G, ctx)].field.filter((card) =>
-    isMonster(card)
-  ).length;
-
-  decision.opts.damage -= numMonsters * 10;
-  if (decision.opts.damage < 0) decision.opts.damage = 0;
-}
-
-function scout(G: GameState, ctx: Ctx, _opts: ActionOpts): any {
-  const player = G.player[ctx.currentPlayer];
-
-  if (player.deck.length <= 0) return INVALID_MOVE;
-
-  player.deck[0].reveal = true;
-  if (isMonster(player.deck[0])) player.hand.push(player.deck.shift()!);
-}
-
-function shuffle(G: GameState, ctx: Ctx, _opts: ActionOpts): any {
-  const id = ctx.currentPlayer;
-  const deck = G.player[id].deck;
-
-  deck.map((card) => {
-    if (card.reveal) card.reveal = false;
-  });
-
-  G.player[id].deck = ctx.random!.Shuffle!(deck);
-}
-
-function tuck(G: GameState, ctx: Ctx, opts: ActionOpts): any {
-  if (!G.stack) return;
-  if (!opts.selection || !opts.position) return;
-
-  for (const location of Object.keys(opts.selection) as Location[]) {
-    opts.selection[location]!.map((card) => {
-      const cardLoc = getCardAtLocation(G, ctx, location, card.key) as NonCharacter;
-      cardLoc.reveal = true;
-
-      G.player[card.owner].deck.splice(opts.position!, 0, cardLoc);
-
-      handleCardLeaveField(G, ctx, cardLoc, location);
-    });
-  }
-}
-
 function level(G: GameState, ctx: Ctx, opts: ActionOpts): any {
   if (!G.stack) return;
   if (!opts.selection) return;
@@ -274,6 +170,125 @@ function level(G: GameState, ctx: Ctx, opts: ActionOpts): any {
   }
 }
 
+// TODO: extend to play cards from top of deck
+function play(G: GameState, ctx: Ctx, opts: ActionOpts): any {
+  if (!G.stack) return;
+  if (!opts.selection || !opts.selection[Location.Hand]) return;
+
+  const player = G.player[ctx.currentPlayer];
+
+  opts.selection[Location.Hand]!.map((card) => {
+    if (isMonster(card) || isItem(card)) {
+      player.field.push(card);
+      handleAbility(G, ctx, card);
+    } else if (isTactic(card)) {
+      player.discard.push(card);
+      handleAbility(G, ctx, card);
+    }
+
+    rmCard(G, ctx, card, Location.Hand);
+  });
+}
+
+// TODO: Genericize, shouldn't be only current player to draw
+function quest(G: GameState, ctx: Ctx, _opts: ActionOpts): any {
+  const player = G.player[ctx.currentPlayer];
+
+  if (player.deck.length <= 0) return INVALID_MOVE;
+
+  player.hand.push(player.deck.shift()!);
+}
+
+function refresh(G: GameState, ctx: Ctx, opts: ActionOpts): any {
+  if (!G.stack) return;
+  if (opts.lifegain == undefined) return;
+
+  G.player[ctx.currentPlayer].hp += opts.lifegain;
+}
+
+function scout(G: GameState, ctx: Ctx, _opts: ActionOpts): any {
+  const player = G.player[ctx.currentPlayer];
+
+  if (player.deck.length <= 0) return INVALID_MOVE;
+
+  player.deck[0].reveal = true;
+  if (isMonster(player.deck[0])) player.hand.push(player.deck.shift()!);
+}
+
+function shuffle(G: GameState, ctx: Ctx, _opts: ActionOpts): any {
+  const id = ctx.currentPlayer;
+  const deck = G.player[id].deck;
+
+  deck.map((card) => {
+    if (card.reveal) card.reveal = false;
+  });
+
+  G.player[id].deck = ctx.random!.Shuffle!(deck);
+}
+
+function shield(G: GameState, ctx: Ctx, opts: ActionOpts): any {
+  if (!G.stack || !opts.decision) return;
+
+  const decision = G.stack.decisions.filter((dec) => dec.key === opts.decision)[0];
+  if (!decision || !decision.opts || !decision.opts.damage) return;
+
+  // TODO: ensure getOpponentID of current player is correct, probably better to check decision's target and calculate # of monsters of player being targeted
+  const numMonsters = G.player[getOpponentID(G, ctx)].field.filter((card) =>
+    isMonster(card)
+  ).length;
+
+  decision.opts.damage -= numMonsters * 10;
+  if (decision.opts.damage < 0) decision.opts.damage = 0;
+}
+
+function tough(G: GameState, _ctx: Ctx, opts: ActionOpts): any {
+  if (!G.stack || !opts.decision) return;
+
+  const decision = G.stack.decisions.filter((dec) => dec.key === opts.decision)[0];
+  if (!decision || !decision.opts || !decision.opts.damage) return;
+
+  decision.opts.damage = undefined;
+}
+
+// TODO: extend interactive options for no level option
+function trainHard(G: GameState, ctx: Ctx, _opts: ActionOpts): any {
+  if (!G.stack) return;
+
+  const warriorSkills = G.player[ctx.currentPlayer].learnedSkills.filter((card) =>
+    isWarrior(card)
+  );
+  if (warriorSkills.length < 3) return;
+
+  const decision: Decision = {
+    action: 'level',
+    target: {
+      location: Location.Hand,
+      quantity: 1,
+    },
+    selection: {},
+    finished: false,
+    key: getRandomKey(),
+  };
+
+  upsertStack(G, ctx, [decision]);
+}
+
+function tuck(G: GameState, ctx: Ctx, opts: ActionOpts): any {
+  if (!G.stack) return;
+  if (!opts.selection || !opts.position) return;
+
+  for (const location of Object.keys(opts.selection) as Location[]) {
+    opts.selection[location]!.map((card) => {
+      const cardLoc = getCardAtLocation(G, ctx, location, card.key) as NonCharacter;
+      cardLoc.reveal = true;
+
+      G.player[card.owner].deck.splice(opts.position!, 0, cardLoc);
+
+      handleCardLeaveField(G, ctx, cardLoc, location);
+    });
+  }
+}
+
 export const actions = {
   bounce,
   damage,
@@ -286,7 +301,11 @@ export const actions = {
   scout,
   shield,
   shuffle,
+  tough,
+  trainHard,
   tuck,
 };
 
 export type Action = keyof typeof actions;
+
+export * from './utils';

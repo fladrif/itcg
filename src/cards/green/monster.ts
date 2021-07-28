@@ -178,7 +178,7 @@ export const jrboogie: Omit<Monster, 'key' | 'owner'> = {
       quantity: 1,
     },
   },
-  ability: {}, // TODO: stealthy
+  ability: { keywords: ['stealthy'] },
   ...defaultTypes,
 };
 
@@ -200,7 +200,7 @@ export const lunarpixie: Omit<Monster, 'key' | 'owner'> = {
     },
   },
   ability: {
-    // TODO: stealthy
+    keywords: ['stealthy'],
     skills: [
       {
         action: 'damage',

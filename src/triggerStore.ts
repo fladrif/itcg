@@ -2,7 +2,7 @@ import { Ctx, PlayerID } from 'boardgame.io';
 
 import { GameState } from './game';
 import { Action, Location } from './actions';
-import { Monster, isMonster, NonCharacter } from './card';
+import { isCharacter, isMonster, Monster, NonCharacter } from './card';
 import { Decision } from './stack';
 import { getMonsterHealth } from './state';
 import {
@@ -444,6 +444,54 @@ export class RelentlessTrigger extends Trigger {
   }
 }
 
+export class ToughTrigger extends Trigger {
+  constructor(name: string, player: PlayerID, opts?: TriggerOptions) {
+    super(name, 'Before', 'damage', opts, player);
+  }
+
+  shouldTrigger(G: GameState, _ctx: Ctx, decision: Decision, prep: TriggerPrepostion) {
+    const alreadyTriggered = G.stack!.decisionTriggers[decision.key].includes(this.name);
+    const rightPrep = prep === this.prep;
+    const rightAction = decision.action === this.actionTrigger;
+
+    const locations = Object.keys(decision.selection) as Location[];
+    const monsterIsTough = locations.some(
+      (location) =>
+        decision.selection[location] &&
+        decision.selection[location]!.some(
+          (card) => isMonster(card) && card.ability.keywords?.includes('tough')
+        )
+    );
+    const sourceIsChar = decision.opts?.source
+      ? isCharacter(decision.opts.source)
+      : false;
+
+    if (
+      alreadyTriggered ||
+      !rightPrep ||
+      !rightAction ||
+      !monsterIsTough ||
+      !sourceIsChar
+    )
+      return false;
+    return true;
+  }
+
+  createDecision(_G: GameState, _ctx: Ctx, decision: Decision) {
+    const retDec: Decision = {
+      action: 'tough',
+      opts: {
+        decision: decision.key,
+      },
+      selection: {},
+      finished: false,
+      key: getRandomKey(),
+    };
+
+    return [retDec];
+  }
+}
+
 export function pruneTriggerStore(G: GameState, _ctx: Ctx, key: string) {
   const index = G.triggers.findIndex((trig) => trig.key === key);
   if (index < 0) return;
@@ -475,11 +523,13 @@ export const triggers = {
   RelentlessTrigger,
   RevengeTrigger,
   ShieldTrigger,
+  ToughTrigger,
 };
 
 export type TriggerNames = keyof typeof triggers;
 
 export const defaultTriggers: TriggerStore[] = [
+  { name: 'ToughTrigger', key: '_tough', owner: '-1' },
   { name: 'ShieldTrigger', key: '_shield', owner: '-1' },
   { name: 'DmgDestroyTrigger', key: '_dmgDestroy', owner: '-1' },
 ];

@@ -91,7 +91,7 @@ export class ITCGInteractive extends React.Component<InteractiveProp> {
       this.props.stage == 'level' ? (
         <div style={baseStyle}>
           <button style={posButtonStyle} onClick={() => this.props.noLevel()}>
-            Skip Level Stage
+            Do not Level
           </button>
         </div>
       ) : this.props.stage == 'activate' ? (
