@@ -52,18 +52,22 @@ export function checkDeadMonstersOnField(G: GameState, ctx: Ctx) {
 }
 
 function resetAttacks(G: GameState, ctx: Ctx) {
-  // TODO: Handle confused better, track turn in play, only use on that turn
   G.player[ctx.currentPlayer].field
     .filter((card) => isMonster(card))
     .map((card) => {
       const mon = card as Monster;
-      mon.attacks = mon.ability.keywords
-        ? mon.ability.keywords.includes('fierce')
-          ? 2
-          : mon.ability.keywords.includes('confused')
-          ? 0
-          : 1
-        : 1;
+
+      // TODO: get keywords through state
+      const keywords = mon.ability.keywords;
+
+      if (!keywords) {
+        mon.attacks = 1;
+        return;
+      }
+
+      const confused = mon.turnETB == ctx.turn && keywords.includes('confused');
+
+      mon.attacks = confused ? 0 : keywords.includes('fierce') ? 2 : 1;
       // TODO: verify if this is needed // (card as Monster).damageTaken = 0;
     });
 }

@@ -53,11 +53,14 @@ export interface Monster extends NonCharacter {
   attacks: number;
   attack: number;
   damageTaken: number;
+  turnETB: number;
 }
 
 export interface Tactic extends NonCharacter {}
 
-export interface Item extends NonCharacter {}
+export interface Item extends NonCharacter {
+  turnETB: number;
+}
 
 export interface SkillRequirements {
   level: number;

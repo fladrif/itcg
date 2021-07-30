@@ -195,6 +195,7 @@ function play(G: GameState, ctx: Ctx, opts: ActionOpts): any {
 
   opts.selection[Location.Hand]!.map((card) => {
     if (isMonster(card) || isItem(card)) {
+      card.turnETB = ctx.turn;
       player.field.push(card);
       handleAbility(G, ctx, card);
     } else if (isTactic(card)) {
