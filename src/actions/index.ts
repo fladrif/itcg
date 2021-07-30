@@ -14,7 +14,7 @@ import {
   Character,
   NonCharacter,
 } from '../card';
-import { Decision, Selection, upsertStack } from '../stack';
+import { Decision, Selection, parseSkill, upsertStack } from '../stack';
 import {
   deepCardComp,
   getLocation,
@@ -156,22 +156,21 @@ function discard(G: GameState, ctx: Ctx, opts: ActionOpts): any {
 }
 
 function level(G: GameState, ctx: Ctx, opts: ActionOpts): any {
-  if (!G.stack) return;
-  if (!opts.selection) return;
-
-  const player = G.player[ctx.currentPlayer];
+  if (!G.stack || !opts.selection) return;
 
   for (const location of Object.keys(opts.selection) as Location[]) {
     opts.selection[location]!.map((card) => {
+      const player = G.player[card.owner];
       const selCard = card as NonCharacter;
 
-      const turn = selCard.skill.requirements.turn !== undefined ? ctx.turn : undefined;
+      const oneshot = selCard.skill.requirements.oneshot;
+      if (oneshot) upsertStack(G, ctx, [parseSkill(selCard.skill, selCard)]);
 
       player.learnedSkills.push({
         ...selCard,
         skill: {
           ...selCard.skill,
-          requirements: { ...selCard.skill.requirements, turn },
+          requirements: { ...selCard.skill.requirements, oneshot },
         },
       });
 
@@ -205,9 +204,9 @@ function play(G: GameState, ctx: Ctx, opts: ActionOpts): any {
   });
 }
 
-// TODO: Genericize, shouldn't be only current player to draw
-function quest(G: GameState, ctx: Ctx, _opts: ActionOpts): any {
-  const player = G.player[ctx.currentPlayer];
+function quest(G: GameState, ctx: Ctx, opts: ActionOpts): any {
+  const owner = opts.source ? opts.source.owner : ctx.currentPlayer;
+  const player = G.player[owner];
 
   if (player.deck.length <= 0) return INVALID_MOVE;
 
@@ -259,16 +258,24 @@ function shuffle(G: GameState, ctx: Ctx, _opts: ActionOpts): any {
   G.player[id].deck = ctx.random!.Shuffle!(deck);
 }
 
+// TODO: take into account shield abilities
 function shield(G: GameState, ctx: Ctx, opts: ActionOpts): any {
   if (!G.stack || !opts.decision) return;
+  const validLocations = [Location.OppCharacter, Location.Character];
 
   const decision = G.stack.decisions.filter((dec) => dec.key === opts.decision)[0];
   if (!decision || !decision.opts || !decision.opts.damage) return;
 
-  // TODO: ensure getOpponentID of current player is correct, probably better to check decision's target and calculate # of monsters of player being targeted
-  const numMonsters = G.player[getOpponentID(G, ctx)].field.filter((card) =>
-    isMonster(card)
-  ).length;
+  const selectionLocations = Object.keys(decision.selection) as Location[];
+  const selectedChars = selectionLocations
+    .map((loc) => {
+      if (validLocations.includes(loc)) return decision.selection[loc];
+      return [];
+    })
+    .flat();
+  const owner = selectedChars[0] ? selectedChars[0].owner : getOpponentID(G, ctx);
+
+  const numMonsters = G.player[owner].field.filter((card) => isMonster(card)).length;
 
   decision.opts.damage -= numMonsters * 10;
   if (decision.opts.damage < 0) decision.opts.damage = 0;

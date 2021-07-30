@@ -74,7 +74,7 @@ export const rainofarrows: Omit<Tactic, 'key' | 'owner'> = {
     // TODO: Steady Hand
     action: 'quest',
     activated: false,
-    requirements: { level: 0, turn: -1 },
+    requirements: { level: 0, oneshot: true },
   },
   ability: {
     skills: [

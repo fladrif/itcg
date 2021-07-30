@@ -170,7 +170,7 @@ export const jrboogie: Omit<Monster, 'key' | 'owner'> = {
   skill: {
     action: 'bounce',
     activated: false,
-    requirements: { level: 0, turn: -1 },
+    requirements: { level: 0, oneshot: true },
     targets: {
       level: 30,
       type: CardTypes.Monster,
@@ -191,7 +191,7 @@ export const lunarpixie: Omit<Monster, 'key' | 'owner'> = {
   skill: {
     action: 'bounce',
     activated: false,
-    requirements: { level: 0, turn: -1 },
+    requirements: { level: 0, oneshot: true },
     targets: {
       level: 30,
       type: CardTypes.Monster,

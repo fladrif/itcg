@@ -2,7 +2,7 @@ import { Ctx, PlayerID } from 'boardgame.io';
 
 import { GameState } from './game';
 import { Action, Location } from './actions';
-import { isCharacter, isMonster, Monster, NonCharacter } from './card';
+import { isMonster, Monster, NonCharacter } from './card';
 import { Decision } from './stack';
 import { getMonsterHealth } from './state';
 import {
@@ -449,7 +449,13 @@ export class ToughTrigger extends Trigger {
     super(name, 'Before', 'damage', opts, player);
   }
 
-  shouldTrigger(G: GameState, _ctx: Ctx, decision: Decision, prep: TriggerPrepostion) {
+  shouldTrigger(G: GameState, ctx: Ctx, decision: Decision, prep: TriggerPrepostion) {
+    const validLocations = [
+      Location.OppCharacter,
+      Location.OppCharAction,
+      Location.Character,
+      Location.CharAction,
+    ];
     const alreadyTriggered = G.stack!.decisionTriggers[decision.key].includes(this.name);
     const rightPrep = prep === this.prep;
     const rightAction = decision.action === this.actionTrigger;
@@ -462,9 +468,11 @@ export class ToughTrigger extends Trigger {
           (card) => isMonster(card) && card.ability.keywords?.includes('tough')
         )
     );
-    const sourceIsChar = decision.opts?.source
-      ? isCharacter(decision.opts.source)
+
+    const sourceLocation = decision.opts?.source
+      ? getCardLocation(G, ctx, decision.opts.source.key)
       : false;
+    const sourceIsChar = sourceLocation ? validLocations.includes(sourceLocation) : false;
 
     if (
       alreadyTriggered ||
@@ -472,8 +480,10 @@ export class ToughTrigger extends Trigger {
       !rightAction ||
       !monsterIsTough ||
       !sourceIsChar
-    )
+    ) {
       return false;
+    }
+
     return true;
   }
 
@@ -514,6 +524,7 @@ export function pushTriggerStore(
   });
 }
 
+// TODO: Create split damage trigger
 export const triggers = {
   DmgDestroyTrigger,
   FairyTrigger,

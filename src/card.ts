@@ -65,7 +65,7 @@ export interface Item extends NonCharacter {
 export interface SkillRequirements {
   level: number;
   class?: Partial<Record<CardClasses, number>>;
-  turn?: number;
+  oneshot?: boolean;
 }
 
 export interface Skill {

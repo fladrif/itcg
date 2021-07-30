@@ -71,7 +71,7 @@ export const octopus: Omit<Monster, 'key' | 'owner'> = {
     action: 'quest',
     requirements: {
       level: 0,
-      turn: -1,
+      oneshot: true,
     },
     activated: false,
   },

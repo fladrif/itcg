@@ -20,12 +20,8 @@ export type CharacterType = Omit<Character, 'key' | 'owner'>;
 export type ItemType = Omit<Item, 'key' | 'owner'>;
 export type TacticType = Omit<Tactic, 'key' | 'owner'>;
 
-export function meetsSkillReq(
-  req: SkillRequirements,
-  P: PlayerState,
-  turn: number
-): boolean {
-  if (req.turn !== undefined) return req.turn === turn;
+export function meetsSkillReq(req: SkillRequirements, P: PlayerState): boolean {
+  if (req.oneshot) return false;
 
   if (req.level > P.level) return false;
 

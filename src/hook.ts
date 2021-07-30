@@ -88,7 +88,7 @@ export function endActivateStage(G: GameState, ctx: Ctx, now?: boolean) {
   player.learnedSkills.map((card) => skills.push(card.skill));
 
   const availableSkills = skills.slice(player.activationPos).filter((skill) => {
-    return meetsSkillReq(skill.requirements, player, ctx.turn);
+    return meetsSkillReq(skill.requirements, player);
   });
 
   const noTargets = availableSkills.length == 0;

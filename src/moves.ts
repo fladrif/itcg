@@ -1,4 +1,4 @@
-import { Ctx, PlayerID } from 'boardgame.io';
+import { Ctx } from 'boardgame.io';
 import { INVALID_MOVE } from 'boardgame.io/core';
 
 import { GameState } from './game';
@@ -57,7 +57,7 @@ export function activateSkill(
 
   const skill = 'skills' in selCard ? selCard.skills[position] : selCard.skill;
 
-  if (!meetsSkillReq(skill.requirements, player, ctx.turn)) {
+  if (!meetsSkillReq(skill.requirements, player)) {
     return INVALID_MOVE;
   }
 

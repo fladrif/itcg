@@ -191,7 +191,7 @@ export const blockgolem: Omit<Monster, 'key' | 'owner'> = {
   skill: {
     action: 'scout',
     activated: false,
-    requirements: { level: 0, turn: -1 },
+    requirements: { level: 0, oneshot: true },
   },
   ability: {},
   ...defaultTypes,
@@ -206,7 +206,7 @@ export const stonegolem: Omit<Monster, 'key' | 'owner'> = {
   skill: {
     action: 'scout',
     activated: false,
-    requirements: { level: 0, turn: -1 },
+    requirements: { level: 0, oneshot: true },
   },
   ability: { triggers: [{ name: 'RelentlessTrigger', opts: { damage: 40 } }] },
   ...defaultTypes,
@@ -221,7 +221,7 @@ export const tauromacis: Omit<Monster, 'key' | 'owner'> = {
   skill: {
     action: 'trainhard',
     activated: false,
-    requirements: { level: 0, turn: -1 },
+    requirements: { level: 0, oneshot: true },
   },
   ability: {
     triggers: [{ name: 'PrevailTrigger' }],
