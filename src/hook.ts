@@ -95,6 +95,7 @@ export function endActivateStage(G: GameState, ctx: Ctx, now?: boolean) {
   if (noTargets) endActivate(G, ctx);
 }
 
+// TODO: add prune triggers for turn only triggers
 export function endAttackStage(G: GameState, ctx: Ctx, now?: boolean) {
   if (now) return ctx.events!.endTurn!();
 

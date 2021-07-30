@@ -23,6 +23,7 @@ export interface TriggerStore {
   key: string;
   owner: PlayerID;
   opts?: TriggerOptions;
+  lifetime?: TriggerLifetime;
 }
 
 export interface TriggerOptions {
@@ -30,9 +31,8 @@ export interface TriggerOptions {
 }
 
 export interface TriggerLifetime {
-  turn?: number;
-  stage?: string;
-  once?: boolean;
+  turn?: number; // once per turn; w/ once, only once on that turn
+  once?: boolean; // once only
 }
 
 export abstract class Trigger {
@@ -48,13 +48,15 @@ export abstract class Trigger {
     preposition: TriggerPrepostion,
     actionTrigger: Action,
     opts?: TriggerOptions,
-    owner?: PlayerID
+    owner?: PlayerID,
+    lifetime?: TriggerLifetime
   ) {
     this.name = name;
     this.owner = owner || 'Global';
     this.prep = preposition;
     this.actionTrigger = actionTrigger;
     this.opts = opts;
+    this.lifetime = lifetime;
   }
 
   abstract shouldTrigger(
@@ -68,8 +70,13 @@ export abstract class Trigger {
 }
 
 export class LootTrigger extends Trigger {
-  constructor(name: string, player: PlayerID, opts?: TriggerOptions) {
-    super(name, 'After', 'play', opts, player);
+  constructor(
+    name: string,
+    player: PlayerID,
+    opts?: TriggerOptions,
+    lifetime?: TriggerLifetime
+  ) {
+    super(name, 'After', 'play', opts, player, lifetime);
   }
 
   shouldTrigger(G: GameState, ctx: Ctx, decision: Decision, prep: TriggerPrepostion) {
@@ -114,8 +121,13 @@ export class LootTrigger extends Trigger {
 }
 
 export class GeniusTrigger extends Trigger {
-  constructor(name: string, player: PlayerID, opts?: TriggerOptions) {
-    super(name, 'After', 'play', opts, player);
+  constructor(
+    name: string,
+    player: PlayerID,
+    opts?: TriggerOptions,
+    lifetime?: TriggerLifetime
+  ) {
+    super(name, 'After', 'play', opts, player, lifetime);
   }
 
   shouldTrigger(G: GameState, _ctx: Ctx, decision: Decision, prep: TriggerPrepostion) {
@@ -151,8 +163,13 @@ export class GeniusTrigger extends Trigger {
 }
 
 export class RevengeTrigger extends Trigger {
-  constructor(name: string, player: PlayerID, opts?: TriggerOptions) {
-    super(name, 'After', 'play', opts, player);
+  constructor(
+    name: string,
+    player: PlayerID,
+    opts?: TriggerOptions,
+    lifetime?: TriggerLifetime
+  ) {
+    super(name, 'After', 'play', opts, player, lifetime);
   }
 
   shouldTrigger(G: GameState, ctx: Ctx, decision: Decision, prep: TriggerPrepostion) {
@@ -189,8 +206,13 @@ export class RevengeTrigger extends Trigger {
 }
 
 export class FairyTrigger extends Trigger {
-  constructor(name: string, player: PlayerID, opts?: TriggerOptions) {
-    super(name, 'After', 'level', opts, player);
+  constructor(
+    name: string,
+    player: PlayerID,
+    opts?: TriggerOptions,
+    lifetime?: TriggerLifetime
+  ) {
+    super(name, 'After', 'level', opts, player, lifetime);
   }
 
   shouldTrigger(G: GameState, ctx: Ctx, decision: Decision, prep: TriggerPrepostion) {
@@ -229,7 +251,12 @@ export class FairyTrigger extends Trigger {
 // TODO: Currently triggers on the entire damage decision, should split damage decision into constituent parts so shield triggers only on character damage (for damage decisions that affect characters and monsters)
 // Perhaps replace decision instead of modifying, creates issue with triggering itself
 export class ShieldTrigger extends Trigger {
-  constructor(_name: string, _player: PlayerID, _opts?: TriggerOptions) {
+  constructor(
+    _name: string,
+    _player: PlayerID,
+    _opts?: TriggerOptions,
+    _lifetime?: TriggerLifetime
+  ) {
     super('shield', 'Before', 'damage');
   }
 
@@ -275,7 +302,12 @@ export class ShieldTrigger extends Trigger {
 }
 
 export class DmgDestroyTrigger extends Trigger {
-  constructor(_name: string, _player: PlayerID, _opts?: TriggerOptions) {
+  constructor(
+    _name: string,
+    _player: PlayerID,
+    _opts?: TriggerOptions,
+    _lifetime?: TriggerLifetime
+  ) {
     super('dmgDestroy', 'After', 'damage');
   }
 
@@ -339,8 +371,13 @@ export class DmgDestroyTrigger extends Trigger {
 }
 
 export class PrevailTrigger extends Trigger {
-  constructor(name: string, player: PlayerID, opts?: TriggerOptions) {
-    super(name, 'Before', 'destroy', opts, player);
+  constructor(
+    name: string,
+    player: PlayerID,
+    opts?: TriggerOptions,
+    lifetime?: TriggerLifetime
+  ) {
+    super(name, 'Before', 'destroy', opts, player, lifetime);
   }
 
   shouldTrigger(G: GameState, _ctx: Ctx, decision: Decision, prep: TriggerPrepostion) {
@@ -377,8 +414,13 @@ export class PrevailTrigger extends Trigger {
 }
 
 export class RelentlessTrigger extends Trigger {
-  constructor(name: string, player: PlayerID, opts?: TriggerOptions) {
-    super(name, 'After', 'destroy', opts, player);
+  constructor(
+    name: string,
+    player: PlayerID,
+    opts?: TriggerOptions,
+    lifetime?: TriggerLifetime
+  ) {
+    super(name, 'After', 'destroy', opts, player, lifetime);
   }
 
   shouldTrigger(G: GameState, _ctx: Ctx, decision: Decision, prep: TriggerPrepostion) {
@@ -445,8 +487,13 @@ export class RelentlessTrigger extends Trigger {
 }
 
 export class ToughTrigger extends Trigger {
-  constructor(name: string, player: PlayerID, opts?: TriggerOptions) {
-    super(name, 'Before', 'damage', opts, player);
+  constructor(
+    name: string,
+    player: PlayerID,
+    opts?: TriggerOptions,
+    lifetime?: TriggerLifetime
+  ) {
+    super(name, 'Before', 'damage', opts, player, lifetime);
   }
 
   shouldTrigger(G: GameState, ctx: Ctx, decision: Decision, prep: TriggerPrepostion) {
@@ -514,13 +561,15 @@ export function pushTriggerStore(
   _ctx: Ctx,
   triggerRef: TriggerNames,
   card: NonCharacter,
-  opts?: TriggerOptions
+  opts?: TriggerOptions,
+  lifetime?: TriggerLifetime
 ) {
   G.triggers.push({
     name: triggerRef,
     key: card.key,
     owner: card.owner,
     opts,
+    lifetime,
   });
 }
 
