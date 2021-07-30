@@ -219,7 +219,7 @@ export const tauromacis: Omit<Monster, 'key' | 'owner'> = {
   attack: 50,
   health: 40,
   skill: {
-    action: 'trainHard',
+    action: 'trainhard',
     activated: false,
     requirements: { level: 0, turn: -1 },
   },
