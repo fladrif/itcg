@@ -268,10 +268,7 @@ function shield(G: GameState, ctx: Ctx, opts: ActionOpts): any {
 
   const selectionLocations = Object.keys(decision.selection) as Location[];
   const selectedChars = selectionLocations
-    .map((loc) => {
-      if (validLocations.includes(loc)) return decision.selection[loc];
-      return [];
-    })
+    .map((loc) => (validLocations.includes(loc) ? decision.selection[loc] : []))
     .flat();
   const owner = selectedChars[0] ? selectedChars[0].owner : getOpponentID(G, ctx);
 
