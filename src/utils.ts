@@ -13,6 +13,7 @@ import {
   SkillRequirements,
 } from './card';
 import { Location } from './actions';
+import { Selection } from './stack';
 
 export type MonsterType = Omit<Monster, 'key' | 'owner'>;
 export type CharacterType = Omit<Character, 'key' | 'owner'>;
@@ -137,4 +138,18 @@ export function getRandomKey(): string {
 
 export function getCurrentStage(_G: GameState, ctx: Ctx): string {
   return ctx.activePlayers ? ctx.activePlayers[ctx.currentPlayer] : '';
+}
+
+export function mergeSelections(sel1: Selection, sel2: Selection): Selection {
+  const mergedSel: Selection = [sel1, sel2].reduce((acc, sel) => {
+    for (const location of Object.keys(sel) as Location[]) {
+      if (!acc[location]) acc[location] = [];
+
+      if (sel[location]) acc[location]!.push(...sel[location]!);
+    }
+
+    return acc;
+  }, {});
+
+  return mergedSel;
 }

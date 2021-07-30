@@ -1,6 +1,6 @@
 import { Ctx } from 'boardgame.io';
 
-import { GameState } from './game';
+import { GameState, PlayerState } from './game';
 import {
   actions,
   isOpponentAction,
@@ -10,8 +10,8 @@ import {
   Location,
 } from './actions';
 import { endActivateStage, endAttackStage } from './hook';
-import { Skill, Character, NonCharacter } from './card';
-import { ensureFilter, filterSelections } from './target';
+import { isMonster, Skill, Character, NonCharacter } from './card';
+import { ensureFilter, filterSelections, isTargetable } from './target';
 import { stackTriggers } from './trigger';
 import {
   deepCardComp,
@@ -20,7 +20,9 @@ import {
   getLocation,
   getCardAtLocation,
   getRandomKey,
+  mergeSelections,
 } from './utils';
+import { GlobalState } from './state';
 
 // TODO: Handle choice/modal selections as well
 export type Selection = Partial<Record<Location, (Character | NonCharacter)[]>>;
@@ -126,12 +128,8 @@ export function resolveStack(G: GameState, ctx: Ctx, confirmation?: boolean) {
     const decision = stack.decisions.pop()!;
     const actionOpts = { ...decision.opts, selection: decision.selection };
 
-    // TODO: Merge is not perfect, will overwrite selections if they exist in both
     if (decision.opts?.selection) {
-      actionOpts.selection = {
-        ...actionOpts.selection,
-        ...decision.opts.selection,
-      };
+      actionOpts.selection = mergeSelections(decision.selection, decision.opts.selection);
     }
 
     actions[decision.action](G, ctx, actionOpts);
@@ -215,6 +213,8 @@ export function selectCard(
 
   if (!curDecision.selection[cardLoc]) curDecision.selection[cardLoc] = [];
 
+  if (!isSelectable(G.state, playerState, curDecision, selCard)) return;
+
   if (!selCard.selected) {
     curDecision.selection[cardLoc]!.push(selCard);
     selCard.selected = true;
@@ -233,6 +233,46 @@ export function selectCard(
   curDecision.finished = finished;
 
   pruneSelection(G, ctx, curDecision.selection, selection);
+}
+
+function isSelectable(
+  globalState: GlobalState[],
+  playerState: PlayerState,
+  decision: Decision,
+  card: Character | NonCharacter
+): boolean {
+  if (!isTargetable(ensureFilter(decision.target!, playerState), card)) return false;
+  if (!validationGate(globalState, decision, card)) return false;
+
+  return true;
+}
+
+function validationGate(
+  globalState: GlobalState[],
+  decision: Decision,
+  card: Character | NonCharacter
+): boolean {
+  if (decision.action === 'attack' && isMonster(card)) {
+    if (card.ability.keywords && card.ability.keywords.includes('stealthy')) return false;
+  }
+
+  const stateTarget = globalState.filter(
+    (state) =>
+      state.player == card.owner &&
+      !!state.modifier.target &&
+      state.modifier.target.action === decision.action
+  );
+
+  if (stateTarget.some((target) => isStateTargetable(target, card))) return false;
+
+  return true;
+}
+
+function isStateTargetable(target: GlobalState, card: Character | NonCharacter): boolean {
+  // TODO: add specific card targetted effects in future if necessary.
+  if (isTargetable(target.targets, card)) return false;
+
+  return true;
 }
 
 function pruneDecisions(G: GameState, ctx: Ctx, decisions: Decision[]) {

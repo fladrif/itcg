@@ -1,6 +1,6 @@
 import { Ctx, PlayerID } from 'boardgame.io';
 
-import { ActionTargets, Location } from './actions';
+import { Action, ActionTargets, Location } from './actions';
 import { Monster, NonCharacter } from './card';
 import { GameState } from './game';
 import { checkDeadMonstersOnField } from './hook';
@@ -12,8 +12,13 @@ export interface MonsterStateModifier {
   attack?: number;
 }
 
+export interface TargetStateModifier {
+  action: Action;
+}
+
 export interface StateModifier {
   monster?: MonsterStateModifier;
+  target?: TargetStateModifier;
 }
 
 export interface GlobalState {

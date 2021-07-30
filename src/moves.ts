@@ -83,7 +83,7 @@ export function attack(
   }
 
   const attackDecision: Decision = {
-    action: 'damage',
+    action: 'attack',
     target: {
       xor: [
         {

@@ -59,10 +59,12 @@ export interface TargetFilter {
 
 interface AndActionTarget {
   and: ActionTargets[];
+
   xor?: never;
 }
 interface XorActionTarget {
   xor: ActionTargets[];
+
   and?: never;
 }
 
@@ -76,6 +78,20 @@ export interface ActionOpts {
   position?: number;
   source?: Character | NonCharacter;
   lifegain?: number;
+}
+
+function attack(G: GameState, ctx: Ctx, opts: ActionOpts): any {
+  if (!G.stack) return;
+
+  const decision: Decision = {
+    action: 'damage',
+    opts,
+    selection: { ...opts.selection } || {},
+    finished: false,
+    key: getRandomKey(),
+  };
+
+  upsertStack(G, ctx, [decision]);
 }
 
 function bounce(G: GameState, ctx: Ctx, opts: ActionOpts): any {
@@ -290,6 +306,7 @@ function tuck(G: GameState, ctx: Ctx, opts: ActionOpts): any {
 }
 
 export const actions = {
+  attack,
   bounce,
   damage,
   destroy,

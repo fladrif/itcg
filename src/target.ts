@@ -19,6 +19,19 @@ export function ensureFilter(filter: ActionTargets, state: PlayerState): ActionT
   return { ...filter, level };
 }
 
+export function isTargetable(
+  filter: ActionTargets,
+  card: Character | NonCharacter
+): boolean {
+  if ('location' in filter) return cardInFilter(filter, card);
+
+  if ('and' in filter) return filter.and!.some((filt) => isTargetable(filt, card));
+
+  if ('xor' in filter) return filter.xor!.some((filt) => isTargetable(filt, card));
+
+  throw new Error(`Filter composed incorrectly: ${filter}`);
+}
+
 export function filterSelections(
   filter: ActionTargets,
   selection: Selection,
@@ -45,14 +58,9 @@ function handleFilter(
   }
 
   // Reverse assumes recent is pushed onto selection array; ie at the back
-  const filteredSelection = locSelection.reverse().filter((selection) => {
-    if (filter.type && filter.type !== selection.type) return false;
-    if (filter.class && !filter.class.includes(selection.class)) return false;
-    if (filter.level !== undefined && filter.level !== 'CurrentLevel') {
-      if (filter.level < (selection as NonCharacter).level) return false;
-    }
-    return true;
-  });
+  const filteredSelection = locSelection
+    .reverse()
+    .filter((card) => cardInFilter(filter, card));
 
   const nonFilteredSelection = locSelection.filter(
     (card) => !filteredSelection.includes(card)
@@ -109,6 +117,15 @@ function handleXOR(
   }
 
   return { selection: leastSel, finished, usedRecent };
+}
+
+function cardInFilter(filter: TargetFilter, card: Character | NonCharacter): boolean {
+  if (filter.type && filter.type !== card.type) return false;
+  if (filter.class && !filter.class.includes(card.class)) return false;
+  if (filter.level !== undefined && filter.level !== 'CurrentLevel') {
+    if (filter.level < (card as NonCharacter).level) return false;
+  }
+  return true;
 }
 
 function betterFit(current: FilterResponse, best: FilterResponse): boolean {
