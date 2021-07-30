@@ -83,6 +83,8 @@ export interface ActionOpts {
 function attack(G: GameState, ctx: Ctx, opts: ActionOpts): any {
   if (!G.stack) return;
 
+  (getCardAtLocation(G, ctx, Location.Field, opts.source!.key) as Monster).attacks--;
+
   const decision: Decision = {
     action: 'damage',
     opts,
@@ -117,10 +119,6 @@ function bounce(G: GameState, ctx: Ctx, opts: ActionOpts): any {
 function damage(G: GameState, ctx: Ctx, opts: ActionOpts): any {
   if (!G.stack) return;
   if (!opts.selection || opts.damage == undefined) return;
-
-  if (G.stack.currentStage == 'attack') {
-    (getCardAtLocation(G, ctx, Location.Field, opts.source!.key) as Monster).attacks--;
-  }
 
   for (const location of Object.keys(opts.selection) as Location[]) {
     opts.selection[location]!.map((card) => {
@@ -216,6 +214,24 @@ function quest(G: GameState, ctx: Ctx, _opts: ActionOpts): any {
   player.hand.push(player.deck.shift()!);
 }
 
+function rainofarrows(G: GameState, ctx: Ctx, opts: ActionOpts): any {
+  if (!G.stack || !opts.source || !opts.damage) return;
+
+  const oppCards = getOpponentState(G, ctx, opts.source.owner).hand.length;
+
+  const decision: Decision = {
+    action: 'damage',
+    opts: {
+      damage: oppCards * opts.damage!,
+    },
+    selection: { ...opts.selection } || {},
+    finished: false,
+    key: getRandomKey(),
+  };
+
+  upsertStack(G, ctx, [decision]);
+}
+
 function refresh(G: GameState, ctx: Ctx, opts: ActionOpts): any {
   if (!G.stack) return;
   if (opts.lifegain == undefined) return;
@@ -268,7 +284,7 @@ function tough(G: GameState, _ctx: Ctx, opts: ActionOpts): any {
 }
 
 // TODO: extend interactive options for no level option
-function trainHard(G: GameState, ctx: Ctx, _opts: ActionOpts): any {
+function trainhard(G: GameState, ctx: Ctx, _opts: ActionOpts): any {
   if (!G.stack) return;
 
   const warriorSkills = G.player[ctx.currentPlayer].learnedSkills.filter((card) =>
@@ -315,12 +331,13 @@ export const actions = {
   level,
   play,
   quest,
+  rainofarrows,
   refresh,
   scout,
   shield,
   shuffle,
   tough,
-  trainHard,
+  trainhard,
   tuck,
 };
 

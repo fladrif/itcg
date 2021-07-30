@@ -72,17 +72,16 @@ export const rainofarrows: Omit<Tactic, 'key' | 'owner'> = {
   level: 40,
   skill: {
     // TODO: Steady Hand
-    action: 'play',
+    action: 'quest',
     activated: false,
     requirements: { level: 0, turn: -1 },
   },
   ability: {
     skills: [
       {
-        action: 'damage',
+        action: 'rainofarrows',
         activated: false,
         opts: {
-          // TODO: for each card in opp's hand
           damage: 20,
         },
         requirements: { level: 0 },
