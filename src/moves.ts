@@ -34,7 +34,6 @@ export function levelUp(
 
   upsertStack(G, ctx, [levelDecision], 'level');
   resolveStack(G, ctx);
-  endLevelStage(G, ctx);
 }
 
 export function activateSkill(

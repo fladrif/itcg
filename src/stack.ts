@@ -9,7 +9,7 @@ import {
   ActionTargets,
   Location,
 } from './actions';
-import { endActivateStage, endAttackStage } from './hook';
+import { endLevelStage, endActivateStage, endAttackStage } from './hook';
 import { isMonster, Skill, Character, NonCharacter } from './card';
 import { ensureFilter, filterSelections, isTargetable } from './target';
 import { stackTriggers } from './trigger';
@@ -112,6 +112,7 @@ export function resolveStack(G: GameState, ctx: Ctx, confirmation?: boolean) {
         return;
       }
 
+      if (stack.currentStage == 'level') endLevelStage(G, ctx);
       if (stack.currentStage == 'activate') endActivateStage(G, ctx);
       if (stack.currentStage == 'attack') endAttackStage(G, ctx);
 
