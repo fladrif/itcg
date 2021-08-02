@@ -194,6 +194,27 @@ function level(G: GameState, ctx: Ctx, opts: ActionOpts): any {
   }
 }
 
+function nomercy(G: GameState, ctx: Ctx, opts: ActionOpts): any {
+  if (!G.stack) return;
+
+  const source = opts.source as NonCharacter;
+  if (!opts.selection || opts.damage == undefined || !source) return;
+
+  pushTriggerStore(G, ctx, 'NoMercyTrigger', source, undefined, {
+    usableTurn: ctx.turn,
+  });
+
+  const decision: Decision = {
+    action: 'damage',
+    opts,
+    selection: { ...opts.selection } || {},
+    finished: false,
+    key: getRandomKey(),
+  };
+
+  upsertStack(G, ctx, [decision]);
+}
+
 // TODO: extend to play cards from top of deck
 function play(G: GameState, ctx: Ctx, opts: ActionOpts): any {
   if (!G.stack) return;
@@ -357,6 +378,7 @@ export const actions = {
   destroy,
   discard,
   level,
+  nomercy,
   play,
   quest,
   rainofarrows,

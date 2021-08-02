@@ -2,7 +2,7 @@ import { Ctx, PlayerID } from 'boardgame.io';
 
 import { GameState } from './game';
 import { Action, Location } from './actions';
-import { isMonster, Monster, NonCharacter } from './card';
+import { isMonster, CardTypes, Monster, NonCharacter } from './card';
 import { Decision } from './stack';
 import { getMonsterHealth } from './state';
 import {
@@ -69,6 +69,48 @@ export abstract class Trigger {
   abstract createDecision(G: GameState, ctx: Ctx, decision: Decision): Decision[];
 }
 
+export class GeniusTrigger extends Trigger {
+  constructor(
+    name: string,
+    player: PlayerID,
+    opts?: TriggerOptions,
+    lifetime?: TriggerLifetime
+  ) {
+    super(name, 'After', 'play', opts, player, lifetime);
+  }
+
+  shouldTrigger(G: GameState, _ctx: Ctx, decision: Decision, prep: TriggerPrepostion) {
+    const locations = Object.keys(decision.selection) as Location[];
+    const cardIsPlayed = locations.some(
+      (loc) =>
+        decision.selection[loc] &&
+        decision.selection[loc]!.some((card) => card.key === this.name)
+    );
+
+    if (
+      !G.stack!.decisionTriggers[decision.key].includes(this.name) &&
+      prep === this.prep &&
+      decision.action === this.actionTrigger &&
+      cardIsPlayed
+    ) {
+      return true;
+    }
+
+    return false;
+  }
+
+  createDecision(_G: GameState, _ctx: Ctx, _decision: Decision) {
+    const dec: Decision = {
+      action: 'quest',
+      selection: {},
+      finished: false,
+      key: getRandomKey(),
+    };
+
+    return [dec];
+  }
+}
+
 export class LootTrigger extends Trigger {
   constructor(
     name: string,
@@ -120,41 +162,64 @@ export class LootTrigger extends Trigger {
   }
 }
 
-export class GeniusTrigger extends Trigger {
+export class NoMercyTrigger extends Trigger {
   constructor(
     name: string,
     player: PlayerID,
     opts?: TriggerOptions,
     lifetime?: TriggerLifetime
   ) {
-    super(name, 'After', 'play', opts, player, lifetime);
+    super(name, 'After', 'destroy', opts, player, lifetime);
   }
 
-  shouldTrigger(G: GameState, _ctx: Ctx, decision: Decision, prep: TriggerPrepostion) {
-    const locations = Object.keys(decision.selection) as Location[];
-    const cardIsPlayed = locations.some(
-      (loc) =>
-        decision.selection[loc] &&
-        decision.selection[loc]!.some((card) => card.key === this.name)
-    );
+  shouldTrigger(G: GameState, ctx: Ctx, decision: Decision, prep: TriggerPrepostion) {
+    const alreadyTriggered = G.stack!.decisionTriggers[decision.key].includes(this.name);
+    const rightPrep = prep === this.prep;
+    const rightAction = decision.action === this.actionTrigger;
+
+    const usableTurn = this.lifetime?.usableTurn;
+    const canActivateOnTurn = usableTurn ? usableTurn == ctx.turn : false;
+
+    const isSource = decision.opts?.source
+      ? decision.opts.source.key === this.name
+      : false;
 
     if (
-      !G.stack!.decisionTriggers[decision.key].includes(this.name) &&
-      prep === this.prep &&
-      decision.action === this.actionTrigger &&
-      cardIsPlayed
+      alreadyTriggered ||
+      !rightPrep ||
+      !rightAction ||
+      !isSource ||
+      !canActivateOnTurn
     ) {
-      return true;
+      return false;
     }
 
-    return false;
+    return true;
   }
 
-  createDecision(_G: GameState, _ctx: Ctx, _decision: Decision) {
+  createDecision(G: GameState, ctx: Ctx, _decision: Decision) {
     const dec: Decision = {
-      action: 'quest',
+      action: 'damage',
       selection: {},
       finished: false,
+      target: {
+        xor: [
+          {
+            type: CardTypes.Monster,
+            location: Location.OppField,
+            quantity: 1,
+          },
+          {
+            type: CardTypes.Character,
+            location: Location.OppCharacter,
+            quantity: 1,
+          },
+        ],
+      },
+      opts: {
+        damage: 10,
+        source: getCardAtLocation(G, ctx, getCardLocation(G, ctx, this.name), this.name),
+      },
       key: getRandomKey(),
     };
 
@@ -503,12 +568,21 @@ export class SteadyHandTrigger extends Trigger {
     const rightPrep = prep === this.prep;
     const rightAction = decision.action === this.actionTrigger;
 
+    const usableTurn = this.lifetime?.usableTurn;
+    const canActivateOnTurn = usableTurn ? usableTurn == ctx.turn : false;
+
     const sourceLocation = decision.opts?.source
       ? getCardLocation(G, ctx, decision.opts.source.key)
       : false;
     const sourceIsChar = sourceLocation ? validLocations.includes(sourceLocation) : false;
 
-    if (alreadyTriggered || !rightPrep || !rightAction || !sourceIsChar) {
+    if (
+      alreadyTriggered ||
+      !rightPrep ||
+      !rightAction ||
+      !sourceIsChar ||
+      !canActivateOnTurn
+    ) {
       return false;
     }
 
@@ -634,6 +708,7 @@ export const triggers = {
   FairyTrigger,
   GeniusTrigger,
   LootTrigger,
+  NoMercyTrigger,
   PrevailTrigger,
   RelentlessTrigger,
   RevengeTrigger,

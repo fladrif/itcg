@@ -7,13 +7,12 @@ const defaultTypes = {
   selected: false,
 };
 
-// TODO: trigger on skill
 export const goldencrow: Omit<Item, 'key' | 'owner'> = {
   name: 'Golden Crow',
   image: 'GoldenCrow',
   level: 60,
   skill: {
-    action: 'damage',
+    action: 'nomercy',
     activated: false,
     opts: { damage: 10 },
     requirements: {

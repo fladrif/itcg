@@ -23,7 +23,6 @@ import {
   mergeSelections,
 } from './utils';
 import { GlobalState } from './state';
-import { TriggerStore } from './triggerStore';
 
 // TODO: Handle choice/modal selections as well
 export type Selection = Partial<Record<Location, (Character | NonCharacter)[]>>;
@@ -46,7 +45,6 @@ export interface Stack {
   currentStage: string;
   decisionTriggers: Record<string, string[]>;
   queuedDecisions: Decision[];
-  triggers?: TriggerStore[];
   prevActivatePos?: number;
 }
 

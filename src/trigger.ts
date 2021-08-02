@@ -26,8 +26,7 @@ function getTriggers(
   decision: Decision,
   prep: TriggerPrepostion
 ): Decision[] {
-  const triggers = G.stack?.triggers ? [...G.triggers, ...G.stack.triggers] : G.triggers;
-  const processedTriggers = triggers.reverse().map((store) => processTriggers(store)); // reverse for trigger order matters
+  const processedTriggers = G.triggers.reverse().map((store) => processTriggers(store)); // reverse for trigger order matters
   const triggerDecisions: Decision[] = [];
 
   for (const trigger of processedTriggers) {
