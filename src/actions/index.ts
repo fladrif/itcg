@@ -26,8 +26,10 @@ import {
 } from '../utils';
 
 import { handleAbility, handleCardLeaveField } from './utils';
+import { pushTriggerStore } from '../triggerStore';
 
 // TODO: possible refactor, this is always relative to currentPlayer; sometimes needs to be relative to card owner or other context
+// edit: or fine as is and handle relativity elsewhere
 export enum Location {
   Field = 'Field',
   Hand = 'Hand',
@@ -114,6 +116,15 @@ function bounce(G: GameState, ctx: Ctx, opts: ActionOpts): any {
         handleCardLeaveField(G, ctx, cardLoc, location);
       });
   }
+}
+
+function buff(G: GameState, _ctx: Ctx, opts: ActionOpts): any {
+  if (!G.stack || !opts.decision || !opts.damage) return;
+
+  const decision = G.stack.decisions.filter((dec) => dec.key === opts.decision)[0];
+  if (!decision || !decision.opts || !decision.opts.damage) return;
+
+  decision.opts.damage += opts.damage;
 }
 
 function damage(G: GameState, ctx: Ctx, opts: ActionOpts): any {
@@ -287,6 +298,18 @@ function tough(G: GameState, _ctx: Ctx, opts: ActionOpts): any {
   decision.opts.damage = undefined;
 }
 
+function steadyhand(G: GameState, ctx: Ctx, opts: ActionOpts): any {
+  if (!G.stack) return;
+
+  const level = G.player[ctx.currentPlayer].level;
+  const source = opts.source as NonCharacter;
+  if (!source || level < 50) return;
+
+  pushTriggerStore(G, ctx, 'SteadyHandTrigger', source, undefined, {
+    usableTurn: ctx.turn,
+  });
+}
+
 // TODO: extend interactive options for no level option
 function trainhard(G: GameState, ctx: Ctx, _opts: ActionOpts): any {
   if (!G.stack) return;
@@ -329,6 +352,7 @@ function tuck(G: GameState, ctx: Ctx, opts: ActionOpts): any {
 export const actions = {
   attack,
   bounce,
+  buff,
   damage,
   destroy,
   discard,
@@ -340,6 +364,7 @@ export const actions = {
   scout,
   shield,
   shuffle,
+  steadyhand,
   tough,
   trainhard,
   tuck,

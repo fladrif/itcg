@@ -5,7 +5,7 @@ import { isMonster, Monster, NonCharacter, SkillRequirements } from '../card';
 import { GameState } from '../game';
 import { upsertStack, parseSkill } from '../stack';
 import { removeGlobalState } from '../state';
-import { pruneTriggerStore, pushTriggerStore } from '../triggerStore';
+import { removeTrigger, pushTriggerStore } from '../triggerStore';
 import { getCardAtLocation, getCardLocation, rmCard } from '../utils';
 
 export function handleAbility(G: GameState, ctx: Ctx, card: NonCharacter): any {
@@ -41,7 +41,7 @@ export function handleCardLeaveField(
   card: NonCharacter,
   location: Location
 ) {
-  pruneTriggerStore(G, ctx, card.key);
+  removeTrigger(G, ctx, card.key);
   rmCard(G, ctx, card, location);
   resetMonsterDamage(G, ctx, card);
   removeGlobalState(G, ctx, card);

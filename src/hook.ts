@@ -5,6 +5,7 @@ import { Skill, isMonster, Monster } from './card';
 import { GameState } from './game';
 import { Decision, upsertStack } from './stack';
 import { getMonsterHealth } from './state';
+import { pruneTriggerStore } from './triggerStore';
 import { getCardLocation, getLocation, getRandomKey, meetsSkillReq } from './utils';
 
 export function endLevelStage(G: GameState, ctx: Ctx) {
@@ -95,13 +96,18 @@ export function endActivateStage(G: GameState, ctx: Ctx, now?: boolean) {
   if (noTargets) endActivate(G, ctx);
 }
 
+export function endAttack(G: GameState, ctx: Ctx) {
+  pruneTriggerStore(G, ctx);
+  ctx.events!.endTurn!();
+}
+
 // TODO: add prune triggers for turn only triggers
 export function endAttackStage(G: GameState, ctx: Ctx, now?: boolean) {
-  if (now) return ctx.events!.endTurn!();
+  if (now) return endAttack(G, ctx);
 
   const currentField = G.player[ctx.currentPlayer].field;
 
   if (!currentField.some((card) => isMonster(card) && card.attacks > 0)) {
-    ctx.events!.endTurn!();
+    endAttack(G, ctx);
   }
 }

@@ -10,7 +10,6 @@ interface FilterResponse {
   usedRecent: boolean;
 }
 
-// TODO: Test current level works
 export function ensureFilter(filter: ActionTargets, state: PlayerState): ActionTargets {
   if ('and' in filter) return { and: filter.and!.map((fil) => ensureFilter(fil, state)) };
   if ('xor' in filter) return { xor: filter.xor!.map((fil) => ensureFilter(fil, state)) };

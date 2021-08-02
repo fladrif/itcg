@@ -31,8 +31,8 @@ export interface TriggerOptions {
 }
 
 export interface TriggerLifetime {
+  usableTurn?: number; // can only be used on this turn
   turn?: number; // once per turn; w/ once, only once on that turn
-  once?: boolean; // once only
 }
 
 export abstract class Trigger {
@@ -486,6 +486,51 @@ export class RelentlessTrigger extends Trigger {
   }
 }
 
+export class SteadyHandTrigger extends Trigger {
+  constructor(
+    name: string,
+    player: PlayerID,
+    opts?: TriggerOptions,
+    lifetime?: TriggerLifetime
+  ) {
+    super(name, 'Before', 'damage', opts, player, lifetime);
+  }
+
+  shouldTrigger(G: GameState, ctx: Ctx, decision: Decision, prep: TriggerPrepostion) {
+    const validLocations = [Location.CharAction, Location.Character];
+
+    const alreadyTriggered = G.stack!.decisionTriggers[decision.key].includes(this.name);
+    const rightPrep = prep === this.prep;
+    const rightAction = decision.action === this.actionTrigger;
+
+    const sourceLocation = decision.opts?.source
+      ? getCardLocation(G, ctx, decision.opts.source.key)
+      : false;
+    const sourceIsChar = sourceLocation ? validLocations.includes(sourceLocation) : false;
+
+    if (alreadyTriggered || !rightPrep || !rightAction || !sourceIsChar) {
+      return false;
+    }
+
+    return true;
+  }
+
+  createDecision(_G: GameState, _ctx: Ctx, decision: Decision) {
+    const retDec: Decision = {
+      action: 'buff',
+      opts: {
+        decision: decision.key,
+        damage: 10,
+      },
+      selection: {},
+      finished: false,
+      key: getRandomKey(),
+    };
+
+    return [retDec];
+  }
+}
+
 export class ToughTrigger extends Trigger {
   constructor(
     name: string,
@@ -549,7 +594,17 @@ export class ToughTrigger extends Trigger {
   }
 }
 
-export function pruneTriggerStore(G: GameState, _ctx: Ctx, key: string) {
+export function pruneTriggerStore(G: GameState, ctx: Ctx) {
+  const unPrunedTriggers = G.triggers.filter((trig) => {
+    const uTurn = trig.lifetime?.usableTurn;
+
+    return !(uTurn && uTurn <= ctx.turn);
+  });
+
+  G.triggers = unPrunedTriggers;
+}
+
+export function removeTrigger(G: GameState, _ctx: Ctx, key: string) {
   const index = G.triggers.findIndex((trig) => trig.key === key);
   if (index < 0) return;
 
@@ -583,6 +638,7 @@ export const triggers = {
   RelentlessTrigger,
   RevengeTrigger,
   ShieldTrigger,
+  SteadyHandTrigger,
   ToughTrigger,
 };
 
