@@ -16,6 +16,7 @@ interface HighlightProp {
 const highlightStyle: React.CSSProperties = {
   display: 'flex',
   flexDirection: 'column',
+  backgroundColor: '#c9def2',
   width: '18%',
   paddingLeft: '1%',
   paddingRight: '1%',

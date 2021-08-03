@@ -11,7 +11,7 @@ import {
   noActivate,
   selectTarget,
   confirmSkill,
-  declineSkill,
+  resetStack,
   attack,
   noAttacks,
 } from './moves';
@@ -146,10 +146,10 @@ export const ITCG = {
       },
       attack: { moves: { attack, noAttacks } },
       select: {
-        moves: { selectTarget, confirmSkill, declineSkill },
+        moves: { selectTarget, confirmSkill, resetStack },
       },
       confirmation: {
-        moves: { confirmSkill, declineSkill },
+        moves: { confirmSkill, resetStack },
       },
     },
   },

@@ -128,13 +128,13 @@ export function confirmSkill(
   resolveStack(G, ctx);
 }
 
-export function declineSkill(
+export function resetStack(
   G: GameState,
   ctx: Ctx,
   _card: [Location, Character | NonCharacter],
   _position?: number
 ) {
-  resolveStack(G, ctx, false);
+  resolveStack(G, ctx, true);
 }
 
 export function noAttacks(
@@ -163,6 +163,7 @@ export function noActivate(
 ) {
   endActivateStage(G, ctx, true);
 }
+
 export function nullMove(card: [Location, Character | NonCharacter]) {
   return card;
 }

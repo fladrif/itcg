@@ -3,6 +3,7 @@ import React from 'react';
 interface InteractiveProp {
   stage: string;
   decisionFinished: boolean;
+  force: boolean;
   noLevel: () => any;
   noActivate: () => any;
   noAttacks: () => any;
@@ -22,9 +23,9 @@ const buttonStyle: React.CSSProperties = {
   flex: '1',
   color: 'white',
   textShadow: '1px 1px 2px black',
-  fontSize: '120%',
+  fontSize: '150%',
   borderRadius: '0.5em',
-  padding: '20%',
+  margin: '2%',
 };
 
 const posButtonStyle: React.CSSProperties = {
@@ -111,18 +112,22 @@ export class ITCGInteractive extends React.Component<InteractiveProp> {
           <button style={posButtonStyle} onClick={() => this.props.confirm()}>
             Confirm
           </button>
-          <button style={negButtonStyle} onClick={() => this.props.decline()}>
-            Decline
-          </button>
+          {this.props.force ? null : (
+            <button style={negButtonStyle} onClick={() => this.props.decline()}>
+              Decline
+            </button>
+          )}
         </div>
       ) : this.props.stage == 'select' && this.props.decisionFinished == false ? (
-        <div style={baseStyle}>
-          <button style={negButtonStyle} onClick={() => this.props.decline()}>
-            Decline
-          </button>
-        </div>
+        this.props.force ? null : (
+          <div style={baseStyle}>
+            <button style={negButtonStyle} onClick={() => this.props.decline()}>
+              Decline
+            </button>
+          </div>
+        )
       ) : (
-        <div>Opponent's Turn</div>
+        <div>Opponent's Move</div>
       );
 
     return button;

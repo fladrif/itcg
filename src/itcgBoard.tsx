@@ -18,11 +18,11 @@ import { ITCGStats } from './itcgStats';
 const containerStyle: React.CSSProperties = {
   display: 'grid',
   position: 'relative',
-  gridTemplateColumns: '15% 70% 15%',
+  gridTemplateColumns: '15% 60% 10% 15%',
   gridTemplateRows: '20% 5% 50% 5% 20%',
   height: '100vh',
   gridTemplateAreas:
-    "'ochar ohand odiscard' 'ochar ostat char' 'ochar field char' 'ochar stat char' 'interface hand char'",
+    "'odiscard ohand . char' 'ochar ostat ostat char' 'ochar field field char' 'ochar stat stat char' 'ochar hand interface discard'",
   backgroundColor: '#A3FFB4',
 };
 
@@ -54,8 +54,14 @@ const innerFieldStyle: React.CSSProperties = {
 
 const interactiveStyle: React.CSSProperties = {
   display: 'flex',
-  backgroundColor: '#ffd700',
+  // backgroundColor: '#ffd700',
   gridArea: 'interface',
+};
+
+const discardStyle: React.CSSProperties = {
+  display: 'flex',
+  backgroundColor: '#ffd700',
+  gridArea: 'discard',
 };
 
 const statStyle: React.CSSProperties = {
@@ -113,6 +119,8 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
       : '';
 
     const curDecisionFinished = stack ? stack.activeDecisions[0].finished : false;
+    const decisionForced =
+      stack && stack.activeDecisions[0].force ? stack.activeDecisions[0].force : false;
 
     const gameOver = this.props.ctx.gameover ? (
       <div style={dialogStyle}>
@@ -187,7 +195,7 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
           <ITCGStats
             playerState={playerState}
             confMove={this.props.moves.confirmSkill}
-            declMove={this.props.moves.declineSkill}
+            declMove={this.props.moves.resetStack}
             stage={
               this.props.ctx.activePlayers ? this.props.ctx.activePlayers[playerID] : ''
             }
@@ -213,19 +221,22 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
           />
         </div>
         <div style={interactiveStyle}>
-          <ITCGDiscard
-            playerState={playerState}
-            currentPlayer={this.props.ctx.currentPlayer === this.props.playerID}
-            select={this.props.moves.selectTarget}
-          />
           <ITCGInteractive
             stage={currentPlayerStage}
             decisionFinished={curDecisionFinished}
+            force={decisionForced}
             noLevel={this.props.moves.noLevel}
             noActivate={this.props.moves.noActivate}
             noAttacks={this.props.moves.noAttacks}
             confirm={this.props.moves.confirmSkill}
-            decline={this.props.moves.declineSkill}
+            decline={this.props.moves.resetStack}
+          />
+        </div>
+        <div style={discardStyle}>
+          <ITCGDiscard
+            playerState={playerState}
+            currentPlayer={this.props.ctx.currentPlayer === this.props.playerID}
+            select={this.props.moves.selectTarget}
           />
         </div>
       </div>

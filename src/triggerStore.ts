@@ -148,6 +148,7 @@ export class LootTrigger extends Trigger {
       action: 'discard',
       selection: {},
       finished: false,
+      force: true,
       target: {
         location: Location.OppHand,
         quantity: 1,

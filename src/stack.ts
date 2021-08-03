@@ -27,6 +27,10 @@ import { GlobalState } from './state';
 // TODO: Handle choice/modal selections as well
 export type Selection = Partial<Record<Location, (Character | NonCharacter)[]>>;
 
+export interface Choice {
+  name: string;
+}
+
 export interface Decision {
   action: Action;
   selection: Selection;
@@ -34,8 +38,9 @@ export interface Decision {
   key: string;
   opts?: ActionOpts;
   target?: ActionTargets;
-  choice?: boolean;
-  // TODO: future multiple choice
+  force?: boolean;
+  choice?: Choice[];
+  // TODO: future multiple choice; coin flip
   modal?: boolean;
 }
 
@@ -96,7 +101,7 @@ function setStages(G: GameState, ctx: Ctx, decisions: Decision[]) {
   ctx.events!.setActivePlayers!(otherStages);
 }
 
-export function resolveStack(G: GameState, ctx: Ctx, confirmation?: boolean) {
+export function resolveStack(G: GameState, ctx: Ctx, resetStack?: boolean) {
   const stack = G.stack;
   if (!stack) return;
 
@@ -139,12 +144,12 @@ export function resolveStack(G: GameState, ctx: Ctx, confirmation?: boolean) {
 
     pruneSelection(G, ctx, decision.selection, decision.selection); // Removes select tag from card (ui)
     resolveStack(G, ctx);
-  } else if (confirmation !== false && !isDecisionNeeded(stack.activeDecisions[0])) {
+  } else if (resetStack !== true && !isDecisionNeeded(stack.activeDecisions[0])) {
     stack.decisions.push(stack.activeDecisions.shift()!);
     ctx.events!.endStage!();
 
     resolveStack(G, ctx);
-  } else if (confirmation === false) {
+  } else if (resetStack) {
     pruneDecisions(G, ctx, stack.decisions);
     pruneDecisions(G, ctx, stack.activeDecisions);
 
