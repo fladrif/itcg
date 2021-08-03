@@ -3,12 +3,12 @@ import React from 'react';
 interface InteractiveProp {
   stage: string;
   decisionFinished: boolean;
-  force: boolean;
+  noReset: boolean;
   noLevel: () => any;
   noActivate: () => any;
   noAttacks: () => any;
   confirm: () => any;
-  decline: () => any;
+  resetStack: () => any;
 }
 
 const baseStyle: React.CSSProperties = {
@@ -63,7 +63,7 @@ export class ITCGInteractive extends React.Component<InteractiveProp> {
   }
 
   currentNegMove() {
-    return this.props.stage === 'select' ? this.props.decline : () => {};
+    return this.props.stage === 'select' ? this.props.resetStack : () => {};
   }
 
   keydownFn(e: KeyboardEvent) {
@@ -112,17 +112,17 @@ export class ITCGInteractive extends React.Component<InteractiveProp> {
           <button style={posButtonStyle} onClick={() => this.props.confirm()}>
             Confirm
           </button>
-          {this.props.force ? null : (
-            <button style={negButtonStyle} onClick={() => this.props.decline()}>
-              Decline
+          {this.props.noReset ? null : (
+            <button style={negButtonStyle} onClick={() => this.props.resetStack()}>
+              Reset Stack
             </button>
           )}
         </div>
       ) : this.props.stage == 'select' && this.props.decisionFinished == false ? (
-        this.props.force ? null : (
+        this.props.noReset ? null : (
           <div style={baseStyle}>
-            <button style={negButtonStyle} onClick={() => this.props.decline()}>
-              Decline
+            <button style={negButtonStyle} onClick={() => this.props.resetStack()}>
+              Reset Stack
             </button>
           </div>
         )

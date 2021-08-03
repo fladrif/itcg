@@ -38,7 +38,7 @@ export interface Decision {
   key: string;
   opts?: ActionOpts;
   target?: ActionTargets;
-  force?: boolean;
+  noReset?: boolean;
   choice?: Choice[];
   // TODO: future multiple choice; coin flip
   modal?: boolean;

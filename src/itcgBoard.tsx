@@ -22,7 +22,7 @@ const containerStyle: React.CSSProperties = {
   gridTemplateRows: '20% 5% 50% 5% 20%',
   height: '100vh',
   gridTemplateAreas:
-    "'odiscard ohand . char' 'ochar ostat ostat char' 'ochar field field char' 'ochar stat stat char' 'ochar hand interface discard'",
+    "'odiscard ohand ohand char' 'ochar ostat ostat char' 'ochar field field char' 'ochar stat stat char' 'ochar hand interface discard'",
   backgroundColor: '#A3FFB4',
 };
 
@@ -119,8 +119,11 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
       : '';
 
     const curDecisionFinished = stack ? stack.activeDecisions[0].finished : false;
-    const decisionForced =
-      stack && stack.activeDecisions[0].force ? stack.activeDecisions[0].force : false;
+
+    const noResetDecision =
+      stack && stack.activeDecisions[0].noReset
+        ? stack.activeDecisions[0].noReset
+        : false;
 
     const gameOver = this.props.ctx.gameover ? (
       <div style={dialogStyle}>
@@ -224,12 +227,12 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
           <ITCGInteractive
             stage={currentPlayerStage}
             decisionFinished={curDecisionFinished}
-            force={decisionForced}
+            noReset={noResetDecision}
             noLevel={this.props.moves.noLevel}
             noActivate={this.props.moves.noActivate}
             noAttacks={this.props.moves.noAttacks}
             confirm={this.props.moves.confirmSkill}
-            decline={this.props.moves.resetStack}
+            resetStack={this.props.moves.resetStack}
           />
         </div>
         <div style={discardStyle}>
