@@ -43,7 +43,6 @@ const handStyle: React.CSSProperties = {
 
 const fieldStyle: React.CSSProperties = {
   display: 'flex',
-  backgroundColor: '#c9def2',
   gridArea: 'field',
 };
 

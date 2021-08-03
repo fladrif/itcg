@@ -22,6 +22,16 @@ const fieldStyle: React.CSSProperties = {
   maxHeight: '50%',
 };
 
+const activeStyle: React.CSSProperties = {
+  ...fieldStyle,
+  backgroundColor: '#c9def2',
+};
+
+const inactiveStyle: React.CSSProperties = {
+  ...fieldStyle,
+  backgroundColor: '#a0b1c1',
+};
+
 export class ITCGField extends React.Component<FieldProps> {
   render() {
     const field = this.props.state.field.map((card) => {
@@ -53,6 +63,8 @@ export class ITCGField extends React.Component<FieldProps> {
         />
       );
     });
-    return <div style={fieldStyle}>{field} </div>;
+    const stage = this.props.stage;
+    const parsedStyle = stage && stage !== '' ? activeStyle : inactiveStyle;
+    return <div style={parsedStyle}>{field}</div>;
   }
 }

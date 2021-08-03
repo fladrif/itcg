@@ -46,6 +46,10 @@ const stageModalStyle: React.CSSProperties = {
 
 const highlightModalStyle: React.CSSProperties = {
   color: 'yellow',
+  border: 'solid',
+  borderRadius: '0.25em',
+  padding: '1%',
+  margin: '1%',
   fontSize: '150%',
 };
 
@@ -64,16 +68,12 @@ export class ITCGStats extends React.Component<StatProp> {
       </div>
     );
     const activateModal = (
-      <div
-        style={this.props.stage == 'activate' ? highlightModalStyle : stageModalStyle}
-      >
+      <div style={this.props.stage == 'activate' ? highlightModalStyle : stageModalStyle}>
         activate
       </div>
     );
     const attackModal = (
-      <div
-        style={this.props.stage == 'attack' ? highlightModalStyle : stageModalStyle}
-      >
+      <div style={this.props.stage == 'attack' ? highlightModalStyle : stageModalStyle}>
         attack
       </div>
     );
@@ -84,7 +84,11 @@ export class ITCGStats extends React.Component<StatProp> {
       </div>
     );
 
-    const selectModal = <div style={confirmationStyle}><div style={highlightModalStyle}>Please select a card</div></div>;
+    const selectModal = (
+      <div style={confirmationStyle}>
+        <div style={highlightModalStyle}>Please select a card</div>
+      </div>
+    );
 
     const modal =
       this.props.stage == 'confirmation'

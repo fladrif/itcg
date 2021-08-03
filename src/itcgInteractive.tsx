@@ -122,7 +122,7 @@ export class ITCGInteractive extends React.Component<InteractiveProp> {
           </button>
         </div>
       ) : (
-        <div>nothing</div>
+        <div>Opponent's Turn</div>
       );
 
     return button;
