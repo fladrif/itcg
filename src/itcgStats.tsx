@@ -5,6 +5,7 @@ import { ProgressBar } from './progressBar';
 export interface StatProp {
   playerState: PlayerState;
   stage: string;
+  prompt: string;
   confMove?: () => any;
   declMove?: () => any;
 }
@@ -57,8 +58,7 @@ export class ITCGStats extends React.Component<StatProp> {
   render() {
     const confModal = (
       <div style={confirmationStyle}>
-        <button onClick={() => this.props.confMove!()}>confirm</button>
-        <button onClick={() => this.props.declMove!()}>decline</button>
+        <div style={highlightModalStyle}>{this.props.prompt}</div>
       </div>
     );
 
@@ -91,7 +91,7 @@ export class ITCGStats extends React.Component<StatProp> {
     );
 
     const modal =
-      this.props.stage == 'confirmation'
+      this.props.stage == 'confirmation' || this.props.stage == 'choice'
         ? confModal
         : this.props.stage == 'select'
         ? selectModal

@@ -10,6 +10,7 @@ import {
   activateSkill,
   noActivate,
   selectTarget,
+  selectChoice,
   confirmSkill,
   resetStack,
   attack,
@@ -147,6 +148,9 @@ export const ITCG = {
       attack: { moves: { attack, noAttacks } },
       select: {
         moves: { selectTarget, confirmSkill, resetStack },
+      },
+      choice: {
+        moves: { selectChoice },
       },
       confirmation: {
         moves: { confirmSkill, resetStack },

@@ -62,6 +62,8 @@ import TopPowerKnockBack from './images/top-PowerKnockBack.jpg';
 import SkillPowerKnockBack from './images/skill-PowerKnockBack.jpg';
 import TopGoldenCrow from './images/top-GoldenCrow.jpg';
 import SkillGoldenCrow from './images/skill-GoldenCrow.jpg';
+import TopBattleBow from './images/top-BattleBow.jpg';
+import SkillBattleBow from './images/skill-BattleBow.jpg';
 import TopSherman from './images/top-Sherman.jpg';
 import SkillSherman from './images/skill1-Sherman.jpg';
 import Skill2Sherman from './images/skill2-Sherman.jpg';
@@ -207,6 +209,10 @@ export const cardImages: Record<string, CardImages> = {
   GoldenCrow: {
     top: TopGoldenCrow,
     skill: SkillGoldenCrow,
+  },
+  BattleBow: {
+    top: TopBattleBow,
+    skill: SkillBattleBow,
   },
   Sherman: {
     top: TopSherman,

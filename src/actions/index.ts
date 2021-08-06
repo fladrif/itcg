@@ -14,7 +14,7 @@ import {
   Character,
   NonCharacter,
 } from '../card';
-import { Decision, Selection, parseSkill, upsertStack } from '../stack';
+import { Choice, Decision, Selection, parseSkill, upsertStack } from '../stack';
 import {
   deepCardComp,
   getLocation,
@@ -76,10 +76,20 @@ export type ActionTargets = TargetFilter | AndActionTarget | XorActionTarget;
 export interface ActionOpts {
   damage?: number;
   selection?: Selection;
+  choiceSelection?: Choice;
   decision?: string;
   position?: number;
   source?: Character | NonCharacter;
+  triggerKey?: string;
   lifegain?: number;
+  dialogDecision?: Decision;
+}
+
+function ack(G: GameState, ctx: Ctx, opts: ActionOpts): any {
+  if (!G.stack) return;
+  if (!opts.choiceSelection || !opts.dialogDecision) return;
+
+  upsertStack(G, ctx, [opts.dialogDecision]);
 }
 
 function attack(G: GameState, ctx: Ctx, opts: ActionOpts): any {
@@ -125,6 +135,57 @@ function buff(G: GameState, _ctx: Ctx, opts: ActionOpts): any {
   if (!decision || !decision.opts || !decision.opts.damage) return;
 
   decision.opts.damage += opts.damage;
+}
+
+function criticalshot(G: GameState, ctx: Ctx, opts: ActionOpts): any {
+  if (!G.stack) return;
+  if (!opts.choiceSelection || !opts.source) return;
+
+  const flippedCoin = ctx.random!.Die(2) == 1 ? Choice.Heads : Choice.Tails;
+  const didWin = flippedCoin === opts.choiceSelection;
+
+  const dmgDec: Decision = {
+    action: 'damage',
+    opts: {
+      ...opts,
+      damage: G.player[opts.source.owner].level,
+    },
+    noReset: true,
+    selection: {},
+    target: {
+      xor: [
+        {
+          type: CardTypes.Monster,
+          location: Location.OppField,
+          quantity: 1,
+        },
+        {
+          type: CardTypes.Character,
+          location: Location.OppCharacter,
+          quantity: 1,
+        },
+      ],
+    },
+    finished: false,
+    key: getRandomKey(),
+  };
+
+  const ackDec: Decision = {
+    action: 'ack',
+    opts: {
+      ...opts,
+      dialogDecision: didWin ? dmgDec : undefined,
+    },
+    dialogPrompt: didWin
+      ? `${flippedCoin}, you won the flip!`
+      : `${flippedCoin}, you lost the flip..`,
+    choice: [Choice.Ack],
+    selection: {},
+    finished: false,
+    key: getRandomKey(),
+  };
+
+  upsertStack(G, ctx, [ackDec]);
 }
 
 function damage(G: GameState, ctx: Ctx, opts: ActionOpts): any {
@@ -213,6 +274,18 @@ function nomercy(G: GameState, ctx: Ctx, opts: ActionOpts): any {
   };
 
   upsertStack(G, ctx, [decision]);
+}
+
+function optional(G: GameState, ctx: Ctx, opts: ActionOpts): any {
+  if (!G.stack) return;
+  if (!opts.choiceSelection || !opts.dialogDecision || !opts.triggerKey) return;
+
+  if (opts.choiceSelection !== Choice.Yes) return;
+
+  const trigger = G.triggers.filter((trigger) => trigger.key === opts.triggerKey)[0];
+  if (trigger?.lifetime?.turn !== undefined) trigger.lifetime.turn = ctx.turn + 1;
+
+  upsertStack(G, ctx, [opts.dialogDecision]);
 }
 
 // TODO: extend to play cards from top of deck
@@ -345,7 +418,9 @@ function trainhard(G: GameState, ctx: Ctx, _opts: ActionOpts): any {
     target: {
       location: Location.Hand,
       quantity: 1,
+      quantityUpTo: true,
     },
+    noReset: true,
     selection: {},
     finished: false,
     key: getRandomKey(),
@@ -371,14 +446,17 @@ function tuck(G: GameState, ctx: Ctx, opts: ActionOpts): any {
 }
 
 export const actions = {
+  ack,
   attack,
   bounce,
   buff,
+  criticalshot,
   damage,
   destroy,
   discard,
   level,
   nomercy,
+  optional,
   play,
   quest,
   rainofarrows,

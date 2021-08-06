@@ -2,8 +2,9 @@ import { PlayerID } from 'boardgame.io';
 
 import { Action, ActionOpts, ActionTargets } from './actions';
 import { Keyword } from './keywords';
+import { Choice } from './stack';
 import { GlobalState } from './state';
-import { TriggerNames, TriggerOptions } from './triggerStore';
+import { TriggerLifetime, TriggerNames, TriggerOptions } from './triggerStore';
 import { getRandomKey } from './utils';
 
 export const SAMPLE_SKILL: Skill = {
@@ -72,17 +73,21 @@ export interface Skill {
   requirements: SkillRequirements;
   action: Action;
   activated: boolean;
+  noReset?: boolean;
   opts?: ActionOpts;
   targets?: ActionTargets;
+  dialogPrompt?: string;
+  choice?: Choice[];
 }
 
-export interface TriggerfRef {
+export interface TriggerRef {
   name: TriggerNames;
   opts?: TriggerOptions;
+  lifetime?: TriggerLifetime;
 }
 
 export interface Ability {
-  triggers?: TriggerfRef[];
+  triggers?: TriggerRef[];
   skills?: Skill[];
   state?: Omit<GlobalState, 'owner' | 'player'>;
   keywords?: Keyword[];

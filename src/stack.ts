@@ -24,11 +24,17 @@ import {
 } from './utils';
 import { GlobalState } from './state';
 
-// TODO: Handle choice/modal selections as well
 export type Selection = Partial<Record<Location, (Character | NonCharacter)[]>>;
 
-export interface Choice {
-  name: string;
+export enum Choice {
+  Heads = 'Heads',
+  Tails = 'Tails',
+  Yes = 'Yes',
+  No = 'No',
+  Ack = 'Ack',
+  Rock = 'Rock',
+  Paper = 'Paper',
+  Scissor = 'Scissor',
 }
 
 export interface Decision {
@@ -36,12 +42,12 @@ export interface Decision {
   selection: Selection;
   finished: boolean;
   key: string;
+  dialogPrompt?: string;
   opts?: ActionOpts;
   target?: ActionTargets;
   noReset?: boolean;
   choice?: Choice[];
-  // TODO: future multiple choice; coin flip
-  modal?: boolean;
+  choiceSelection?: Choice;
 }
 
 export interface Stack {
@@ -83,20 +89,20 @@ function stage(
 
 function setStages(G: GameState, ctx: Ctx, decisions: Decision[]) {
   if (!G.stack) return;
-
   const loopbackStage = stage(G.stack.currentStage, false);
-  const otherStages = decisions.reduce((acc, decision) => {
+  const otherStages = decisions.reverse().reduce((acc, decision) => {
     const isOpponent = decision.target ? isOpponentAction(decision.target) : false;
 
-    //TODO: Need to add modal option
     const stageName = !!decision.target
       ? 'select'
       : decision.choice !== undefined
-      ? 'confirmation'
+      ? 'choice'
       : 'confirmation';
 
     return stage(stageName, isOpponent, acc);
   }, loopbackStage);
+
+  decisions.reverse();
 
   ctx.events!.setActivePlayers!(otherStages);
 }
@@ -132,7 +138,11 @@ export function resolveStack(G: GameState, ctx: Ctx, resetStack?: boolean) {
     }
 
     const decision = stack.decisions.pop()!;
-    const actionOpts = { ...decision.opts, selection: decision.selection };
+    const actionOpts = {
+      ...decision.opts,
+      selection: decision.selection,
+      choiceSelection: decision.choiceSelection,
+    };
 
     if (decision.opts?.selection) {
       actionOpts.selection = mergeSelections(decision.selection, decision.opts.selection);
@@ -169,6 +179,9 @@ export function parseSkill(skill: Skill, source: Character | NonCharacter): Deci
     opts: { ...skill.opts, source },
     target: skill.targets,
     selection: {},
+    dialogPrompt: skill.dialogPrompt,
+    choice: skill.choice,
+    noReset: skill.noReset,
     finished: false,
     key: getRandomKey(),
   };
@@ -203,6 +216,16 @@ export function upsertStack(
   setStages(G, ctx, G.stack.activeDecisions);
 }
 
+export function makeChoice(G: GameState, _ctx: Ctx, choice: Choice) {
+  if (!G.stack) return;
+
+  const curDecision = G.stack.activeDecisions[0];
+  if (!curDecision.choice?.includes(choice)) return;
+
+  curDecision.choiceSelection = choice;
+  curDecision.finished = true;
+}
+
 export function selectCard(
   G: GameState,
   ctx: Ctx,
@@ -214,6 +237,7 @@ export function selectCard(
 
   const cardLoc = card[0];
   const selCard = getLocation(G, ctx, card[0]).filter((c) => deepCardComp(c, card[1]))[0];
+  if (!selCard) return;
 
   const curDecision = G.stack.activeDecisions[0];
 
@@ -339,7 +363,6 @@ function unselectGameCards(
 function isDecisionNeeded(dec: Decision): boolean {
   if (dec.target !== undefined && dec.finished === false) return true;
   if (dec.choice !== undefined && dec.finished === false) return true;
-  if (dec.modal !== undefined && dec.finished === false) return true;
 
   return false;
 }

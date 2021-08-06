@@ -1,14 +1,34 @@
 import React from 'react';
 
+import { Choice } from './stack';
+import { MoveOptions } from './moves';
+import { getRandomKey } from './utils';
+
 interface InteractiveProp {
   stage: string;
   decisionFinished: boolean;
-  noReset: boolean;
+  showReset: boolean;
+  choices: Choice[];
   noLevel: () => any;
   noActivate: () => any;
   noAttacks: () => any;
   confirm: () => any;
+  selectChoice: () => any;
   resetStack: () => any;
+}
+
+export interface DialogButtons {
+  label: string;
+  move: (opts?: MoveOptions) => any;
+  choice?: Choice;
+  sentiment?: 'pos' | 'neg' | 'neu';
+  condition?: keyof InteractiveProp;
+}
+
+export interface Dialog {
+  stage: string;
+  prompt: string;
+  buttons: DialogButtons[];
 }
 
 const baseStyle: React.CSSProperties = {
@@ -28,6 +48,11 @@ const buttonStyle: React.CSSProperties = {
   margin: '2%',
 };
 
+const neuButtonStyle: React.CSSProperties = {
+  background: 'radial-gradient(#A95AA1, #C28BBD)',
+  ...buttonStyle,
+};
+
 const posButtonStyle: React.CSSProperties = {
   background: 'radial-gradient(#934822, #F5793A)',
   ...buttonStyle,
@@ -41,6 +66,7 @@ const negButtonStyle: React.CSSProperties = {
 export class ITCGInteractive extends React.Component<InteractiveProp> {
   posMove: () => any;
   negMove: () => any;
+  stagePrompts: Dialog[];
 
   constructor(props: InteractiveProp) {
     super(props);
@@ -48,8 +74,68 @@ export class ITCGInteractive extends React.Component<InteractiveProp> {
 
     this.posMove = this.currentPosMove();
     this.negMove = this.currentNegMove();
+
+    this.stagePrompts = [
+      {
+        stage: 'level',
+        prompt: 'Level up with a card',
+        buttons: [
+          {
+            label: 'Do not Level',
+            sentiment: 'neg',
+            move: this.props.noLevel,
+          },
+        ],
+      },
+      {
+        stage: 'activate',
+        prompt: 'Activate a Skill',
+        buttons: [
+          {
+            label: 'Go to Attack Stage',
+            sentiment: 'neg',
+            move: this.props.noActivate,
+          },
+        ],
+      },
+      {
+        stage: 'attack',
+        prompt: 'Attack with your monsters',
+        buttons: [
+          {
+            label: 'Pass Turn',
+            sentiment: 'neg',
+            move: this.props.noAttacks,
+          },
+        ],
+      },
+      {
+        stage: 'select',
+        prompt: 'Select a card',
+        buttons: [
+          {
+            label: 'Confirm',
+            sentiment: 'pos',
+            move: this.props.confirm,
+            condition: 'decisionFinished',
+          },
+          {
+            label: 'Undo',
+            sentiment: 'neg',
+            move: this.props.resetStack,
+            condition: 'showReset',
+          },
+        ],
+      },
+      {
+        stage: 'choice',
+        prompt: 'Choose one',
+        buttons: [],
+      },
+    ];
   }
 
+  // TODO: update to respect stagePrompts
   currentPosMove() {
     return this.props.stage === 'level'
       ? this.props.noLevel
@@ -64,6 +150,14 @@ export class ITCGInteractive extends React.Component<InteractiveProp> {
 
   currentNegMove() {
     return this.props.stage === 'select' ? this.props.resetStack : () => {};
+  }
+
+  currentStage(): Dialog {
+    return (
+      this.stagePrompts.filter((prompt) => prompt.stage === this.props.stage)[0] || {
+        buttons: [],
+      }
+    );
   }
 
   keydownFn(e: KeyboardEvent) {
@@ -88,48 +182,50 @@ export class ITCGInteractive extends React.Component<InteractiveProp> {
   }
 
   render() {
-    const button =
-      this.props.stage == 'level' ? (
-        <div style={baseStyle}>
-          <button style={posButtonStyle} onClick={() => this.props.noLevel()}>
-            Do not Level
-          </button>
-        </div>
-      ) : this.props.stage == 'activate' ? (
-        <div style={baseStyle}>
-          <button style={posButtonStyle} onClick={() => this.props.noActivate()}>
-            Go to Attack Stage
-          </button>
-        </div>
-      ) : this.props.stage == 'attack' ? (
-        <div style={baseStyle}>
-          <button style={posButtonStyle} onClick={() => this.props.noAttacks()}>
-            Pass Turn
-          </button>
-        </div>
-      ) : this.props.stage == 'select' && this.props.decisionFinished == true ? (
-        <div style={baseStyle}>
-          <button style={posButtonStyle} onClick={() => this.props.confirm()}>
-            Confirm
-          </button>
-          {this.props.noReset ? null : (
-            <button style={negButtonStyle} onClick={() => this.props.resetStack()}>
-              Reset Stack
-            </button>
-          )}
-        </div>
-      ) : this.props.stage == 'select' && this.props.decisionFinished == false ? (
-        this.props.noReset ? null : (
-          <div style={baseStyle}>
-            <button style={negButtonStyle} onClick={() => this.props.resetStack()}>
-              Reset Stack
-            </button>
-          </div>
-        )
-      ) : (
-        <div>Opponent's Move</div>
-      );
+    const stage = this.currentStage();
 
-    return button;
+    this.stagePrompts.filter((prompt) => prompt.stage === 'choice')[0].buttons =
+      this.props.choices
+        .map((choice) => {
+          const button: DialogButtons = {
+            label: choice,
+            move: this.props.selectChoice,
+            choice: choice,
+            sentiment: 'neu',
+          };
+          return button;
+        })
+        .concat({
+          label: 'Undo',
+          sentiment: 'neg',
+          move: this.props.resetStack,
+          condition: 'showReset',
+        });
+
+    const buttons = stage.buttons.map((button) => {
+      const isVisible = button.condition ? !!this.props[button.condition] : true;
+      if (!isVisible) return null;
+
+      const style = button.sentiment
+        ? button.sentiment == 'pos'
+          ? posButtonStyle
+          : button.sentiment == 'neg'
+          ? negButtonStyle
+          : neuButtonStyle
+        : buttonStyle;
+
+      const move =
+        stage.stage === 'choice'
+          ? () => button.move({ choice: button.choice })
+          : () => button.move();
+
+      return (
+        <button style={style} onClick={move} key={getRandomKey()}>
+          {button.label}
+        </button>
+      );
+    });
+
+    return <div style={baseStyle}>{buttons}</div>;
   }
 }

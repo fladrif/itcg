@@ -171,6 +171,7 @@ export const jrboogie: Omit<Monster, 'key' | 'owner'> = {
     action: 'bounce',
     activated: false,
     requirements: { level: 0, oneshot: true },
+    noReset: true,
     targets: {
       level: 30,
       type: CardTypes.Monster,
@@ -192,6 +193,7 @@ export const lunarpixie: Omit<Monster, 'key' | 'owner'> = {
     action: 'bounce',
     activated: false,
     requirements: { level: 0, oneshot: true },
+    noReset: true,
     targets: {
       level: 30,
       type: CardTypes.Monster,

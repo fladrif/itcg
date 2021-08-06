@@ -15,6 +15,6 @@ export const nixieBase: Deck = {
     [cards.rainofarrows, 2],
     [cards.soularrow, 2],
     [cards.powerknockback, 2],
-    [cards.goldencrow, 2],
+    [cards.battlebow, 2],
   ],
 };

@@ -11,7 +11,7 @@ import { getCardAtLocation, getCardLocation, rmCard } from '../utils';
 export function handleAbility(G: GameState, ctx: Ctx, card: NonCharacter): any {
   if (card.ability.triggers) {
     card.ability.triggers.map((trigger) =>
-      pushTriggerStore(G, ctx, trigger.name, card, trigger.opts)
+      pushTriggerStore(G, ctx, trigger.name, card, trigger.opts, trigger.lifetime)
     );
   }
 

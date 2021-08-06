@@ -118,6 +118,8 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
       ? this.props.ctx.activePlayers[opponentID]
       : '';
 
+    const dialogPrompt = stack ? stack.activeDecisions[0].dialogPrompt || '' : '';
+
     const curDecisionFinished = stack ? stack.activeDecisions[0].finished : false;
 
     const noResetDecision =
@@ -130,6 +132,11 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
         <ITCGGameOver won={this.props.ctx.gameover.winner === playerID} />
       </div>
     ) : null;
+
+    const choices =
+      currentPlayerStage === 'choice' && stack
+        ? stack.activeDecisions[0].choice || []
+        : [];
 
     return (
       <div style={containerStyle}>
@@ -168,6 +175,7 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
         <div style={oppStatStyle}>
           <ITCGStats
             playerState={opponentState}
+            prompt={dialogPrompt}
             stage={
               this.props.ctx.activePlayers ? this.props.ctx.activePlayers[opponentID] : ''
             }
@@ -197,6 +205,7 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
         <div style={statStyle}>
           <ITCGStats
             playerState={playerState}
+            prompt={dialogPrompt}
             confMove={this.props.moves.confirmSkill}
             declMove={this.props.moves.resetStack}
             stage={
@@ -226,11 +235,13 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
         <div style={interactiveStyle}>
           <ITCGInteractive
             stage={currentPlayerStage}
+            choices={choices}
             decisionFinished={curDecisionFinished}
-            noReset={noResetDecision}
+            showReset={!noResetDecision}
             noLevel={this.props.moves.noLevel}
             noActivate={this.props.moves.noActivate}
             noAttacks={this.props.moves.noAttacks}
+            selectChoice={this.props.moves.selectChoice}
             confirm={this.props.moves.confirmSkill}
             resetStack={this.props.moves.resetStack}
           />

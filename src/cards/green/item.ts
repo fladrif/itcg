@@ -1,10 +1,31 @@
 import { Item, CardTypes, CardClasses } from '../../card';
 import { Location } from '../../actions';
+import { Choice } from '../../stack';
 
 const defaultTypes = {
   type: CardTypes.Item,
   class: CardClasses.Bowman,
   selected: false,
+};
+
+export const battlebow: Omit<Item, 'key' | 'owner'> = {
+  name: 'Battle Bow',
+  image: 'BattleBow',
+  level: 25,
+  skill: {
+    action: 'criticalshot',
+    activated: false,
+    requirements: {
+      level: 0,
+      oneshot: true,
+    },
+    dialogPrompt: 'Choose heads or tails',
+    choice: [Choice.Heads, Choice.Tails],
+  },
+  ability: {
+    triggers: [{ name: 'BattleBowTrigger', lifetime: { turn: 0 } }],
+  },
+  ...defaultTypes,
 };
 
 export const goldencrow: Omit<Item, 'key' | 'owner'> = {

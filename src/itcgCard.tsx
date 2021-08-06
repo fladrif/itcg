@@ -3,11 +3,12 @@ import React from 'react';
 import { Character, NonCharacter, isMonster, CardTypes } from './card';
 import { Location } from './actions';
 import { cardImages, cardback } from './itcgCardImages';
+import { MoveOptions } from './moves';
 
 interface CardProp {
   card: Character | NonCharacter;
   location: Location;
-  move: (card: [Location, Character | NonCharacter], position?: number) => any;
+  move: (opts: MoveOptions) => any;
   styles: Styles[];
   skill0: Styles[];
   skill1: Styles[];
@@ -160,24 +161,32 @@ export class ITCGCard extends React.Component<CardProp, CardState> {
       <div style={baseStyle}>
         <img
           style={style}
-          onClick={() => this.props.move([this.props.location, this.props.card])}
+          onClick={() =>
+            this.props.move({ card: [this.props.location, this.props.card] })
+          }
           src={cardImages[this.props.card.image].top}
           alt={this.props.card.name}
         />
         <img
-          onClick={() => this.props.move([this.props.location, this.props.card], 0)}
+          onClick={() =>
+            this.props.move({ card: [this.props.location, this.props.card], position: 0 })
+          }
           style={skill0Style}
           src={cardImages[this.props.card.image].skill}
           alt={this.props.card.name}
         />
         <img
-          onClick={() => this.props.move([this.props.location, this.props.card], 1)}
+          onClick={() =>
+            this.props.move({ card: [this.props.location, this.props.card], position: 1 })
+          }
           style={skill1Style}
           src={cardImages[this.props.card.image].skill2}
           alt={this.props.card.name}
         />
         <img
-          onClick={() => this.props.move([this.props.location, this.props.card], 2)}
+          onClick={() =>
+            this.props.move({ card: [this.props.location, this.props.card], position: 2 })
+          }
           style={skill2Style}
           src={cardImages[this.props.card.image].skill3}
           alt={this.props.card.name}
@@ -192,7 +201,10 @@ export class ITCGCard extends React.Component<CardProp, CardState> {
         <img
           style={style}
           onClick={() =>
-            this.props.move([this.props.location, this.props.card], this.props.skillPos)
+            this.props.move({
+              card: [this.props.location, this.props.card],
+              position: this.props.skillPos,
+            })
           }
           src={cardImages[this.props.card.image].skill}
           alt={this.props.card.name}
@@ -211,7 +223,9 @@ export class ITCGCard extends React.Component<CardProp, CardState> {
       <div style={baseStyle}>
         <img
           style={style}
-          onClick={() => this.props.move([this.props.location, this.props.card])}
+          onClick={() =>
+            this.props.move({ card: [this.props.location, this.props.card] })
+          }
           src={cardImages[this.props.card.image].top}
           alt={this.props.card.name}
           onMouseEnter={() => this.expandCard()}
@@ -219,7 +233,9 @@ export class ITCGCard extends React.Component<CardProp, CardState> {
         />
         <img
           style={getStyles([...this.props.skill0, ...this.state.skill0])}
-          onClick={() => this.props.move([this.props.location, this.props.card], 0)}
+          onClick={() =>
+            this.props.move({ card: [this.props.location, this.props.card], position: 0 })
+          }
           src={cardImages[this.props.card.image].skill}
           alt={this.props.card.name}
           onMouseEnter={() => this.expandCard()}

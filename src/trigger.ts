@@ -26,12 +26,12 @@ function getTriggers(
   decision: Decision,
   prep: TriggerPrepostion
 ): Decision[] {
-  const processedTriggers = G.triggers.reverse().map((store) => processTriggers(store)); // reverse for trigger order matters
+  const processedTriggers = G.triggers.map((store) => processTriggers(store));
   const triggerDecisions: Decision[] = [];
 
   for (const trigger of processedTriggers) {
     if (trigger.shouldTrigger(G, ctx, decision, prep)) {
-      G.stack!.decisionTriggers[decision.key].push(trigger.name);
+      G.stack!.decisionTriggers[decision.key].push(trigger.key);
 
       triggerDecisions.push(...trigger.createDecision(G, ctx, decision));
     }
@@ -41,5 +41,11 @@ function getTriggers(
 }
 
 function processTriggers(trig: TriggerStore): Trigger {
-  return new triggers[trig.name](trig.key, trig.owner, trig.opts, trig.lifetime);
+  return new triggers[trig.name](
+    trig.cardOwner,
+    trig.owner,
+    trig.key,
+    trig.opts,
+    trig.lifetime
+  );
 }

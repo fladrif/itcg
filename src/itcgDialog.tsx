@@ -22,6 +22,7 @@ const baseStyle: React.CSSProperties = {
     '2px 0 0 #fff, -2px 0 0 #fff, 0 2px 0 #fff, 0 -2px 0 #fff, 1px 1px 0 #fff, -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff',
   backgroundColor: 'rgba(84, 84, 84, 0.5)',
   fontSize: '42px',
+  overflow: 'hidden',
 };
 
 const titleStyle: React.CSSProperties = {
