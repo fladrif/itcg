@@ -2,7 +2,7 @@ import { Ctx, PlayerID } from 'boardgame.io';
 import lodash from 'lodash';
 
 import { instantiateCard, Character, NonCharacter } from './card';
-import { hydrateDeck, nixieSample, shermanBase } from './decks';
+import { hydrateDeck, nixieBase, shermanBase } from './decks';
 import { resetMonsterDamageOnField } from './hook';
 import {
   levelUp,
@@ -67,14 +67,14 @@ function preConfigSetup(): GameState {
   };
 
   state.player['1'] = {
-    deck: lodash(hydrateDeck(nixieSample, '1')).shuffle().value(),
-    character: instantiateCard(nixieSample.character, '1')[0],
+    deck: lodash(hydrateDeck(nixieBase, '1')).shuffle().value(),
+    character: instantiateCard(nixieBase.character, '1')[0],
     hand: [],
     learnedSkills: [],
     field: [],
     discard: [],
-    hp: nixieSample.character.health,
-    maxHP: nixieSample.character.health,
+    hp: nixieBase.character.health,
+    maxHP: nixieBase.character.health,
     level: 0,
     activationPos: 0,
   };
