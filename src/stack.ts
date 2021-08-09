@@ -11,7 +11,7 @@ import {
 } from './actions';
 import { endLevelStage, endActivateStage, endAttackStage } from './hook';
 import { isMonster, Skill, Character, NonCharacter } from './card';
-import { ensureFilter, filterSelections, isTargetable } from './target';
+import { ensureFilter, filterSelections, isTargetable, mayFinished } from './target';
 import { stackTriggers } from './trigger';
 import {
   deepCardComp,
@@ -48,6 +48,7 @@ export interface Decision {
   noReset?: boolean;
   choice?: Choice[];
   choiceSelection?: Choice;
+  mainDecision?: boolean;
 }
 
 export interface Stack {
@@ -69,6 +70,11 @@ interface CurrentActiveStage {
   currentPlayer: string;
   others?: never;
   next?: SetActiveStage;
+}
+
+interface ResolveStackOptions {
+  resetStack?: boolean;
+  finished?: boolean;
 }
 
 export type SetActiveStage = CurrentActiveStage | OpponentActiveStage;
@@ -107,7 +113,7 @@ function setStages(G: GameState, ctx: Ctx, decisions: Decision[]) {
   ctx.events!.setActivePlayers!(otherStages);
 }
 
-export function resolveStack(G: GameState, ctx: Ctx, resetStack?: boolean) {
+export function resolveStack(G: GameState, ctx: Ctx, opts?: ResolveStackOptions) {
   const stack = G.stack;
   if (!stack) return;
 
@@ -149,17 +155,23 @@ export function resolveStack(G: GameState, ctx: Ctx, resetStack?: boolean) {
     }
 
     actions[decision.action](G, ctx, actionOpts);
+    if (decision.mainDecision) stack.prevActivatePos = undefined;
 
     stackTriggers(G, ctx, decision, 'After');
 
     pruneSelection(G, ctx, decision.selection, decision.selection); // Removes select tag from card (ui)
     resolveStack(G, ctx);
-  } else if (resetStack !== true && !isDecisionNeeded(stack.activeDecisions[0])) {
+  } else if (
+    opts?.resetStack !== true &&
+    (!isDecisionNeeded(stack.activeDecisions[0]) || opts?.finished)
+  ) {
+    if (!mayFinished(stack.activeDecisions[0].target) && opts?.finished) return; // finished opt can only be used with mayFinished
+
     stack.decisions.push(stack.activeDecisions.shift()!);
     ctx.events!.endStage!();
 
     resolveStack(G, ctx);
-  } else if (resetStack) {
+  } else if (opts?.resetStack) {
     pruneDecisions(G, ctx, stack.decisions);
     pruneDecisions(G, ctx, stack.activeDecisions);
 
@@ -173,7 +185,11 @@ export function resolveStack(G: GameState, ctx: Ctx, resetStack?: boolean) {
   }
 }
 
-export function parseSkill(skill: Skill, source: Character | NonCharacter): Decision {
+export function parseSkill(
+  skill: Skill,
+  source: Character | NonCharacter,
+  main?: boolean
+): Decision {
   return {
     action: skill.action,
     opts: { ...skill.opts, source },
@@ -184,6 +200,7 @@ export function parseSkill(skill: Skill, source: Character | NonCharacter): Deci
     noReset: skill.noReset,
     finished: false,
     key: getRandomKey(),
+    mainDecision: main,
   };
 }
 

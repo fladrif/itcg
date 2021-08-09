@@ -177,6 +177,7 @@ export const jrboogie: Omit<Monster, 'key' | 'owner'> = {
       type: CardTypes.Monster,
       location: Location.Discard,
       quantity: 1,
+      quantityUpTo: true,
     },
   },
   ability: { keywords: ['stealthy'] },
@@ -199,6 +200,7 @@ export const lunarpixie: Omit<Monster, 'key' | 'owner'> = {
       type: CardTypes.Monster,
       location: Location.Discard,
       quantity: 1,
+      quantityUpTo: true,
     },
   },
   ability: {

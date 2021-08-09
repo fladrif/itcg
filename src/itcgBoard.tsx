@@ -14,6 +14,7 @@ import { ITCGHand } from './itcgHand';
 import { ITCGHighlight } from './itcgHighlight';
 import { ITCGInteractive } from './itcgInteractive';
 import { ITCGStats } from './itcgStats';
+import { mayFinished } from './target';
 
 const containerStyle: React.CSSProperties = {
   display: 'grid',
@@ -121,6 +122,10 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
     const dialogPrompt = stack ? stack.activeDecisions[0].dialogPrompt || '' : '';
 
     const curDecisionFinished = stack ? stack.activeDecisions[0].finished : false;
+    const decMaybeFinished =
+      stack && stack.activeDecisions[0].target
+        ? mayFinished(stack.activeDecisions[0].target)
+        : false;
 
     const noResetDecision =
       stack && stack.activeDecisions[0].noReset
@@ -237,6 +242,7 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
             stage={currentPlayerStage}
             choices={choices}
             decisionFinished={curDecisionFinished}
+            decMaybeFinished={decMaybeFinished}
             showReset={!noResetDecision}
             noLevel={this.props.moves.noLevel}
             noActivate={this.props.moves.noActivate}

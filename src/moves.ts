@@ -21,10 +21,11 @@ export interface MoveOptions {
   card?: [Location, Character | NonCharacter];
   choice?: Choice;
   position?: number;
+  finished?: boolean;
 }
 
-export function levelUp(G: GameState, ctx: Ctx, opts: MoveOptions) {
-  if (!opts.card) return INVALID_MOVE;
+export function levelUp(G: GameState, ctx: Ctx, opts?: MoveOptions) {
+  if (!opts || !opts.card) return INVALID_MOVE;
 
   const cardLoc = opts.card[0];
   const selCard = opts.card[1];
@@ -47,8 +48,8 @@ export function levelUp(G: GameState, ctx: Ctx, opts: MoveOptions) {
   resolveStack(G, ctx);
 }
 
-export function activateSkill(G: GameState, ctx: Ctx, opts: MoveOptions) {
-  if (!opts.card) return INVALID_MOVE;
+export function activateSkill(G: GameState, ctx: Ctx, opts?: MoveOptions) {
+  if (!opts || !opts.card) return INVALID_MOVE;
 
   const card = opts.card;
   const player = G.player[ctx.currentPlayer];
@@ -73,12 +74,12 @@ export function activateSkill(G: GameState, ctx: Ctx, opts: MoveOptions) {
   player.activationPos = opts.position + 1;
   skill.activated = true;
 
-  upsertStack(G, ctx, [parseSkill(skill, selCard)], 'activate', prevPos);
+  upsertStack(G, ctx, [parseSkill(skill, selCard, true)], 'activate', prevPos);
   resolveStack(G, ctx);
 }
 
-export function attack(G: GameState, ctx: Ctx, opts: MoveOptions) {
-  if (!opts.card) return INVALID_MOVE;
+export function attack(G: GameState, ctx: Ctx, opts?: MoveOptions) {
+  if (!opts || !opts.card) return INVALID_MOVE;
 
   const card = opts.card;
   const cardLoc = card[0];
@@ -117,39 +118,39 @@ export function attack(G: GameState, ctx: Ctx, opts: MoveOptions) {
   resolveStack(G, ctx);
 }
 
-export function selectChoice(G: GameState, ctx: Ctx, opts: MoveOptions) {
-  if (!opts.choice) return INVALID_MOVE;
+export function selectChoice(G: GameState, ctx: Ctx, opts?: MoveOptions) {
+  if (!opts || !opts.choice) return INVALID_MOVE;
 
   makeChoice(G, ctx, opts.choice);
   resolveStack(G, ctx);
 }
 
-export function selectTarget(G: GameState, ctx: Ctx, opts: MoveOptions) {
-  if (!opts.card) return INVALID_MOVE;
+export function selectTarget(G: GameState, ctx: Ctx, opts?: MoveOptions) {
+  if (!opts || !opts.card) return INVALID_MOVE;
 
   selectCard(G, ctx, opts.card);
 }
 
-export function confirmSkill(G: GameState, ctx: Ctx, _opts: MoveOptions) {
-  resolveStack(G, ctx);
+export function confirmSkill(G: GameState, ctx: Ctx, opts?: MoveOptions) {
+  resolveStack(G, ctx, { finished: opts?.finished });
 }
 
-export function resetStack(G: GameState, ctx: Ctx, _opts: MoveOptions) {
-  resolveStack(G, ctx, true);
+export function resetStack(G: GameState, ctx: Ctx, _opts?: MoveOptions) {
+  resolveStack(G, ctx, { resetStack: true });
 }
 
-export function noAttacks(G: GameState, ctx: Ctx, _opts: MoveOptions) {
+export function noAttacks(G: GameState, ctx: Ctx, _opts?: MoveOptions) {
   endAttackStage(G, ctx, true);
 }
 
-export function noLevel(G: GameState, ctx: Ctx, _opts: MoveOptions) {
+export function noLevel(G: GameState, ctx: Ctx, _opts?: MoveOptions) {
   endLevelStage(G, ctx);
 }
 
-export function noActivate(G: GameState, ctx: Ctx, _opts: MoveOptions) {
+export function noActivate(G: GameState, ctx: Ctx, _opts?: MoveOptions) {
   endActivateStage(G, ctx, true);
 }
 
-export function nullMove(opts: MoveOptions) {
+export function nullMove(opts?: MoveOptions) {
   return opts;
 }

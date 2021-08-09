@@ -172,6 +172,7 @@ function criticalshot(G: GameState, ctx: Ctx, opts: ActionOpts): any {
 
   const ackDec: Decision = {
     action: 'ack',
+    noReset: true,
     opts: {
       ...opts,
       dialogDecision: didWin ? dmgDec : undefined,
@@ -278,7 +279,7 @@ function nomercy(G: GameState, ctx: Ctx, opts: ActionOpts): any {
 
 function optional(G: GameState, ctx: Ctx, opts: ActionOpts): any {
   if (!G.stack) return;
-  if (!opts.choiceSelection || !opts.dialogDecision || !opts.triggerKey) return;
+  if (!opts.choiceSelection || !opts.dialogDecision) return;
 
   if (opts.choiceSelection !== Choice.Yes) return;
 
@@ -405,20 +406,20 @@ function steadyhand(G: GameState, ctx: Ctx, opts: ActionOpts): any {
 }
 
 // TODO: extend interactive options for no level option
-function trainhard(G: GameState, ctx: Ctx, _opts: ActionOpts): any {
+function trainhard(G: GameState, ctx: Ctx, opts: ActionOpts): any {
   if (!G.stack) return;
 
   const warriorSkills = G.player[ctx.currentPlayer].learnedSkills.filter((card) =>
     isWarrior(card)
   );
-  if (warriorSkills.length < 3) return;
+  const handSize = G.player[ctx.currentPlayer].hand.length;
+  if (warriorSkills.length < 3 || handSize <= 0) return;
 
-  const decision: Decision = {
+  const levelDec: Decision = {
     action: 'level',
     target: {
       location: Location.Hand,
       quantity: 1,
-      quantityUpTo: true,
     },
     noReset: true,
     selection: {},
@@ -426,7 +427,21 @@ function trainhard(G: GameState, ctx: Ctx, _opts: ActionOpts): any {
     key: getRandomKey(),
   };
 
-  upsertStack(G, ctx, [decision]);
+  const optDec: Decision = {
+    action: 'optional',
+    selection: {},
+    finished: false,
+    opts: {
+      dialogDecision: levelDec,
+      ...opts,
+    },
+    noReset: true,
+    dialogPrompt: 'Would you like to level up?',
+    choice: [Choice.Yes, Choice.No],
+    key: getRandomKey(),
+  };
+
+  upsertStack(G, ctx, [optDec]);
 }
 
 function tuck(G: GameState, ctx: Ctx, opts: ActionOpts): any {

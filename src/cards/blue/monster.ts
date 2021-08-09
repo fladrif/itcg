@@ -64,7 +64,22 @@ export const slime: Omit<Monster, 'key' | 'owner'> = {
       lifegain: 10,
     },
   },
-  ability: {}, // TODO: destroy item
+  ability: {
+    skills: [
+      {
+        action: 'destroy',
+        requirements: { level: 0 },
+        targets: {
+          location: Location.OppField,
+          type: CardTypes.Item,
+          quantity: 1,
+          quantityUpTo: true,
+        },
+        noReset: true,
+        activated: false,
+      },
+    ],
+  },
   ...defaultTypes,
 };
 

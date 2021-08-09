@@ -7,12 +7,13 @@ import { getRandomKey } from './utils';
 interface InteractiveProp {
   stage: string;
   decisionFinished: boolean;
+  decMaybeFinished: boolean;
   showReset: boolean;
   choices: Choice[];
   noLevel: () => any;
   noActivate: () => any;
   noAttacks: () => any;
-  confirm: () => any;
+  confirm: (opts?: MoveOptions) => any;
   selectChoice: () => any;
   resetStack: () => any;
 }
@@ -75,6 +76,10 @@ export class ITCGInteractive extends React.Component<InteractiveProp> {
     this.posMove = this.currentPosMove();
     this.negMove = this.currentNegMove();
 
+    this.stagePrompts = [];
+  }
+
+  setStagePrompts() {
     this.stagePrompts = [
       {
         stage: 'level',
@@ -116,8 +121,12 @@ export class ITCGInteractive extends React.Component<InteractiveProp> {
           {
             label: 'Confirm',
             sentiment: 'pos',
-            move: this.props.confirm,
-            condition: 'decisionFinished',
+            move: this.props.decMaybeFinished
+              ? () => this.props.confirm({ finished: true })
+              : this.props.confirm,
+            condition: this.props.decMaybeFinished
+              ? 'decMaybeFinished'
+              : 'decisionFinished',
           },
           {
             label: 'Undo',
@@ -130,7 +139,22 @@ export class ITCGInteractive extends React.Component<InteractiveProp> {
       {
         stage: 'choice',
         prompt: 'Choose one',
-        buttons: [],
+        buttons: this.props.choices
+          .map((choice) => {
+            const button: DialogButtons = {
+              label: choice,
+              move: this.props.selectChoice,
+              choice: choice,
+              sentiment: 'neu',
+            };
+            return button;
+          })
+          .concat({
+            label: 'Undo',
+            sentiment: 'neg',
+            move: this.props.resetStack,
+            condition: 'showReset',
+          }),
       },
     ];
   }
@@ -144,7 +168,9 @@ export class ITCGInteractive extends React.Component<InteractiveProp> {
       : this.props.stage === 'attack'
       ? this.props.noAttacks
       : this.props.stage === 'select' && this.props.decisionFinished === true
-      ? this.props.confirm
+      ? this.props.decMaybeFinished
+        ? () => this.props.confirm({ finished: true })
+        : this.props.confirm
       : () => {};
   }
 
@@ -182,25 +208,8 @@ export class ITCGInteractive extends React.Component<InteractiveProp> {
   }
 
   render() {
+    this.setStagePrompts();
     const stage = this.currentStage();
-
-    this.stagePrompts.filter((prompt) => prompt.stage === 'choice')[0].buttons =
-      this.props.choices
-        .map((choice) => {
-          const button: DialogButtons = {
-            label: choice,
-            move: this.props.selectChoice,
-            choice: choice,
-            sentiment: 'neu',
-          };
-          return button;
-        })
-        .concat({
-          label: 'Undo',
-          sentiment: 'neg',
-          move: this.props.resetStack,
-          condition: 'showReset',
-        });
 
     const buttons = stage.buttons.map((button) => {
       const isVisible = button.condition ? !!this.props[button.condition] : true;

@@ -19,6 +19,7 @@ export const battlebow: Omit<Item, 'key' | 'owner'> = {
       level: 0,
       oneshot: true,
     },
+    noReset: true,
     dialogPrompt: 'Choose heads or tails',
     choice: [Choice.Heads, Choice.Tails],
   },

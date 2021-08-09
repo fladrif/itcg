@@ -130,7 +130,6 @@ export class BattleBowTrigger extends Trigger {
       key: getRandomKey(),
     };
 
-    // TODO: investigate adding source and tracking trigger liftime
     const optionalDec: Decision = {
       action: 'optional',
       finished: false,

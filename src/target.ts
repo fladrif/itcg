@@ -10,6 +10,18 @@ interface FilterResponse {
   usedRecent: boolean;
 }
 
+export function mayFinished(filter?: ActionTargets): boolean {
+  if (!filter) return false;
+
+  if ('location' in filter) return isFilterMay(filter);
+
+  if ('and' in filter) return !filter.and!.some((filt) => !mayFinished(filt));
+
+  if ('xor' in filter) return filter.xor!.some((filt) => mayFinished(filt));
+
+  throw new Error(`Filter composed incorrectly: ${filter}`);
+}
+
 export function ensureFilter(filter: ActionTargets, state: PlayerState): ActionTargets {
   if ('and' in filter) return { and: filter.and!.map((fil) => ensureFilter(fil, state)) };
   if ('xor' in filter) return { xor: filter.xor!.map((fil) => ensureFilter(fil, state)) };
@@ -125,6 +137,12 @@ function cardInFilter(filter: TargetFilter, card: Character | NonCharacter): boo
     if (filter.level < (card as NonCharacter).level) return false;
   }
   return true;
+}
+
+function isFilterMay(filter: TargetFilter): boolean {
+  if (filter.quantityUpTo) return true;
+
+  return false;
 }
 
 function betterFit(current: FilterResponse, best: FilterResponse): boolean {
