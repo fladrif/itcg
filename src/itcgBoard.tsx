@@ -119,7 +119,7 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
       ? this.props.ctx.activePlayers[opponentID]
       : '';
 
-    const dialogPrompt = stack ? stack.activeDecisions[0].dialogPrompt || '' : '';
+    const dialogPrompt = ''; // stack ? stack.activeDecisions[0].dialogPrompt || '' : '';
 
     const curDecisionFinished = stack ? stack.activeDecisions[0].finished : false;
     const decMaybeFinished =
