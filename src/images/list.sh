@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cards=( "EmeraldEarrings.jpg" "Fairy.jpg" "GreenMushroom.jpg" "JrNecki.jpg" "MagicClaw.jpg" "Octopus.jpg" "OrangeMushroom.jpg" "RedSnail.jpg" "RibbonPig.jpg" "WildBoar.jpg") 
+cards=("Drake.jpg" "GreenTrixter.jpg" "JrBoogie.jpg" "LunarPixie.jpg" "Stirge.jpg" "Tweeter.jpg" "ArrowBlow.jpg" "RainOfArrows.jpg" "SoulArrow.jpg" "PowerKnockBack.jpg" "GoldenCrow.jpg") 
 
 for i in "${cards[@]}"
 do

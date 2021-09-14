@@ -1,6 +1,6 @@
 # Maplestory iTCG 
 
-![Sketch Cardback](itcgCBsk2.jpg)
+![Sketch Cardback](src/images/itcgCBsk2.jpg)
 
 Web client and server for the Maplestory iTCG card game built on the [boardgame](https://boardgame.io) framework.
 
