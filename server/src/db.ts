@@ -1,5 +1,8 @@
 import { createConnection, Connection, ILike } from 'typeorm';
+
 import { Decks, Users } from './dbTable';
+
+import { Deck } from '../../src/game';
 
 export interface User {
   username: string;
@@ -83,6 +86,49 @@ export class DB {
 
     if (thisUser) return true;
     return false;
+  }
+
+  async getDecks(userID: string): Promise<Decks[]> {
+    if (!this.connection) await this.init();
+
+    const dec = this.connection!.getRepository(Decks);
+    const decs = await dec.find({
+      relations: ['owner'],
+      where: [{ owner: userID }, { owner: null }],
+    });
+
+    return decs;
+  }
+
+  async getDeck(id: string): Promise<Decks | undefined> {
+    if (!this.connection) await this.init();
+
+    const dec = this.connection!.getRepository(Decks);
+    const deck = await dec.findOne({ relations: ['owner'], where: { id } });
+    return deck;
+  }
+
+  async saveDeck(
+    id: string,
+    name: string,
+    deckList: Deck,
+    owner?: string
+  ): Promise<string> {
+    if (!this.connection) await this.init();
+
+    const user = owner ? await this.getUserByID(owner) : undefined;
+
+    const dec = this.connection!.getRepository(Decks);
+    await dec.save(new Decks(id, name, deckList, user));
+
+    return id;
+  }
+
+  async deleteDeck(deck: Decks): Promise<void> {
+    if (!this.connection) await this.init();
+
+    const dec = this.connection!.getRepository(Decks);
+    await dec.delete(deck.id);
   }
 }
 

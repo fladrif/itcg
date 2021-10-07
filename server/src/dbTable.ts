@@ -1,4 +1,4 @@
-import { Entity, PrimaryColumn, Column, ManyToOne, OneToMany } from 'typeorm';
+import { Entity, PrimaryColumn, Column, JoinColumn, ManyToOne } from 'typeorm';
 
 import { Deck } from '../../src/game';
 
@@ -16,14 +16,10 @@ export class Users {
   @Column('text')
   password: string;
 
-  @OneToMany(() => Decks, (decks) => decks.owner)
-  decks: Decks[];
-
   constructor(id: string, username: string, password: string) {
     this.id = id;
     this.username = username;
     this.password = password;
-    this.decks = [];
   }
 }
 
@@ -35,16 +31,17 @@ export class Decks {
   @Column('text')
   name: string;
 
-  @ManyToOne(() => Users, (users) => users.decks)
-  owner: Users;
-
   @Column('json')
   deck_list: Deck;
 
-  constructor(id: string, username: string, owner: Users, deckList: Deck) {
+  @ManyToOne(() => Users)
+  @JoinColumn({ name: 'owner_id' })
+  owner?: Users;
+
+  constructor(id: string, name: string, deckList: Deck, owner?: Users) {
     this.id = id;
-    this.name = username;
-    this.owner = owner;
+    this.name = name;
     this.deck_list = deckList;
+    this.owner = owner;
   }
 }

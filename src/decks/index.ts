@@ -46,3 +46,5 @@ export const nixieSample: Deck = {
 
 export * from './bowman';
 export * from './warrior';
+
+export * from './utils';

@@ -4,4 +4,5 @@ export * from './logout';
 export * from './room';
 export * from './header';
 export * from './deck';
+export * from './deckBuilder';
 export * from './frontpage';

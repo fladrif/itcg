@@ -23,7 +23,7 @@ const style: React.CSSProperties = {
   flexDirection: 'column',
   alignItems: 'center',
   verticalAlign: 'middle',
-  overflow: 'scroll',
+  overflowY: 'auto',
 };
 
 export interface AppState {

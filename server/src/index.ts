@@ -13,7 +13,7 @@ import { SERVER } from '../../src/config';
 import { db } from './db';
 import { AUTH_COOKIE_NAME, USER_COOKIE_NAME, setCookies, verify } from './utils';
 import { extractAuth } from './auth';
-import { DeckRouter, RoomRouter } from './routes';
+import { CardRouter, DeckRouter, RoomRouter } from './routes';
 
 export interface UserNonce {
   username: string;
@@ -53,7 +53,7 @@ const server = Server({
 server.app.use(bodyParser());
 server.app.use(cors({ credentials: true }));
 
-server.router.use(['/decks', '/games', '/rooms'], extractAuth);
+server.router.use(['/cards', '/decks', '/games', '/rooms'], extractAuth);
 
 server.router.get('/', (ctx: any) => {
   ctx.body = 'Hey! What are you doing? Stop it!';
@@ -116,6 +116,7 @@ server.router.get('/getNonce', (ctx: any) => {
   ctx.body = nonce;
 });
 
+server.router.use('/cards', CardRouter.routes());
 server.router.use('/decks', DeckRouter.routes());
 server.router.use('/rooms', RoomRouter.routes());
 

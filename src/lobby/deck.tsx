@@ -1,26 +1,28 @@
 import React from 'react';
-import { Redirect } from 'react-router-dom';
-import { Button, FormGroup, FormLabel, FormControl } from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
 import axios from 'axios';
-import CryptoJS from 'crypto-js';
 
-import { getRandomKey } from '../utils';
+import { ITCGDeckBuilder } from './deckBuilder';
+
 import { AppState } from '../App';
+import { Deck } from '../game';
 
-interface RoomProp {
+interface DeckProp {
   server: string;
   update: (state: AppState) => void;
 }
 
-interface Room {
+export interface DeckMetaData {
   id: string;
-  owner: string;
-  opp?: string;
+  name: string;
+  deck_list: Deck;
+  modify: boolean;
 }
 
-interface State {
-  rooms: Room[];
-  activeRoom?: Room;
+export interface State {
+  decks: DeckMetaData[];
+  build: boolean;
+  buildDeck?: string;
 }
 
 const baseStyle: React.CSSProperties = {
@@ -29,7 +31,7 @@ const baseStyle: React.CSSProperties = {
   width: '70vw',
 };
 
-const roomStyle: React.CSSProperties = {
+const deckStyle: React.CSSProperties = {
   margin: '3%',
   padding: '1%',
   border: 'groove',
@@ -45,152 +47,82 @@ const buttonStyle: React.CSSProperties = {
   marginLeft: '80%',
 };
 
-export class ITCGDeck extends React.Component<RoomProp> {
+export class ITCGDeck extends React.Component<DeckProp> {
   state: State;
-  timerID: any;
 
-  constructor(prop: RoomProp) {
+  constructor(prop: DeckProp) {
     super(prop);
-    this.state = { rooms: [] };
+    this.state = { decks: [], build: false };
   }
 
-  async updateSelf() {
-    const resp = await axios.get('/rooms', {
+  async componentDidMount() {
+    await this.updateSelf();
+  }
+
+  async updateSelf(obj?: Partial<State>) {
+    const resp = await axios('/decks', {
       baseURL: this.props.server,
       timeout: 1000,
       withCredentials: true,
     });
 
-    const rooms = resp.data;
-    if (!rooms) return;
+    if (!resp.data) return;
 
-    if (!Array.isArray(rooms)) {
-      this.setState({ activeRoom: rooms });
-    } else {
-      this.setState({ rooms: rooms, activeRoom: undefined });
-    }
+    this.setState({ ...obj, decks: resp.data });
   }
 
-  async componentDidMount() {
-    await this.updateSelf();
-
-    this.timerID = setInterval(async () => await this.updateSelf(), 1000);
+  buildDeck(id?: string) {
+    this.setState({ build: true, buildDeck: id });
   }
 
-  componentWillUnmount() {
-    clearInterval(this.timerID);
+  parseDeckList(deck: Deck) {
+    if (!deck.character) return;
+    return <div>{deck.character.name}</div>;
   }
 
-  getActiveRoom(room: Room) {
-    return (
-      <div>
-        <h1>Duel Preparation</h1>
-        Owner: <b>{room.owner}</b>
-        <br />
-        Ready: <b>false</b>
-        <br />
-        <br />
-        Opponent: <b>{room.opp}</b>
-        <br />
-        Ready: <b>false</b>
-        <br />
-        <Button style={buttonStyle} onClick={() => this.leaveRoom(room.id)}>
-          Leave Room
-        </Button>
-      </div>
-    );
-  }
+  parseDeckLists() {
+    const decks = this.state.decks;
 
-  getRoomList(rooms: Room[]) {
-    return (
-      <div>
-        <h1>Decks</h1>
-        {rooms.map((rm) => (
-          <div style={roomStyle}>
-            <b>User</b>: {rm.owner}
-            <Button style={buttonStyle} onClick={() => this.joinRoom(rm.id)}>
-              Join Room
+    const parsedList = decks.map((deck) => {
+      return (
+        <div style={deckStyle} key={deck.id}>
+          <h3>{deck.name}</h3>
+          {this.parseDeckList(deck.deck_list)}
+          {deck.modify && (
+            <Button style={buttonStyle} onClick={() => this.buildDeck(deck.id)}>
+              Modify Deck
             </Button>
-          </div>
-        ))}
-      </div>
+          )}
+        </div>
+      );
+    });
+
+    return <>{parsedList}</>;
+  }
+
+  getDeckList() {
+    return (
+      <>
+        <Button style={buttonStyle} onClick={() => this.buildDeck()}>
+          Create new Deck
+        </Button>
+        <h1>Decks</h1>
+        {this.parseDeckLists()}
+      </>
     );
-  }
-
-  getRooms() {
-    if (!!this.state.activeRoom) {
-      return this.getActiveRoom(this.state.activeRoom);
-    }
-
-    const rooms = this.state.rooms;
-    if (rooms.length > 0) {
-      return this.getRoomList(rooms);
-    } else {
-      return <h2>No Rooms Open</h2>;
-    }
-  }
-
-  async makeRoom() {
-    if (!!this.state.activeRoom) return;
-
-    await axios
-      .post(
-        '/rooms/create',
-        {},
-        {
-          baseURL: this.props.server,
-          timeout: 1000,
-          withCredentials: true,
-        }
-      )
-      .catch((err) => {
-        console.error(err);
-      });
-  }
-
-  async joinRoom(id: string) {
-    if (!!this.state.activeRoom) return;
-
-    await axios
-      .post(
-        '/rooms/join',
-        { id },
-        {
-          baseURL: this.props.server,
-          timeout: 1000,
-          withCredentials: true,
-        }
-      )
-      .catch((err) => {
-        console.error(err);
-      });
-  }
-
-  async leaveRoom(id: string) {
-    await axios
-      .post(
-        '/rooms/leave',
-        { id },
-        {
-          baseURL: this.props.server,
-          timeout: 1000,
-          withCredentials: true,
-        }
-      )
-      .catch((err) => {
-        console.error(err);
-      });
   }
 
   render() {
     return (
       <div style={baseStyle}>
-        {!this.state.activeRoom && (
-          <Button style={buttonStyle} onClick={() => this.makeRoom()}>
-            Create Room
-          </Button>
+        {!this.state.build && this.getDeckList()}
+        {this.state.build && (
+          <ITCGDeckBuilder
+            server={this.props.server}
+            deckID={this.state.buildDeck}
+            update={(obj) => this.updateSelf(obj)}
+          />
         )}
-        {this.getRooms()}
       </div>
     );
   }

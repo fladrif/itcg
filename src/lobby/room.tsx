@@ -126,7 +126,7 @@ export class ITCGRoom extends React.Component<RoomProp> {
     if (rooms.length > 0) {
       return this.getRoomList(rooms);
     } else {
-      return <h2>No Rooms Open</h2>;
+      return <h2>No Open Rooms</h2>;
     }
   }
 
