@@ -32,9 +32,15 @@ const baseStyle: React.CSSProperties = {
 };
 
 const deckStyle: React.CSSProperties = {
-  margin: '3%',
+  display: 'flex',
+  flexDirection: 'row',
+  margin: '1%',
   padding: '1%',
   border: 'groove',
+};
+
+const deckInfoStyle: React.CSSProperties = {
+  flex: '1',
 };
 
 const buttonStyle: React.CSSProperties = {
@@ -44,6 +50,10 @@ const buttonStyle: React.CSSProperties = {
   alignItems: 'center',
   width: '10%',
   marginTop: '1%',
+};
+
+const topButtonStyle: React.CSSProperties = {
+  ...buttonStyle,
   marginLeft: '80%',
 };
 
@@ -77,7 +87,17 @@ export class ITCGDeck extends React.Component<DeckProp> {
 
   parseDeckList(deck: Deck) {
     if (!deck.character) return;
-    return <div>{deck.character.name}</div>;
+    return (
+      <div>
+        {deck.deck.map((card) => {
+          return (
+            <div>
+              {card[1]} {card[0].name}
+            </div>
+          );
+        })}
+      </div>
+    );
   }
 
   parseDeckLists() {
@@ -86,8 +106,13 @@ export class ITCGDeck extends React.Component<DeckProp> {
     const parsedList = decks.map((deck) => {
       return (
         <div style={deckStyle} key={deck.id}>
-          <h3>{deck.name}</h3>
-          {this.parseDeckList(deck.deck_list)}
+          <div style={deckInfoStyle}>
+            Name: <h2>{deck.name}</h2>
+          </div>
+          <div style={deckInfoStyle}>
+            Character: <h3>{deck.deck_list.character.name}</h3>
+          </div>
+          <div style={deckInfoStyle}>{this.parseDeckList(deck.deck_list)}</div>
           {deck.modify && (
             <Button style={buttonStyle} onClick={() => this.buildDeck(deck.id)}>
               Modify Deck
@@ -103,7 +128,7 @@ export class ITCGDeck extends React.Component<DeckProp> {
   getDeckList() {
     return (
       <>
-        <Button style={buttonStyle} onClick={() => this.buildDeck()}>
+        <Button style={topButtonStyle} onClick={() => this.buildDeck()}>
           Create new Deck
         </Button>
         <h1>Decks</h1>
