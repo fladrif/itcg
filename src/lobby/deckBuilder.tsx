@@ -422,7 +422,9 @@ export class ITCGDeckBuilder extends React.Component<DeckBuilderProp> {
           </FormGroup>
           <div style={formRowStyle}>
             <div style={formCompStyle}>
-              Deck List
+              Deck List:{' '}
+              {this.state.deckList?.deck.reduce((acc, card) => card[1] + acc, 0) || 0} /
+              40
               <div style={formStyle}>{this.renderDeckList()}</div>
             </div>
           </div>
