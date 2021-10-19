@@ -42,6 +42,11 @@ const menuItem: React.CSSProperties = {
   color: 'black',
 };
 
+const selectedMenuItem: React.CSSProperties = {
+  ...menuItem,
+  backgroundColor: 'grey',
+};
+
 const UIStyle: React.CSSProperties = {
   marginTop: '1%',
   marginRight: '3%',
@@ -82,13 +87,13 @@ export class ITCGHeader extends React.Component<HeaderProps> {
   loggedInMenu() {
     return (
       <>
-        <NavLink style={menuItem} to={'/'}>
+        <NavLink activeStyle={selectedMenuItem} exact={true} style={menuItem} to={'/'}>
           Home
         </NavLink>
-        <NavLink style={menuItem} to={'/rooms'}>
+        <NavLink activeStyle={selectedMenuItem} style={menuItem} to={'/rooms'}>
           Rooms
         </NavLink>
-        <NavLink style={menuItem} to={'/decks'}>
+        <NavLink activeStyle={selectedMenuItem} style={menuItem} to={'/decks'}>
           Decks
         </NavLink>
       </>
