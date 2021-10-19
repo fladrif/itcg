@@ -3,6 +3,8 @@ import { Button } from 'react-bootstrap';
 import axios from 'axios';
 
 import { ITCGDeckBuilder } from './deckBuilder';
+import { OverallListStyle, ListItemStyle } from './list.css';
+import { ButtonStyle, OverallButtonStyle } from './overall.css';
 
 import { AppState } from '../App';
 import { Deck } from '../game';
@@ -29,32 +31,6 @@ const baseStyle: React.CSSProperties = {
   display: 'flex',
   flexDirection: 'column',
   width: '70vw',
-};
-
-const deckStyle: React.CSSProperties = {
-  display: 'flex',
-  flexDirection: 'row',
-  margin: '1%',
-  padding: '1%',
-  border: 'groove',
-};
-
-const deckInfoStyle: React.CSSProperties = {
-  flex: '1',
-};
-
-const buttonStyle: React.CSSProperties = {
-  textShadow: '1px 1px 2px grey',
-  fontSize: '120%',
-  borderRadius: '0.5em',
-  alignItems: 'center',
-  width: '10%',
-  marginTop: '1%',
-};
-
-const topButtonStyle: React.CSSProperties = {
-  ...buttonStyle,
-  marginLeft: '80%',
 };
 
 export class ITCGDeck extends React.Component<DeckProp> {
@@ -105,16 +81,16 @@ export class ITCGDeck extends React.Component<DeckProp> {
 
     const parsedList = decks.map((deck) => {
       return (
-        <div style={deckStyle} key={deck.id}>
-          <div style={deckInfoStyle}>
+        <div style={OverallListStyle} key={deck.id}>
+          <div style={ListItemStyle}>
             Name: <h2>{deck.name}</h2>
           </div>
-          <div style={deckInfoStyle}>
+          <div style={ListItemStyle}>
             Character: <h3>{deck.deck_list.character.name}</h3>
           </div>
-          <div style={deckInfoStyle}>{this.parseDeckList(deck.deck_list)}</div>
+          <div style={ListItemStyle}>{this.parseDeckList(deck.deck_list)}</div>
           {deck.modify && (
-            <Button style={buttonStyle} onClick={() => this.buildDeck(deck.id)}>
+            <Button style={ButtonStyle} onClick={() => this.buildDeck(deck.id)}>
               Modify Deck
             </Button>
           )}
@@ -128,7 +104,7 @@ export class ITCGDeck extends React.Component<DeckProp> {
   getDeckList() {
     return (
       <>
-        <Button style={topButtonStyle} onClick={() => this.buildDeck()}>
+        <Button style={OverallButtonStyle} onClick={() => this.buildDeck()}>
           Create new Deck
         </Button>
         <h1>Decks</h1>

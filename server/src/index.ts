@@ -13,26 +13,8 @@ import { SERVER } from '../../src/config';
 import { db } from './db';
 import { AUTH_COOKIE_NAME, USER_COOKIE_NAME, setCookies, verify } from './utils';
 import { extractAuth } from './auth';
+import { UserNonce } from './types';
 import { CardRouter, DeckRouter, RoomRouter } from './routes';
-
-export interface UserNonce {
-  username: string;
-  nonce: string;
-}
-
-export interface Room {
-  id: string;
-
-  owner: string;
-  ownerID: string;
-
-  opp?: string;
-  oppID?: string;
-
-  ownerDeck?: number;
-  oppDeck?: number;
-}
-
 const BCRYPT_SALT_ROUNDS = 10;
 
 const gameServerDB = new PostgresStore({
@@ -53,7 +35,9 @@ const server = Server({
 server.app.use(bodyParser());
 server.app.use(cors({ credentials: true }));
 
-server.router.use(['/cards', '/decks', '/games', '/rooms'], extractAuth);
+server.router.use(['/cards', '/decks', '/rooms'], extractAuth);
+// TODO: role specific extractAuth
+server.router.use(['/games'], extractAuth);
 
 server.router.get('/', (ctx: any) => {
   ctx.body = 'Hey! What are you doing? Stop it!';

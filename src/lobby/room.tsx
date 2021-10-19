@@ -4,24 +4,44 @@ import { Button, FormGroup, FormLabel, FormControl } from 'react-bootstrap';
 import axios from 'axios';
 import CryptoJS from 'crypto-js';
 
+import { OverallListStyle, ListItemStyle } from './list.css';
+import { ButtonStyle, OverallButtonStyle } from './overall.css';
+import { DeckMetaData } from './deck';
+
 import { getRandomKey } from '../utils';
 import { AppState } from '../App';
+import { Deck } from '../game';
 
 interface RoomProp {
   server: string;
   update: (state: AppState) => void;
 }
 
+interface RoomUser {
+  name: string;
+  owner: boolean;
+  deck?: string;
+}
+
 interface Room {
   id: string;
-  owner: string;
-  opp?: string;
+
+  users: RoomUser[];
 }
 
 interface State {
   rooms: Room[];
+  decks: DeckMetaData[];
   activeRoom?: Room;
 }
+
+const readyStyle: React.CSSProperties = {
+  color: 'green',
+};
+
+const notReadyStyle: React.CSSProperties = {
+  color: 'red',
+};
 
 const baseStyle: React.CSSProperties = {
   display: 'flex',
@@ -29,20 +49,16 @@ const baseStyle: React.CSSProperties = {
   width: '70vw',
 };
 
-const roomStyle: React.CSSProperties = {
-  margin: '3%',
-  padding: '1%',
-  border: 'groove',
+const formCompStyle: React.CSSProperties = {
+  display: 'flex',
+  flexDirection: 'column',
+  flex: '1',
+  marginLeft: '1%',
 };
 
-const buttonStyle: React.CSSProperties = {
-  textShadow: '1px 1px 2px grey',
-  fontSize: '120%',
-  borderRadius: '0.5em',
-  alignItems: 'center',
-  width: '10%',
-  marginTop: '1%',
-  marginLeft: '80%',
+const formHeaderCompStyle: React.CSSProperties = {
+  ...formCompStyle,
+  fontSize: '125%',
 };
 
 export class ITCGRoom extends React.Component<RoomProp> {
@@ -51,7 +67,7 @@ export class ITCGRoom extends React.Component<RoomProp> {
 
   constructor(prop: RoomProp) {
     super(prop);
-    this.state = { rooms: [] };
+    this.state = { rooms: [], decks: [] };
   }
 
   async updateSelf() {
@@ -64,8 +80,15 @@ export class ITCGRoom extends React.Component<RoomProp> {
     const rooms = resp.data;
     if (!rooms) return;
 
+    const deckResp = await axios('/decks', {
+      baseURL: this.props.server,
+      timeout: 1000,
+      withCredentials: true,
+    });
+    if (!deckResp.data) return;
+
     if (!Array.isArray(rooms)) {
-      this.setState({ activeRoom: rooms });
+      this.setState({ activeRoom: rooms, decks: deckResp.data });
     } else {
       this.setState({ rooms: rooms, activeRoom: undefined });
     }
@@ -81,38 +104,74 @@ export class ITCGRoom extends React.Component<RoomProp> {
     clearInterval(this.timerID);
   }
 
+  getPlayerDecks() {
+    const decks = this.state.decks;
+
+    return decks.map((deck) => {
+      return <option value={deck.id}>{deck.name}</option>;
+    });
+  }
+
   getActiveRoom(room: Room) {
+    const owner = room.users.find((usr) => usr.owner === true);
+    const guest = room.users.find((usr) => usr.owner === false);
+
     return (
-      <div>
+      <>
         <h1>Duel Preparation</h1>
-        Owner: <b>{room.owner}</b>
-        <br />
-        Ready: <b>false</b>
-        <br />
-        <br />
-        Opponent: <b>{room.opp}</b>
-        <br />
-        Ready: <b>false</b>
-        <br />
-        <Button style={buttonStyle} onClick={() => this.leaveRoom(room.id)}>
-          Leave Room
-        </Button>
-      </div>
+        <div style={OverallListStyle}>
+          <div style={ListItemStyle}>
+            Owner: <h3>{owner.name}</h3>
+          </div>
+          <div style={ListItemStyle}>
+            Owner Ready:{' '}
+            <h3 style={!!owner?.deck ? readyStyle : notReadyStyle}>
+              {!!owner.deck ? 'true' : 'false'}
+            </h3>
+          </div>
+          <div style={ListItemStyle}>
+            Guest: <h3>{guest?.name || ''}</h3>
+          </div>
+          <div style={ListItemStyle}>
+            Guest Ready:{' '}
+            <h3 style={!!guest?.deck ? readyStyle : notReadyStyle}>
+              {!!guest?.deck ? 'true' : 'false'}
+            </h3>
+          </div>
+          <div style={ListItemStyle}>
+            <FormControl
+              as={'select'}
+              style={formHeaderCompStyle}
+              onChange={(e) => this.updateRoom(room.id, e.target.value)}
+            >
+              <option value={''}>Select Deck</option>
+              {this.getPlayerDecks()}
+            </FormControl>
+          </div>
+          <Button style={ButtonStyle} onClick={() => this.leaveRoom(room.id)}>
+            Leave Room
+          </Button>
+        </div>
+      </>
     );
   }
 
   getRoomList(rooms: Room[]) {
+    const styledRooms = rooms.map((rm) => (
+      <div style={OverallListStyle}>
+        <div style={ListItemStyle}>
+          User: <h2>{rm.users.find((usr) => usr.owner === true).name}</h2>
+        </div>
+        <Button style={ButtonStyle} onClick={() => this.joinRoom(rm.id)}>
+          Join Room
+        </Button>
+      </div>
+    ));
+
     return (
       <div>
         <h1>Rooms</h1>
-        {rooms.map((rm) => (
-          <div style={roomStyle}>
-            <b>User</b>: {rm.owner}
-            <Button style={buttonStyle} onClick={() => this.joinRoom(rm.id)}>
-              Join Room
-            </Button>
-          </div>
-        ))}
+        {styledRooms}
       </div>
     );
   }
@@ -166,6 +225,22 @@ export class ITCGRoom extends React.Component<RoomProp> {
       });
   }
 
+  async updateRoom(id: string, deckID: string) {
+    await axios
+      .post(
+        '/rooms/update',
+        { id, deckID },
+        {
+          baseURL: this.props.server,
+          timeout: 1000,
+          withCredentials: true,
+        }
+      )
+      .catch((err) => {
+        console.error(err);
+      });
+  }
+
   async leaveRoom(id: string) {
     await axios
       .post(
@@ -186,7 +261,7 @@ export class ITCGRoom extends React.Component<RoomProp> {
     return (
       <div style={baseStyle}>
         {!this.state.activeRoom && (
-          <Button style={buttonStyle} onClick={() => this.makeRoom()}>
+          <Button style={OverallButtonStyle} onClick={() => this.makeRoom()}>
             Create Room
           </Button>
         )}

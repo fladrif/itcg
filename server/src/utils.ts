@@ -2,7 +2,7 @@ import { RouterContext } from 'koa-router';
 import jwt from 'jsonwebtoken';
 import CryptoJS from 'crypto-js';
 
-import { UserNonce } from './index';
+import { UserNonce } from './types';
 
 export const AUTH_HEADER = 'UserAuth';
 export const AUTH_COOKIE_NAME = 'token';
