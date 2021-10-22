@@ -1,5 +1,5 @@
 {
-  "defaultEnv": "local",
+  "defaultEnv": "prod",
   "local": {
     "driver": "pg",
     "host": "localhost",
