@@ -6,7 +6,15 @@ COPY package-lock.json package-lock.json
 
 RUN npm ci
 
-COPY . .
+COPY server/package.json server/package.json
+COPY server/package-lock.json server/package-lock.json
+
+RUN cd server && npm ci && cd ../
+
+COPY server/src server/src
+COPY server/tsconfig.json server/tsconfig.json
+COPY src src
+COPY public public
 
 RUN npm run build
-RUN npm run build-server
+RUN cd server && npm run build-server
