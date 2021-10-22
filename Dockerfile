@@ -15,6 +15,8 @@ COPY server/src server/src
 COPY server/tsconfig.json server/tsconfig.json
 COPY src src
 COPY public public
+COPY tsconfig.json tsconfig.json
+COPY database.json database.json
 
 RUN npm run build
 RUN cd server && npm run build-server
