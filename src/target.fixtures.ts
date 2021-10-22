@@ -125,4 +125,5 @@ export const playerState: PlayerState = {
   maxHP: 10,
   level: 40,
   activationPos: 0,
+  name: 'Fladrif',
 };

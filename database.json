@@ -1,0 +1,31 @@
+{
+  "defaultEnv": "local",
+  "local": {
+    "driver": "pg",
+    "host": "localhost",
+    "database": "user",
+    "user": "postgres",
+    "password": "itcg"
+  },
+  "itcg": {
+    "driver": "pg",
+    "host": "localhost",
+    "database": "itcg",
+    "user": "postgres",
+    "password": "itcg"
+  },
+  "prod": {
+    "driver": "pg",
+    "host": "itcg-db",
+    "database": "user",
+    "user": "postgres",
+    "password": "itcg"
+  },
+  "prod-itcg": {
+    "driver": "pg",
+    "host": "itcg-db",
+    "database": "itcg",
+    "user": "postgres",
+    "password": "itcg"
+  }
+}

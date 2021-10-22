@@ -38,7 +38,7 @@ const handStyle: React.CSSProperties = {
   display: 'flex',
   backgroundColor: '#36896e',
   gridArea: 'hand',
-  padding: '1em',
+  padding: '1%',
   alignItems: 'flex-end',
 };
 
@@ -80,7 +80,7 @@ const charStyle: React.CSSProperties = {
 const oppHandStyle: React.CSSProperties = {
   display: 'flex',
   backgroundColor: '#36896e',
-  padding: '1em',
+  padding: '1%',
   gridArea: 'ohand',
 };
 

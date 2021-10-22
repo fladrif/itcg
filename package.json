@@ -10,12 +10,17 @@
     "@types/node": "^12.20.12",
     "@types/react": "^17.0.5",
     "@types/react-dom": "^17.0.3",
-    "bgio-postgres": "^1.0.13",
-    "boardgame.io": "^0.43.2",
+    "axios": "^0.21.1",
+    "boardgame.io": "^0.49.3",
+    "crypto-js": "^4.1.1",
+    "js-cookie": "^3.0.0",
+    "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.21",
     "node-persist": "^3.1.0",
     "react": "^17.0.2",
+    "react-bootstrap": "^1.6.1",
     "react-dom": "^17.0.2",
+    "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.2",
     "serve": "^11.3.2",
     "typescript": "^4.2.4",
@@ -23,8 +28,14 @@
     "web-vitals": "^1.1.2"
   },
   "devDependencies": {
+    "@types/crypto-js": "^4.0.2",
+    "@types/js-cookie": "^2.2.7",
+    "@types/jsonwebtoken": "^8.5.5",
     "@types/lodash": "^4.14.168",
-    "@types/uuid": "^8.3.0"
+    "@types/react-router-dom": "^5.1.8",
+    "@types/uuid": "^8.3.0",
+    "db-migrate": "^0.11.12",
+    "db-migrate-pg": "^1.2.2"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -32,7 +43,14 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "build-server": "tsc -p altTsconfig.json && npm run copy-files",
-    "copy-files": "rm -rf lib/images && cp -r src/images lib/images"
+    "copy-files": "rm -rf lib/images && cp -r src/images lib/images",
+    "create-migration": "db-migrate create",
+    "create-db-local": "db-migrate db:create -e itcg user",
+    "create-db": "db-migrate db:create -e prod-itcg user",
+    "migrate-down-local": "db-migrate -e local down",
+    "migrate-down": "db-migrate -e prod down",
+    "migrate-up-local": "db-migrate -e local up",
+    "migrate-up": "db-migrate -e prod up"
   },
   "eslintConfig": {
     "extends": [

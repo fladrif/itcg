@@ -40,7 +40,6 @@ const baseStyle: React.CSSProperties = {
 };
 
 const buttonStyle: React.CSSProperties = {
-  display: 'flex',
   flex: '1',
   color: 'white',
   textShadow: '1px 1px 2px black',
@@ -181,6 +180,8 @@ export class ITCGInteractive extends React.Component<InteractiveProp> {
   currentStage(): Dialog {
     return (
       this.stagePrompts.filter((prompt) => prompt.stage === this.props.stage)[0] || {
+        stage: '',
+        prompt: '',
         buttons: [],
       }
     );

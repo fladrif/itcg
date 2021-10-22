@@ -33,6 +33,7 @@ export interface PlayerState {
   learnedSkills: NonCharacter[];
   field: NonCharacter[];
   discard: NonCharacter[];
+  name: string;
   hp: number;
   maxHP: number;
   level: number;
@@ -40,7 +41,7 @@ export interface PlayerState {
 }
 
 export interface SetupData {
-  players: [{ id: PlayerID; deck: Deck }];
+  players: [{ id: PlayerID; playerName: string; deck: Deck }];
 }
 
 export interface GameState {
@@ -50,7 +51,7 @@ export interface GameState {
   stack?: Stack;
 }
 
-function preConfigSetup(): GameState {
+export function preConfigSetup(): GameState {
   const state: GameState = { player: {}, triggers: [...defaultTriggers], state: [] };
 
   state.player['0'] = {
@@ -64,6 +65,7 @@ function preConfigSetup(): GameState {
     maxHP: shermanBase.character.health,
     level: 0,
     activationPos: 0,
+    name: 'Detheroth',
   };
 
   state.player['1'] = {
@@ -77,6 +79,7 @@ function preConfigSetup(): GameState {
     maxHP: nixieBase.character.health,
     level: 0,
     activationPos: 0,
+    name: 'shinZ',
   };
 
   state.player['0'].hand.push(state.player['0'].deck.pop()!);
@@ -95,16 +98,16 @@ function preConfigSetup(): GameState {
   return state;
 }
 
-export function setup(_ctx: Ctx, setupData: SetupData): GameState {
+function setup(_ctx: Ctx, setupData: SetupData): GameState {
   const state: GameState = {
     player: {},
-    triggers: [],
+    triggers: [...defaultTriggers],
     state: [],
   };
 
   for (const player of setupData.players) {
     state.player[player.id] = {
-      deck: hydrateDeck(player.deck, player.id),
+      deck: lodash(hydrateDeck(player.deck, player.id)).shuffle().value(),
       character: instantiateCard(player.deck.character, player.id)[0],
       hand: [],
       learnedSkills: [],
@@ -114,15 +117,30 @@ export function setup(_ctx: Ctx, setupData: SetupData): GameState {
       maxHP: player.deck.character.health,
       level: 0,
       activationPos: 0,
+      name: player.playerName,
     };
   }
+
+  state.player['0'].hand.push(state.player['0'].deck.pop()!);
+  state.player['0'].hand.push(state.player['0'].deck.pop()!);
+  state.player['0'].hand.push(state.player['0'].deck.pop()!);
+  state.player['0'].hand.push(state.player['0'].deck.pop()!);
+  state.player['0'].hand.push(state.player['0'].deck.pop()!);
+
+  state.player['1'].hand.push(state.player['1'].deck.pop()!);
+  state.player['1'].hand.push(state.player['1'].deck.pop()!);
+  state.player['1'].hand.push(state.player['1'].deck.pop()!);
+  state.player['1'].hand.push(state.player['1'].deck.pop()!);
+  state.player['1'].hand.push(state.player['1'].deck.pop()!);
+  state.player['1'].hand.push(state.player['1'].deck.pop()!);
+
   return state;
 }
 
 export const ITCG = {
   name: 'ITCG',
 
-  setup: preConfigSetup,
+  setup,
 
   moves: {
     levelUp,

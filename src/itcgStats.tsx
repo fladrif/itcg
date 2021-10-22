@@ -28,6 +28,22 @@ const levelStyle: React.CSSProperties = {
   whiteSpace: 'nowrap',
 };
 
+const nameStyle: React.CSSProperties = {
+  display: 'block',
+  alignItems: 'center',
+  justifyContent: 'center',
+  paddingLeft: '0.25em',
+  paddingRight: '0.25em',
+  border: 'solid',
+  borderRadius: '0.5em',
+  borderColor: 'black',
+  color: 'white',
+};
+
+const classStyle: React.CSSProperties = {
+  color: 'lightgray',
+};
+
 const confirmationStyle: React.CSSProperties = {
   display: 'flex',
   alignItems: 'center',
@@ -49,7 +65,8 @@ const highlightModalStyle: React.CSSProperties = {
   color: 'yellow',
   border: 'solid',
   borderRadius: '0.25em',
-  padding: '1%',
+  paddingLeft: '1%',
+  paddingRight: '1%',
   margin: '1%',
   fontSize: '150%',
 };
@@ -100,6 +117,10 @@ export class ITCGStats extends React.Component<StatProp> {
     return (
       <div style={statStyle}>
         <div style={levelStyle}>Lv: {this.props.playerState.level}</div>
+        <div style={nameStyle}>
+          <div style={classStyle}>{this.props.playerState.character.class}</div>
+          {this.props.playerState.name}
+        </div>
         <ProgressBar
           hp={this.props.playerState.hp}
           maxHP={this.props.playerState.maxHP}
