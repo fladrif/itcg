@@ -61,7 +61,7 @@ const formHeaderCompStyle: React.CSSProperties = {
 
 export class ITCGRoom extends React.Component<RoomProp, State> {
   state: State;
-  timerID: NodeJS.Timeout;
+  timerID?: NodeJS.Timeout;
 
   constructor(prop: RoomProp) {
     super(prop);
@@ -104,7 +104,7 @@ export class ITCGRoom extends React.Component<RoomProp, State> {
   }
 
   componentWillUnmount() {
-    clearInterval(this.timerID);
+    if (this.timerID) clearInterval(this.timerID);
   }
 
   getPlayerDecks() {

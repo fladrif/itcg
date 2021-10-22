@@ -207,7 +207,10 @@ export class ITCGDeckBuilder extends React.Component<DeckBuilderProp> {
     if (pushResp) this.props.update({ build: false, buildDeck: undefined });
   }
 
-  findCard(name: string) {
+  async findCard(name: string) {
+    while (!this.state.cardList) {
+      await this.getCardList();
+    }
     return Object.values(this.state.cardList).filter((card) => card.name === name)[0];
   }
 
