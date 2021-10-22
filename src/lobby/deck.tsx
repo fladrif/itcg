@@ -6,12 +6,10 @@ import { ITCGDeckBuilder } from './deckBuilder';
 import { OverallListStyle, ListItemStyle } from './list.css';
 import { ButtonStyle, OverallButtonStyle } from './overall.css';
 
-import { AppState } from '../App';
 import { Deck } from '../game';
 
 interface DeckProp {
   server: string;
-  update: (state: AppState) => void;
 }
 
 export interface DeckMetaData {

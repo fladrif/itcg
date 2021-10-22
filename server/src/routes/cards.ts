@@ -1,4 +1,4 @@
-import Router from 'koa-router';
+import Router from '@koa/router';
 import { Server as ServerTypes } from 'boardgame.io';
 
 import * as cards from '../../../src/cards';

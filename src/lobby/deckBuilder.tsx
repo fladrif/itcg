@@ -402,6 +402,8 @@ export class ITCGDeckBuilder extends React.Component<DeckBuilderProp> {
                 <option></option>
                 {this.renderCardList()}
               </FormControl>
+              Tip: While focused on the card list, type in the card you're looking for and
+              hit enter to add it to the deck list.
             </div>
             <div style={formCompNoExpandStyle}>
               <FormLabel>Quantity</FormLabel>

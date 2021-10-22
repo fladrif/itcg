@@ -1,4 +1,5 @@
-import Router from 'koa-router';
+import Router from '@koa/router';
+import bodyParser from 'koa-bodyparser';
 import { Server as ServerTypes } from 'boardgame.io';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -34,7 +35,7 @@ router.get('/:id', async (ctx: any) => {
   ctx.body = deck!;
 });
 
-router.post('/upsert', async (ctx: any) => {
+router.post('/upsert', bodyParser(), async (ctx: any) => {
   const userID = ctx.header[AUTH_HEADER];
 
   const deckID = ctx.request.body['deckId'] ?? uuidv4();
@@ -55,7 +56,7 @@ router.post('/upsert', async (ctx: any) => {
   ctx.body = 200;
 });
 
-router.post('/delete', async (ctx: any) => {
+router.post('/delete', bodyParser(), async (ctx: any) => {
   const userID = ctx.header[AUTH_HEADER];
   const deckID = ctx.request.body['deckId'];
 

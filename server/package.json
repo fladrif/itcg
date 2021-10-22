@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@koa/cors": "^3.1.0",
+    "@koa/router": "^10.1.1",
     "@testing-library/jest-dom": "^5.12.0",
     "@testing-library/react": "^11.2.6",
     "@testing-library/user-event": "^12.8.3",
@@ -14,7 +15,6 @@
     "bluebird": "^3.7.2",
     "crypto-js": "^4.1.1",
     "koa-bodyparser": "^4.3.0",
-    "koa-router": "^10.1.1",
     "lodash": "^4.17.21",
     "node-persist": "^3.1.0",
     "typeorm": "^0.2.36",
@@ -29,6 +29,7 @@
     "@types/koa": "^2.13.4",
     "@types/koa-bodyparser": "^4.3.3",
     "@types/koa__cors": "^3.0.3",
+    "@types/koa__router": "^8.0.8",
     "@types/lodash": "^4.14.168",
     "@types/uuid": "^8.3.0"
   },

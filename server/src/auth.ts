@@ -1,4 +1,11 @@
-import { AUTH_COOKIE_NAME, AUTH_HEADER, verifyJWT } from './utils';
+import {
+  AUTH_COOKIE_NAME,
+  AUTH_HEADER,
+  SERVER_AUTH_HEADER,
+  SERVER_CLIENT_HEADER,
+  SERVER_ID,
+  verifyJWT,
+} from './utils';
 import { db } from './db';
 
 export async function extractAuth(ctx: any, next: any) {
@@ -11,4 +18,29 @@ export async function extractAuth(ctx: any, next: any) {
 
   ctx.header[AUTH_HEADER] = userID;
   await next();
+}
+
+export async function serverAuth(ctx: any, next: any) {
+  const authHeader = ctx.get(SERVER_AUTH_HEADER);
+  if (!authHeader) ctx.throw(400, 'User not authenticated');
+
+  const serverID = verifyJWT(authHeader);
+  if (!serverID || serverID !== SERVER_ID) ctx.throw(400, 'User not authenticated');
+
+  await next();
+}
+
+export function generateCredentials(ctx: any): string {
+  const userID = ctx.get(SERVER_CLIENT_HEADER);
+
+  return userID;
+}
+
+export async function authenticateCredentials(
+  credentials: any,
+  playerMetadata: any
+): Promise<boolean> {
+  const id = verifyJWT(credentials);
+
+  return id === playerMetadata.credentials;
 }

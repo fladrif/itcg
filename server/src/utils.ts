@@ -1,12 +1,18 @@
-import { RouterContext } from 'koa-router';
+import { RouterContext } from '@koa/router';
 import jwt from 'jsonwebtoken';
 import CryptoJS from 'crypto-js';
+import { v4 as uuidv4 } from 'uuid';
 
 import { UserNonce } from './types';
 
 export const AUTH_HEADER = 'UserAuth';
+export const SERVER_AUTH_HEADER = 'ServerAuth';
+export const SERVER_CLIENT_HEADER = 'CanonicalUserID';
 export const AUTH_COOKIE_NAME = 'token';
 export const USER_COOKIE_NAME = 'user';
+
+export const SERVER_ID = uuidv4();
+
 const JWT_SECRET = 'somethingtobechanged';
 
 interface JWTPayload {

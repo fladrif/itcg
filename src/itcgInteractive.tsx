@@ -180,6 +180,8 @@ export class ITCGInteractive extends React.Component<InteractiveProp> {
   currentStage(): Dialog {
     return (
       this.stagePrompts.filter((prompt) => prompt.stage === this.props.stage)[0] || {
+        stage: '',
+        prompt: '',
         buttons: [],
       }
     );

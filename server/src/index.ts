@@ -4,7 +4,6 @@ import bodyParser from 'koa-bodyparser';
 import cors from '@koa/cors';
 import { v4 as uuidv4 } from 'uuid';
 import bcrypt from 'bcrypt';
-// import Promise from 'bluebird';
 
 import { getRandomKey } from '../../src/utils';
 import { ITCG } from '../../src/game';
@@ -12,9 +11,14 @@ import { SERVER } from '../../src/config';
 
 import { db } from './db';
 import { AUTH_COOKIE_NAME, USER_COOKIE_NAME, setCookies, verify } from './utils';
-import { extractAuth } from './auth';
+import {
+  extractAuth,
+  serverAuth,
+  generateCredentials,
+  authenticateCredentials,
+} from './auth';
 import { UserNonce } from './types';
-import { CardRouter, DeckRouter, RoomRouter } from './routes';
+import { CardRouter, DeckRouter, LobbyRouter, RoomRouter } from './routes';
 const BCRYPT_SALT_ROUNDS = 10;
 
 const gameServerDB = new PostgresStore({
@@ -30,20 +34,21 @@ const server = Server({
   games: [ITCG],
   origins: [SERVER],
   db: gameServerDB,
+  generateCredentials,
+  authenticateCredentials,
 });
 
-server.app.use(bodyParser());
+// server.app.use(bodyParser());
 server.app.use(cors({ credentials: true }));
 
-server.router.use(['/cards', '/decks', '/rooms'], extractAuth);
-// TODO: role specific extractAuth
-server.router.use(['/games'], extractAuth);
+server.router.use(['/cards', '/decks', '/lobby', '/rooms'], extractAuth);
+server.router.use(['/games'], serverAuth);
 
 server.router.get('/', (ctx: any) => {
   ctx.body = 'Hey! What are you doing? Stop it!';
 });
 
-server.router.post('/login', async (ctx: any) => {
+server.router.post('/login', bodyParser(), async (ctx: any) => {
   const { username, passhash } = await verify(ctx, userNonces);
 
   const usernameUsed = await db.userExist(username);
@@ -59,7 +64,7 @@ server.router.post('/login', async (ctx: any) => {
   console.log(`${user.username} logged in`);
 });
 
-server.router.post('/signup', async (ctx: any) => {
+server.router.post('/signup', bodyParser(), async (ctx: any) => {
   const { username, passhash } = await verify(ctx, userNonces);
 
   const usernameUsed = await db.userExist(username);
@@ -102,6 +107,7 @@ server.router.get('/getNonce', (ctx: any) => {
 
 server.router.use('/cards', CardRouter.routes());
 server.router.use('/decks', DeckRouter.routes());
+server.router.use('/lobby', LobbyRouter.routes());
 server.router.use('/rooms', RoomRouter.routes());
 
 server.run(18000);

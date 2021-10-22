@@ -1,25 +1,23 @@
 import React from 'react';
-import { Redirect } from 'react-router-dom';
-import { Button, FormGroup, FormLabel, FormControl } from 'react-bootstrap';
+import { Button, FormControl } from 'react-bootstrap';
 import axios from 'axios';
-import CryptoJS from 'crypto-js';
 
 import { OverallListStyle, ListItemStyle } from './list.css';
 import { ButtonStyle, OverallButtonStyle } from './overall.css';
 import { DeckMetaData } from './deck';
 
-import { getRandomKey } from '../utils';
 import { AppState } from '../App';
-import { Deck } from '../game';
 
 interface RoomProp {
   server: string;
-  update: (state: AppState) => void;
+  username: string;
+  update: (state: AppState) => Promise<void>;
 }
 
 interface RoomUser {
   name: string;
   owner: boolean;
+  ready: boolean;
   deck?: string;
 }
 
@@ -61,9 +59,9 @@ const formHeaderCompStyle: React.CSSProperties = {
   fontSize: '125%',
 };
 
-export class ITCGRoom extends React.Component<RoomProp> {
+export class ITCGRoom extends React.Component<RoomProp, State> {
   state: State;
-  timerID: any;
+  timerID: NodeJS.Timeout;
 
   constructor(prop: RoomProp) {
     super(prop);
@@ -94,10 +92,15 @@ export class ITCGRoom extends React.Component<RoomProp> {
     }
   }
 
+  shouldComponentUpdate(_nextProps: RoomProp, nextState: State) {
+    if (!nextState.activeRoom && this.state.activeRoom) this.props.update({});
+    return true;
+  }
+
   async componentDidMount() {
     await this.updateSelf();
 
-    this.timerID = setInterval(async () => await this.updateSelf(), 1000);
+    this.timerID = setInterval(async () => await this.updateSelf(), 500);
   }
 
   componentWillUnmount() {
@@ -116,6 +119,9 @@ export class ITCGRoom extends React.Component<RoomProp> {
     const owner = room.users.find((usr) => usr.owner === true);
     const guest = room.users.find((usr) => usr.owner === false);
 
+    const cur = room.users.find((usr) => usr.name === this.props.username);
+    const opp = room.users.find((usr) => usr.name !== this.props.username);
+
     return (
       <>
         <h1>Duel Preparation</h1>
@@ -124,30 +130,32 @@ export class ITCGRoom extends React.Component<RoomProp> {
             Owner: <h3>{owner.name}</h3>
           </div>
           <div style={ListItemStyle}>
-            Owner Ready:{' '}
-            <h3 style={!!owner?.deck ? readyStyle : notReadyStyle}>
-              {!!owner.deck ? 'true' : 'false'}
-            </h3>
-          </div>
-          <div style={ListItemStyle}>
             Guest: <h3>{guest?.name || ''}</h3>
           </div>
           <div style={ListItemStyle}>
-            Guest Ready:{' '}
-            <h3 style={!!guest?.deck ? readyStyle : notReadyStyle}>
-              {!!guest?.deck ? 'true' : 'false'}
+            Opponent Status:{' '}
+            <h3 style={!!opp?.ready ? readyStyle : notReadyStyle}>
+              {!!opp?.ready ? 'Ready' : 'Not Ready'}
             </h3>
           </div>
           <div style={ListItemStyle}>
             <FormControl
               as={'select'}
               style={formHeaderCompStyle}
-              onChange={(e) => this.updateRoom(room.id, e.target.value)}
+              onChange={(e) => this.updateRoom(room.id, { deckID: e.target.value })}
+              disabled={cur.ready}
             >
               <option value={''}>Select Deck</option>
               {this.getPlayerDecks()}
             </FormControl>
           </div>
+          <Button
+            style={ButtonStyle}
+            disabled={!cur.deck || cur.ready}
+            onClick={() => this.updateRoom(room.id, { ready: true })}
+          >
+            Lock In
+          </Button>
           <Button style={ButtonStyle} onClick={() => this.leaveRoom(room.id)}>
             Leave Room
           </Button>
@@ -225,11 +233,11 @@ export class ITCGRoom extends React.Component<RoomProp> {
       });
   }
 
-  async updateRoom(id: string, deckID: string) {
+  async updateRoom(id: string, { deckID, ready }: { deckID?: string; ready?: boolean }) {
     await axios
       .post(
         '/rooms/update',
-        { id, deckID },
+        { id, deckID, ready },
         {
           baseURL: this.props.server,
           timeout: 1000,
@@ -239,6 +247,8 @@ export class ITCGRoom extends React.Component<RoomProp> {
       .catch((err) => {
         console.error(err);
       });
+
+    await this.props.update({});
   }
 
   async leaveRoom(id: string) {

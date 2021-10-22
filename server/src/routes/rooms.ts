@@ -1,26 +1,23 @@
-import Router from 'koa-router';
+import Router from '@koa/router';
+import bodyParser from 'koa-bodyparser';
 import { Server as ServerTypes } from 'boardgame.io';
 
-import { getRandomKey } from '../../../src/utils';
-
 import { db } from '../db';
-import { Room } from '../types';
 import { AUTH_HEADER } from '../utils';
-
-import { cleanRoom, userInRoom } from './utils';
-
-const rooms: Room[] = [];
+import { gameRooms } from '../gameRooms';
+import { inGame, shouldStartGame, startGame } from '../gameServer';
 
 const router = new Router<any, ServerTypes.AppCtx>();
 
 router.get('/', async (ctx: any) => {
   const userID = ctx.header[AUTH_HEADER];
 
-  const inRoom = rooms.filter((rm) => userInRoom(rm, userID)).map(cleanRoom);
+  const inRoomID = gameRooms.userInRoom(userID);
+  const room = inRoomID ? gameRooms.getCleanRoom(inRoomID) : undefined;
 
-  if (inRoom.length > 0) return (ctx.body = inRoom[0]);
+  if (!!inRoomID && !!room) return (ctx.body = room);
 
-  const availableRooms = rooms.filter((rm) => rm.users.length < 2).map(cleanRoom);
+  const availableRooms = gameRooms.getOpenRooms();
 
   ctx.body = availableRooms;
 });
@@ -29,67 +26,74 @@ router.post('/create', async (ctx: any) => {
   const id = ctx.header[AUTH_HEADER];
   const owner = await db.getUserByID(id);
 
-  if (rooms.find((rm) => userInRoom(rm, id)))
+  const userInGame = await inGame(id);
+  if (userInGame || gameRooms.userInRoom(id))
     return ctx.throw(400, 'User already in room');
 
-  rooms.push({
-    id: getRandomKey(),
-    users: [{ name: owner.username, id: owner.id, owner: true }],
-  });
+  gameRooms.addRoom({ name: owner.username, id: owner.id, owner: true, ready: false });
 
   ctx.body = 200;
 });
 
-router.post('/update', async (ctx: any) => {
+// TODO: return error if startGame fails
+router.post('/update', bodyParser(), async (ctx: any) => {
   const id = ctx.header[AUTH_HEADER];
 
   const deckID = ctx.request.body['deckID'];
+  const ready = ctx.request.body['ready'];
   const roomID = ctx.request.body['id'];
   if (!roomID) ctx.throw(400, '13: Please retry submission');
 
-  const roomIdx = rooms.findIndex((rm) => rm.id === roomID);
-  if (roomIdx < 0) return ctx.throw(400, 'Room dne');
+  const room = gameRooms.getRoom(roomID);
+  if (!room) return ctx.throw(400, 'Room dne');
 
-  const room = rooms[roomIdx];
   const userIdx = room.users.findIndex((user) => user.id === id);
   if (userIdx < 0) return ctx.throw(400, 'User in room dne');
+  if (room.users[userIdx].ready) return ctx.throw(400, 'User ready');
 
-  room.users[userIdx].deck = deckID;
+  room.users[userIdx].deck = deckID !== undefined ? deckID : room.users[userIdx].deck;
+  room.users[userIdx].ready = ready !== undefined ? ready : room.users[userIdx].ready;
+
+  if (await shouldStartGame(room)) {
+    await startGame(room);
+    gameRooms.delete(roomID);
+  }
 
   ctx.body = 200;
 });
 
-router.post('/join', async (ctx: any) => {
+router.post('/join', bodyParser(), async (ctx: any) => {
   const id = ctx.header[AUTH_HEADER];
   const owner = await db.getUserByID(id);
 
   const roomID = ctx.request.body['id'];
   if (!roomID) ctx.throw(400, '13: Please retry submission');
 
-  const roomIdx = rooms.findIndex((rm) => rm.id === roomID);
-  if (roomIdx < 0) return ctx.throw(400, 'Room dne');
+  const userInGame = await inGame(id);
+  if (userInGame || gameRooms.userInRoom(id))
+    return ctx.throw(400, 'User already in room');
 
-  const room = rooms[roomIdx];
+  const room = gameRooms.getRoom(roomID);
+  if (!room) return ctx.throw(400, 'Room dne');
+
   if (room.users.length >= 2) ctx.throw(400, 'Room Occupied');
 
-  room.users.push({ name: owner.username, id: owner.id, owner: false });
+  room.users.push({ name: owner.username, id: owner.id, owner: false, ready: false });
 
   ctx.body = 200;
 });
 
-router.post('/leave', async (ctx: any) => {
+router.post('/leave', bodyParser(), async (ctx: any) => {
   const id = ctx.header[AUTH_HEADER];
 
   const roomID = ctx.request.body['id'];
   if (!roomID) ctx.throw(400, '13: Please retry submission');
 
-  const roomIdx = rooms.findIndex((rm) => rm.id === roomID);
-  if (roomIdx < 0) return ctx.throw(400, 'Room dne');
-
-  const room = rooms[roomIdx];
+  const room = gameRooms.getRoom(roomID);
+  if (!room) return ctx.throw(400, 'Room dne');
 
   if (room.users.some((user) => user.id === id && user.owner === true)) {
-    rooms.splice(roomIdx, 1);
+    gameRooms.delete(roomID);
   } else if (room.users.some((user) => user.id === id)) {
     const userIdx = room.users.findIndex((user) => user.owner === false);
     room.users.splice(userIdx, 1);
