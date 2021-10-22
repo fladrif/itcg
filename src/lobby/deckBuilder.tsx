@@ -219,7 +219,7 @@ export class ITCGDeckBuilder extends React.Component<DeckBuilderProp> {
 
     const curList = this.state.deckList?.deck ?? [];
 
-    if (curList.find((cards) => cards[0].name === this.state.curCard.name)) {
+    if (curList.find((cards) => cards[0].name === this.state.curCard!.name)) {
       return;
     }
 
@@ -232,6 +232,7 @@ export class ITCGDeckBuilder extends React.Component<DeckBuilderProp> {
   }
 
   incCard(cardName: string) {
+    if (!this.state.deckList) return;
     const list = this.state.deckList.deck;
 
     this.setState({
@@ -249,6 +250,7 @@ export class ITCGDeckBuilder extends React.Component<DeckBuilderProp> {
   }
 
   decCard(cardName: string) {
+    if (!this.state.deckList) return;
     const list = this.state.deckList.deck;
 
     this.setState({

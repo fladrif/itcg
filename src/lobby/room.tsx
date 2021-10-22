@@ -127,7 +127,7 @@ export class ITCGRoom extends React.Component<RoomProp, State> {
         <h1>Duel Preparation</h1>
         <div style={OverallListStyle}>
           <div style={ListItemStyle}>
-            Owner: <h3>{owner.name}</h3>
+            Owner: <h3>{owner?.name || ''}</h3>
           </div>
           <div style={ListItemStyle}>
             Guest: <h3>{guest?.name || ''}</h3>
@@ -143,7 +143,7 @@ export class ITCGRoom extends React.Component<RoomProp, State> {
               as={'select'}
               style={formHeaderCompStyle}
               onChange={(e) => this.updateRoom(room.id, { deckID: e.target.value })}
-              disabled={cur.ready}
+              disabled={cur?.ready}
             >
               <option value={''}>Select Deck</option>
               {this.getPlayerDecks()}
@@ -151,7 +151,7 @@ export class ITCGRoom extends React.Component<RoomProp, State> {
           </div>
           <Button
             style={ButtonStyle}
-            disabled={!cur.deck || cur.ready}
+            disabled={!cur?.deck || cur?.ready}
             onClick={() => this.updateRoom(room.id, { ready: true })}
           >
             Lock In
@@ -168,7 +168,7 @@ export class ITCGRoom extends React.Component<RoomProp, State> {
     const styledRooms = rooms.map((rm) => (
       <div style={OverallListStyle}>
         <div style={ListItemStyle}>
-          User: <h2>{rm.users.find((usr) => usr.owner === true).name}</h2>
+          User: <h2>{rm.users.find((usr) => usr.owner === true)?.name || ''}</h2>
         </div>
         <Button style={ButtonStyle} onClick={() => this.joinRoom(rm.id)}>
           Join Room
