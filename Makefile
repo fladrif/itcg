@@ -13,7 +13,7 @@ network:
 	docker network create itcg-backend || true
 
 run-migration: network
-	docker run -d --rm --name itcg-migration -e POSTGRES_DB=user -e POSTGRES_PASSWORD=itcg --network itcg-backend npm run migrate-up
+	docker run -d --rm --name itcg-migration -e POSTGRES_DB=user -e POSTGRES_PASSWORD=itcg --network itcg-backend itcg npm run migrate-up
 
 start-db: network
 	docker run -d --name itcg-db -e POSTGRES_DB=itcg -e POSTGRES_PASSWORD=itcg --network itcg-backend postgres
