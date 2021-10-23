@@ -21,10 +21,12 @@ export class ITCGFrontPage extends React.Component<FrontPageProps> {
       <>
         <h3>Navigation</h3>
         <p style={paragraphStyle}>
-          <b>Rooms</b>: Find opponents to play games against
+          <b>Rooms</b>: Find opponents to play games against. You can use the discord to
+          prearrange games with other players.
         </p>
         <p style={paragraphStyle}>
-          <b>Decks</b>: Create and modify your own decks
+          <b>Decks</b>: Create and modify your own decks. Deck lists without buttons are
+          public and available to be viewed and used by anyone, but cannot be modified.
         </p>
       </>
     );
@@ -74,10 +76,11 @@ export class ITCGFrontPage extends React.Component<FrontPageProps> {
     return (
       <>
         <p style={paragraphStyle}>
-          <b>September 2021</b> Currently only the first set of cards (base set) is
-          available. Adding sets of cards is a time intensive process, and will therefore
-          be added as I find time. If you would like to contribute and/or submit PR's,
-          please note so in the discord server and I'll make the repository public.
+          <b>October 2021</b> Currently only part of the first set (base set) is
+          available, and I'll be adding cards over the next week. If there are cards from
+          the first set you'd like to be prioritized, please let me know in the discord
+          server. If you would like to contribute and/or submit PR's, please note so in
+          the discord server and I'll make the repository public.
         </p>
       </>
     );
@@ -86,6 +89,16 @@ export class ITCGFrontPage extends React.Component<FrontPageProps> {
   links() {
     return (
       <>
+        <p>
+          For a database (deck lists, documents) of the game, you can visit{' '}
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            href="https://cardgamegeek.com/games/msitcg"
+          >
+            Card Game Geek
+          </a>
+        </p>
         <p>
           For a guide to the game, you can reference the fan site{' '}
           <a
