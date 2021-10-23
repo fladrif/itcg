@@ -207,7 +207,7 @@ export class ITCGDeckBuilder extends React.Component<DeckBuilderProp> {
     if (pushResp) this.props.update({ build: false, buildDeck: undefined });
   }
 
-  async findCard(name: string) {
+  async findCard(name: string): Promise<Omit<NonCharacter, 'key' | 'owner'>> {
     while (!this.state.cardList) {
       await this.getCardList();
     }
@@ -332,10 +332,10 @@ export class ITCGDeckBuilder extends React.Component<DeckBuilderProp> {
             <FormControl
               as={'select'}
               value={this.state.deckList?.character?.name}
-              onChange={(e) =>
+              onChange={async (e) =>
                 this.setState({
                   deckList: {
-                    character: this.findCard(e.target.value),
+                    character: await this.findCard(e.target.value),
                     deck: this.state.deckList?.deck ?? [],
                   },
                 })
@@ -399,8 +399,8 @@ export class ITCGDeckBuilder extends React.Component<DeckBuilderProp> {
               <FormLabel>Card</FormLabel>
               <FormControl
                 as={'select'}
-                onChange={(e) =>
-                  this.setState({ curCard: this.findCard(e.target.value) })
+                onChange={async (e) =>
+                  this.setState({ curCard: await this.findCard(e.target.value) })
                 }
                 autoFocus
               >
