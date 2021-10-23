@@ -38,7 +38,7 @@ const server = Server({
   authenticateCredentials,
 });
 
-server.app.use(cors({ origin: (ctx) => ctx.request.header.origin!, credentials: true }));
+server.app.use(cors({ credentials: true }));
 
 server.router.use(['/cards', '/decks', '/lobby', '/rooms'], extractAuth);
 server.router.use(['/games'], serverAuth);

@@ -68,11 +68,15 @@ export function verifyJWT(token: string): string {
 }
 
 export function setCookies(ctx: RouterContext, username: string, id: string) {
+  const reqDomain = ctx.request.header.domain;
+  const domain = Array.isArray(reqDomain) ? reqDomain[0] : reqDomain;
+
   ctx.cookies.set(AUTH_COOKIE_NAME, signJWT(id), {
     sameSite: 'lax',
   });
   ctx.cookies.set(USER_COOKIE_NAME, username, {
     sameSite: 'lax',
+    domain,
     secure: false,
     httpOnly: false,
   });
