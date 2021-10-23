@@ -4,6 +4,7 @@ import CryptoJS from 'crypto-js';
 import { v4 as uuidv4 } from 'uuid';
 
 import { UserNonce } from './types';
+import { CLIENT } from '../../src/config';
 
 export const AUTH_HEADER = 'UserAuth';
 export const SERVER_AUTH_HEADER = 'ServerAuth';
@@ -68,15 +69,12 @@ export function verifyJWT(token: string): string {
 }
 
 export function setCookies(ctx: RouterContext, username: string, id: string) {
-  const reqDomain = ctx.request.header.domain;
-  const domain = Array.isArray(reqDomain) ? reqDomain[0] : reqDomain;
-
   ctx.cookies.set(AUTH_COOKIE_NAME, signJWT(id), {
     sameSite: 'lax',
   });
   ctx.cookies.set(USER_COOKIE_NAME, username, {
     sameSite: 'lax',
-    domain,
+    domain: CLIENT,
     secure: false,
     httpOnly: false,
   });

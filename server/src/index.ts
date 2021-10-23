@@ -7,7 +7,7 @@ import bcrypt from 'bcrypt';
 
 import { getRandomKey } from '../../src/utils';
 import { ITCG } from '../../src/game';
-import { SERVER } from '../../src/config';
+import { CLIENT, SERVER } from '../../src/config';
 
 import { db } from './db';
 import { AUTH_COOKIE_NAME, USER_COOKIE_NAME, setCookies, verify } from './utils';
@@ -79,8 +79,8 @@ server.router.post('/signup', bodyParser(), async (ctx: any) => {
 server.router.get('/logout', (ctx: any) => {
   const username = ctx.cookies.get(USER_COOKIE_NAME);
 
-  ctx.cookies.set(AUTH_COOKIE_NAME);
-  ctx.cookies.set(USER_COOKIE_NAME);
+  ctx.cookies.set(AUTH_COOKIE_NAME, undefined, { overwrite: true });
+  ctx.cookies.set(USER_COOKIE_NAME, undefined, { domain: CLIENT, overwrite: true });
   ctx.body = 200;
 
   console.log(`${username} logged out`);
