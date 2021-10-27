@@ -1,13 +1,21 @@
 import React from 'react';
 
 import { Location } from './actions';
+import { NonCharacter } from './card';
 import { PlayerState } from './game';
+import { State as BoardState } from './itcgBoard';
 import { ITCGCard } from './itcgCard';
+
+export type DialogBoxOpts = 'discard' | 'deck' | 'oppdiscard' | 'oppdeck';
 
 interface DialogProp {
   playerState: PlayerState;
+  opponentState: PlayerState;
+  currentPlayer: boolean;
   stage: string;
   select: () => any;
+  updateBoard: (state: BoardState) => any;
+  dialogBox?: DialogBoxOpts;
 }
 
 const baseStyle: React.CSSProperties = {
@@ -36,17 +44,53 @@ const selectionStyle: React.CSSProperties = {
   overflow: 'auto',
 };
 
+const buttonStyle: React.CSSProperties = {
+  alignSelf: 'center',
+  width: '20%',
+  fontSize: '50%',
+  borderRadius: '0.5em',
+};
+
 export class ITCGDialog extends React.Component<DialogProp> {
+  getMessage() {
+    if (this.props.dialogBox === 'discard') return 'Discard Pile';
+    if (this.props.dialogBox === 'oppdiscard') return "Opponent's Discard Pile";
+    if (this.props.dialogBox === 'deck') return 'Deck';
+    if (this.props.dialogBox === 'oppdeck') return "Opponent's Deck";
+  }
+
+  getDisplayPile(): NonCharacter[] {
+    if (this.props.dialogBox === 'discard') return this.props.playerState.discard;
+    if (this.props.dialogBox === 'oppdiscard') return this.props.opponentState.discard;
+    if (this.props.dialogBox === 'deck') return this.props.playerState.deck;
+    if (this.props.dialogBox === 'oppdeck') return this.props.opponentState.deck;
+  }
+
+  getLocation(): Location {
+    if (this.props.dialogBox === 'discard' || this.props.dialogBox === 'oppdiscard') {
+      return this.props.currentPlayer ? Location.Discard : Location.OppDiscard;
+    }
+    if (this.props.dialogBox === 'deck' || this.props.dialogBox === 'oppdeck') {
+      return this.props.currentPlayer ? Location.Deck : Location.OppDeck;
+    }
+  }
+
+  finish() {
+    this.props.updateBoard({ dialogBox: undefined });
+  }
+
   render() {
-    if (this.props.stage !== 'select') return null;
+    if (this.props.dialogBox === undefined) return null;
 
-    const message = 'Choose a card';
+    const message = this.getMessage();
 
-    const deck = this.props.playerState.deck.map((card) => {
+    const pile = this.getDisplayPile();
+
+    const deck = pile.map((card) => {
       return (
         <ITCGCard
           move={this.props.select}
-          location={Location.Deck}
+          location={this.getLocation()}
           card={card}
           key={card.key}
         />
@@ -57,6 +101,9 @@ export class ITCGDialog extends React.Component<DialogProp> {
       <div style={baseStyle}>
         <div style={titleStyle}>{message}</div>
         <div style={selectionStyle}>{deck}</div>
+        <button style={buttonStyle} onClick={() => this.finish()}>
+          Done
+        </button>
       </div>
     );
   }

@@ -6,7 +6,7 @@ import { PlayerState } from './game';
 import { Location } from './actions';
 import { NonCharacter } from './card';
 
-interface DiscardProp {
+interface DeckProp {
   playerState: PlayerState;
   currentPlayer: boolean;
   select: () => any;
@@ -22,12 +22,12 @@ const baseStyle: React.CSSProperties = {
   width: '50%',
 };
 
-export class ITCGDiscard extends React.Component<DiscardProp> {
+export class ITCGDeck extends React.Component<DeckProp> {
   formatCard(card: NonCharacter) {
     return (
       <ITCGCard
         move={this.props.select}
-        location={this.props.currentPlayer ? Location.Discard : Location.OppDiscard}
+        location={this.props.currentPlayer ? Location.Deck : Location.OppDeck}
         card={card}
         key={card.key}
       />
@@ -36,21 +36,20 @@ export class ITCGDiscard extends React.Component<DiscardProp> {
 
   updateBoard() {
     const newBoardState: BoardState = {
-      dialogBox: this.props.mainPlayer ? 'discard' : 'oppdiscard',
+      dialogBox: this.props.mainPlayer ? 'deck' : 'oppdeck',
     };
 
     this.props.updateBoard(newBoardState);
   }
 
   render() {
-    const discardLength = this.props.playerState.discard.length;
-    const topCard =
-      discardLength > 0 ? this.props.playerState.discard[discardLength - 1] : undefined;
+    const deckLength = this.props.playerState.deck.length;
+    const topCard = deckLength > 0 ? this.props.playerState.deck[0] : undefined;
     const formattedCard = topCard ? this.formatCard(topCard) : <></>;
 
     return (
       <div style={baseStyle} onClick={() => this.updateBoard()}>
-        Discard{formattedCard}
+        Deck{formattedCard}
       </div>
     );
   }

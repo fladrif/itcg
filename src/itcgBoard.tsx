@@ -6,8 +6,9 @@ import { getOpponentID } from './utils';
 import { Location } from './actions';
 
 import { ITCGCharacter } from './itcgCharacter';
-import { ITCGDialog } from './itcgDialog';
+import { ITCGDialog, DialogBoxOpts } from './itcgDialog';
 import { ITCGDiscard } from './itcgDiscard';
+import { ITCGDeck } from './itcgDeck';
 import { ITCGField } from './itcgField';
 import { ITCGGameOver } from './itcgGameOver';
 import { ITCGHand } from './itcgHand';
@@ -15,6 +16,10 @@ import { ITCGHighlight } from './itcgHighlight';
 import { ITCGInteractive } from './itcgInteractive';
 import { ITCGStats } from './itcgStats';
 import { mayFinished } from './target';
+
+export interface State {
+  dialogBox?: DialogBoxOpts;
+}
 
 const containerStyle: React.CSSProperties = {
   display: 'grid',
@@ -104,6 +109,14 @@ const oppCharStyle: React.CSSProperties = {
 };
 
 export class ITCGBoard extends React.Component<BoardProps<GameState>> {
+  state: State;
+
+  constructor(props: BoardProps<GameState>) {
+    super(props);
+
+    this.state = {};
+  }
+
   render() {
     const stack = this.props.G.stack;
 
@@ -119,6 +132,7 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
       ? this.props.ctx.activePlayers[opponentID]
       : '';
 
+    // TODO: should display opponent's prompt as well
     const dialogPrompt = stack ? stack.activeDecisions[0].dialogPrompt || '' : '';
 
     const curDecisionFinished = stack ? stack.activeDecisions[0].finished : false;
@@ -149,17 +163,30 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
         <div style={dialogStyle}>
           <ITCGDialog
             playerState={playerState}
+            opponentState={opponentState}
+            currentPlayer={this.props.ctx.currentPlayer === this.props.playerID}
             select={this.props.moves.selectTarget}
             stage={
-              '' // this.props.ctx.activePlayers ? this.props.ctx.activePlayers[playerID] : ''
+              this.props.ctx.activePlayers ? this.props.ctx.activePlayers[playerID] : ''
             }
+            updateBoard={(state) => this.setState(state)}
+            dialogBox={this.state.dialogBox}
           />
         </div>
         <div style={oppDiscardStyle}>
+          <ITCGDeck
+            playerState={opponentState}
+            currentPlayer={this.props.ctx.currentPlayer === this.props.playerID}
+            select={this.props.moves.selectTarget}
+            updateBoard={(state) => this.setState(state)}
+            mainPlayer={false}
+          />
           <ITCGDiscard
             playerState={opponentState}
             currentPlayer={this.props.ctx.currentPlayer === this.props.playerID}
             select={this.props.moves.selectTarget}
+            updateBoard={(state) => this.setState(state)}
+            mainPlayer={false}
           />
         </div>
         <div style={oppHandStyle}>
@@ -257,6 +284,15 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
             playerState={playerState}
             currentPlayer={this.props.ctx.currentPlayer === this.props.playerID}
             select={this.props.moves.selectTarget}
+            updateBoard={(state) => this.setState(state)}
+            mainPlayer={true}
+          />
+          <ITCGDeck
+            playerState={playerState}
+            currentPlayer={this.props.ctx.currentPlayer === this.props.playerID}
+            select={this.props.moves.selectTarget}
+            updateBoard={(state) => this.setState(state)}
+            mainPlayer={true}
           />
         </div>
       </div>
