@@ -4,7 +4,7 @@ import { Location } from './actions';
 import { BLANK_CARDNAME, NonCharacter } from './card';
 import { PlayerState } from './game';
 import { State as BoardState } from './itcgBoard';
-import { ITCGCard, ITCGCardback } from './itcgCard';
+import { Styles, ITCGCard, ITCGCardback } from './itcgCard';
 
 export type DialogBoxOpts = 'discard' | 'deck' | 'oppdiscard' | 'oppdeck';
 
@@ -83,14 +83,23 @@ export class ITCGDialog extends React.Component<DialogProp> {
     if (this.props.dialogBox === undefined) return null;
 
     const message = this.getMessage();
-
     const pile = this.getDisplayPile();
 
     const deck = pile.map((card) => {
+      const styles: Styles[] = [];
+      const skill: Styles[] = [];
+
+      if (card.selected) {
+        styles.push('selectedBorderTop');
+        skill.push('selectedBorderBot');
+      }
+
       if (card.name !== BLANK_CARDNAME) {
         return (
           <ITCGCard
             move={this.props.select}
+            styles={styles}
+            skill0={skill}
             location={this.getLocation()}
             card={card}
             key={card.key}
