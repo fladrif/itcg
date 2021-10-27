@@ -137,7 +137,11 @@ export function setup(_ctx: Ctx, setupData: SetupData): GameState {
   return state;
 }
 
-export function playerView(G: GameState, _ctx: Ctx, playerID: PlayerID): GameState {
+export function playerView(
+  G: GameState,
+  _ctx: Ctx,
+  playerID: PlayerID | null
+): GameState {
   const playerIDs = Object.keys(G.player);
 
   const { player, ...restGame } = G;
