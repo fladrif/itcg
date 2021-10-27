@@ -7,6 +7,8 @@ import { GlobalState } from './state';
 import { TriggerLifetime, TriggerNames, TriggerOptions } from './triggerStore';
 import { getRandomKey } from './utils';
 
+export const BLANK_CARDNAME = 'blank';
+
 export const SAMPLE_SKILL: Skill = {
   requirements: { level: 100 },
   action: 'quest',
@@ -139,4 +141,29 @@ export function isWarrior(card: Character | NonCharacter): boolean {
   if (card.class === CardClasses.Warrior) return true;
 
   return false;
+}
+
+const blankCard: Omit<NonCharacter, 'key' | 'owner'> = {
+  type: CardTypes.Monster,
+  class: CardClasses.Magician,
+  selected: false,
+  level: 0,
+  name: BLANK_CARDNAME,
+  image: '',
+  ability: {},
+  skill: {
+    action: 'optional',
+    activated: false,
+    requirements: {
+      level: 0,
+    },
+  },
+};
+
+export function getBlankCard(owner: string, key: string): NonCharacter {
+  return {
+    ...blankCard,
+    owner,
+    key,
+  };
 }

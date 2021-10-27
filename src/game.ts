@@ -19,7 +19,7 @@ import {
 import { Stack } from './stack';
 import { GlobalState } from './state';
 import { TriggerStore, defaultTriggers } from './triggerStore';
-import { getOpponentID } from './utils';
+import { getOpponentID, scrubPile } from './utils';
 
 export interface Deck {
   character: Omit<Character, 'key' | 'owner'>;
@@ -98,7 +98,7 @@ export function preConfigSetup(): GameState {
   return state;
 }
 
-function setup(_ctx: Ctx, setupData: SetupData): GameState {
+export function setup(_ctx: Ctx, setupData: SetupData): GameState {
   const state: GameState = {
     player: {},
     triggers: [...defaultTriggers],
@@ -137,10 +137,30 @@ function setup(_ctx: Ctx, setupData: SetupData): GameState {
   return state;
 }
 
+export function playerView(G: GameState, _ctx: Ctx, playerID: PlayerID): GameState {
+  const playerIDs = Object.keys(G.player);
+
+  const { player, ...restGame } = G;
+  const newState: GameState = { player: {}, ...restGame };
+
+  playerIDs.map((id) => {
+    const { deck, hand, ...nonDeckState } = G.player[id];
+
+    const playerDeck = scrubPile(G.player[id].deck);
+    const playerHand = playerID === id ? hand : scrubPile(hand);
+
+    newState.player[id] = { ...nonDeckState, deck: playerDeck, hand: playerHand };
+  });
+
+  return newState;
+}
+
 export const ITCG = {
   name: 'ITCG',
 
   setup,
+
+  playerView,
 
   moves: {
     levelUp,

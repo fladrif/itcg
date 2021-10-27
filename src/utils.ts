@@ -14,6 +14,7 @@ import {
 } from './card';
 import { Location } from './actions';
 import { Selection } from './stack';
+import { getBlankCard } from './card';
 
 export type MonsterType = Omit<Monster, 'key' | 'owner'>;
 export type CharacterType = Omit<Character, 'key' | 'owner'>;
@@ -148,4 +149,12 @@ export function mergeSelections(sel1: Selection, sel2: Selection): Selection {
   }, {});
 
   return mergedSel;
+}
+
+export function scrubPile(deck: NonCharacter[]): NonCharacter[] {
+  const newDeck = deck.map((card) => {
+    if (card.reveal) return card;
+    return getBlankCard(card.owner, card.key);
+  });
+  return newDeck;
 }

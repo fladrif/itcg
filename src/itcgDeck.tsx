@@ -1,10 +1,10 @@
 import React from 'react';
 
 import { State as BoardState } from './itcgBoard';
-import { Styles, ITCGCard } from './itcgCard';
+import { Styles, ITCGCard, ITCGCardback } from './itcgCard';
 import { PlayerState } from './game';
 import { Location } from './actions';
-import { NonCharacter } from './card';
+import { BLANK_CARDNAME, NonCharacter } from './card';
 
 interface DeckProp {
   playerState: PlayerState;
@@ -24,14 +24,18 @@ const baseStyle: React.CSSProperties = {
 
 export class ITCGDeck extends React.Component<DeckProp> {
   formatCard(card: NonCharacter) {
-    return (
-      <ITCGCard
-        move={this.props.select}
-        location={this.props.currentPlayer ? Location.Deck : Location.OppDeck}
-        card={card}
-        key={card.key}
-      />
-    );
+    if (card.name !== BLANK_CARDNAME) {
+      return (
+        <ITCGCard
+          move={this.props.select}
+          location={this.props.currentPlayer ? Location.Deck : Location.OppDeck}
+          card={card}
+          key={card.key}
+        />
+      );
+    } else {
+      return <ITCGCardback key={card.key} />;
+    }
   }
 
   updateBoard() {

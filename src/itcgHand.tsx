@@ -1,10 +1,10 @@
 import React from 'react';
-import { v4 } from 'uuid';
 
 import { Styles, ITCGCard, ITCGCardback } from './itcgCard';
 import { PlayerState } from './game';
 import { Location } from './actions';
 import { nullMove } from './moves';
+import { BLANK_CARDNAME } from './card';
 
 interface HandProp {
   playerState: PlayerState;
@@ -21,7 +21,7 @@ export class ITCGHand extends React.Component<HandProp> {
       for (let i = 0; i < this.props.playerState.hand.length; i++) {
         const card = this.props.playerState.hand[i];
 
-        if (card.reveal) {
+        if (card.name !== BLANK_CARDNAME) {
           opponentLine.push(
             <ITCGCard
               move={nullMove}
@@ -31,7 +31,7 @@ export class ITCGHand extends React.Component<HandProp> {
             />
           );
         } else {
-          opponentLine.push(<ITCGCardback key={v4()} />);
+          opponentLine.push(<ITCGCardback key={card.key} />);
         }
       }
       return opponentLine;
