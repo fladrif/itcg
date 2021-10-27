@@ -43,6 +43,7 @@ export const emeraldearrings: Omit<Item, 'key' | 'owner'> = {
       ],
     },
   },
+  // TODO: emeral earring ability
   ability: {},
   ...defaultTypes,
 };

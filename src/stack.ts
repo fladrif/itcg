@@ -289,18 +289,26 @@ function isSelectable(
   card: Character | NonCharacter
 ): boolean {
   if (!isTargetable(ensureFilter(decision.target!, playerState), card)) return false;
-  if (!validationGate(globalState, decision, card)) return false;
+  if (!validationGate(globalState, playerState, decision, card)) return false;
 
   return true;
 }
 
 function validationGate(
   globalState: GlobalState[],
+  playerState: PlayerState,
   decision: Decision,
   card: Character | NonCharacter
 ): boolean {
   if (decision.action === 'attack' && isMonster(card)) {
     if (card.ability.keywords && card.ability.keywords.includes('stealthy')) return false;
+  }
+
+  if (decision.action === 'play') {
+    const charClasses = new Set([playerState.character.class]);
+    playerState.learnedSkills.map((card) => charClasses.add(card.class));
+
+    return charClasses.has(card.class);
   }
 
   const stateTarget = globalState.filter(
