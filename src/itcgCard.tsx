@@ -14,6 +14,7 @@ interface CardProp {
   skill1: Styles[];
   skill2: Styles[];
   skillPos?: number;
+  expandable?: boolean;
 }
 
 interface CardState {
@@ -127,7 +128,13 @@ export class ITCGCard extends React.Component<CardProp, CardState> {
     };
   }
 
+  expandable(): boolean {
+    return this.props.expandable === undefined || this.props.expandable === true;
+  }
+
   expandCard() {
+    if (!this.expandable()) return;
+
     this.setState((state) => {
       const newState = state;
 
@@ -139,6 +146,8 @@ export class ITCGCard extends React.Component<CardProp, CardState> {
   }
 
   unexpandCard() {
+    if (!this.expandable()) return;
+
     this.setState((state) => {
       const newState = state;
 

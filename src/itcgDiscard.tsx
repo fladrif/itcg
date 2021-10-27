@@ -30,6 +30,7 @@ export class ITCGDiscard extends React.Component<DiscardProp> {
         location={this.props.currentPlayer ? Location.Discard : Location.OppDiscard}
         card={card}
         key={card.key}
+        expandable={false}
       />
     );
   }

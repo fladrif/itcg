@@ -31,6 +31,7 @@ export class ITCGDeck extends React.Component<DeckProp> {
           location={this.props.currentPlayer ? Location.Deck : Location.OppDeck}
           card={card}
           key={card.key}
+          expandable={false}
         />
       );
     } else {
