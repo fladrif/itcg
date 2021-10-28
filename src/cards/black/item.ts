@@ -7,6 +7,24 @@ const defaultTypes = {
   selected: false,
 };
 
+export const coconutknife: Omit<Item, 'key' | 'owner'> = {
+  name: 'Coconut Knife',
+  image: 'CoconutKnife',
+  level: 20,
+  skill: {
+    action: 'quest',
+    activated: false,
+    requirements: {
+      level: 0,
+      oneshot: true,
+    },
+  },
+  ability: {
+    triggers: [{ name: 'BattleBowTrigger', lifetime: { turn: 0 }, opts: { damage: 10 } }],
+  },
+  ...defaultTypes,
+};
+
 export const emeraldearrings: Omit<Item, 'key' | 'owner'> = {
   name: 'Emerald Earrings',
   image: 'EmeraldEarrings',
@@ -21,26 +39,9 @@ export const emeraldearrings: Omit<Item, 'key' | 'owner'> = {
       },
     },
     targets: {
-      xor: [
-        {
-          level: 70,
-          type: CardTypes.Item,
-          location: Location.Hand,
-          quantity: 1,
-        },
-        {
-          level: 70,
-          type: CardTypes.Monster,
-          location: Location.Hand,
-          quantity: 1,
-        },
-        {
-          level: 70,
-          type: CardTypes.Tactic,
-          location: Location.Hand,
-          quantity: 1,
-        },
-      ],
+      level: 70,
+      location: Location.Hand,
+      quantity: 1,
     },
   },
   // TODO: emeral earring ability

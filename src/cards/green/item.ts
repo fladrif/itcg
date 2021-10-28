@@ -24,7 +24,7 @@ export const battlebow: Omit<Item, 'key' | 'owner'> = {
     choice: [Choice.Heads, Choice.Tails],
   },
   ability: {
-    triggers: [{ name: 'BattleBowTrigger', lifetime: { turn: 0 } }],
+    triggers: [{ name: 'BattleBowTrigger', lifetime: { turn: 0 }, opts: { damage: 20 } }],
   },
   ...defaultTypes,
 };

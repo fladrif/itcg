@@ -124,7 +124,7 @@ export class BattleBowTrigger extends Trigger {
       finished: false,
       selection: {},
       opts: {
-        damage: 20,
+        damage: this.opts?.damage ? this.opts.damage : 0,
         decision: decision.key,
       },
       key: getRandomKey(),

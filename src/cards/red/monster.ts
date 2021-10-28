@@ -9,6 +9,42 @@ const defaultTypes = {
   damageTaken: 0,
 };
 
+export const bellflowerroot: Omit<Monster, 'key' | 'owner'> = {
+  name: 'Bellflower Root',
+  image: 'BellflowerRoot',
+  level: 53,
+  attack: 40,
+  health: 60,
+  skill: {
+    action: 'play',
+    activated: false,
+    requirements: {
+      level: 50,
+      class: {
+        [CardClasses.Magician]: 2,
+      },
+    },
+    targets: {
+      xor: [
+        {
+          level: 50,
+          type: CardTypes.Tactic,
+          location: Location.Hand,
+          quantity: 1,
+        },
+        {
+          level: 50,
+          type: CardTypes.Item,
+          location: Location.Hand,
+          quantity: 1,
+        },
+      ],
+    },
+  },
+  ability: {},
+  ...defaultTypes,
+};
+
 export const darkaxestump: Omit<Monster, 'key' | 'owner'> = {
   name: 'Dark Axe Stump',
   image: 'DarkAxeStump',

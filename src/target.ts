@@ -99,6 +99,7 @@ function handleAND(
   let finished = true;
   let recency = false;
 
+  // TODO: need to check for order, certain filters have priority over others (more restrictive vs more permissive)
   for (const fil of filter.and!) {
     const recurRet = filterSelections(fil, selection, recent);
     finished = finished && recurRet.finished;
@@ -140,9 +141,7 @@ function cardInFilter(filter: TargetFilter, card: Character | NonCharacter): boo
 }
 
 function isFilterMay(filter: TargetFilter): boolean {
-  if (filter.quantityUpTo) return true;
-
-  return false;
+  return !!filter.quantityUpTo;
 }
 
 function betterFit(current: FilterResponse, best: FilterResponse): boolean {

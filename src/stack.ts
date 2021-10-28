@@ -165,7 +165,7 @@ export function resolveStack(G: GameState, ctx: Ctx, opts?: ResolveStackOptions)
     opts?.resetStack !== true &&
     (!isDecisionNeeded(stack.activeDecisions[0]) || opts?.finished)
   ) {
-    if (!mayFinished(stack.activeDecisions[0].target) && opts?.finished) return; // finished opt can only be used with mayFinished
+    if (!mayFinished(stack.activeDecisions[0].target) && opts?.finished) return; // finished option can only be used if quantityUpTo is true
 
     stack.decisions.push(stack.activeDecisions.shift()!);
     ctx.events!.endStage!();
