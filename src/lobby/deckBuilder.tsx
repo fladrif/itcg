@@ -323,79 +323,139 @@ export class ITCGDeckBuilder extends React.Component<DeckBuilderProp> {
       <div style={baseStyle}>
         <h1>Deck Builder</h1>
         <form onSubmit={async (e) => await this.handleSubmit(e)} style={formStyle}>
-          <FormGroup controlId={'header'} style={formRowStyle}>
-            <FormControl
-              type={'text'}
-              value={this.state.name ?? 'Default Deck Name'}
-              onChange={(e) => this.setState({ name: e.target.value })}
-              style={formHeaderCompStyle}
-            />
-            <FormControl
-              as={'select'}
-              value={this.state.deckList?.character?.name}
-              onChange={async (e) =>
-                this.setState({
-                  deckList: {
-                    character: await this.findCard(e.target.value),
-                    deck: this.state.deckList?.deck ?? [],
-                  },
-                })
-              }
-              style={formHeaderCompStyle}
-            >
-              <option>Select Character</option>
-              {this.renderCardList(true)}
-            </FormControl>
-          </FormGroup>
-          <FormGroup controlId={'filter'} style={formRowStyle}>
+          <div style={{ ...formRowStyle, marginBottom: '0%' }}>
             <div style={formCompStyle}>
-              <FormLabel>Class</FormLabel>
-              <FormControl
-                as={'select'}
-                onChange={(e) =>
-                  this.setState({
-                    filter: {
-                      class: e.target.value === 'All' ? undefined : e.target.value,
-                      type: this.state.filter.type,
-                    },
-                  })
-                }
-              >
-                <option>All</option>
-                <option>Bowman</option>
-                <option>Magician</option>
-                <option>Thief</option>
-                <option>Warrior</option>
-              </FormControl>
+              <FormGroup controlId={'header'} style={formRowStyle}>
+                <FormControl
+                  type={'text'}
+                  value={this.state.name ?? 'Default Deck Name'}
+                  onChange={(e) => this.setState({ name: e.target.value })}
+                  style={formHeaderCompStyle}
+                />
+                <FormControl
+                  as={'select'}
+                  value={this.state.deckList?.character?.name}
+                  onChange={async (e) =>
+                    this.setState({
+                      deckList: {
+                        character: await this.findCard(e.target.value),
+                        deck: this.state.deckList?.deck ?? [],
+                      },
+                    })
+                  }
+                  style={formHeaderCompStyle}
+                >
+                  <option>Select Character</option>
+                  {this.renderCardList(true)}
+                </FormControl>
+              </FormGroup>
+              <FormGroup controlId={'filter'} style={formRowStyle}>
+                <div style={formCompStyle}>
+                  <FormLabel>Class</FormLabel>
+                  <FormControl
+                    as={'select'}
+                    onChange={(e) =>
+                      this.setState({
+                        filter: {
+                          class: e.target.value === 'All' ? undefined : e.target.value,
+                          type: this.state.filter.type,
+                        },
+                      })
+                    }
+                  >
+                    <option>All</option>
+                    <option>Bowman</option>
+                    <option>Magician</option>
+                    <option>Thief</option>
+                    <option>Warrior</option>
+                  </FormControl>
+                </div>
+                <div style={formCompStyle}>
+                  <FormLabel>Type</FormLabel>
+                  <FormControl
+                    as={'select'}
+                    onChange={(e) =>
+                      this.setState({
+                        filter: {
+                          type: e.target.value === 'All' ? undefined : e.target.value,
+                          class: this.state.filter.class,
+                        },
+                      })
+                    }
+                  >
+                    <option>All</option>
+                    <option>Monster</option>
+                    <option>Tactic</option>
+                    <option>Item</option>
+                  </FormControl>
+                </div>
+                <div style={formCompStyle}>
+                  <FormLabel>Set</FormLabel>
+                  <FormControl as={'select'}>
+                    <option>All</option>
+                    <option>Set 1</option>
+                  </FormControl>
+                </div>
+              </FormGroup>
+              <FormGroup controlId={'selection'} style={formRowStyle}>
+                <div style={formCompStyle}>
+                  <FormLabel>Card</FormLabel>
+                  <FormControl
+                    as={'select'}
+                    onChange={async (e) =>
+                      this.setState({ curCard: await this.findCard(e.target.value) })
+                    }
+                    autoFocus
+                  >
+                    <option></option>
+                    {this.renderCardList()}
+                  </FormControl>
+                  Tip: While focused on the card list, type in the card you're looking for
+                  and hit enter to add it to the deck list.
+                </div>
+                <div style={formCompNoExpandStyle}>
+                  <FormLabel>Quantity</FormLabel>
+                  <FormControl
+                    as={'select'}
+                    defaultValue={'4'}
+                    onChange={(e) =>
+                      this.setState({ curQuantity: parseInt(e.target.value) })
+                    }
+                  >
+                    <option>1</option>
+                    <option>2</option>
+                    <option>3</option>
+                    <option>4</option>
+                  </FormControl>
+                </div>
+                <Button
+                  style={{ ...buttonStyle, height: '3em' }}
+                  onClick={() => this.addCard()}
+                >
+                  Add
+                </Button>
+              </FormGroup>
             </div>
-            <div style={formCompStyle}>
-              <FormLabel>Type</FormLabel>
-              <FormControl
-                as={'select'}
-                onChange={(e) =>
-                  this.setState({
-                    filter: {
-                      type: e.target.value === 'All' ? undefined : e.target.value,
-                      class: this.state.filter.class,
-                    },
-                  })
-                }
-              >
-                <option>All</option>
-                <option>Monster</option>
-                <option>Tactic</option>
-                <option>Item</option>
-              </FormControl>
-            </div>
-            <div style={formCompStyle}>
-              <FormLabel>Set</FormLabel>
-              <FormControl as={'select'}>
-                <option>All</option>
-                <option>Set 1</option>
-              </FormControl>
-            </div>
-          </FormGroup>
-          <FormGroup controlId={'selection'} style={formRowStyle}>
+            <FormGroup controlId={'character'} style={{ ...formRowStyle, margin: '' }}>
+              <div style={formCompStyle}>
+                {this.state.deckList?.character && (
+                  <ITCGCard
+                    move={() => {}}
+                    card={instantiateCard(this.state.deckList.character, '0')[0]}
+                    location={Location.Deck}
+                    styles={['expandStyle']}
+                    skill0={['expandStyle']}
+                    skill1={['expandStyle']}
+                    skill2={['expandStyle']}
+                  />
+                )}
+                {!this.state.deckList?.character && (
+                  <ITCGCardback styles={['expandStyle']} />
+                )}
+              </div>
+            </FormGroup>
+          </div>
+          <div style={formRowStyle}>
             <div style={{ ...formCompStyle, flex: '0' }}>
               {this.state.curCard && (
                 <ITCGCard
@@ -408,42 +468,6 @@ export class ITCGDeckBuilder extends React.Component<DeckBuilderProp> {
               )}
               {!this.state.curCard && <ITCGCardback styles={['expandStyle']} />}
             </div>
-            <div style={formCompStyle}>
-              <FormLabel>Card</FormLabel>
-              <FormControl
-                as={'select'}
-                onChange={async (e) =>
-                  this.setState({ curCard: await this.findCard(e.target.value) })
-                }
-                autoFocus
-              >
-                <option></option>
-                {this.renderCardList()}
-              </FormControl>
-              Tip: While focused on the card list, type in the card you're looking for and
-              hit enter to add it to the deck list.
-            </div>
-            <div style={formCompNoExpandStyle}>
-              <FormLabel>Quantity</FormLabel>
-              <FormControl
-                as={'select'}
-                defaultValue={'4'}
-                onChange={(e) => this.setState({ curQuantity: parseInt(e.target.value) })}
-              >
-                <option>1</option>
-                <option>2</option>
-                <option>3</option>
-                <option>4</option>
-              </FormControl>
-            </div>
-            <Button
-              style={{ ...buttonStyle, height: '3em' }}
-              onClick={() => this.addCard()}
-            >
-              Add
-            </Button>
-          </FormGroup>
-          <div style={formRowStyle}>
             <div style={formCompStyle}>
               Deck List:{' '}
               {this.state.deckList?.deck.reduce((acc, card) => card[1] + acc, 0) || 0} /
