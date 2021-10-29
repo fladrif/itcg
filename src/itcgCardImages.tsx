@@ -64,6 +64,54 @@ import TopGoldenCrow from './images/top-GoldenCrow.jpg';
 import SkillGoldenCrow from './images/skill-GoldenCrow.jpg';
 import TopBattleBow from './images/top-BattleBow.jpg';
 import SkillBattleBow from './images/skill-BattleBow.jpg';
+import TopAvenger from './images/top-Avenger.jpg';
+import SkillAvenger from './images/skill-Avenger.jpg';
+import TopDoubleStrike from './images/top-DoubleStrike.jpg';
+import SkillDoubleStrike from './images/skill-DoubleStrike.jpg';
+import TopBuffy from './images/top-Buffy.jpg';
+import SkillBuffy from './images/skill-Buffy.jpg';
+import TopCico from './images/top-Cico.jpg';
+import SkillCico from './images/skill-Cico.jpg';
+import TopCroco from './images/top-Croco.jpg';
+import SkillCroco from './images/skill-Croco.jpg';
+import TopKrappy from './images/top-Krappy.jpg';
+import SkillKrappy from './images/skill-Krappy.jpg';
+import TopKrip from './images/top-Krip.jpg';
+import SkillKrip from './images/skill-Krip.jpg';
+import TopLorang from './images/top-Lorang.jpg';
+import SkillLorang from './images/skill-Lorang.jpg';
+import TopCurseEye from './images/top-CurseEye.jpg';
+import SkillCurseEye from './images/skill-CurseEye.jpg';
+import TopHornedMushroom from './images/top-HornedMushroom.jpg';
+import SkillHornedMushroom from './images/skill-HornedMushroom.jpg';
+import TopPlatoonChronos from './images/top-PlatoonChronos.jpg';
+import SkillPlatoonChronos from './images/skill-PlatoonChronos.jpg';
+import TopItemTrade from './images/top-ItemTrade.jpg';
+import SkillItemTrade from './images/skill-ItemTrade.jpg';
+import TopEnergyBolt from './images/top-EnergyBolt.jpg';
+import SkillEnergyBolt from './images/skill-EnergyBolt.jpg';
+import TopHeal from './images/top-Heal.jpg';
+import SkillHeal from './images/skill-Heal.jpg';
+import TopSideQuest from './images/top-SideQuest.jpg';
+import SkillSideQuest from './images/skill-SideQuest.jpg';
+import TopBellflowerRoot from './images/top-BellflowerRoot.jpg';
+import SkillBellflowerRoot from './images/skill-BellflowerRoot.jpg';
+import TopLioner from './images/top-Lioner.jpg';
+import SkillLioner from './images/skill-Lioner.jpg';
+import TopPeachMonkey from './images/top-PeachMonkey.jpg';
+import SkillPeachMonkey from './images/skill-PeachMonkey.jpg';
+import TopZetaGray from './images/top-ZetaGray.jpg';
+import SkillZetaGray from './images/skill-ZetaGray.jpg';
+import TopZombieLupin from './images/top-ZombieLupin.jpg';
+import SkillZombieLupin from './images/skill-ZombieLupin.jpg';
+import TopCoconutKnife from './images/top-CoconutKnife.jpg';
+import SkillCoconutKnife from './images/skill-CoconutKnife.jpg';
+import TopJrYeti from './images/top-JrYeti.jpg';
+import SkillJrYeti from './images/skill-JrYeti.jpg';
+import TopPepe from './images/top-Pepe.jpg';
+import SkillPepe from './images/skill-Pepe.jpg';
+import TopSentinel from './images/top-Sentinel.jpg';
+import SkillSentinel from './images/skill-Sentinel.jpg';
 import TopSherman from './images/top-Sherman.jpg';
 import SkillSherman from './images/skill1-Sherman.jpg';
 import Skill2Sherman from './images/skill2-Sherman.jpg';
@@ -72,6 +120,14 @@ import TopNixie from './images/top-Nixie.jpg';
 import SkillNixie from './images/skill1-Nixie.jpg';
 import Skill2Nixie from './images/skill2-Nixie.jpg';
 import Skill3Nixie from './images/skill3-Nixie.jpg';
+import TopIvan from './images/top-Ivan.jpg';
+import SkillIvan from './images/skill1-Ivan.jpg';
+import Skill2Ivan from './images/skill2-Ivan.jpg';
+import Skill3Ivan from './images/skill3-Ivan.jpg';
+import TopMaya from './images/top-Maya.jpg';
+import SkillMaya from './images/skill1-Maya.jpg';
+import Skill2Maya from './images/skill2-Maya.jpg';
+import Skill3Maya from './images/skill3-Maya.jpg';
 import Cardback from './images/cardback.jpg';
 
 interface CardImages {
@@ -214,6 +270,102 @@ export const cardImages: Record<string, CardImages> = {
     top: TopBattleBow,
     skill: SkillBattleBow,
   },
+  Avenger: {
+    top: TopAvenger,
+    skill: SkillAvenger,
+  },
+  DoubleStrike: {
+    top: TopDoubleStrike,
+    skill: SkillDoubleStrike,
+  },
+  Buffy: {
+    top: TopBuffy,
+    skill: SkillBuffy,
+  },
+  Cico: {
+    top: TopCico,
+    skill: SkillCico,
+  },
+  Croco: {
+    top: TopCroco,
+    skill: SkillCroco,
+  },
+  Krappy: {
+    top: TopKrappy,
+    skill: SkillKrappy,
+  },
+  Krip: {
+    top: TopKrip,
+    skill: SkillKrip,
+  },
+  Lorang: {
+    top: TopLorang,
+    skill: SkillLorang,
+  },
+  CurseEye: {
+    top: TopCurseEye,
+    skill: SkillCurseEye,
+  },
+  HornedMushroom: {
+    top: TopHornedMushroom,
+    skill: SkillHornedMushroom,
+  },
+  PlatoonChronos: {
+    top: TopPlatoonChronos,
+    skill: SkillPlatoonChronos,
+  },
+  ItemTrade: {
+    top: TopItemTrade,
+    skill: SkillItemTrade,
+  },
+  EnergyBolt: {
+    top: TopEnergyBolt,
+    skill: SkillEnergyBolt,
+  },
+  Heal: {
+    top: TopHeal,
+    skill: SkillHeal,
+  },
+  SideQuest: {
+    top: TopSideQuest,
+    skill: SkillSideQuest,
+  },
+  BellflowerRoot: {
+    top: TopBellflowerRoot,
+    skill: SkillBellflowerRoot,
+  },
+  Lioner: {
+    top: TopLioner,
+    skill: SkillLioner,
+  },
+  PeachMonkey: {
+    top: TopPeachMonkey,
+    skill: SkillPeachMonkey,
+  },
+  ZetaGray: {
+    top: TopZetaGray,
+    skill: SkillZetaGray,
+  },
+  ZombieLupin: {
+    top: TopZombieLupin,
+    skill: SkillZombieLupin,
+  },
+  CoconutKnife: {
+    top: TopCoconutKnife,
+    skill: SkillCoconutKnife,
+  },
+  JrYeti: {
+    top: TopJrYeti,
+    skill: SkillJrYeti,
+  },
+  Pepe: {
+    top: TopPepe,
+    skill: SkillPepe,
+  },
+  Sentinel: {
+    top: TopSentinel,
+    skill: SkillSentinel,
+  },
   Sherman: {
     top: TopSherman,
     skill: SkillSherman,
@@ -225,6 +377,18 @@ export const cardImages: Record<string, CardImages> = {
     skill: SkillNixie,
     skill2: Skill2Nixie,
     skill3: Skill3Nixie,
+  },
+  Ivan: {
+    top: TopIvan,
+    skill: SkillIvan,
+    skill2: Skill2Ivan,
+    skill3: Skill3Ivan,
+  },
+  Maya: {
+    top: TopMaya,
+    skill: SkillMaya,
+    skill2: Skill2Maya,
+    skill3: Skill3Maya,
   },
 };
 

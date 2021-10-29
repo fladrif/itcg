@@ -4,7 +4,9 @@ import lodash from 'lodash';
 import { Button, FormGroup, FormLabel, FormControl } from 'react-bootstrap';
 import axios from 'axios';
 
-import { CardClasses, CardTypes, NonCharacter } from '../card';
+import { Location } from '../actions';
+import { CardClasses, CardTypes, NonCharacter, instantiateCard } from '../card';
+import { ITCGCard, ITCGCardback } from '../itcgCard';
 import { Deck } from '../game';
 
 import { State as DeckState } from './deck';
@@ -67,7 +69,6 @@ const formRowStyle: React.CSSProperties = {
   display: 'flex',
   flexDirection: 'row',
   margin: '3%',
-  whiteSpace: 'nowrap',
 };
 
 const buttonRowStyle: React.CSSProperties = {
@@ -395,6 +396,18 @@ export class ITCGDeckBuilder extends React.Component<DeckBuilderProp> {
             </div>
           </FormGroup>
           <FormGroup controlId={'selection'} style={formRowStyle}>
+            <div style={{ ...formCompStyle, flex: '0' }}>
+              {this.state.curCard && (
+                <ITCGCard
+                  move={() => {}}
+                  card={instantiateCard(this.state.curCard, '0')[0]}
+                  location={Location.Deck}
+                  styles={['expandStyle']}
+                  skill0={['expandStyle']}
+                />
+              )}
+              {!this.state.curCard && <ITCGCardback styles={['expandStyle']} />}
+            </div>
             <div style={formCompStyle}>
               <FormLabel>Card</FormLabel>
               <FormControl
@@ -423,7 +436,10 @@ export class ITCGDeckBuilder extends React.Component<DeckBuilderProp> {
                 <option>4</option>
               </FormControl>
             </div>
-            <Button style={buttonStyle} onClick={() => this.addCard()}>
+            <Button
+              style={{ ...buttonStyle, height: '3em' }}
+              onClick={() => this.addCard()}
+            >
               Add
             </Button>
           </FormGroup>
