@@ -1,0 +1,46 @@
+{
+  "name": "itcg-server",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@koa/cors": "^3.1.0",
+    "@koa/router": "^10.1.1",
+    "@testing-library/jest-dom": "^5.12.0",
+    "@testing-library/react": "^11.2.6",
+    "@testing-library/user-event": "^12.8.3",
+    "@types/jest": "^26.0.23",
+    "@types/node": "^12.20.12",
+    "bcrypt": "^5.0.1",
+    "bgio-postgres": "^1.0.13",
+    "bluebird": "^3.7.2",
+    "crypto-js": "^4.1.1",
+    "koa-bodyparser": "^4.3.0",
+    "lodash": "^4.17.21",
+    "node-persist": "^3.1.0",
+    "typeorm": "^0.2.36",
+    "typescript": "^4.2.4",
+    "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.0",
+    "@types/bluebird": "^3.5.36",
+    "@types/crypto-js": "^4.0.2",
+    "@types/koa": "^2.13.4",
+    "@types/koa-bodyparser": "^4.3.3",
+    "@types/koa-router": "^7.4.4",
+    "@types/koa__cors": "^3.0.3",
+    "@types/lodash": "^4.14.168",
+    "@types/uuid": "^8.3.0"
+  },
+  "scripts": {
+    "build-server": "tsc -p tsconfig.json",
+    "copy-files": "rm -rf lib/images && cp -r src/images lib/images",
+    "create-migration": "db-migrate create",
+    "create-db-local": "db-migrate db:create -e itcg user",
+    "create-db": "db-migrate db:create -e prod-itcg user",
+    "migrate-down-local": "db-migrate -e local down",
+    "migrate-down": "db-migrate -e prod down",
+    "migrate-up-local": "db-migrate -e local up",
+    "migrate-up": "db-migrate -e prod up"
+  }
+}
