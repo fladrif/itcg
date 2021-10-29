@@ -76,11 +76,21 @@ export class ITCGFrontPage extends React.Component<FrontPageProps> {
     return (
       <>
         <p style={paragraphStyle}>
+          <b>October 28, 2021</b> Added more cards: Most easily added cards are now
+          available, technically more difficult cards are in the pipeline; Common
+          characters for all classes now available. Updated UI: View discard piles and
+          decks, interact with them through a pop-up dialog box; Added card viewer in deck
+          builder. Backend game state updated: Clients now do not have access to all game
+          data (deck and deck order, opponent's hand). Upcoming updates will include more
+          cards and fix those currently broken (Golden Crow, Buffy, Emerald Earrings).
+        </p>
+        <p style={paragraphStyle}>
           <b>October 2021</b> Currently only part of the first set (base set) is
           available, and I'll be adding cards over the next week. If there are cards from
           the first set you'd like to be prioritized, please let me know in the discord
           server. If you would like to contribute and/or submit PR's, please note so in
           the discord server and I'll make the repository public.
+          <br />
         </p>
       </>
     );
@@ -110,7 +120,8 @@ export class ITCGFrontPage extends React.Component<FrontPageProps> {
           </a>
         </p>
         <p>
-          For help on this site in particular or to report issues, please use the{' '}
+          For matchmaking and/or finding players, help on this site in particular, or to
+          report issues, please use the{' '}
           <a
             target="_blank"
             rel="noopener noreferrer"
