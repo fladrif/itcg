@@ -69,7 +69,6 @@ function resetAttacks(G: GameState, ctx: Ctx) {
       const confused = mon.turnETB == ctx.turn && keywords.includes('confused');
 
       mon.attacks = confused ? 0 : keywords.includes('fierce') ? 2 : 1;
-      // TODO: verify if this is needed // (card as Monster).damageTaken = 0;
     });
 }
 
@@ -83,13 +82,13 @@ export function endActivateStage(G: GameState, ctx: Ctx, now?: boolean) {
   if (now) return endActivate(G, ctx);
 
   const player = G.player[ctx.currentPlayer];
-  const skills: Skill[] = [];
+  const skills: Skill[][] = [];
 
   skills.push(...player.character.skills);
   player.learnedSkills.map((card) => skills.push(card.skill));
 
   const availableSkills = skills.slice(player.activationPos).filter((skill) => {
-    return meetsSkillReq(skill.requirements, player);
+    return skill.every((skill) => meetsSkillReq(skill.requirements, player));
   });
 
   const noTargets = availableSkills.length == 0;

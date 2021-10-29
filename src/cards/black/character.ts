@@ -3,18 +3,18 @@ import { Location } from '../../actions';
 
 const defaultTypes = {
   type: CardTypes.Character,
-  class: CardClasses.Warrior,
+  class: CardClasses.Thief,
   selected: false,
 };
 
-export const sherman: Omit<Character, 'key' | 'owner'> = {
-  name: 'Sherman',
-  image: 'Sherman',
-  health: 240,
+export const ivan: Omit<Character, 'key' | 'owner'> = {
+  name: 'Ivan',
+  image: 'Ivan',
+  health: 220,
   skills: [
     [
       {
-        requirements: { level: 10, class: { [CardClasses.Warrior]: 1 } },
+        requirements: { level: 10, class: { [CardClasses.Thief]: 1 } },
         action: 'damage',
         activated: false,
         opts: { damage: 10 },
@@ -22,13 +22,13 @@ export const sherman: Omit<Character, 'key' | 'owner'> = {
           xor: [
             {
               type: CardTypes.Monster,
-              quantity: 1,
               location: Location.OppField,
+              quantity: 1,
             },
             {
               type: CardTypes.Character,
-              quantity: 1,
               location: Location.OppCharacter,
+              quantity: 1,
             },
           ],
         },
@@ -36,21 +36,21 @@ export const sherman: Omit<Character, 'key' | 'owner'> = {
     ],
     [
       {
-        requirements: { level: 20 },
+        requirements: { level: 10 },
         action: 'quest',
         activated: false,
       },
     ],
     [
       {
-        requirements: { level: 30, class: { [CardClasses.Warrior]: 2 } },
+        requirements: { level: 20, class: { [CardClasses.Thief]: 1 } },
         action: 'play',
         activated: false,
         targets: {
           level: 'CurrentLevel',
-          type: CardTypes.Monster,
-          quantity: 1,
+          type: CardTypes.Item,
           location: Location.Hand,
+          quantity: 1,
         },
       },
     ],

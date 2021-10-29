@@ -41,12 +41,12 @@ export interface Card {
 
 export interface Character extends Card {
   health: number;
-  skills: Skill[];
+  skills: Skill[][];
 }
 
 export interface NonCharacter extends Exclude<Card, Character> {
   level: number;
-  skill: Skill;
+  skill: Skill[];
   ability: Ability;
   reveal?: boolean;
 }
@@ -74,7 +74,13 @@ export interface SkillRequirements {
 export interface Skill {
   requirements: SkillRequirements;
   action: Action;
+  /**
+   * Used for UI drawing, always set to false manually
+   */
   activated: boolean;
+  /**
+   * Can skill be skipped or undone. Set true for forced actions like targeted discard effects
+   */
   noReset?: boolean;
   opts?: ActionOpts;
   targets?: ActionTargets;
@@ -151,13 +157,15 @@ const blankCard: Omit<NonCharacter, 'key' | 'owner'> = {
   name: BLANK_CARDNAME,
   image: '',
   ability: {},
-  skill: {
-    action: 'optional',
-    activated: false,
-    requirements: {
-      level: 0,
+  skill: [
+    {
+      action: 'optional',
+      activated: false,
+      requirements: {
+        level: 0,
+      },
     },
-  },
+  ],
 };
 
 export function getBlankCard(owner: string, key: string): NonCharacter {

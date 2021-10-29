@@ -81,8 +81,15 @@ export interface ActionOpts {
   position?: number;
   source?: Character | NonCharacter;
   triggerKey?: string;
+  /**
+   * Amount to regain hp. Used with refresh action
+   */
   lifegain?: number;
   dialogDecision?: Decision;
+  /**
+   * Should refresh increase hp over starting total. Defaults true if undef
+   */
+  overheal?: boolean;
 }
 
 function ack(G: GameState, ctx: Ctx, opts: ActionOpts): any {
@@ -228,24 +235,44 @@ function discard(G: GameState, ctx: Ctx, opts: ActionOpts): any {
   destroy(G, ctx, opts);
 }
 
+function drinkpotion(G: GameState, ctx: Ctx, opts: ActionOpts): any {
+  if (!G.stack) return;
+  if (!opts.source) return;
+
+  const healDec: Decision = {
+    action: 'refresh',
+    opts: {
+      ...opts,
+      lifegain: G.player[opts.source.owner].level,
+    },
+    selection: {},
+    finished: false,
+    key: getRandomKey(),
+  };
+
+  upsertStack(G, ctx, [healDec]);
+}
+
 function level(G: GameState, ctx: Ctx, opts: ActionOpts): any {
   if (!G.stack || !opts.selection) return;
 
   for (const location of Object.keys(opts.selection) as Location[]) {
     opts.selection[location]!.map((card) => {
+      // Iterate over all cards in selection
+
       const player = G.player[card.owner];
-      const selCard = card as NonCharacter;
+      const selCard = card as NonCharacter; // uses copy of card as canonical
 
-      const oneshot = selCard.skill.requirements.oneshot;
-      if (oneshot) upsertStack(G, ctx, [parseSkill(selCard.skill, selCard)]);
+      const oneshot = selCard.skill.some((skill) => skill.requirements.oneshot);
+      if (oneshot) {
+        upsertStack(
+          G,
+          ctx,
+          selCard.skill.map((skill) => parseSkill(skill, selCard))
+        );
+      }
 
-      player.learnedSkills.push({
-        ...selCard,
-        skill: {
-          ...selCard.skill,
-          requirements: { ...selCard.skill.requirements, oneshot },
-        },
-      });
+      player.learnedSkills.push({ ...selCard });
 
       rmCard(G, ctx, selCard, location);
 
@@ -302,6 +329,7 @@ function play(G: GameState, ctx: Ctx, opts: ActionOpts): any {
       player.field.push(card);
       handleAbility(G, ctx, card);
     } else if (isTactic(card)) {
+      // TODO: move to temporary zone first
       player.discard.push(card);
       handleAbility(G, ctx, card);
     }
@@ -340,6 +368,13 @@ function rainofarrows(G: GameState, ctx: Ctx, opts: ActionOpts): any {
 function refresh(G: GameState, ctx: Ctx, opts: ActionOpts): any {
   if (!G.stack) return;
   if (opts.lifegain == undefined) return;
+
+  const doNotOverheal = opts.overheal !== undefined && opts.overheal === false;
+
+  const maxHP = G.player[ctx.currentPlayer].maxHP;
+  const willOverheal = G.player[ctx.currentPlayer].hp + opts.lifegain > maxHP;
+
+  if (doNotOverheal && willOverheal) return (G.player[ctx.currentPlayer].hp = maxHP);
 
   G.player[ctx.currentPlayer].hp += opts.lifegain;
 }
@@ -469,6 +504,7 @@ export const actions = {
   damage,
   destroy,
   discard,
+  drinkpotion,
   level,
   nomercy,
   optional,

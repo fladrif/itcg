@@ -393,11 +393,11 @@ function isDecisionNeeded(dec: Decision): boolean {
 }
 
 function resetSkillActivations(G: GameState, ctx: Ctx) {
-  (getLocation(G, ctx, Location.Character)[0] as Character).skills.map(
-    (skill) => (skill.activated = false)
+  (getLocation(G, ctx, Location.Character)[0] as Character).skills.map((skill) =>
+    skill.map((sk) => (sk.activated = false))
   );
 
-  (getLocation(G, ctx, Location.CharAction) as NonCharacter[]).map(
-    (card) => (card.skill.activated = false)
+  (getLocation(G, ctx, Location.CharAction) as NonCharacter[]).map((card) =>
+    card.skill.map((sk) => (sk.activated = false))
   );
 }
