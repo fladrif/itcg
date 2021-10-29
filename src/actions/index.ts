@@ -371,10 +371,13 @@ function refresh(G: GameState, ctx: Ctx, opts: ActionOpts): any {
 
   const doNotOverheal = opts.overheal !== undefined && opts.overheal === false;
 
+  const curHP = G.player[ctx.currentPlayer].hp;
   const maxHP = G.player[ctx.currentPlayer].maxHP;
-  const willOverheal = G.player[ctx.currentPlayer].hp + opts.lifegain > maxHP;
+  const willOverheal = curHP + opts.lifegain > maxHP;
 
-  if (doNotOverheal && willOverheal) return (G.player[ctx.currentPlayer].hp = maxHP);
+  if (doNotOverheal && willOverheal) {
+    return (G.player[ctx.currentPlayer].hp = curHP > maxHP ? curHP : maxHP);
+  }
 
   G.player[ctx.currentPlayer].hp += opts.lifegain;
 }
