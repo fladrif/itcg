@@ -64,7 +64,7 @@ export function activateSkill(G: GameState, ctx: Ctx, opts?: MoveOptions) {
     return INVALID_MOVE;
   }
 
-  let skill = 'skills' in selCard ? selCard.skills[opts.position] : selCard.skill;
+  const skill = 'skills' in selCard ? selCard.skills[opts.position] : selCard.skill;
 
   if (skill.every((skill) => !meetsSkillReq(skill.requirements, player))) {
     return INVALID_MOVE;
@@ -72,9 +72,9 @@ export function activateSkill(G: GameState, ctx: Ctx, opts?: MoveOptions) {
 
   const prevPos = player.activationPos;
   player.activationPos = opts.position + 1;
-  skill = skill.map((skill) => {
-    return { ...skill, activated: true };
-  });
+  for (const sk of skill) {
+    sk.activated = true;
+  }
 
   upsertStack(
     G,

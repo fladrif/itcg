@@ -31,15 +31,18 @@ export class ITCGCharacter extends React.Component<CharacterProp> {
     const skillCards = this.props.playerState.learnedSkills.map((card, index) => {
       const levelStyles: Styles[] = ['leveledCardStyle'];
 
-      if (card.skill.activated) {
+      if (card.skill.every((sk) => sk.activated)) {
         levelStyles.push('activatedBorderTop', 'activatedBorderBot');
       } else if (card.selected) {
         levelStyles.push('selectedBorderTop', 'selectedBorderBot');
       } else if (
         this.props.playerState &&
         this.props.stage === 'activate' &&
-        (!meetsSkillReq(card.skill.requirements, this.props.playerState) ||
-          this.props.playerState.activationPos > index + 3)
+        card.skill.every(
+          (sk) =>
+            !meetsSkillReq(sk.requirements, this.props.playerState) ||
+            this.props.playerState.activationPos > index + 3
+        )
       ) {
         levelStyles.push('shadeStyle');
       }
@@ -72,12 +75,15 @@ export class ITCGCharacter extends React.Component<CharacterProp> {
     }
 
     character.skills.map((skill, idx) => {
-      if (skill.activated)
+      if (skill.every((sk) => sk.activated))
         skillStyle[idx].push('activatedBorderTop', 'activatedBorderBot');
       if (
         this.props.stage === 'activate' &&
-        (!meetsSkillReq(skill.requirements, this.props.playerState) ||
-          this.props.playerState.activationPos > idx)
+        skill.every(
+          (sk) =>
+            !meetsSkillReq(sk.requirements, this.props.playerState) ||
+            this.props.playerState.activationPos > idx
+        )
       ) {
         skillStyle[idx].push('shadeStyle');
       }

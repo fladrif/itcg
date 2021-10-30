@@ -397,7 +397,14 @@ function resetSkillActivations(G: GameState, ctx: Ctx) {
     skill.map((sk) => (sk.activated = false))
   );
 
-  (getLocation(G, ctx, Location.CharAction) as NonCharacter[]).map((card) =>
-    card.skill.map((sk) => (sk.activated = false))
-  );
+  G.player[ctx.currentPlayer].learnedSkills = (
+    getLocation(G, ctx, Location.CharAction) as NonCharacter[]
+  ).map((card) => {
+    return {
+      ...card,
+      skill: card.skill.map((sk) => {
+        return { ...sk, activated: false };
+      }),
+    };
+  });
 }
