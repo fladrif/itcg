@@ -2,7 +2,7 @@ import React from 'react';
 
 import { PlayerState } from './game';
 import { Location } from './actions';
-import { meetsSkillReq } from './utils';
+import { every, meetsSkillReq } from './utils';
 
 import { Styles, ITCGCard } from './itcgCard';
 
@@ -31,14 +31,15 @@ export class ITCGCharacter extends React.Component<CharacterProp> {
     const skillCards = this.props.playerState.learnedSkills.map((card, index) => {
       const levelStyles: Styles[] = ['leveledCardStyle'];
 
-      if (card.skill.every((sk) => sk.activated)) {
+      if (every(card.skill, (sk) => sk.activated)) {
         levelStyles.push('activatedBorderTop', 'activatedBorderBot');
       } else if (card.selected) {
         levelStyles.push('selectedBorderTop', 'selectedBorderBot');
       } else if (
         this.props.playerState &&
         this.props.stage === 'activate' &&
-        card.skill.every(
+        every(
+          card.skill,
           (sk) =>
             !meetsSkillReq(sk.requirements, this.props.playerState) ||
             this.props.playerState.activationPos > index + 3
@@ -75,11 +76,12 @@ export class ITCGCharacter extends React.Component<CharacterProp> {
     }
 
     character.skills.map((skill, idx) => {
-      if (skill.every((sk) => sk.activated))
+      if (every(skill, (sk) => sk.activated))
         skillStyle[idx].push('activatedBorderTop', 'activatedBorderBot');
       if (
         this.props.stage === 'activate' &&
-        skill.every(
+        every(
+          skill,
           (sk) =>
             !meetsSkillReq(sk.requirements, this.props.playerState) ||
             this.props.playerState.activationPos > idx
