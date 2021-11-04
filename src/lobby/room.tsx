@@ -71,7 +71,7 @@ export class ITCGRoom extends React.Component<RoomProp, State> {
   async updateSelf() {
     const resp = await axios.get('/rooms', {
       baseURL: this.props.server,
-      timeout: 1000,
+      timeout: 5000,
       withCredentials: true,
     });
 
@@ -80,7 +80,7 @@ export class ITCGRoom extends React.Component<RoomProp, State> {
 
     const deckResp = await axios('/decks', {
       baseURL: this.props.server,
-      timeout: 1000,
+      timeout: 5000,
       withCredentials: true,
     });
     if (!deckResp.data) return;
@@ -206,7 +206,7 @@ export class ITCGRoom extends React.Component<RoomProp, State> {
         {},
         {
           baseURL: this.props.server,
-          timeout: 1000,
+          timeout: 5000,
           withCredentials: true,
         }
       )
@@ -224,7 +224,7 @@ export class ITCGRoom extends React.Component<RoomProp, State> {
         { id },
         {
           baseURL: this.props.server,
-          timeout: 1000,
+          timeout: 5000,
           withCredentials: true,
         }
       )
@@ -240,7 +240,7 @@ export class ITCGRoom extends React.Component<RoomProp, State> {
         { id, deckID, ready },
         {
           baseURL: this.props.server,
-          timeout: 1000,
+          timeout: 5000,
           withCredentials: true,
         }
       )
@@ -258,7 +258,7 @@ export class ITCGRoom extends React.Component<RoomProp, State> {
         { id },
         {
           baseURL: this.props.server,
-          timeout: 1000,
+          timeout: 5000,
           withCredentials: true,
         }
       )

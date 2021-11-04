@@ -58,7 +58,7 @@ class App extends React.Component {
     const resp = await axios
       .get('/lobby/inGame', {
         baseURL: SERVER,
-        timeout: 1000,
+        timeout: 5000,
         withCredentials: true,
       })
       .catch((err) => {

@@ -100,7 +100,7 @@ export class ITCGSignUp extends React.Component<SignUpProp> {
       .get(`/getNonce`, {
         baseURL: this.props.server,
         params: { username: this.state.username },
-        timeout: 1000,
+        timeout: 5000,
       })
       .catch((error) =>
         this.setState({ submitting: false, warning: error.response.data })
@@ -124,7 +124,7 @@ export class ITCGSignUp extends React.Component<SignUpProp> {
         },
         {
           baseURL: this.props.server,
-          timeout: 1000,
+          timeout: 5000,
           withCredentials: true,
         }
       )

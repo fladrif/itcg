@@ -103,7 +103,7 @@ async function joinGame(matchID: string, player: RoomUser, id: number): Promise<
       },
       {
         baseURL: SERVER,
-        timeout: 1000,
+        timeout: 5000,
         headers: { ...getServerHeaders(), ...clientHeader },
       }
     )

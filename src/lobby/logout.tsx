@@ -14,7 +14,7 @@ export class ITCGLogOut extends React.Component<LogoutProp> {
     const resp = await axios
       .get(`/logout`, {
         baseURL: this.props.server,
-        timeout: 1000,
+        timeout: 5000,
         withCredentials: true,
       })
       .catch();

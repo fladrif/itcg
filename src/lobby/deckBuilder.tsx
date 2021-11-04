@@ -137,7 +137,7 @@ export class ITCGDeckBuilder extends React.Component<DeckBuilderProp> {
   async getCardList() {
     const resp = await axios('/cards', {
       baseURL: this.props.server,
-      timeout: 1000,
+      timeout: 5000,
       withCredentials: true,
     });
 
@@ -149,7 +149,7 @@ export class ITCGDeckBuilder extends React.Component<DeckBuilderProp> {
   async getDeckInfo() {
     const resp = await axios(`/decks/${this.props.deckID}`, {
       baseURL: this.props.server,
-      timeout: 1000,
+      timeout: 5000,
       withCredentials: true,
     });
 
@@ -167,7 +167,7 @@ export class ITCGDeckBuilder extends React.Component<DeckBuilderProp> {
         },
         {
           baseURL: this.props.server,
-          timeout: 1000,
+          timeout: 5000,
           withCredentials: true,
         }
       )
@@ -196,7 +196,7 @@ export class ITCGDeckBuilder extends React.Component<DeckBuilderProp> {
         },
         {
           baseURL: this.props.server,
-          timeout: 1000,
+          timeout: 5000,
           withCredentials: true,
         }
       )

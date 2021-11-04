@@ -46,7 +46,7 @@ export class ITCGDeck extends React.Component<DeckProp> {
   async updateSelf(obj?: Partial<State>) {
     const resp = await axios('/decks', {
       baseURL: this.props.server,
-      timeout: 1000,
+      timeout: 5000,
       withCredentials: true,
     });
 
