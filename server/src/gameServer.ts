@@ -4,8 +4,11 @@ import lodash from 'lodash';
 import { LobbyAPI } from 'boardgame.io';
 
 import { SERVER, GAME_NAME } from '../../src/config';
+import { BLANK_CARDNAME, Character, NonCharacter } from '../../src/card';
+import { cards, CardName } from '../../src/cards';
 
 import { db } from './db';
+import { Decks } from './dbTable';
 import { Room, RoomUser } from './types';
 import { SERVER_AUTH_HEADER, SERVER_CLIENT_HEADER, SERVER_ID, signJWT } from './utils';
 
@@ -15,6 +18,48 @@ export interface GamePlayerData {
   credentials?: string;
 }
 
+function getCard(name: string): Omit<Character | NonCharacter, 'owner' | 'key'> {
+  for (const card in cards) {
+    if (cards[card as CardName].name === name) return cards[card as CardName];
+  }
+
+  return cards['blankCard'];
+}
+
+export function updateDeck(deck: Decks): boolean {
+  const updatedDeckList = deck.deck_list.deck.map((card) => {
+    const isV1 = card[0].canonicalName === undefined;
+
+    const updatedCard = isV1
+      ? (getCard(card[0].name) as Omit<NonCharacter, 'owner' | 'key'>)
+      : (cards[card[0].canonicalName] as Omit<NonCharacter, 'owner' | 'key'>);
+
+    return [updatedCard, card[1]] as [Omit<NonCharacter, 'owner' | 'key'>, number];
+  });
+
+  const character = deck.deck_list.character;
+  const updatedChar =
+    character.canonicalName === undefined
+      ? (getCard(character.name) as Omit<Character, 'owner' | 'key'>)
+      : (cards[character.canonicalName] as Omit<Character, 'owner' | 'key'>);
+
+  if (
+    !updatedChar ||
+    !updatedDeckList.reduce((acc, card) => acc && card[0].name !== BLANK_CARDNAME, true)
+  ) {
+    return false;
+  }
+
+  db.saveDeck(
+    deck.id,
+    deck.name,
+    { character: updatedChar, deck: updatedDeckList },
+    deck.owner ? deck.owner.username : undefined
+  );
+
+  return true;
+}
+
 export async function shouldStartGame(room: Room): Promise<boolean> {
   const validDecks = await Bluebird.reduce(
     room.users,
@@ -22,7 +67,9 @@ export async function shouldStartGame(room: Room): Promise<boolean> {
       if (!usr.deck) return false;
 
       const deckExist = await db.getDeck(usr.deck);
-      return !!deckExist && acc;
+      const validDeck = !!deckExist ? updateDeck(deckExist) : false;
+
+      return !!validDeck && acc;
     },
     true
   );
