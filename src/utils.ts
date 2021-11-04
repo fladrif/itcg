@@ -160,11 +160,5 @@ export function scrubPile(deck: NonCharacter[]): NonCharacter[] {
 }
 
 export function every<T>(arr: T[], fn: (val: T) => boolean): boolean {
-  let retVal = true;
-
-  for (const val of arr) {
-    retVal = retVal && fn(val);
-  }
-
-  return retVal;
+  return arr.reduce<boolean>((acc, val) => acc && fn(val), true);
 }
