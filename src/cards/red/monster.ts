@@ -10,6 +10,7 @@ const defaultTypes = {
 };
 
 export const bellflowerroot: Omit<Monster, 'key' | 'owner'> = {
+  canonicalName: 'bellflowerroot',
   name: 'Bellflower Root',
   image: 'BellflowerRoot',
   level: 53,
@@ -48,6 +49,7 @@ export const bellflowerroot: Omit<Monster, 'key' | 'owner'> = {
 };
 
 export const darkaxestump: Omit<Monster, 'key' | 'owner'> = {
+  canonicalName: 'darkaxestump',
   name: 'Dark Axe Stump',
   image: 'DarkAxeStump',
   level: 22,
@@ -76,6 +78,7 @@ export const darkaxestump: Omit<Monster, 'key' | 'owner'> = {
 };
 
 export const jrnecki: Omit<Monster, 'key' | 'owner'> = {
+  canonicalName: 'jrnecki',
   name: 'Jr. Necki',
   image: 'JrNecki',
   level: 21,
@@ -104,6 +107,7 @@ export const jrnecki: Omit<Monster, 'key' | 'owner'> = {
 };
 
 export const lioner: Omit<Monster, 'key' | 'owner'> = {
+  canonicalName: 'lioner',
   name: 'Lioner',
   image: 'Lioner',
   level: 53,
@@ -142,6 +146,7 @@ export const lioner: Omit<Monster, 'key' | 'owner'> = {
 };
 
 export const octopus: Omit<Monster, 'key' | 'owner'> = {
+  canonicalName: 'octopus',
   name: 'Octopus',
   image: 'Octopus',
   level: 12,
@@ -164,6 +169,7 @@ export const octopus: Omit<Monster, 'key' | 'owner'> = {
 };
 
 export const peachmonkey: Omit<Monster, 'key' | 'owner'> = {
+  canonicalName: 'peachmonkey',
   name: 'Peach Monkey',
   image: 'PeachMonkey',
   level: 62,
@@ -214,6 +220,7 @@ export const peachmonkey: Omit<Monster, 'key' | 'owner'> = {
 };
 
 export const zetagray: Omit<Monster, 'key' | 'owner'> = {
+  canonicalName: 'zetagray',
   name: 'Zeta Gray',
   image: 'ZetaGray',
   level: 42,
@@ -233,6 +240,7 @@ export const zetagray: Omit<Monster, 'key' | 'owner'> = {
 };
 
 export const zombielupin: Omit<Monster, 'key' | 'owner'> = {
+  canonicalName: 'zombielupin',
   name: 'Zombie Lupin',
   image: 'ZombieLupin',
   level: 40,

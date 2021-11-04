@@ -8,6 +8,7 @@ const defaultTypes = {
 };
 
 export const maya: Omit<Character, 'key' | 'owner'> = {
+  canonicalName: 'maya',
   name: 'Maya',
   image: 'Maya',
   health: 190,

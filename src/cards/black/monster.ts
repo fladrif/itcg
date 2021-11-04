@@ -10,6 +10,7 @@ const defaultTypes = {
 };
 
 export const buffy: Omit<Monster, 'key' | 'owner'> = {
+  canonicalName: 'buffy',
   name: 'Buffy',
   image: 'Buffy',
   level: 61,
@@ -58,6 +59,7 @@ export const buffy: Omit<Monster, 'key' | 'owner'> = {
 };
 
 export const cico: Omit<Monster, 'key' | 'owner'> = {
+  canonicalName: 'cico',
   name: 'Cico',
   image: 'Cico',
   level: 25,
@@ -98,6 +100,7 @@ export const cico: Omit<Monster, 'key' | 'owner'> = {
 };
 
 export const croco: Omit<Monster, 'key' | 'owner'> = {
+  canonicalName: 'croco',
   name: 'Croco',
   image: 'Croco',
   level: 52,
@@ -126,6 +129,7 @@ export const croco: Omit<Monster, 'key' | 'owner'> = {
 };
 
 export const krappy: Omit<Monster, 'key' | 'owner'> = {
+  canonicalName: 'krappy',
   name: 'Krappy',
   image: 'Krappy',
   level: 24,
@@ -171,6 +175,7 @@ export const krappy: Omit<Monster, 'key' | 'owner'> = {
 };
 
 export const krip: Omit<Monster, 'key' | 'owner'> = {
+  canonicalName: 'krip',
   name: 'Krip',
   image: 'Krip',
   level: 30,
@@ -216,6 +221,7 @@ export const krip: Omit<Monster, 'key' | 'owner'> = {
 };
 
 export const lorang: Omit<Monster, 'key' | 'owner'> = {
+  canonicalName: 'lorang',
   name: 'Lorang',
   image: 'Lorang',
   level: 37,
@@ -244,6 +250,7 @@ export const lorang: Omit<Monster, 'key' | 'owner'> = {
 };
 
 export const orangemushroom: Omit<Monster, 'key' | 'owner'> = {
+  canonicalName: 'orangemushroom',
   name: 'Orange Mushroom',
   image: 'OrangeMushroom',
   level: 8,
@@ -274,6 +281,7 @@ export const orangemushroom: Omit<Monster, 'key' | 'owner'> = {
 };
 
 export const redsnail: Omit<Monster, 'key' | 'owner'> = {
+  canonicalName: 'redsnail',
   name: 'Red Snail',
   image: 'RedSnail',
   level: 4,

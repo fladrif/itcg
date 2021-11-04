@@ -30,6 +30,7 @@ const avengerDrawAbility: Skill = {
 };
 
 export const avenger: Omit<Tactic, 'key' | 'owner'> = {
+  canonicalName: 'avenger',
   name: 'Avenger',
   image: 'Avenger',
   level: 70,
@@ -58,6 +59,7 @@ export const avenger: Omit<Tactic, 'key' | 'owner'> = {
 };
 
 export const doublestrike: Omit<Tactic, 'key' | 'owner'> = {
+  canonicalName: 'doublestrike',
   name: 'Double Strike',
   image: 'DoubleStrike',
   level: 20,

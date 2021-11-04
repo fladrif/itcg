@@ -8,6 +8,7 @@ const defaultTypes = {
 };
 
 export const itemtrade: Omit<Tactic, 'key' | 'owner'> = {
+  canonicalName: 'itemtrade',
   name: 'Item Trade',
   image: 'ItemTrade',
   level: 30,
@@ -44,6 +45,7 @@ export const itemtrade: Omit<Tactic, 'key' | 'owner'> = {
   ...defaultTypes,
 };
 export const resting: Omit<Tactic, 'key' | 'owner'> = {
+  canonicalName: 'resting',
   name: 'Resting',
   image: 'Resting',
   level: 10,

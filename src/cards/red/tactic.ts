@@ -11,6 +11,7 @@ const magicclawAbility: Skill = {
   requirements: { level: 0 },
   action: 'damage',
   activated: false,
+  noReset: true,
   opts: {
     damage: 20,
   },
@@ -30,6 +31,7 @@ const magicclawAbility: Skill = {
 };
 
 export const energybolt: Omit<Tactic, 'key' | 'owner'> = {
+  canonicalName: 'energybolt',
   name: 'Energy Bolt',
   image: 'EnergyBolt',
   level: 40,
@@ -97,6 +99,7 @@ export const energybolt: Omit<Tactic, 'key' | 'owner'> = {
 };
 
 export const heal: Omit<Tactic, 'key' | 'owner'> = {
+  canonicalName: 'heal',
   name: 'Heal',
   image: 'Heal',
   level: 40,
@@ -132,6 +135,7 @@ export const heal: Omit<Tactic, 'key' | 'owner'> = {
 };
 
 export const magicclaw: Omit<Tactic, 'key' | 'owner'> = {
+  canonicalName: 'magicclaw',
   name: 'Magic Claw',
   image: 'MagicClaw',
   level: 20,
@@ -154,18 +158,19 @@ export const magicclaw: Omit<Tactic, 'key' | 'owner'> = {
     },
   ],
   ability: {
-    skills: [magicclawAbility, { ...magicclawAbility, noReset: true }],
+    skills: [magicclawAbility, magicclawAbility],
   },
   ...defaultTypes,
 };
 
-export const questSkill: Skill = {
+const questSkill: Skill = {
   action: 'quest',
   activated: false,
   requirements: { level: 0 },
 };
 
 export const sidequest: Omit<Tactic, 'key' | 'owner'> = {
+  canonicalName: 'sidequest',
   name: 'Side Quest',
   image: 'SideQuest',
   level: 40,

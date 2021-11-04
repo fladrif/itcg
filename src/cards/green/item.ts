@@ -9,6 +9,7 @@ const defaultTypes = {
 };
 
 export const battlebow: Omit<Item, 'key' | 'owner'> = {
+  canonicalName: 'battlebow',
   name: 'Battle Bow',
   image: 'BattleBow',
   level: 25,
@@ -32,6 +33,7 @@ export const battlebow: Omit<Item, 'key' | 'owner'> = {
 };
 
 export const goldencrow: Omit<Item, 'key' | 'owner'> = {
+  canonicalName: 'goldencrow',
   name: 'Golden Crow',
   image: 'GoldenCrow',
   level: 60,

@@ -1,7 +1,7 @@
 import { PlayerID } from 'boardgame.io';
 
 import { Deck } from '../game';
-import * as cards from '../cards';
+import { cards } from '../cards';
 import { instantiateCard, NonCharacter } from '../card';
 
 export function hydrateDeck(deck: Deck, owner: PlayerID): NonCharacter[] {
@@ -9,7 +9,7 @@ export function hydrateDeck(deck: Deck, owner: PlayerID): NonCharacter[] {
 }
 
 export const shermanSample: Deck = {
-  character: cards.sherman,
+  character: cards.maya,
   deck: [
     [cards.slime, 1],
     [cards.fairy, 1],
@@ -17,11 +17,11 @@ export const shermanSample: Deck = {
     [cards.octopus, 1],
     [cards.redsnail, 1],
     [cards.wildboar, 1],
-    [cards.magicclaw, 1],
-    [cards.ribbonpig, 4],
+    [cards.magicclaw, 4],
+    [cards.ribbonpig, 1],
     [cards.darkaxestump, 1],
     [cards.greenmushroom, 1],
-    [cards.orangemushroom, 4],
+    [cards.orangemushroom, 1],
     [cards.emeraldearrings, 1],
   ],
 };

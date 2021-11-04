@@ -1,5 +1,5 @@
 import { Deck } from '../game';
-import * as cards from '../cards';
+import { cards } from '../cards';
 
 export const nixieBase: Deck = {
   character: cards.nixie,

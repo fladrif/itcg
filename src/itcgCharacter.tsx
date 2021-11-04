@@ -80,7 +80,6 @@ export class ITCGCharacter extends React.Component<CharacterProp> {
     }
 
     character.skills.map((skill, idx) => {
-      console.log('Is Array: ', Array.isArray(skill));
       if (every(skill, (sk) => sk.activated)) {
         skillStyle[idx].push('activatedBorderTop', 'activatedBorderBot');
       }

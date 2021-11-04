@@ -10,6 +10,7 @@ const defaultTypes = {
 };
 
 export const curseeye: Omit<Monster, 'key' | 'owner'> = {
+  canonicalName: 'curseeye',
   name: 'Curse Eye',
   image: 'CurseEye',
   level: 35,
@@ -48,6 +49,7 @@ export const curseeye: Omit<Monster, 'key' | 'owner'> = {
 };
 
 export const drake: Omit<Monster, 'key' | 'owner'> = {
+  canonicalName: 'drake',
   name: 'Drake',
   image: 'Drake',
   level: 50,
@@ -112,6 +114,7 @@ export const drake: Omit<Monster, 'key' | 'owner'> = {
 };
 
 export const fairy: Omit<Monster, 'key' | 'owner'> = {
+  canonicalName: 'fairy',
   name: 'Fairy',
   image: 'Fairy',
   level: 30,
@@ -142,6 +145,7 @@ export const fairy: Omit<Monster, 'key' | 'owner'> = {
 };
 
 export const greentrixter: Omit<Monster, 'key' | 'owner'> = {
+  canonicalName: 'greentrixter',
   name: 'Green Trixter',
   image: 'GreenTrixter',
   level: 28,
@@ -206,6 +210,7 @@ export const greentrixter: Omit<Monster, 'key' | 'owner'> = {
 };
 
 export const hornedmushroom: Omit<Monster, 'key' | 'owner'> = {
+  canonicalName: 'hornedmushroom',
   name: 'Horned Mushroom',
   image: 'HornedMushroom',
   level: 22,
@@ -244,6 +249,7 @@ export const hornedmushroom: Omit<Monster, 'key' | 'owner'> = {
 };
 
 export const jrboogie: Omit<Monster, 'key' | 'owner'> = {
+  canonicalName: 'jrboogie',
   name: 'Jr. Boogie',
   image: 'JrBoogie',
   level: 35,
@@ -269,6 +275,7 @@ export const jrboogie: Omit<Monster, 'key' | 'owner'> = {
 };
 
 export const lunarpixie: Omit<Monster, 'key' | 'owner'> = {
+  canonicalName: 'lunarpixie',
   name: 'Lunar Pixie',
   image: 'LunarPixie',
   level: 45,
@@ -320,6 +327,7 @@ export const lunarpixie: Omit<Monster, 'key' | 'owner'> = {
 };
 
 export const platoonchronos: Omit<Monster, 'key' | 'owner'> = {
+  canonicalName: 'platoonchronos',
   name: 'Platoon Chronos',
   image: 'PlatoonChronos',
   level: 41,
@@ -345,6 +353,7 @@ export const platoonchronos: Omit<Monster, 'key' | 'owner'> = {
 };
 
 export const stirge: Omit<Monster, 'key' | 'owner'> = {
+  canonicalName: 'stirge',
   name: 'Stirge',
   image: 'Stirge',
   level: 20,
@@ -383,6 +392,7 @@ export const stirge: Omit<Monster, 'key' | 'owner'> = {
 };
 
 export const tweeter: Omit<Monster, 'key' | 'owner'> = {
+  canonicalName: 'tweeter',
   name: 'Tweeter',
   image: 'Tweeter',
   level: 39,

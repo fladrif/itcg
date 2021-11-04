@@ -10,6 +10,7 @@ const defaultTypes = {
 };
 
 export const blockgolem: Omit<Monster, 'key' | 'owner'> = {
+  canonicalName: 'blockgolem',
   name: 'Block Golem',
   image: 'BlockGolem',
   level: 42,
@@ -27,6 +28,7 @@ export const blockgolem: Omit<Monster, 'key' | 'owner'> = {
 };
 
 export const fireboar: Omit<Monster, 'key' | 'owner'> = {
+  canonicalName: 'fireboar',
   name: 'Fire Boar',
   image: 'FireBoar',
   level: 32,
@@ -55,6 +57,7 @@ export const fireboar: Omit<Monster, 'key' | 'owner'> = {
 };
 
 export const greenmushroom: Omit<Monster, 'key' | 'owner'> = {
+  canonicalName: 'greenmushroom',
   name: 'Green Mushroom',
   image: 'GreenMushroom',
   level: 15,
@@ -93,6 +96,7 @@ export const greenmushroom: Omit<Monster, 'key' | 'owner'> = {
 };
 
 export const grizzly: Omit<Monster, 'key' | 'owner'> = {
+  canonicalName: 'grizzly',
   name: 'Grizzly',
   image: 'Grizzly',
   level: 56,
@@ -121,6 +125,7 @@ export const grizzly: Omit<Monster, 'key' | 'owner'> = {
 };
 
 export const jryeti: Omit<Monster, 'key' | 'owner'> = {
+  canonicalName: 'jryeti',
   name: 'Jr. Yeti',
   image: 'JrYeti',
   level: 50,
@@ -157,6 +162,7 @@ export const jryeti: Omit<Monster, 'key' | 'owner'> = {
 };
 
 export const pepe: Omit<Monster, 'key' | 'owner'> = {
+  canonicalName: 'pepe',
   name: 'Pepe',
   image: 'Pepe',
   level: 60,
@@ -197,6 +203,7 @@ export const pepe: Omit<Monster, 'key' | 'owner'> = {
 };
 
 export const ribbonpig: Omit<Monster, 'key' | 'owner'> = {
+  canonicalName: 'ribbonpig',
   name: 'Ribbon Pig',
   image: 'RibbonPig',
   level: 10,
@@ -225,6 +232,7 @@ export const ribbonpig: Omit<Monster, 'key' | 'owner'> = {
 };
 
 export const sentinel: Omit<Monster, 'key' | 'owner'> = {
+  canonicalName: 'sentinel',
   name: 'Sentinel',
   image: 'Sentinel',
   level: 30,
@@ -242,6 +250,7 @@ export const sentinel: Omit<Monster, 'key' | 'owner'> = {
 };
 
 export const slime: Omit<Monster, 'key' | 'owner'> = {
+  canonicalName: 'slime',
   name: 'Slime',
   image: 'Slime',
   level: 6,
@@ -282,6 +291,7 @@ export const slime: Omit<Monster, 'key' | 'owner'> = {
 };
 
 export const stonegolem: Omit<Monster, 'key' | 'owner'> = {
+  canonicalName: 'stonegolem',
   name: 'Stone Golem',
   image: 'StoneGolem',
   level: 55,
@@ -299,6 +309,7 @@ export const stonegolem: Omit<Monster, 'key' | 'owner'> = {
 };
 
 export const tauromacis: Omit<Monster, 'key' | 'owner'> = {
+  canonicalName: 'tauromacis',
   name: 'Tauromacis',
   image: 'Tauromacis',
   level: 70,
@@ -318,6 +329,7 @@ export const tauromacis: Omit<Monster, 'key' | 'owner'> = {
 };
 
 export const wildboar: Omit<Monster, 'key' | 'owner'> = {
+  canonicalName: 'wildboar',
   name: 'Wild Boar',
   image: 'WildBoar',
   level: 25,
@@ -356,6 +368,7 @@ export const wildboar: Omit<Monster, 'key' | 'owner'> = {
 };
 
 export const yetipepe: Omit<Monster, 'key' | 'owner'> = {
+  canonicalName: 'yetipepe',
   name: 'Yeti & Pepe',
   image: 'YetiPepe',
   level: 78,

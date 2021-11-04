@@ -1,7 +1,7 @@
 import { ActionTargets, Location } from './actions';
 import { PlayerState } from './game';
 import { instantiateCard } from './card';
-import { nixie } from './cards';
+import { cards } from './cards';
 
 export const filterFinished: ActionTargets = {
   xor: [
@@ -116,7 +116,7 @@ export const filterCurrentLevelAfter: ActionTargets = {
 
 export const playerState: PlayerState = {
   deck: [],
-  character: instantiateCard(nixie, '0')[0],
+  character: instantiateCard(cards.nixie, '0')[0],
   hand: [],
   learnedSkills: [],
   field: [],

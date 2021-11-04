@@ -8,6 +8,7 @@ const defaultTypes = {
 };
 
 export const battleshield: Omit<Item, 'key' | 'owner'> = {
+  canonicalName: 'battleshield',
   name: 'Battle Shield',
   image: 'BattleShield',
   level: 35,
@@ -62,6 +63,7 @@ export const battleshield: Omit<Item, 'key' | 'owner'> = {
 };
 
 export const theninedragons: Omit<Item, 'key' | 'owner'> = {
+  canonicalName: 'theninedragons',
   name: 'The Nine Dragons',
   image: 'TheNineDragons',
   level: 50,

@@ -8,6 +8,7 @@ const defaultTypes = {
 };
 
 export const arrowblow: Omit<Tactic, 'key' | 'owner'> = {
+  canonicalName: 'arrowblow',
   name: 'Arrow Blow',
   image: 'ArrowBlow',
   level: 10,
@@ -69,6 +70,7 @@ export const arrowblow: Omit<Tactic, 'key' | 'owner'> = {
 };
 
 export const rainofarrows: Omit<Tactic, 'key' | 'owner'> = {
+  canonicalName: 'rainofarrows',
   name: 'Rain Of Arrows',
   image: 'RainOfArrows',
   level: 40,
@@ -108,6 +110,7 @@ export const rainofarrows: Omit<Tactic, 'key' | 'owner'> = {
 };
 
 export const soularrow: Omit<Tactic, 'key' | 'owner'> = {
+  canonicalName: 'soularrow',
   name: 'Soul Arrow',
   image: 'SoulArrow',
   level: 30,
@@ -185,6 +188,7 @@ export const soularrow: Omit<Tactic, 'key' | 'owner'> = {
 };
 
 export const powerknockback: Omit<Tactic, 'key' | 'owner'> = {
+  canonicalName: 'powerknockback',
   name: 'Power Knock-Back',
   image: 'PowerKnockBack',
   level: 40,

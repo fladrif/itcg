@@ -8,6 +8,7 @@ const defaultTypes = {
 };
 
 export const nixie: Omit<Character, 'key' | 'owner'> = {
+  canonicalName: 'nixie',
   name: 'Nixie',
   image: 'Nixie',
   health: 200,

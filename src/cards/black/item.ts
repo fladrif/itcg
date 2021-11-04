@@ -8,6 +8,7 @@ const defaultTypes = {
 };
 
 export const coconutknife: Omit<Item, 'key' | 'owner'> = {
+  canonicalName: 'coconutknife',
   name: 'Coconut Knife',
   image: 'CoconutKnife',
   level: 20,
@@ -41,6 +42,7 @@ export const coconutknife: Omit<Item, 'key' | 'owner'> = {
 };
 
 export const emeraldearrings: Omit<Item, 'key' | 'owner'> = {
+  canonicalName: 'emeraldearrings',
   name: 'Emerald Earrings',
   image: 'EmeraldEarrings',
   level: 30,

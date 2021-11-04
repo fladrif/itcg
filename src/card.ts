@@ -6,6 +6,7 @@ import { Choice } from './stack';
 import { GlobalState } from './state';
 import { TriggerLifetime, TriggerNames, TriggerOptions } from './triggerStore';
 import { getRandomKey } from './utils';
+import { CardName } from './cards';
 
 export const BLANK_CARDNAME = 'blank';
 
@@ -30,6 +31,7 @@ export enum CardClasses {
 }
 
 export interface Card {
+  canonicalName: CardName;
   name: string;
   type: CardTypes;
   class: CardClasses;
@@ -149,7 +151,8 @@ export function isWarrior(card: Character | NonCharacter): boolean {
   return false;
 }
 
-const blankCard: Omit<NonCharacter, 'key' | 'owner'> = {
+export const blankCard: Omit<NonCharacter, 'key' | 'owner'> = {
+  canonicalName: 'blankCard',
   type: CardTypes.Monster,
   class: CardClasses.Magician,
   selected: false,
