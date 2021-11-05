@@ -101,6 +101,7 @@ const formHeaderCompStyle: React.CSSProperties = {
 };
 
 const listCardStyle: React.CSSProperties = {
+  flex: '1',
   marginLeft: '5%',
 };
 
@@ -281,13 +282,37 @@ export class ITCGDeckBuilder extends React.Component<DeckBuilderProp> {
         <div style={deckListRowStyle} key={card[0].name}>
           <Button onClick={() => this.incCard(card[0].name)}>+</Button>
           <Button onClick={() => this.decCard(card[0].name)}>-</Button>
-          <div style={listCardStyle}>{card[1]}</div>
+          <div style={{ marginLeft: '3%' }}>{card[1]}</div>
           <div style={listCardStyle}>{card[0].name}</div>
+          <div style={listCardStyle}> {card[0].level} </div>
+          <div style={listCardStyle}>{card[0].class}</div>
+          <div style={listCardStyle}>{card[0].type}</div>
         </div>
       );
     });
 
-    return <>{cardList}</>;
+    return (
+      <>
+        <div style={deckListRowStyle} key={'coldescription'}>
+          <div style={{}}>
+            <b>Quantity</b>
+          </div>
+          <div style={listCardStyle}>
+            <b>Name</b>
+          </div>
+          <div style={listCardStyle}>
+            <b>Level</b>
+          </div>
+          <div style={listCardStyle}>
+            <b>Class</b>
+          </div>
+          <div style={listCardStyle}>
+            <b>Type</b>
+          </div>
+        </div>
+        {cardList}
+      </>
+    );
   }
 
   renderCardList(characterList?: boolean) {
