@@ -160,15 +160,7 @@ export const blankCard: Omit<NonCharacter, 'key' | 'owner'> = {
   name: BLANK_CARDNAME,
   image: '',
   ability: {},
-  skill: [
-    {
-      action: 'optional',
-      activated: false,
-      requirements: {
-        level: 0,
-      },
-    },
-  ],
+  skill: [],
 };
 
 export function getBlankCard(owner: string, key: string): NonCharacter {

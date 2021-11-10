@@ -253,6 +253,31 @@ function drinkpotion(G: GameState, ctx: Ctx, opts: ActionOpts): any {
   upsertStack(G, ctx, [healDec]);
 }
 
+function flip(G: GameState, ctx: Ctx, opts: ActionOpts): any {
+  if (!G.stack) return;
+  if (!opts.choiceSelection || !opts.source || !opts.dialogDecision) return;
+
+  const flippedCoin = ctx.random!.Die(2) == 1 ? Choice.Heads : Choice.Tails;
+  const didWin = flippedCoin === opts.choiceSelection;
+
+  const ackDec: Decision = {
+    action: 'ack',
+    noReset: true,
+    opts: {
+      ...opts,
+      dialogDecision: didWin ? opts.dialogDecision : undefined,
+    },
+    dialogPrompt: didWin
+      ? `${flippedCoin}, you won the flip!`
+      : `${flippedCoin}, you lost the flip..`,
+    choice: [Choice.Ack],
+    selection: {},
+    finished: false,
+    key: getRandomKey(),
+  };
+
+  upsertStack(G, ctx, [ackDec]);
+}
 function level(G: GameState, ctx: Ctx, opts: ActionOpts): any {
   if (!G.stack || !opts.selection) return;
 
@@ -281,6 +306,28 @@ function level(G: GameState, ctx: Ctx, opts: ActionOpts): any {
       player.hp += 20;
     });
   }
+}
+
+function loot(G: GameState, ctx: Ctx, opts: ActionOpts): any {
+  if (!G.stack) return;
+
+  const oppState = getOpponentState(G, ctx);
+  if (oppState.hand.length < 3) return;
+
+  const discardDecision: Decision = {
+    action: 'discard',
+    key: getRandomKey(),
+    finished: false,
+    target: {
+      location: Location.OppHand,
+      quantity: 1,
+    },
+    selection: {},
+    noReset: true,
+    opts,
+  };
+
+  upsertStack(G, ctx, [discardDecision]);
 }
 
 function nomercy(G: GameState, ctx: Ctx, opts: ActionOpts): any {
@@ -316,26 +363,34 @@ function optional(G: GameState, ctx: Ctx, opts: ActionOpts): any {
   upsertStack(G, ctx, [opts.dialogDecision]);
 }
 
-// TODO: extend to play cards from top of deck
 function play(G: GameState, ctx: Ctx, opts: ActionOpts): any {
   if (!G.stack) return;
-  if (!opts.selection || !opts.selection[Location.Hand]) return;
+  if (!opts.selection) return;
 
   const player = G.player[ctx.currentPlayer];
+  const locations = Object.keys(opts.selection) as Location[];
 
-  opts.selection[Location.Hand]!.map((card) => {
-    if (isMonster(card) || isItem(card)) {
-      card.turnETB = ctx.turn;
-      player.field.push(card);
-      handleAbility(G, ctx, card);
-    } else if (isTactic(card)) {
-      // TODO: move to temporary zone first
-      player.discard.push(card);
-      handleAbility(G, ctx, card);
-    }
+  locations.forEach((location) => {
+    if (!opts.selection![location]) return;
 
-    rmCard(G, ctx, card, Location.Hand);
+    opts.selection![location]!.map((card) => {
+      if (isMonster(card) || isItem(card)) {
+        card.turnETB = ctx.turn;
+        player.field.push(card);
+        handleAbility(G, ctx, card);
+      } else if (isTactic(card)) {
+        // TODO: move to temporary zone first
+        player.discard.push(card);
+        handleAbility(G, ctx, card);
+      }
+
+      rmCard(G, ctx, card, location);
+    });
   });
+}
+
+function putIntoPlay(G: GameState, ctx: Ctx, opts: ActionOpts): any {
+  play(G, ctx, opts);
 }
 
 function quest(G: GameState, ctx: Ctx, opts: ActionOpts): any {
@@ -508,10 +563,13 @@ export const actions = {
   destroy,
   discard,
   drinkpotion,
+  flip,
   level,
+  loot,
   nomercy,
   optional,
   play,
+  putIntoPlay,
   quest,
   rainofarrows,
   refresh,

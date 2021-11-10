@@ -12,7 +12,7 @@ import {
 import { endLevelStage, endActivateStage, endAttackStage } from './hook';
 import { isMonster, Skill, Character, NonCharacter } from './card';
 import { ensureFilter, filterSelections, isTargetable, mayFinished } from './target';
-import { stackTriggers } from './trigger';
+import { getTriggerFns, stackTriggerFns, stackTriggers } from './trigger';
 import {
   deepCardComp,
   getCurrentStage,
@@ -154,10 +154,21 @@ export function resolveStack(G: GameState, ctx: Ctx, opts?: ResolveStackOptions)
       actionOpts.selection = mergeSelections(decision.selection, decision.opts.selection);
     }
 
+    /**
+     * Will only stack decisions, but won't start executing until after current decision is completed
+     * Used so that cards being destroyed with death triggers can see their own death.
+     * Cards that ignore their own death trigger will need to explicitly check for themselves
+     */
+    const afterTrigFns = getTriggerFns(G, ctx, decision, 'After');
+
     actions[decision.action](G, ctx, actionOpts);
     if (decision.mainDecision) stack.prevActivatePos = undefined;
 
-    stackTriggers(G, ctx, decision, 'After');
+    /**
+     * Triggers will not duplicate, inherent check if triggered for particular decision
+     */
+    afterTrigFns.push(...getTriggerFns(G, ctx, decision, 'After'));
+    stackTriggerFns(G, ctx, decision, afterTrigFns);
 
     pruneSelection(G, ctx, decision.selection, decision.selection); // Removes select tag from card (ui)
     resolveStack(G, ctx);

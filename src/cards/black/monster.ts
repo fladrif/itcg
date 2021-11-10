@@ -280,6 +280,42 @@ export const orangemushroom: Omit<Monster, 'key' | 'owner'> = {
   ...defaultTypes,
 };
 
+export const pinkteddy: Omit<Monster, 'key' | 'owner'> = {
+  canonicalName: 'pinkteddy',
+  name: 'Pink Teddy',
+  image: 'PinkTeddy',
+  level: 32,
+  attack: 30,
+  health: 30,
+  skill: [
+    {
+      action: 'loot',
+      activated: false,
+      requirements: { level: 0, oneshot: true },
+    },
+  ],
+  ability: {},
+  ...defaultTypes,
+};
+
+export const propelly: Omit<Monster, 'key' | 'owner'> = {
+  canonicalName: 'propelly',
+  name: 'Propelly',
+  image: 'Propelly',
+  level: 37,
+  attack: 50,
+  health: 20,
+  skill: [
+    {
+      action: 'loot',
+      activated: false,
+      requirements: { level: 0, oneshot: true },
+    },
+  ],
+  ability: {},
+  ...defaultTypes,
+};
+
 export const redsnail: Omit<Monster, 'key' | 'owner'> = {
   canonicalName: 'redsnail',
   name: 'Red Snail',
@@ -306,5 +342,44 @@ export const redsnail: Omit<Monster, 'key' | 'owner'> = {
     },
   ],
   ability: { keywords: ['tough'] },
+  ...defaultTypes,
+};
+
+export const seacle: Omit<Monster, 'key' | 'owner'> = {
+  canonicalName: 'seacle',
+  name: 'Seacle',
+  image: 'Seacle',
+  level: 23,
+  attack: 20,
+  health: 20,
+  skill: [
+    {
+      action: 'play',
+      activated: false,
+      requirements: {
+        level: 30,
+        class: {
+          [CardClasses.Thief]: 1,
+        },
+      },
+      targets: {
+        xor: [
+          {
+            level: 30,
+            type: CardTypes.Monster,
+            location: Location.Hand,
+            quantity: 1,
+          },
+          {
+            level: 30,
+            type: CardTypes.Tactic,
+            location: Location.Hand,
+            quantity: 1,
+          },
+        ],
+      },
+    },
+  ],
+  ability: { triggers: [{ name: 'SlipperyTrigger' }] },
   ...defaultTypes,
 };

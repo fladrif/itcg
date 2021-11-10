@@ -34,7 +34,7 @@ export interface TriggerOptions {
 
 export interface TriggerLifetime {
   usableTurn?: number; // can only be used on this turn
-  turn?: number; // once per turn; w/ once, only once on that turn
+  turn?: number; // once per turn
 }
 
 export abstract class Trigger {
@@ -62,6 +62,30 @@ export abstract class Trigger {
     this.actionTrigger = actionTrigger;
     this.opts = opts;
     this.lifetime = lifetime;
+  }
+
+  baseCheck(
+    G: GameState,
+    ctx: Ctx,
+    decision: Decision,
+    prep: TriggerPrepostion
+  ): boolean {
+    const alreadyTriggered = G.stack!.decisionTriggers[decision.key].includes(this.key);
+    const rightPrep = prep === this.prep;
+    const rightAction = decision.action === this.actionTrigger;
+
+    const baseChecks = !alreadyTriggered && rightPrep && rightAction;
+
+    const usableTurn = this.lifetime?.usableTurn;
+    const canActivateOnTurn = usableTurn ? usableTurn == ctx.turn : false;
+
+    const onceATurn = this.lifetime?.turn;
+    const canTriggerThisTurn = onceATurn ? onceATurn <= ctx.turn : false;
+
+    if (!!usableTurn) return canActivateOnTurn && baseChecks;
+    if (!!onceATurn) return canTriggerThisTurn && baseChecks;
+
+    return baseChecks;
   }
 
   abstract shouldTrigger(
@@ -536,7 +560,7 @@ export class ShieldTrigger extends Trigger {
   }
 }
 
-export class PrevailTrigger extends Trigger {
+export class SlipperyTrigger extends Trigger {
   constructor(
     cardOwner: string,
     player: PlayerID,
@@ -547,10 +571,8 @@ export class PrevailTrigger extends Trigger {
     super(cardOwner, 'Before', 'destroy', key, opts, player, lifetime);
   }
 
-  shouldTrigger(G: GameState, _ctx: Ctx, decision: Decision, prep: TriggerPrepostion) {
-    const alreadyTriggered = G.stack!.decisionTriggers[decision.key].includes(this.key);
-    const rightPrep = prep === this.prep;
-    const rightAction = decision.action === this.actionTrigger;
+  shouldTrigger(G: GameState, ctx: Ctx, decision: Decision, prep: TriggerPrepostion) {
+    if (!this.baseCheck(G, ctx, decision, prep)) return false;
 
     const locations = Object.keys(decision.selection) as Location[];
     const monsterDestroyed = locations.some(
@@ -559,8 +581,61 @@ export class PrevailTrigger extends Trigger {
         decision.selection[location]!.some((card) => card.key === this.cardOwner)
     );
 
-    if (alreadyTriggered || !rightPrep || !rightAction || !monsterDestroyed) return false;
-    return true;
+    return monsterDestroyed;
+  }
+
+  createDecision(G: GameState, ctx: Ctx, _decision: Decision) {
+    const currentLocation = getCardLocation(G, ctx, this.cardOwner);
+    const card = getCardAtLocation(G, ctx, currentLocation, this.cardOwner);
+
+    const slipperyDecision: Decision = {
+      action: 'putIntoPlay',
+      selection: { [currentLocation]: [card] },
+      finished: false,
+      key: getRandomKey(),
+      opts: {
+        source: card,
+      },
+    };
+
+    const flipDecision: Decision = {
+      action: 'flip',
+      selection: {},
+      choice: [Choice.Heads, Choice.Tails],
+      opts: {
+        dialogDecision: slipperyDecision,
+        source: card,
+      },
+      finished: false,
+      key: getRandomKey(),
+    };
+
+    return [flipDecision];
+  }
+}
+
+export class PrevailTrigger extends Trigger {
+  constructor(
+    cardOwner: string,
+    player: PlayerID,
+    key: string,
+    opts?: TriggerOptions,
+    lifetime?: TriggerLifetime
+  ) {
+    super(cardOwner, 'After', 'destroy', key, opts, player, lifetime);
+  }
+
+  shouldTrigger(G: GameState, ctx: Ctx, decision: Decision, prep: TriggerPrepostion) {
+    if (!this.baseCheck(G, ctx, decision, prep)) return false;
+
+    const locations = Object.keys(decision.selection) as Location[];
+    const monsterDestroyed = locations.some(
+      (location) =>
+        !!decision.selection[location] &&
+        decision.selection[location]!.some((card) => card.key === this.cardOwner)
+    );
+
+    return monsterDestroyed;
   }
 
   createDecision(G: GameState, ctx: Ctx, _decision: Decision) {
@@ -821,6 +896,7 @@ export const triggers = {
   RelentlessTrigger,
   RevengeTrigger,
   ShieldTrigger,
+  SlipperyTrigger,
   SteadyHandTrigger,
   ToughTrigger,
 };

@@ -154,7 +154,7 @@ export function mergeSelections(sel1: Selection, sel2: Selection): Selection {
 export function scrubPile(deck: NonCharacter[]): NonCharacter[] {
   const newDeck = deck.map((card) => {
     if (card.reveal) return card;
-    return getBlankCard(card.owner, card.key);
+    return getBlankCard(card.owner, getRandomKey());
   });
   return newDeck;
 }
