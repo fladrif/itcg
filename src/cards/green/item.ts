@@ -64,6 +64,6 @@ export const goldencrow: Omit<Item, 'key' | 'owner'> = {
       },
     },
   ],
-  ability: {}, // TODO: double dmg trigger
+  ability: { triggers: [{ name: 'GoldenCrowTrigger' }] },
   ...defaultTypes,
 };

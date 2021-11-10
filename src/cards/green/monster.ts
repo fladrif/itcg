@@ -9,6 +9,45 @@ const defaultTypes = {
   damageTaken: 0,
 };
 
+export const cerebes: Omit<Monster, 'key' | 'owner'> = {
+  canonicalName: 'cerebes',
+  name: 'Cerebes',
+  image: 'Cerebes',
+  level: 72,
+  attack: 70,
+  health: 70,
+  skill: [
+    {
+      action: 'play',
+      activated: false,
+      requirements: {
+        level: 80,
+        class: {
+          [CardClasses.Bowman]: 2,
+        },
+      },
+      targets: {
+        xor: [
+          {
+            level: 120,
+            type: CardTypes.Item,
+            location: Location.Hand,
+            quantity: 1,
+          },
+          {
+            level: 120,
+            type: CardTypes.Monster,
+            location: Location.Hand,
+            quantity: 1,
+          },
+        ],
+      },
+    },
+  ],
+  ability: { triggers: [{ name: 'EarthquakeTrigger', opts: { damage: 40 } }] },
+  ...defaultTypes,
+};
+
 export const curseeye: Omit<Monster, 'key' | 'owner'> = {
   canonicalName: 'curseeye',
   name: 'Curse Eye',

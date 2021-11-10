@@ -105,6 +105,12 @@ export abstract class Trigger {
     return this.shouldTriggerExtension(G, ctx, decision, prep);
   }
 
+  isOwner(decision: Decision): boolean {
+    return decision.opts?.source?.owner
+      ? decision.opts.source.owner === this.owner
+      : false;
+  }
+
   abstract shouldTriggerExtension(
     G: GameState,
     ctx: Ctx,
@@ -144,7 +150,7 @@ export class BattleBowTrigger extends Trigger {
       : false;
     const sourceIsChar = sourceLocation ? validLocations.includes(sourceLocation) : false;
 
-    return sourceIsChar;
+    return sourceIsChar && this.isOwner(decision);
   }
 
   createDecision(G: GameState, ctx: Ctx, decision: Decision) {
@@ -252,6 +258,69 @@ export class DmgDestroyTrigger extends Trigger {
   }
 }
 
+export class EarthquakeTrigger extends Trigger {
+  constructor(
+    cardOwner: string,
+    player: PlayerID,
+    key: string,
+    opts?: TriggerOptions,
+    lifetime?: TriggerLifetime
+  ) {
+    super(cardOwner, 'After', 'damage', key, opts, player, lifetime);
+  }
+
+  shouldTriggerExtension(
+    _G: GameState,
+    _ctx: Ctx,
+    decision: Decision,
+    _prep: TriggerPrepostion
+  ) {
+    const locations = Object.keys(decision.selection) as Location[];
+    const cardIsDamaged = locations.some(
+      (location) =>
+        !!decision.selection[location] &&
+        decision.selection[location]!.some((card) => card.key === this.cardOwner)
+    );
+
+    const dmgSource = decision.opts?.source;
+    const sourceIsMonster = dmgSource ? dmgSource.type === CardTypes.Monster : false;
+
+    const triggerDamageExists = this.opts?.damage;
+
+    return cardIsDamaged && sourceIsMonster && !!triggerDamageExists;
+  }
+
+  createDecision(G: GameState, ctx: Ctx, decision: Decision) {
+    const source = decision.opts!.source!;
+
+    const cardLoc = getCardLocation(G, ctx, source.key);
+    const card = getCardAtLocation(G, ctx, cardLoc, source.key);
+
+    const isDamaged = decision.opts?.damage ? decision.opts.damage > 0 : false;
+    if (!isDamaged) return [];
+
+    const dec: Decision = {
+      action: 'damage',
+      selection: {
+        [cardLoc]: [card],
+      },
+      finished: false,
+      opts: {
+        damage: this.opts!.damage,
+        source: getCardAtLocation(
+          G,
+          ctx,
+          getCardLocation(G, ctx, this.cardOwner),
+          this.cardOwner
+        ),
+      },
+      key: getRandomKey(),
+    };
+
+    return [dec];
+  }
+}
+
 export class FairyTrigger extends Trigger {
   constructor(
     cardOwner: string,
@@ -330,6 +399,74 @@ export class GeniusTrigger extends Trigger {
     };
 
     return [dec];
+  }
+}
+
+export class GoldenCrowTrigger extends Trigger {
+  constructor(
+    cardOwner: string,
+    player: PlayerID,
+    key: string,
+    opts?: TriggerOptions,
+    lifetime?: TriggerLifetime
+  ) {
+    super(cardOwner, 'Before', 'damage', key, opts, player, lifetime);
+  }
+
+  shouldTriggerExtension(
+    G: GameState,
+    ctx: Ctx,
+    decision: Decision,
+    _prep: TriggerPrepostion
+  ) {
+    const validLocations = [
+      Location.OppCharacter,
+      Location.OppCharAction,
+      Location.Character,
+      Location.CharAction,
+    ];
+
+    const sourceLocation = decision.opts?.source
+      ? getCardLocation(G, ctx, decision.opts.source.key)
+      : false;
+    const sourceIsChar = sourceLocation ? validLocations.includes(sourceLocation) : false;
+
+    return sourceIsChar && this.isOwner(decision);
+  }
+
+  createDecision(G: GameState, ctx: Ctx, decision: Decision) {
+    const decisionDmg = decision.opts?.damage || 0;
+
+    const buffDec: Decision = {
+      action: 'buff',
+      finished: false,
+      selection: {},
+      opts: {
+        damage: decisionDmg,
+        decision: decision.key,
+      },
+      key: getRandomKey(),
+    };
+
+    const optionalDec: Decision = {
+      action: 'optional',
+      finished: false,
+      selection: {},
+      choice: [Choice.Yes, Choice.No],
+      opts: {
+        dialogDecision: buffDec,
+        triggerKey: this.key,
+        source: getCardAtLocation(
+          G,
+          ctx,
+          getCardLocation(G, ctx, this.cardOwner),
+          this.cardOwner
+        ),
+      },
+      key: getRandomKey(),
+    };
+
+    return [optionalDec];
   }
 }
 
@@ -845,8 +982,10 @@ export function pushTriggerStore(
 export const triggers = {
   BattleBowTrigger,
   DmgDestroyTrigger,
+  EarthquakeTrigger,
   FairyTrigger,
   GeniusTrigger,
+  GoldenCrowTrigger,
   LootTrigger,
   NoMercyTrigger,
   PrevailTrigger,
