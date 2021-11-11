@@ -22,9 +22,9 @@ export function stackTriggers(
 ): boolean {
   // TODO: Maybe should split this into multiple calls, one for ea selection, or split decision, one for ea selection
   // edit: probably for shield, but maybe not if trigger order works + splitting damage decisions
-  const decisions = getTriggers(G, ctx, decision, prep);
+  const decisions = getTriggerFns(G, ctx, decision, prep);
 
-  upsertStack(G, ctx, decisions);
+  stackTriggerFns(G, ctx, decision, decisions);
 
   if (prep === 'Before' && decisions.length > 0) return true;
   return false;
@@ -56,26 +56,6 @@ export function getTriggerFns(
       G.stack!.decisionTriggers[decision.key].push(trigger.key);
 
       triggerDecisions.push(trigger.createDecision.bind(trigger));
-    }
-  }
-
-  return triggerDecisions;
-}
-
-function getTriggers(
-  G: GameState,
-  ctx: Ctx,
-  decision: Decision,
-  prep: TriggerPrepostion
-): Decision[] {
-  const processedTriggers = G.triggers.map((store) => processTriggers(store));
-  const triggerDecisions: Decision[] = [];
-
-  for (const trigger of processedTriggers) {
-    if (trigger.shouldTrigger(G, ctx, decision, prep)) {
-      G.stack!.decisionTriggers[decision.key].push(trigger.key);
-
-      triggerDecisions.push(...trigger.createDecision(G, ctx, decision));
     }
   }
 
