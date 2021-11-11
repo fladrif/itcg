@@ -269,8 +269,7 @@ export function selectCard(
   const playerState = G.player[ctx.currentPlayer];
 
   const cardLoc = card[0];
-  const selCard = getLocation(G, ctx, card[0]).filter((c) => deepCardComp(c, card[1]))[0];
-  if (!selCard) return;
+  const selCard = getCardAtLocation(G, ctx, cardLoc, card[1].key);
 
   const curDecision = G.stack.activeDecisions[0];
 

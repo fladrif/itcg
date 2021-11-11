@@ -59,7 +59,8 @@
     { "name": "Sentinel" },
     { "name": "Cerebes" },
     { "name": "ChiefGray" },
-    { "name": "RedNight" }
+    { "name": "RedNight" },
+    { "name": "RedApprenticeHat" }
   ],
   "characters": [
     { "name": "Sherman" },

@@ -14,7 +14,13 @@ import {
   Choice,
 } from './stack';
 import { getMonsterAtt } from './state';
-import { deepCardComp, getLocation, getRandomKey, meetsSkillReq } from './utils';
+import {
+  deepCardComp,
+  getCardAtLocation,
+  getLocation,
+  getRandomKey,
+  meetsSkillReq,
+} from './utils';
 import { Location } from './actions';
 
 export interface MoveOptions {
@@ -28,19 +34,16 @@ export function levelUp(G: GameState, ctx: Ctx, opts?: MoveOptions) {
   if (!opts || !opts.card) return INVALID_MOVE;
 
   const cardLoc = opts.card[0];
-  const selCard = opts.card[1];
+  const selCard = getCardAtLocation(G, ctx, cardLoc, opts.card[1].key);
 
   if (cardLoc !== Location.Hand || 'skills' in selCard) return INVALID_MOVE;
 
   const levelDecision: Decision = {
-    opts: {
-      selection: {
-        [cardLoc]: [selCard],
-      },
+    selection: {
+      [cardLoc]: [selCard],
     },
     action: 'level',
     finished: false,
-    selection: {},
     key: getRandomKey(),
   };
 
