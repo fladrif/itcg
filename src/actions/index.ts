@@ -54,6 +54,7 @@ export interface TargetFilter {
   level?: LevelSelector;
   type?: CardTypes;
   class?: CardClasses[];
+  excludeCardKey?: string[];
 
   and?: never;
   xor?: never;
@@ -64,6 +65,7 @@ interface AndActionTarget {
 
   xor?: never;
 }
+
 interface XorActionTarget {
   xor: ActionTargets[];
 
@@ -146,6 +148,33 @@ function buff(G: GameState, _ctx: Ctx, opts: ActionOpts): any {
   if (!decision || !decision.opts || !decision.opts.damage) return;
 
   decision.opts.damage += opts.damage;
+}
+
+function conjure(G: GameState, ctx: Ctx, opts: ActionOpts): any {
+  if (!G.stack) return;
+  if (!opts.source) return;
+
+  const bounceDec: Decision = {
+    action: 'bounce',
+    opts,
+    noReset: true,
+    selection: {},
+    target: {
+      class: [CardClasses.Magician],
+      location: Location.CharAction,
+      quantity: 1,
+      excludeCardKey: [opts.source.key],
+    },
+    finished: false,
+    key: getRandomKey(),
+  };
+
+  const hasMageLevel =
+    G.player[opts.source.owner].learnedSkills.filter(
+      (card) => card.class === CardClasses.Magician
+    ).length >= 2;
+
+  if (hasMageLevel) upsertStack(G, ctx, [bounceDec]);
 }
 
 function criticalshot(G: GameState, ctx: Ctx, opts: ActionOpts): any {
@@ -285,6 +314,21 @@ function flip(G: GameState, ctx: Ctx, opts: ActionOpts): any {
 function level(G: GameState, ctx: Ctx, opts: ActionOpts): any {
   if (!G.stack || !opts.selection) return;
 
+  const dec: Decision[] = [];
+
+  const refreshDec: (card: NonCharacter) => Decision = (card) => {
+    return {
+      action: 'refresh',
+      selection: {},
+      finished: false,
+      opts: {
+        lifegain: 20,
+        source: card,
+      },
+      key: getRandomKey(),
+    };
+  };
+
   for (const location of Object.keys(opts.selection) as Location[]) {
     opts.selection[location]!.map((card) => {
       // Iterate over all cards in selection
@@ -305,11 +349,12 @@ function level(G: GameState, ctx: Ctx, opts: ActionOpts): any {
 
       rmCard(G, ctx, selCard, location);
 
-      // TODO: May want to consider handling level elsewhere, or determining it jit, (consider destroying cards under character)
       player.level += 10;
-      player.hp += 20;
+      dec.push(refreshDec(selCard));
     });
   }
+
+  upsertStack(G, ctx, dec);
 }
 
 function loot(G: GameState, ctx: Ctx, opts: ActionOpts): any {
@@ -433,17 +478,18 @@ function refresh(G: GameState, ctx: Ctx, opts: ActionOpts): any {
   if (!G.stack) return;
   if (opts.lifegain == undefined) return;
 
+  const player = opts.source?.owner ? opts.source.owner : ctx.currentPlayer;
   const doNotOverheal = opts.overheal !== undefined && opts.overheal === false;
 
-  const curHP = G.player[ctx.currentPlayer].hp;
-  const maxHP = G.player[ctx.currentPlayer].maxHP;
+  const curHP = G.player[player].hp;
+  const maxHP = G.player[player].maxHP;
   const willOverheal = curHP + opts.lifegain > maxHP;
 
   if (doNotOverheal && willOverheal) {
-    return (G.player[ctx.currentPlayer].hp = curHP > maxHP ? curHP : maxHP);
+    return (G.player[player].hp = curHP > maxHP ? curHP : maxHP);
   }
 
-  G.player[ctx.currentPlayer].hp += opts.lifegain;
+  G.player[player].hp += opts.lifegain;
 }
 
 function scout(G: GameState, ctx: Ctx, _opts: ActionOpts): any {
@@ -567,6 +613,7 @@ export const actions = {
   attack,
   bounce,
   buff,
+  conjure,
   criticalshot,
   damage,
   destroy,

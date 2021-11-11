@@ -35,13 +35,15 @@ export function handleAbility(G: GameState, ctx: Ctx, card: NonCharacter): any {
   }
 }
 
-// TODO: Handle deleveling, destroying char action card
 export function handleCardLeaveField(
   G: GameState,
   ctx: Ctx,
   card: NonCharacter,
   location: Location
 ) {
+  if (location === Location.OppCharAction || location === Location.CharAction) {
+    G.player[card.owner].level -= 10;
+  }
   removeTrigger(G, ctx, card.key);
   rmCard(G, ctx, card, location);
   resetMonsterDamage(G, ctx, card);

@@ -1115,6 +1115,50 @@ export class ToughTrigger extends Trigger {
   }
 }
 
+export class WickedTrigger extends Trigger {
+  constructor(
+    cardOwner: string,
+    player: PlayerID,
+    key: string,
+    opts?: TriggerOptions,
+    lifetime?: TriggerLifetime
+  ) {
+    super(cardOwner, 'After', 'refresh', key, opts, player, lifetime);
+  }
+
+  shouldTriggerExtension(
+    _G: GameState,
+    ctx: Ctx,
+    decision: Decision,
+    _prep: TriggerPrepostion
+  ) {
+    const sourceIsOwner = decision.opts?.source?.owner
+      ? decision.opts.source.owner === this.owner
+      : ctx.currentPlayer === this.owner;
+
+    return sourceIsOwner;
+  }
+
+  createDecision(G: GameState, ctx: Ctx, decision: Decision) {
+    const oppID = getOpponentID(G, ctx, this.owner);
+    const oppCharLoc =
+      oppID === ctx.currentPlayer ? Location.Character : Location.OppCharacter;
+    const oppChar = G.player[oppID].character;
+
+    const retDec: Decision = {
+      action: 'damage',
+      opts: {
+        damage: decision.opts?.lifegain,
+      },
+      selection: { [oppCharLoc]: [oppChar] },
+      finished: false,
+      key: getRandomKey(),
+    };
+
+    return [retDec];
+  }
+}
+
 // TODO: Create split damage trigger
 export const triggers = {
   BattleBowTrigger,
@@ -1136,6 +1180,7 @@ export const triggers = {
   SuperGeniusTrigger,
   SteadyHandTrigger,
   ToughTrigger,
+  WickedTrigger,
 };
 
 export type TriggerNames = keyof typeof triggers;

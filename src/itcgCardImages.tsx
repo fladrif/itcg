@@ -120,6 +120,8 @@ import TopRedNight from './images/top-RedNight.jpg';
 import SkillRedNight from './images/skill-RedNight.jpg';
 import TopRedApprenticeHat from './images/top-RedApprenticeHat.jpg';
 import SkillRedApprenticeHat from './images/skill-RedApprenticeHat.jpg';
+import TopLucida from './images/top-Lucida.jpg';
+import SkillLucida from './images/skill-Lucida.jpg';
 import TopSherman from './images/top-Sherman.jpg';
 import SkillSherman from './images/skill1-Sherman.jpg';
 import Skill2Sherman from './images/skill2-Sherman.jpg';
@@ -389,6 +391,10 @@ export const cardImages: Record<string, CardImages> = {
   RedApprenticeHat: {
     top: TopRedApprenticeHat,
     skill: SkillRedApprenticeHat,
+  },
+  Lucida: {
+    top: TopLucida,
+    skill: SkillLucida,
   },
   Sherman: {
     top: TopSherman,

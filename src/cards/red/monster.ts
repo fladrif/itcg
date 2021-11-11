@@ -163,6 +163,29 @@ export const lioner: Omit<Monster, 'key' | 'owner'> = {
   ...defaultTypes,
 };
 
+export const lucida: Omit<Monster, 'key' | 'owner'> = {
+  canonicalName: 'lucida',
+  name: 'Lucida',
+  image: 'Lucida',
+  level: 73,
+  attack: 60,
+  health: 90,
+  skill: [
+    {
+      action: 'conjure',
+      requirements: {
+        level: 0,
+        oneshot: true,
+      },
+      activated: false,
+    },
+  ],
+  ability: {
+    triggers: [{ name: 'WickedTrigger' }],
+  },
+  ...defaultTypes,
+};
+
 export const octopus: Omit<Monster, 'key' | 'owner'> = {
   canonicalName: 'octopus',
   name: 'Octopus',

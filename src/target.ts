@@ -132,6 +132,7 @@ function handleXOR(
 }
 
 function cardInFilter(filter: TargetFilter, card: Character | NonCharacter): boolean {
+  if (filter.excludeCardKey?.includes(card.key)) return false;
   if (filter.type && filter.type !== card.type) return false;
   if (filter.class && !filter.class.includes(card.class)) return false;
   if (filter.level !== undefined && filter.level !== 'CurrentLevel') {
