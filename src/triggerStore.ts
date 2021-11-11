@@ -2,7 +2,7 @@ import { Ctx, PlayerID } from 'boardgame.io';
 
 import { GameState } from './game';
 import { Action, Location } from './actions';
-import { isMonster, CardTypes, Monster, NonCharacter } from './card';
+import { isMonster, CardTypes, Monster, NonCharacter, isItem, isTactic } from './card';
 import { Choice, Decision } from './stack';
 import { getMonsterHealth } from './state';
 import {
@@ -187,6 +187,96 @@ export class BattleBowTrigger extends Trigger {
   }
 }
 
+export class SuperGeniusTrigger extends Trigger {
+  constructor(
+    cardOwner: string,
+    player: PlayerID,
+    key: string,
+    opts?: TriggerOptions,
+    lifetime?: TriggerLifetime
+  ) {
+    super(cardOwner, 'After', 'play', key, opts, player, lifetime);
+  }
+
+  shouldTriggerExtension(
+    _G: GameState,
+    _ctx: Ctx,
+    decision: Decision,
+    _prep: TriggerPrepostion
+  ) {
+    const locations = Object.keys(decision.selection) as Location[];
+    const cardPlayed = locations.some(
+      (location) =>
+        !!decision.selection[location] &&
+        decision.selection[location]!.some((card) => card.key === this.cardOwner)
+    );
+
+    return cardPlayed && this.isOwner(decision);
+  }
+
+  createDecision(G: GameState, ctx: Ctx, decision: Decision) {
+    const triggerOwner = decision.opts?.source?.owner;
+    if (!triggerOwner) return [];
+
+    const player = G.player[triggerOwner];
+    player.deck[0].reveal = true;
+
+    const putDec: Decision = {
+      action: 'putIntoHand',
+      selection: {},
+      finished: false,
+      opts: {
+        source: getCardAtLocation(
+          G,
+          ctx,
+          getCardLocation(G, ctx, this.cardOwner),
+          this.cardOwner
+        ),
+      },
+      key: getRandomKey(),
+    };
+
+    const playDec: Decision = {
+      action: 'play',
+      selection: {
+        [Location.Hand]: [player.deck[0]],
+      },
+      finished: false,
+      opts: {
+        source: getCardAtLocation(
+          G,
+          ctx,
+          getCardLocation(G, ctx, this.cardOwner),
+          this.cardOwner
+        ),
+      },
+      key: getRandomKey(),
+    };
+
+    const optionDec: Decision = {
+      action: 'optional',
+      selection: {},
+      choice: [Choice.Yes, Choice.No],
+      finished: false,
+      dialogPrompt: `Play ${player.deck[0].name}?`,
+      noReset: true,
+      opts: {
+        dialogDecision: playDec,
+        source: getCardAtLocation(
+          G,
+          ctx,
+          getCardLocation(G, ctx, this.cardOwner),
+          this.cardOwner
+        ),
+      },
+      key: getRandomKey(),
+    };
+
+    if (isTactic(player.deck[0])) return [putDec, optionDec];
+    return [putDec];
+  }
+}
+
 export class DmgDestroyTrigger extends Trigger {
   constructor(
     _cardOwner: string,
@@ -318,6 +408,62 @@ export class EarthquakeTrigger extends Trigger {
     };
 
     return [dec];
+  }
+}
+
+export class EmeraldEarringsTrigger extends Trigger {
+  constructor(
+    cardOwner: string,
+    player: PlayerID,
+    key: string,
+    opts?: TriggerOptions,
+    lifetime?: TriggerLifetime
+  ) {
+    super(cardOwner, 'After', 'play', key, opts, player, lifetime);
+  }
+
+  shouldTriggerExtension(
+    _G: GameState,
+    _ctx: Ctx,
+    decision: Decision,
+    _prep: TriggerPrepostion
+  ) {
+    const locations = Object.keys(decision.selection) as Location[];
+    const anotherItemPlayed = locations.some(
+      (location) =>
+        !!decision.selection[location] &&
+        decision.selection[location]!.some(
+          (card) => card.type === CardTypes.Item && card.key !== this.cardOwner
+        )
+    );
+
+    return anotherItemPlayed && this.isOwner(decision);
+  }
+
+  createDecision(G: GameState, ctx: Ctx, decision: Decision) {
+    const triggerOwner = decision.opts?.source?.owner;
+    if (!triggerOwner) return [];
+
+    const player = G.player[triggerOwner];
+    player.deck[0].reveal = true;
+
+    const dec: Decision = {
+      action: 'putIntoHand',
+      selection: {},
+      finished: false,
+      opts: {
+        source: getCardAtLocation(
+          G,
+          ctx,
+          getCardLocation(G, ctx, this.cardOwner),
+          this.cardOwner
+        ),
+      },
+      key: getRandomKey(),
+    };
+
+    if (isItem(player.deck[0])) return [dec];
+    return [];
   }
 }
 
@@ -983,6 +1129,7 @@ export const triggers = {
   BattleBowTrigger,
   DmgDestroyTrigger,
   EarthquakeTrigger,
+  EmeraldEarringsTrigger,
   FairyTrigger,
   GeniusTrigger,
   GoldenCrowTrigger,
@@ -993,6 +1140,7 @@ export const triggers = {
   RevengeTrigger,
   ShieldTrigger,
   SlipperyTrigger,
+  SuperGeniusTrigger,
   SteadyHandTrigger,
   ToughTrigger,
 };

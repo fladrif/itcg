@@ -389,6 +389,11 @@ function play(G: GameState, ctx: Ctx, opts: ActionOpts): any {
   });
 }
 
+// TODO: generalize to card from any location (incl temp zone)?
+function putIntoHand(G: GameState, ctx: Ctx, opts: ActionOpts): any {
+  quest(G, ctx, opts);
+}
+
 function putIntoPlay(G: GameState, ctx: Ctx, opts: ActionOpts): any {
   play(G, ctx, opts);
 }
@@ -570,6 +575,7 @@ export const actions = {
   optional,
   play,
   putIntoPlay,
+  putIntoHand,
   quest,
   rainofarrows,
   refresh,

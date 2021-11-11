@@ -48,6 +48,24 @@ export const bellflowerroot: Omit<Monster, 'key' | 'owner'> = {
   ...defaultTypes,
 };
 
+export const chiefgray: Omit<Monster, 'key' | 'owner'> = {
+  canonicalName: 'chiefgray',
+  name: 'Chief Gray',
+  image: 'ChiefGray',
+  level: 49,
+  attack: 10,
+  health: 30,
+  skill: [
+    {
+      action: 'quest',
+      activated: false,
+      requirements: { level: 0, oneshot: true },
+    },
+  ],
+  ability: { triggers: [{ name: 'SuperGeniusTrigger' }] },
+  ...defaultTypes,
+};
+
 export const darkaxestump: Omit<Monster, 'key' | 'owner'> = {
   canonicalName: 'darkaxestump',
   name: 'Dark Axe Stump',
