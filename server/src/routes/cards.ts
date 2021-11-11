@@ -6,7 +6,8 @@ import { cards } from '../../../src/cards';
 const router = new Router<any, ServerTypes.AppCtx>();
 
 router.get('/', async (ctx: any) => {
-  ctx.body = cards;
+  const { blankCard, ...nonBlankCards } = cards;
+  ctx.body = nonBlankCards;
 });
 
 export { router as CardRouter };
