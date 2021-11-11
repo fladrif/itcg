@@ -4,7 +4,7 @@ import { Action, ActionOpts, ActionTargets } from './actions';
 import { Keyword } from './keywords';
 import { Choice } from './stack';
 import { GlobalState } from './state';
-import { TriggerLifetime, TriggerNames, TriggerOptions } from './triggerStore';
+import { TriggerLifetime, TriggerNames, TriggerOptions } from './trigger';
 import { getRandomKey } from './utils';
 import { CardName } from './cards';
 

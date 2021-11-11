@@ -26,7 +26,7 @@ import {
 } from '../utils';
 
 import { handleAbility, handleCardLeaveField } from './utils';
-import { pushTriggerStore } from '../triggerStore';
+import { pushTriggerStore } from '../trigger';
 
 // TODO: possible refactor, this is always relative to currentPlayer; sometimes needs to be relative to card owner or other context
 // edit: or fine as is and handle relativity elsewhere

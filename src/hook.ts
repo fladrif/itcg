@@ -5,7 +5,7 @@ import { Skill, isMonster, Monster } from './card';
 import { GameState } from './game';
 import { Decision, upsertStack } from './stack';
 import { getMonsterHealth } from './state';
-import { pruneTriggerStore } from './triggerStore';
+import { pruneTriggerStore } from './trigger';
 import { getCardLocation, getLocation, getRandomKey, meetsSkillReq } from './utils';
 
 export function endLevelStage(G: GameState, ctx: Ctx) {

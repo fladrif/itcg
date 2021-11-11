@@ -18,7 +18,7 @@ import {
 } from './moves';
 import { Stack } from './stack';
 import { GlobalState } from './state';
-import { TriggerStore, defaultTriggers } from './triggerStore';
+import { TriggerStore, defaultTriggers } from './trigger';
 import { getOpponentID, scrubPile } from './utils';
 
 export interface Deck {

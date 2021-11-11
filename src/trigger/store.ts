@@ -1,10 +1,10 @@
 import { Ctx, PlayerID } from 'boardgame.io';
 
-import { GameState } from './game';
-import { Action, Location } from './actions';
-import { isMonster, CardTypes, Monster, NonCharacter, isItem, isTactic } from './card';
-import { Choice, Decision } from './stack';
-import { getMonsterHealth } from './state';
+import { GameState } from '../game';
+import { Location } from '../actions';
+import { isMonster, CardTypes, Monster, isItem, isTactic } from '../card';
+import { Choice, Decision } from '../stack';
+import { getMonsterHealth } from '../state';
 import {
   deepCardComp,
   getCardLocation,
@@ -13,113 +13,15 @@ import {
   getOpponentID,
   getOpponentState,
   getRandomKey,
-} from './utils';
+} from '../utils';
 
-export type TriggerOwner = PlayerID | 'Global';
-export type TriggerPrepostion = 'Before' | 'After';
-
-export interface TriggerStore {
-  name: TriggerNames;
-  key: string;
-  owner: PlayerID;
-  cardOwner: string;
-  opts?: TriggerOptions;
-  lifetime?: TriggerLifetime;
-}
-
-// TODO: dd & merge triggeroptions and triggerlifetime
-export interface TriggerOptions {
-  damage?: number;
-}
-
-export interface TriggerLifetime {
-  /**
-   * Can only trigger on this turn
-   */
-  usableTurn?: number;
-  /**
-   * Triggers once per turn
-   */
-  turn?: number;
-}
-
-export abstract class Trigger {
-  owner: TriggerOwner;
-  cardOwner: string;
-  key: string;
-  prep: TriggerPrepostion;
-  actionTrigger: Action;
-  opts?: TriggerOptions;
-  lifetime?: TriggerLifetime;
-
-  constructor(
-    cardOwner: string,
-    preposition: TriggerPrepostion,
-    actionTrigger: Action,
-    key: string,
-    opts?: TriggerOptions,
-    owner?: PlayerID,
-    lifetime?: TriggerLifetime
-  ) {
-    this.cardOwner = cardOwner;
-    this.owner = owner || 'Global';
-    this.prep = preposition;
-    this.key = key;
-    this.actionTrigger = actionTrigger;
-    this.opts = opts;
-    this.lifetime = lifetime;
-  }
-
-  baseCheck(
-    G: GameState,
-    ctx: Ctx,
-    decision: Decision,
-    prep: TriggerPrepostion
-  ): boolean {
-    const alreadyTriggered = G.stack!.decisionTriggers[decision.key].includes(this.key);
-    const rightPrep = prep === this.prep;
-    const rightAction = decision.action === this.actionTrigger;
-
-    const baseChecks = !alreadyTriggered && rightPrep && rightAction;
-
-    const usableTurn = this.lifetime?.usableTurn;
-    const canActivateOnTurn = usableTurn ? usableTurn == ctx.turn : false;
-
-    const onceATurn = this.lifetime?.turn;
-    const canTriggerThisTurn = onceATurn ? onceATurn <= ctx.turn : false;
-
-    if (!!usableTurn) return canActivateOnTurn && baseChecks;
-    if (!!onceATurn) return canTriggerThisTurn && baseChecks;
-
-    return baseChecks;
-  }
-
-  shouldTrigger(
-    G: GameState,
-    ctx: Ctx,
-    decision: Decision,
-    prep: TriggerPrepostion
-  ): boolean {
-    if (!this.baseCheck(G, ctx, decision, prep)) return false;
-
-    return this.shouldTriggerExtension(G, ctx, decision, prep);
-  }
-
-  isOwner(decision: Decision): boolean {
-    return decision.opts?.source?.owner
-      ? decision.opts.source.owner === this.owner
-      : false;
-  }
-
-  abstract shouldTriggerExtension(
-    G: GameState,
-    ctx: Ctx,
-    decision: Decision,
-    prep: TriggerPrepostion
-  ): boolean;
-
-  abstract createDecision(G: GameState, ctx: Ctx, decision: Decision): Decision[];
-}
+import { Trigger } from './trigger';
+import {
+  TriggerStore,
+  TriggerOptions,
+  TriggerLifetime,
+  TriggerPrepostion,
+} from './types';
 
 export class BattleBowTrigger extends Trigger {
   constructor(
@@ -1087,41 +989,6 @@ export class ToughTrigger extends Trigger {
 
     return [retDec];
   }
-}
-
-export function pruneTriggerStore(G: GameState, ctx: Ctx) {
-  const unPrunedTriggers = G.triggers.filter((trig) => {
-    const uTurn = trig.lifetime?.usableTurn;
-
-    return !(uTurn && uTurn <= ctx.turn);
-  });
-
-  G.triggers = unPrunedTriggers;
-}
-
-export function removeTrigger(G: GameState, _ctx: Ctx, key: string) {
-  const index = G.triggers.findIndex((trig) => trig.key === key);
-  if (index < 0) return;
-
-  G.triggers.splice(index, 1);
-}
-
-export function pushTriggerStore(
-  G: GameState,
-  _ctx: Ctx,
-  triggerName: TriggerNames,
-  card: NonCharacter,
-  opts?: TriggerOptions,
-  lifetime?: TriggerLifetime
-) {
-  G.triggers.push({
-    name: triggerName,
-    cardOwner: card.key,
-    key: getRandomKey(),
-    owner: card.owner,
-    opts,
-    lifetime,
-  });
 }
 
 // TODO: Create split damage trigger

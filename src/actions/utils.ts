@@ -5,7 +5,7 @@ import { isMonster, Monster, NonCharacter, SkillRequirements } from '../card';
 import { GameState } from '../game';
 import { upsertStack, parseSkill } from '../stack';
 import { removeGlobalState } from '../state';
-import { removeTrigger, pushTriggerStore } from '../triggerStore';
+import { removeTrigger, pushTriggerStore } from '../trigger';
 import { getCardAtLocation, getCardLocation, rmCard } from '../utils';
 
 export function handleAbility(G: GameState, ctx: Ctx, card: NonCharacter): any {

@@ -1,8 +1,18 @@
 import { Ctx } from 'boardgame.io';
 
-import { GameState } from './game';
-import { upsertStack, Decision } from './stack';
-import { triggers, Trigger, TriggerStore, TriggerPrepostion } from './triggerStore';
+import { NonCharacter } from '../card';
+import { GameState } from '../game';
+import { upsertStack, Decision } from '../stack';
+import { getRandomKey } from '../utils';
+
+import { Trigger } from './trigger';
+import { triggers, TriggerNames } from './store';
+import {
+  TriggerStore,
+  TriggerOptions,
+  TriggerLifetime,
+  TriggerPrepostion,
+} from './types';
 
 export function stackTriggers(
   G: GameState,
@@ -80,4 +90,39 @@ function processTriggers(trig: TriggerStore): Trigger {
     trig.opts,
     trig.lifetime
   );
+}
+
+export function pruneTriggerStore(G: GameState, ctx: Ctx) {
+  const unPrunedTriggers = G.triggers.filter((trig) => {
+    const uTurn = trig.lifetime?.usableTurn;
+
+    return !(uTurn && uTurn <= ctx.turn);
+  });
+
+  G.triggers = unPrunedTriggers;
+}
+
+export function removeTrigger(G: GameState, _ctx: Ctx, key: string) {
+  const index = G.triggers.findIndex((trig) => trig.key === key);
+  if (index < 0) return;
+
+  G.triggers.splice(index, 1);
+}
+
+export function pushTriggerStore(
+  G: GameState,
+  _ctx: Ctx,
+  triggerName: TriggerNames,
+  card: NonCharacter,
+  opts?: TriggerOptions,
+  lifetime?: TriggerLifetime
+) {
+  G.triggers.push({
+    name: triggerName,
+    cardOwner: card.key,
+    key: getRandomKey(),
+    owner: card.owner,
+    opts,
+    lifetime,
+  });
 }
