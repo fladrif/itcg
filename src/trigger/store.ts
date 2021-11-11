@@ -831,35 +831,31 @@ export class RelentlessTrigger extends Trigger {
     validLocations.map((location) => {
       if (!decision.selection[location]) return;
 
-      getLocation(G, ctx, location)
-        .filter(
-          (card) => !!decision.selection[location]!.find((c) => deepCardComp(c, card))
-        )
-        .map((card) => {
-          if (isMonster(card)) {
-            const thisCard = getCardAtLocation(
-              G,
-              ctx,
-              getCardLocation(G, ctx, this.cardOwner),
-              this.cardOwner
-            );
-            const oppCharCard = getOpponentState(G, ctx, this.owner).character;
-            const oppCharLocation = getCardLocation(G, ctx, oppCharCard.key);
+      decision.selection[location]!.forEach((card) => {
+        if (!isMonster(card)) return;
 
-            decisions.push({
-              action: 'damage',
-              opts: {
-                damage: this.opts!.damage,
-                source: thisCard,
-              },
-              selection: {
-                [oppCharLocation]: [oppCharCard],
-              },
-              finished: true,
-              key: getRandomKey(),
-            });
-          }
+        const thisCard = getCardAtLocation(
+          G,
+          ctx,
+          getCardLocation(G, ctx, this.cardOwner),
+          this.cardOwner
+        );
+        const oppCharCard = getOpponentState(G, ctx, this.owner).character;
+        const oppCharLocation = getCardLocation(G, ctx, oppCharCard.key);
+
+        decisions.push({
+          action: 'damage',
+          opts: {
+            damage: this.opts!.damage,
+            source: thisCard,
+          },
+          selection: {
+            [oppCharLocation]: [oppCharCard],
+          },
+          finished: false,
+          key: getRandomKey(),
         });
+      });
     });
 
     return decisions;
