@@ -650,7 +650,7 @@ export class PrevailTrigger extends Trigger {
     decision: Decision,
     _prep: TriggerPrepostion
   ) {
-    const locations = Object.keys(decision.selection) as Location[];
+    const locations = [Location.Field, Location.OppField];
     const monsterDestroyed = locations.some(
       (location) =>
         !!decision.selection[location] &&
@@ -742,7 +742,7 @@ export class RedNightTrigger extends Trigger {
     decision: Decision,
     _prep: TriggerPrepostion
   ) {
-    const locations = Object.keys(decision.selection) as Location[];
+    const locations = [Location.Field, Location.OppField];
     const isOwners = locations.some(
       (location) =>
         !!decision.selection[location] &&
