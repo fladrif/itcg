@@ -103,7 +103,7 @@ export function pruneTriggerStore(G: GameState, ctx: Ctx) {
 }
 
 export function removeTrigger(G: GameState, _ctx: Ctx, key: string) {
-  const index = G.triggers.findIndex((trig) => trig.key === key);
+  const index = G.triggers.findIndex((trig) => trig.cardOwner === key);
   if (index < 0) return;
 
   G.triggers.splice(index, 1);
