@@ -66,3 +66,37 @@ export const emeraldearrings: Omit<Item, 'key' | 'owner'> = {
   ability: { triggers: [{ name: 'EmeraldEarringsTrigger' }] },
   ...defaultTypes,
 };
+
+export const rednight: Omit<Item, 'key' | 'owner'> = {
+  canonicalName: 'rednight',
+  name: 'Red Night',
+  image: 'RedNight',
+  level: 10,
+  skill: [
+    {
+      action: 'quest',
+      activated: false,
+      requirements: {
+        level: 0,
+        oneshot: true,
+      },
+    },
+    {
+      action: 'discard',
+      activated: false,
+      requirements: {
+        level: 0,
+        oneshot: true,
+      },
+      targets: {
+        location: Location.Hand,
+        quantity: 1,
+      },
+      noReset: true,
+    },
+  ],
+  ability: {
+    triggers: [{ name: 'RedNightTrigger' }],
+  },
+  ...defaultTypes,
+};

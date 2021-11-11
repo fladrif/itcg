@@ -1,4 +1,4 @@
-import { Ctx } from 'boardgame.io';
+import { Ctx, PlayerID } from 'boardgame.io';
 
 import { GameState, PlayerState } from './game';
 import {
@@ -48,6 +48,7 @@ export interface Decision {
   noReset?: boolean;
   choice?: Choice[];
   choiceSelection?: Choice;
+  playerChoice?: PlayerID;
   mainDecision?: boolean;
 }
 
@@ -96,8 +97,13 @@ function stage(
 function setStages(G: GameState, ctx: Ctx, decisions: Decision[]) {
   if (!G.stack) return;
   const loopbackStage = stage(G.stack.currentStage, false);
+
   const otherStages = decisions.reverse().reduce((acc, decision) => {
-    const isOpponent = decision.target ? isOpponentAction(decision.target) : false;
+    const isOpponent = decision.target
+      ? isOpponentAction(decision.target)
+      : decision.playerChoice
+      ? decision.playerChoice !== ctx.currentPlayer
+      : false;
 
     const stageName = !!decision.target
       ? 'select'

@@ -35,6 +35,7 @@ export function handleAbility(G: GameState, ctx: Ctx, card: NonCharacter): any {
   }
 }
 
+// TODO: Handle deleveling, destroying char action card
 export function handleCardLeaveField(
   G: GameState,
   ctx: Ctx,
@@ -55,6 +56,7 @@ function resetMonsterDamage(G: GameState, ctx: Ctx, card: NonCharacter) {
   (c as Monster).damageTaken = 0;
 }
 
+// TODO: this needs to be relative to the current player, and the owner of the decision
 export function isOpponentAction(target: ActionTargets): boolean {
   if ('location' in target) return target.location === Location.OppHand;
 

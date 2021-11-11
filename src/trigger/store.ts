@@ -72,6 +72,7 @@ export class BattleBowTrigger extends Trigger {
       finished: false,
       selection: {},
       choice: [Choice.Yes, Choice.No],
+      noReset: true,
       opts: {
         dialogDecision: buffDec,
         triggerKey: this.key,
@@ -501,6 +502,7 @@ export class GoldenCrowTrigger extends Trigger {
       finished: false,
       selection: {},
       choice: [Choice.Yes, Choice.No],
+      noReset: true,
       opts: {
         dialogDecision: buffDec,
         triggerKey: this.key,
@@ -600,6 +602,7 @@ export class NoMercyTrigger extends Trigger {
       action: 'damage',
       selection: {},
       finished: false,
+      noReset: true,
       target: {
         xor: [
           {
@@ -627,6 +630,238 @@ export class NoMercyTrigger extends Trigger {
     };
 
     return [dec];
+  }
+}
+
+export class PrevailTrigger extends Trigger {
+  constructor(
+    cardOwner: string,
+    player: PlayerID,
+    key: string,
+    opts?: TriggerOptions,
+    lifetime?: TriggerLifetime
+  ) {
+    super(cardOwner, 'After', 'destroy', key, opts, player, lifetime);
+  }
+
+  shouldTriggerExtension(
+    _G: GameState,
+    _ctx: Ctx,
+    decision: Decision,
+    _prep: TriggerPrepostion
+  ) {
+    const locations = Object.keys(decision.selection) as Location[];
+    const monsterDestroyed = locations.some(
+      (location) =>
+        !!decision.selection[location] &&
+        decision.selection[location]!.some((card) => card.key === this.cardOwner)
+    );
+
+    return monsterDestroyed;
+  }
+
+  createDecision(G: GameState, ctx: Ctx, _decision: Decision) {
+    const currentLocation = getCardLocation(G, ctx, this.cardOwner);
+    const card = getCardAtLocation(G, ctx, currentLocation, this.cardOwner);
+
+    const decision: Decision = {
+      action: 'bounce',
+      selection: {
+        [currentLocation]: [card],
+      },
+      finished: false,
+      key: getRandomKey(),
+    };
+
+    return [decision];
+  }
+}
+
+export class RedApprenticeHatTrigger extends Trigger {
+  constructor(
+    cardOwner: string,
+    player: PlayerID,
+    key: string,
+    opts?: TriggerOptions,
+    lifetime?: TriggerLifetime
+  ) {
+    super(cardOwner, 'After', 'level', key, opts, player, lifetime);
+  }
+
+  shouldTriggerExtension(
+    _G: GameState,
+    _ctx: Ctx,
+    decision: Decision,
+    _prep: TriggerPrepostion
+  ) {
+    const locations = Object.keys(decision.selection) as Location[];
+    const levelIsOwner = locations.some(
+      (location) =>
+        decision.selection[location] &&
+        decision.selection[location]!.some((card) => card.owner === this.owner)
+    );
+
+    return levelIsOwner;
+  }
+
+  createDecision(G: GameState, ctx: Ctx, _decision: Decision) {
+    const healDec: Decision = {
+      action: 'refresh',
+      selection: {},
+      finished: false,
+      opts: {
+        lifegain: 10,
+        source: getCardAtLocation(
+          G,
+          ctx,
+          getCardLocation(G, ctx, this.cardOwner),
+          this.cardOwner
+        ),
+      },
+      key: getRandomKey(),
+    };
+
+    return [healDec];
+  }
+}
+
+export class RedNightTrigger extends Trigger {
+  constructor(
+    cardOwner: string,
+    player: PlayerID,
+    key: string,
+    opts?: TriggerOptions,
+    lifetime?: TriggerLifetime
+  ) {
+    super(cardOwner, 'After', 'destroy', key, opts, player, lifetime);
+  }
+
+  shouldTriggerExtension(
+    _G: GameState,
+    _ctx: Ctx,
+    decision: Decision,
+    _prep: TriggerPrepostion
+  ) {
+    const locations = Object.keys(decision.selection) as Location[];
+    const isOwners = locations.some((location) => {
+      !!decision.selection[location] &&
+        decision.selection[location]!.some((card) => card.owner === this.owner);
+    });
+
+    return isOwners;
+  }
+
+  createDecision(G: GameState, ctx: Ctx, _decision: Decision) {
+    // TODO: need check for no valid targets (skip target selection step)
+    const discardDec: Decision = {
+      action: 'discard',
+      selection: {},
+      finished: false,
+      noReset: true,
+      target: {
+        location: this.owner === ctx.currentPlayer ? Location.OppHand : Location.Hand,
+        quantity: 1,
+      },
+      opts: {
+        source: getCardAtLocation(
+          G,
+          ctx,
+          getCardLocation(G, ctx, this.cardOwner),
+          this.cardOwner
+        ),
+      },
+      key: getRandomKey(),
+    };
+
+    const flipDec: Decision = {
+      action: 'flip',
+      selection: {},
+      finished: false,
+      dialogPrompt: 'Choose heads or tails',
+      choice: [Choice.Heads, Choice.Tails],
+      playerChoice: this.owner,
+      noReset: true,
+      opts: {
+        dialogDecision: discardDec,
+        source: getCardAtLocation(
+          G,
+          ctx,
+          getCardLocation(G, ctx, this.cardOwner),
+          this.cardOwner
+        ),
+      },
+      key: getRandomKey(),
+    };
+
+    return [flipDec];
+  }
+}
+
+export class RelentlessTrigger extends Trigger {
+  constructor(
+    cardOwner: string,
+    player: PlayerID,
+    key: string,
+    opts?: TriggerOptions,
+    lifetime?: TriggerLifetime
+  ) {
+    super(cardOwner, 'After', 'destroy', key, opts, player, lifetime);
+  }
+
+  shouldTriggerExtension(
+    _G: GameState,
+    _ctx: Ctx,
+    decision: Decision,
+    _prep: TriggerPrepostion
+  ) {
+    const damageOptsExists = !!this.opts?.damage;
+
+    const monsterDestroyed = decision.opts?.source
+      ? decision.opts.source.key === this.cardOwner
+      : false;
+
+    return monsterDestroyed && damageOptsExists;
+  }
+
+  createDecision(G: GameState, ctx: Ctx, decision: Decision) {
+    const validLocations = [Location.Field, Location.OppField];
+    const decisions: Decision[] = [];
+
+    validLocations.map((location) => {
+      if (!decision.selection[location]) return;
+
+      getLocation(G, ctx, location)
+        .filter(
+          (card) => !!decision.selection[location]!.find((c) => deepCardComp(c, card))
+        )
+        .map((card) => {
+          if (isMonster(card)) {
+            const thisCard = getCardAtLocation(
+              G,
+              ctx,
+              getCardLocation(G, ctx, this.cardOwner),
+              this.cardOwner
+            );
+            const oppCharCard = getOpponentState(G, ctx, this.owner).character;
+            const oppCharLocation = getCardLocation(G, ctx, oppCharCard.key);
+
+            decisions.push({
+              action: 'damage',
+              opts: {
+                damage: this.opts!.damage,
+                source: thisCard,
+              },
+              selection: {
+                [oppCharLocation]: [oppCharCard],
+              },
+              finished: true,
+              key: getRandomKey(),
+            });
+          }
+        });
+    });
+
+    return decisions;
   }
 }
 
@@ -780,118 +1015,6 @@ export class SlipperyTrigger extends Trigger {
   }
 }
 
-export class PrevailTrigger extends Trigger {
-  constructor(
-    cardOwner: string,
-    player: PlayerID,
-    key: string,
-    opts?: TriggerOptions,
-    lifetime?: TriggerLifetime
-  ) {
-    super(cardOwner, 'After', 'destroy', key, opts, player, lifetime);
-  }
-
-  shouldTriggerExtension(
-    _G: GameState,
-    _ctx: Ctx,
-    decision: Decision,
-    _prep: TriggerPrepostion
-  ) {
-    const locations = Object.keys(decision.selection) as Location[];
-    const monsterDestroyed = locations.some(
-      (location) =>
-        !!decision.selection[location] &&
-        decision.selection[location]!.some((card) => card.key === this.cardOwner)
-    );
-
-    return monsterDestroyed;
-  }
-
-  createDecision(G: GameState, ctx: Ctx, _decision: Decision) {
-    const currentLocation = getCardLocation(G, ctx, this.cardOwner);
-    const card = getCardAtLocation(G, ctx, currentLocation, this.cardOwner);
-
-    const decision: Decision = {
-      action: 'bounce',
-      selection: {
-        [currentLocation]: [card],
-      },
-      finished: false,
-      key: getRandomKey(),
-    };
-
-    return [decision];
-  }
-}
-
-export class RelentlessTrigger extends Trigger {
-  constructor(
-    cardOwner: string,
-    player: PlayerID,
-    key: string,
-    opts?: TriggerOptions,
-    lifetime?: TriggerLifetime
-  ) {
-    super(cardOwner, 'After', 'destroy', key, opts, player, lifetime);
-  }
-
-  shouldTriggerExtension(
-    _G: GameState,
-    _ctx: Ctx,
-    decision: Decision,
-    _prep: TriggerPrepostion
-  ) {
-    const damageOptsExists = !!this.opts?.damage;
-
-    const monsterDestroyed = decision.opts?.source
-      ? decision.opts.source.key === this.cardOwner
-      : false;
-
-    return monsterDestroyed && damageOptsExists;
-  }
-
-  createDecision(G: GameState, ctx: Ctx, decision: Decision) {
-    const validLocations = [Location.Field, Location.OppField];
-    const decisions: Decision[] = [];
-
-    validLocations.map((location) => {
-      if (!decision.selection[location]) return;
-
-      getLocation(G, ctx, location)
-        .filter(
-          (card) => !!decision.selection[location]!.find((c) => deepCardComp(c, card))
-        )
-        .map((card) => {
-          if (isMonster(card)) {
-            const thisCard = getCardAtLocation(
-              G,
-              ctx,
-              getCardLocation(G, ctx, this.cardOwner),
-              this.cardOwner
-            );
-            const oppCharCard = getOpponentState(G, ctx, this.owner).character;
-            const oppCharLocation = getCardLocation(G, ctx, oppCharCard.key);
-
-            decisions.push({
-              action: 'damage',
-              opts: {
-                damage: this.opts!.damage,
-                source: thisCard,
-              },
-              selection: {
-                [oppCharLocation]: [oppCharCard],
-              },
-              finished: true,
-              key: getRandomKey(),
-            });
-          }
-        });
-    });
-
-    return decisions;
-  }
-}
-
 export class SteadyHandTrigger extends Trigger {
   constructor(
     cardOwner: string,
@@ -1003,6 +1126,8 @@ export const triggers = {
   LootTrigger,
   NoMercyTrigger,
   PrevailTrigger,
+  RedApprenticeHatTrigger,
+  RedNightTrigger,
   RelentlessTrigger,
   RevengeTrigger,
   ShieldTrigger,
