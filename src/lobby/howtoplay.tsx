@@ -80,6 +80,10 @@ export class ITCGHowToPlay extends React.Component {
           <i>Oneshot</i> skills are also activated here. You can read about those further
           down in the <b>Activate</b> phase.
         </p>
+        <p style={paragraphStyle}>
+          <b>Play Tip:</b> When in the <b>Level</b> phase, click on a card in your hand to
+          level up with it.
+        </p>
         <h3>Activate</h3>
         <p style={paragraphStyle}>
           The <b>Activate</b> phase allows the player to utilize the skills learned by
@@ -101,6 +105,12 @@ export class ITCGHowToPlay extends React.Component {
           <i>oneshot</i> skill. These skills are activated immediately when the card is
           used to level up, and will only activate once during the game at that time.
         </p>
+        <p style={paragraphStyle}>
+          <b>Play Tip:</b> When in the <b>Activate</b> phase, click on the{' '}
+          <b>Character</b> skill you wish to activate. Skills will be shaded if your
+          character doesn't meet the requirements, or if they've been activated already or
+          skipped.
+        </p>
         <h3>Attack</h3>
         <p style={paragraphStyle}>
           The <b>Attack</b> phase is the last phase of a player's turn, and the time when
@@ -112,6 +122,12 @@ export class ITCGHowToPlay extends React.Component {
           <b>Monster</b> without taking damage itself. Damage to <b>Monster</b>s, if not
           enough to destroy them, will be removed after the turn ends. Attacks to{' '}
           <b>Character</b>s will be <i>shield</i>ed (explained below).
+        </p>
+        <p style={paragraphStyle}>
+          <b>Play Tip:</b> When in the <b>Attack</b> phase, click on the <b>Monster</b>{' '}
+          you wish to attack with, then the <b>Monster</b> or <b>Character</b> you wish to
+          attack with that <b>Monster</b>. <b>Monster</b>s that cannot attack, or have
+          already attacked will be shaded.
         </p>
       </>
     );
