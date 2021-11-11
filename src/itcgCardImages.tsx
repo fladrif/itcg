@@ -112,6 +112,8 @@ import TopPepe from './images/top-Pepe.jpg';
 import SkillPepe from './images/skill-Pepe.jpg';
 import TopSentinel from './images/top-Sentinel.jpg';
 import SkillSentinel from './images/skill-Sentinel.jpg';
+import TopCerebes from './images/top-Cerebes.jpg';
+import SkillCerebes from './images/skill-Cerebes.jpg';
 import TopSherman from './images/top-Sherman.jpg';
 import SkillSherman from './images/skill1-Sherman.jpg';
 import Skill2Sherman from './images/skill2-Sherman.jpg';
@@ -365,6 +367,10 @@ export const cardImages: Record<string, CardImages> = {
   Sentinel: {
     top: TopSentinel,
     skill: SkillSentinel,
+  },
+  Cerebes: {
+    top: TopCerebes,
+    skill: SkillCerebes,
   },
   Sherman: {
     top: TopSherman,
