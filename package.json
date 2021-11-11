@@ -35,13 +35,15 @@
     "@types/react-router-dom": "^5.1.8",
     "@types/uuid": "^8.3.0",
     "db-migrate": "^0.11.12",
-    "db-migrate-pg": "^1.2.2"
+    "db-migrate-pg": "^1.2.2",
+    "mustache": "^4.2.0"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
+    "gen-card-images": "mustache cardImageTmpl/data.json cardImageTmpl/template.mustache > src/itcgCardImages.tsx",
     "build-server": "tsc -p altTsconfig.json && npm run copy-files",
     "copy-files": "rm -rf lib/images && cp -r src/images lib/images",
     "create-migration": "db-migrate create",

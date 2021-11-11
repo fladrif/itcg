@@ -1,0 +1,37 @@
+{{#nonCharacters}}
+import Top{{ name }} from './images/top-{{ name }}.jpg';
+import Skill{{ name }} from './images/skill-{{ name }}.jpg';
+{{/nonCharacters}}
+{{#characters}}
+import Top{{ name }} from './images/top-{{ name }}.jpg';
+import Skill{{ name }} from './images/skill1-{{ name }}.jpg';
+import Skill2{{ name }} from './images/skill2-{{ name }}.jpg';
+import Skill3{{ name }} from './images/skill3-{{ name }}.jpg';
+{{/characters}}
+import Cardback from './images/cardback.jpg';
+
+interface CardImages {
+  top: any;
+  skill: any;
+  skill2?: any;
+  skill3?: any;
+}
+
+export const cardImages: Record<string, CardImages> = {
+{{#nonCharacters}}
+  {{ name }}: {
+    top: Top{{ name }},
+    skill: Skill{{ name }},
+  },
+{{/nonCharacters}}
+{{#characters}}
+  {{ name }}: {
+    top: Top{{ name }},
+    skill: Skill{{ name }},
+    skill2: Skill2{{ name }},
+    skill3: Skill3{{ name }},
+  },
+{{/characters}}
+};
+
+export const cardback = Cardback;
