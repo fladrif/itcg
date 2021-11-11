@@ -66,7 +66,9 @@ export class ITCGHowToPlay extends React.Component {
           There are three phases to each turn, the <b>Level</b> phase, <b>Activate</b>{' '}
           phase, and <b>Attack</b> phase, in this exact order. If you have no available
           actions for any particular phase, it will be automatically skipped for you.
-          Otherwise you can click on the relevant button to skip that phase.
+          Otherwise you can click on the relevant button to skip that phase. Phases will
+          be displayed for both players to the right of their health bar, and the current
+          phase will be bolded in yellow.
         </p>
         <h3>Level</h3>
         <p style={paragraphStyle}>
