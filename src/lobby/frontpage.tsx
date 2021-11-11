@@ -5,6 +5,7 @@ interface FrontPageProps {
 }
 
 const baseStyle: React.CSSProperties = {
+  marginTop: '1%',
   display: 'flex',
   flexDirection: 'column',
   width: '60vw',

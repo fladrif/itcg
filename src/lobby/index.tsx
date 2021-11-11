@@ -6,3 +6,4 @@ export * from './header';
 export * from './deck';
 export * from './deckBuilder';
 export * from './frontpage';
+export * from './howtoplay';

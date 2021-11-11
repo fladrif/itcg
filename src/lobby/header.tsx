@@ -90,6 +90,9 @@ export class ITCGHeader extends React.Component<HeaderProps> {
         <NavLink activeStyle={selectedMenuItem} exact={true} style={menuItem} to={'/'}>
           Home
         </NavLink>
+        <NavLink activeStyle={selectedMenuItem} style={menuItem} to={'/howtoplay'}>
+          How To Play
+        </NavLink>
         <NavLink activeStyle={selectedMenuItem} style={menuItem} to={'/rooms'}>
           Rooms
         </NavLink>
