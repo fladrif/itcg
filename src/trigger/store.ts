@@ -743,10 +743,11 @@ export class RedNightTrigger extends Trigger {
     _prep: TriggerPrepostion
   ) {
     const locations = Object.keys(decision.selection) as Location[];
-    const isOwners = locations.some((location) => {
-      !!decision.selection[location] &&
-        decision.selection[location]!.some((card) => card.owner === this.owner);
-    });
+    const isOwners = locations.some(
+      (location) =>
+        !!decision.selection[location] &&
+        decision.selection[location]!.some((card) => card.owner === this.owner)
+    );
 
     return isOwners;
   }
@@ -779,9 +780,9 @@ export class RedNightTrigger extends Trigger {
       finished: false,
       dialogPrompt: 'Choose heads or tails',
       choice: [Choice.Heads, Choice.Tails],
-      playerChoice: this.owner,
       noReset: true,
       opts: {
+        activePlayer: this.owner,
         dialogDecision: discardDec,
         source: getCardAtLocation(
           G,
