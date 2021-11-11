@@ -30,7 +30,12 @@ const highlightStyle: React.CSSProperties = {
 export class ITCGHighlight extends React.Component<HighlightProp> {
   render() {
     const stack = this.props.state.stack;
-    if (!stack || stack.currentStage === 'attack') return null;
+
+    const active = this.props.ctx.activePlayers;
+    const activePlayer = Object.keys(active)[0];
+    const stage = active[activePlayer];
+
+    if (!stack || stage === 'attack') return null;
 
     const sourceEffect = stack.activeDecisions[0].opts?.source
       ? stack.activeDecisions[0].opts!.source!

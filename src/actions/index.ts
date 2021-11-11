@@ -1,4 +1,4 @@
-import { Ctx } from 'boardgame.io';
+import { Ctx, PlayerID } from 'boardgame.io';
 import { INVALID_MOVE } from 'boardgame.io/core';
 
 import { GameState } from '../game';
@@ -90,6 +90,10 @@ export interface ActionOpts {
    * Should refresh increase hp over starting total. Defaults true if undef
    */
   overheal?: boolean;
+  /**
+   * Which player decision belongs to
+   */
+  activePlayer?: PlayerID;
 }
 
 function ack(G: GameState, ctx: Ctx, opts: ActionOpts): any {
