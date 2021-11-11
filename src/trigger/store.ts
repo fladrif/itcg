@@ -175,7 +175,7 @@ export class SuperGeniusTrigger extends Trigger {
       key: getRandomKey(),
     };
 
-    if (isTactic(player.deck[0])) return [putDec, optionDec];
+    if (isTactic(player.deck[0])) return [optionDec, putDec];
     return [putDec];
   }
 }
