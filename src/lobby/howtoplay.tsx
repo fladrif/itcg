@@ -64,7 +64,9 @@ export class ITCGHowToPlay extends React.Component {
         <h2>Parts of the Turn</h2>
         <p style={paragraphStyle}>
           There are three phases to each turn, the <b>Level</b> phase, <b>Activate</b>{' '}
-          phase, and <b>Attack</b> phase, in this exact order.
+          phase, and <b>Attack</b> phase, in this exact order. If you have no available
+          actions for any particular phase, it will be automatically skipped for you.
+          Otherwise you can click on the relevant button to skip that phase.
         </p>
         <h3>Level</h3>
         <p style={paragraphStyle}>
@@ -82,7 +84,8 @@ export class ITCGHowToPlay extends React.Component {
         </p>
         <p style={paragraphStyle}>
           <b>Play Tip:</b> When in the <b>Level</b> phase, click on a card in your hand to
-          level up with it.
+          level up with it. Click on the <i>Do not Level</i> button if you want to skip to
+          the <b>Activate</b> phase.
         </p>
         <h3>Activate</h3>
         <p style={paragraphStyle}>
@@ -109,7 +112,8 @@ export class ITCGHowToPlay extends React.Component {
           <b>Play Tip:</b> When in the <b>Activate</b> phase, click on the{' '}
           <b>Character</b> skill you wish to activate. Skills will be shaded if your
           character doesn't meet the requirements, or if they've been activated already or
-          skipped.
+          skipped. Click on the <i>Go to Attack Stage</i> button if you are done
+          activating skills.
         </p>
         <h3>Attack</h3>
         <p style={paragraphStyle}>
@@ -127,7 +131,8 @@ export class ITCGHowToPlay extends React.Component {
           <b>Play Tip:</b> When in the <b>Attack</b> phase, click on the <b>Monster</b>{' '}
           you wish to attack with, then the <b>Monster</b> or <b>Character</b> you wish to
           attack with that <b>Monster</b>. <b>Monster</b>s that cannot attack, or have
-          already attacked will be shaded.
+          already attacked will be shaded. Click on <i>Pass Turn</i> if you do not want to
+          attack with any other <b>Monster</b>s.
         </p>
       </>
     );
