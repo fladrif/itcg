@@ -428,6 +428,63 @@ export class FairyTrigger extends Trigger {
   }
 }
 
+export class FocusTrigger extends Trigger {
+  constructor(
+    cardOwner: string,
+    player: PlayerID,
+    key: string,
+    opts?: TriggerOptions,
+    lifetime?: TriggerLifetime
+  ) {
+    super(cardOwner, 'Before', ['attack', 'damage'], key, opts, player, lifetime);
+  }
+
+  shouldTriggerExtension(
+    G: GameState,
+    ctx: Ctx,
+    decision: Decision,
+    _prep: TriggerPrepostion
+  ) {
+    const validLocation = [
+      Location.Character,
+      Location.CharAction,
+      Location.OppCharacter,
+      Location.OppCharAction,
+    ];
+
+    const sourceIsMonster = decision.opts?.source
+      ? isMonster(decision.opts.source) && decision.action === 'attack'
+      : false;
+
+    const sourceIsCharAction = decision.opts?.source
+      ? validLocation.includes(getCardLocation(G, ctx, decision.opts.source.key))
+      : false;
+
+    return (sourceIsCharAction || sourceIsMonster) && this.sourceIsOwner(decision);
+  }
+
+  createDecision(G: GameState, ctx: Ctx, decision: Decision) {
+    const buffDec: Decision = {
+      action: 'buff',
+      finished: false,
+      selection: {},
+      opts: {
+        damage: this.opts?.damage ? this.opts.damage : 0,
+        decision: decision.key,
+        source: getCardAtLocation(
+          G,
+          ctx,
+          getCardLocation(G, ctx, this.cardOwner),
+          this.cardOwner
+        ),
+      },
+      key: getRandomKey(),
+    };
+
+    return [buffDec];
+  }
+}
+
 export class GeniusTrigger extends Trigger {
   constructor(
     cardOwner: string,
@@ -1318,6 +1375,7 @@ export const triggers = {
   EarthquakeTrigger,
   EmeraldEarringsTrigger,
   FairyTrigger,
+  FocusTrigger,
   GeniusTrigger,
   GoldenCrowTrigger,
   LootTrigger,

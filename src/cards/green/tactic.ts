@@ -187,6 +187,46 @@ export const soularrow: Omit<Tactic, 'key' | 'owner'> = {
   ...defaultTypes,
 };
 
+export const focus: Omit<Tactic, 'key' | 'owner'> = {
+  canonicalName: 'focus',
+  name: 'Focus',
+  image: 'Focus',
+  level: 20,
+  skill: [
+    {
+      action: 'play',
+      activated: false,
+      requirements: {
+        level: 40,
+        class: {
+          [CardClasses.Bowman]: 2,
+        },
+      },
+      targets: {
+        level: 40,
+        type: CardTypes.Tactic,
+        location: Location.Hand,
+        quantity: 1,
+      },
+    },
+  ],
+  ability: {
+    triggers: [
+      {
+        name: 'FocusTrigger',
+        opts: {
+          damage: 50,
+        },
+        lifetime: {
+          usableTurn: 'ETBTurn',
+          once: true,
+        },
+      },
+    ],
+  },
+  ...defaultTypes,
+};
+
 export const powerknockback: Omit<Tactic, 'key' | 'owner'> = {
   canonicalName: 'powerknockback',
   name: 'Power Knock-Back',

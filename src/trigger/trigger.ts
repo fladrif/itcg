@@ -16,14 +16,14 @@ export abstract class Trigger {
   cardOwner: string;
   key: string;
   prep: TriggerPrepostion;
-  actionTrigger: Action;
+  actionTrigger: Action[];
   opts?: TriggerOptions;
   lifetime?: TriggerLifetime;
 
   constructor(
     cardOwner: string,
     preposition: TriggerPrepostion,
-    actionTrigger: Action,
+    actionTrigger: Action | Action[],
     key: string,
     opts?: TriggerOptions,
     owner?: PlayerID,
@@ -33,7 +33,7 @@ export abstract class Trigger {
     this.owner = owner || 'Global';
     this.prep = preposition;
     this.key = key;
-    this.actionTrigger = actionTrigger;
+    this.actionTrigger = Array.isArray(actionTrigger) ? actionTrigger : [actionTrigger];
     this.opts = opts;
     this.lifetime = lifetime;
   }
@@ -46,7 +46,7 @@ export abstract class Trigger {
   ): boolean {
     const alreadyTriggered = G.stack!.decisionTriggers[decision.key].includes(this.key);
     const rightPrep = prep === this.prep;
-    const rightAction = decision.action === this.actionTrigger;
+    const rightAction = this.actionTrigger.includes(decision.action);
 
     const baseChecks = !alreadyTriggered && rightPrep && rightAction;
 

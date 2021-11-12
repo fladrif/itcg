@@ -128,6 +128,8 @@ import TopHector from './images/top-Hector.jpg';
 import SkillHector from './images/skill-Hector.jpg';
 import TopSoulTeddy from './images/top-SoulTeddy.jpg';
 import SkillSoulTeddy from './images/skill-SoulTeddy.jpg';
+import TopFocus from './images/top-Focus.jpg';
+import SkillFocus from './images/skill-Focus.jpg';
 import TopSherman from './images/top-Sherman.jpg';
 import SkillSherman from './images/skill1-Sherman.jpg';
 import Skill2Sherman from './images/skill2-Sherman.jpg';
@@ -413,6 +415,10 @@ export const cardImages: Record<string, CardImages> = {
   SoulTeddy: {
     top: TopSoulTeddy,
     skill: SkillSoulTeddy,
+  },
+  Focus: {
+    top: TopFocus,
+    skill: SkillFocus,
   },
   Sherman: {
     top: TopSherman,

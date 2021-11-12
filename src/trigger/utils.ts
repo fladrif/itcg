@@ -54,6 +54,9 @@ export function getTriggerFns(
   for (const trigger of processedTriggers) {
     if (trigger.shouldTrigger(G, ctx, decision, prep)) {
       G.stack!.decisionTriggers[decision.key].push(trigger.key);
+      if (trigger.lifetime?.usableTurn && trigger.lifetime?.once) {
+        removeTrigger(G, ctx, trigger.cardOwner);
+      }
 
       triggerDecisions.push(trigger.createDecision.bind(trigger));
     }
@@ -82,8 +85,8 @@ export function pruneTriggerStore(G: GameState, ctx: Ctx) {
   G.triggers = unPrunedTriggers;
 }
 
-export function removeTrigger(G: GameState, _ctx: Ctx, key: string) {
-  const index = G.triggers.findIndex((trig) => trig.cardOwner === key);
+export function removeTrigger(G: GameState, _ctx: Ctx, cardOwner: string) {
+  const index = G.triggers.findIndex((trig) => trig.cardOwner === cardOwner);
   if (index < 0) return;
 
   G.triggers.splice(index, 1);
@@ -108,18 +111,16 @@ export function pushTriggerStore(
 }
 
 export function parseTriggerLifetime(
-  lifetime: TriggerLifetime,
-  card: NonCharacter
+  ctx: Ctx,
+  lifetime: TriggerLifetime
 ): TriggerLifetime {
-  if (!(isMonster(card) || isItem(card))) return lifetime;
-
   const usableTurn =
     lifetime.usableTurn && lifetime.usableTurn === 'ETBTurn'
-      ? card.turnETB
+      ? ctx.turn
       : lifetime.usableTurn;
 
   return {
+    ...lifetime,
     usableTurn,
-    turn: lifetime.turn,
   };
 }

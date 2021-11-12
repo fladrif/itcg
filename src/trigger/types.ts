@@ -25,6 +25,10 @@ export interface TriggerLifetime {
    */
   usableTurn?: number | 'ETBTurn';
   /**
+   * Only triggers once on usable turn
+   */
+  once?: boolean;
+  /**
    * Triggers once per turn
    */
   turn?: number;

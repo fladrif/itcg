@@ -12,7 +12,7 @@ export function handleAbility(G: GameState, ctx: Ctx, card: NonCharacter): any {
   if (card.ability.triggers) {
     card.ability.triggers.map((trigger) => {
       const lifetime = trigger.lifetime
-        ? parseTriggerLifetime(trigger.lifetime, card)
+        ? parseTriggerLifetime(ctx, trigger.lifetime)
         : undefined;
 
       pushTriggerStore(G, ctx, trigger.name, card, trigger.opts, lifetime);
