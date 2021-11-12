@@ -383,3 +383,24 @@ export const seacle: Omit<Monster, 'key' | 'owner'> = {
   ability: { triggers: [{ name: 'SlipperyTrigger' }] },
   ...defaultTypes,
 };
+
+export const soulteddy: Omit<Monster, 'key' | 'owner'> = {
+  canonicalName: 'soulteddy',
+  name: 'Soul Teddy',
+  image: 'SoulTeddy',
+  level: 63,
+  attack: 50,
+  health: 40,
+  skill: [
+    {
+      action: 'loot',
+      activated: false,
+      requirements: { level: 0, oneshot: true },
+    },
+  ],
+  ability: {
+    keywords: ['tough'],
+    triggers: [{ name: 'StartleTrigger' }],
+  },
+  ...defaultTypes,
+};

@@ -1028,6 +1028,54 @@ export class SlipperyTrigger extends Trigger {
   }
 }
 
+export class StartleTrigger extends Trigger {
+  constructor(
+    cardOwner: string,
+    player: PlayerID,
+    key: string,
+    opts?: TriggerOptions,
+    lifetime?: TriggerLifetime
+  ) {
+    super(cardOwner, 'Before', 'attack', key, opts, player, lifetime);
+  }
+
+  shouldTriggerExtension(
+    _G: GameState,
+    _ctx: Ctx,
+    decision: Decision,
+    _prep: TriggerPrepostion
+  ) {
+    const locations = [Location.Character, Location.OppCharacter];
+    const oppCharAttacked = locations.some(
+      (location) =>
+        !!decision.selection[location] &&
+        decision.selection[location]!.some((card) => card.owner !== this.owner)
+    );
+
+    return oppCharAttacked && this.sourceIsOwner(decision);
+  }
+
+  createDecision(G: GameState, ctx: Ctx, _decision: Decision) {
+    const oppHand = getOpponentState(G, ctx, this.owner).hand;
+    if (oppHand.length <= 0) return [];
+
+    const randomIndex = ctx.random!.Die(oppHand.length);
+    const card = oppHand[randomIndex - 1];
+
+    const discardDec: Decision = {
+      action: 'discard',
+      selection: { [getCardLocation(G, ctx, card.key)]: [card] },
+      finished: false,
+      key: getRandomKey(),
+      opts: {
+        source: card,
+      },
+    };
+
+    return [discardDec];
+  }
+}
+
 export class SteadyHandTrigger extends Trigger {
   constructor(
     cardOwner: string,
@@ -1281,8 +1329,9 @@ export const triggers = {
   RevengeTrigger,
   ShieldTrigger,
   SlipperyTrigger,
-  SuperGeniusTrigger,
+  StartleTrigger,
   SteadyHandTrigger,
+  SuperGeniusTrigger,
   ToughTrigger,
   WickedTrigger,
 };
