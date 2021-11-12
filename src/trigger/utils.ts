@@ -1,6 +1,6 @@
 import { Ctx } from 'boardgame.io';
 
-import { NonCharacter } from '../card';
+import { Character, isItem, isMonster, NonCharacter } from '../card';
 import { GameState } from '../game';
 import { upsertStack, Decision } from '../stack';
 import { getRandomKey } from '../utils';
@@ -76,7 +76,7 @@ export function pruneTriggerStore(G: GameState, ctx: Ctx) {
   const unPrunedTriggers = G.triggers.filter((trig) => {
     const uTurn = trig.lifetime?.usableTurn;
 
-    return !(uTurn && uTurn <= ctx.turn);
+    return !(uTurn && uTurn < ctx.turn);
   });
 
   G.triggers = unPrunedTriggers;
@@ -93,7 +93,7 @@ export function pushTriggerStore(
   G: GameState,
   _ctx: Ctx,
   triggerName: TriggerNames,
-  card: NonCharacter,
+  card: NonCharacter | Character,
   opts?: TriggerOptions,
   lifetime?: TriggerLifetime
 ) {
@@ -105,4 +105,21 @@ export function pushTriggerStore(
     opts,
     lifetime,
   });
+}
+
+export function parseTriggerLifetime(
+  lifetime: TriggerLifetime,
+  card: NonCharacter
+): TriggerLifetime {
+  if (!(isMonster(card) || isItem(card))) return lifetime;
+
+  const usableTurn =
+    lifetime.usableTurn && lifetime.usableTurn === 'ETBTurn'
+      ? card.turnETB
+      : lifetime.usableTurn;
+
+  return {
+    usableTurn,
+    turn: lifetime.turn,
+  };
 }

@@ -52,7 +52,7 @@ export class BattleBowTrigger extends Trigger {
       : false;
     const sourceIsChar = sourceLocation ? validLocations.includes(sourceLocation) : false;
 
-    return sourceIsChar && this.isOwner(decision);
+    return sourceIsChar && this.sourceIsOwner(decision);
   }
 
   createDecision(G: GameState, ctx: Ctx, decision: Decision) {
@@ -87,6 +87,112 @@ export class BattleBowTrigger extends Trigger {
     };
 
     return [optionalDec];
+  }
+}
+
+export class BoneRattleTrigger extends Trigger {
+  constructor(
+    cardOwner: string,
+    player: PlayerID,
+    key: string,
+    opts?: TriggerOptions,
+    lifetime?: TriggerLifetime
+  ) {
+    super(cardOwner, 'After', 'destroy', key, opts, player, lifetime);
+  }
+
+  shouldTriggerExtension(
+    _G: GameState,
+    _ctx: Ctx,
+    decision: Decision,
+    _prep: TriggerPrepostion
+  ) {
+    const damageOptsExists = !!this.opts?.damage;
+
+    const ownerMonster = decision.opts?.source
+      ? decision.opts.source.owner === this.owner && isMonster(decision.opts.source)
+      : false;
+
+    return ownerMonster && damageOptsExists;
+  }
+
+  createDecision(G: GameState, ctx: Ctx, decision: Decision) {
+    const validLocations = [Location.Field, Location.OppField];
+    const decisions: Decision[] = [];
+
+    validLocations.map((location) => {
+      if (!decision.selection[location]) return;
+
+      decision.selection[location]!.forEach((card) => {
+        if (!isMonster(card)) return;
+
+        const thisCard = getCardAtLocation(
+          G,
+          ctx,
+          getCardLocation(G, ctx, this.cardOwner),
+          this.cardOwner
+        );
+        const oppCharCard = getOpponentState(G, ctx, this.owner).character;
+        const oppCharLocation = getCardLocation(G, ctx, oppCharCard.key);
+
+        decisions.push({
+          action: 'damage',
+          opts: {
+            damage: this.opts!.damage,
+            source: thisCard,
+          },
+          selection: {
+            [oppCharLocation]: [oppCharCard],
+          },
+          finished: false,
+          key: getRandomKey(),
+        });
+      });
+    });
+
+    return decisions;
+  }
+}
+
+export class BuffAllTrigger extends Trigger {
+  constructor(
+    cardOwner: string,
+    player: PlayerID,
+    key: string,
+    opts?: TriggerOptions,
+    lifetime?: TriggerLifetime
+  ) {
+    super(cardOwner, 'Before', 'attack', key, opts, player, lifetime);
+  }
+
+  shouldTriggerExtension(
+    _G: GameState,
+    _ctx: Ctx,
+    decision: Decision,
+    _prep: TriggerPrepostion
+  ) {
+    return this.sourceIsOwner(decision);
+  }
+
+  createDecision(G: GameState, ctx: Ctx, decision: Decision) {
+    const buffDec: Decision = {
+      action: 'buff',
+      finished: false,
+      selection: {},
+      opts: {
+        damage: this.opts?.damage ? this.opts.damage : 0,
+        decision: decision.key,
+        source: getCardAtLocation(
+          G,
+          ctx,
+          getCardLocation(G, ctx, this.cardOwner),
+          this.cardOwner
+        ),
+      },
+      key: getRandomKey(),
+    };
+
+    return [buffDec];
   }
 }
 
@@ -250,7 +356,7 @@ export class EmeraldEarringsTrigger extends Trigger {
         )
     );
 
-    return anotherItemPlayed && this.isOwner(decision);
+    return anotherItemPlayed && this.sourceIsOwner(decision);
   }
 
   createDecision(G: GameState, ctx: Ctx, decision: Decision) {
@@ -390,7 +496,7 @@ export class GoldenCrowTrigger extends Trigger {
       : false;
     const sourceIsChar = sourceLocation ? validLocations.includes(sourceLocation) : false;
 
-    return sourceIsChar && this.isOwner(decision);
+    return sourceIsChar && this.sourceIsOwner(decision);
   }
 
   createDecision(G: GameState, ctx: Ctx, decision: Decision) {
@@ -989,7 +1095,7 @@ export class SuperGeniusTrigger extends Trigger {
         decision.selection[location]!.some((card) => card.key === this.cardOwner)
     );
 
-    return cardPlayed && this.isOwner(decision);
+    return cardPlayed && this.sourceIsOwner(decision);
   }
 
   createDecision(G: GameState, ctx: Ctx, decision: Decision) {
@@ -1158,6 +1264,8 @@ export class WickedTrigger extends Trigger {
 // TODO: Create split damage trigger
 export const triggers = {
   BattleBowTrigger,
+  BoneRattleTrigger,
+  BuffAllTrigger,
   DmgDestroyTrigger,
   EarthquakeTrigger,
   EmeraldEarringsTrigger,

@@ -61,7 +61,9 @@
     { "name": "ChiefGray" },
     { "name": "RedNight" },
     { "name": "RedApprenticeHat" },
-    { "name": "Lucida" }
+    { "name": "Lucida" },
+    { "name": "OfficerSkeleton" },
+    { "name": "Hector" }
   ],
   "characters": [
     { "name": "Sherman" },

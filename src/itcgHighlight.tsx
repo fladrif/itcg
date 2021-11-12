@@ -31,11 +31,7 @@ export class ITCGHighlight extends React.Component<HighlightProp> {
   render() {
     const stack = this.props.state.stack;
 
-    const active = this.props.ctx.activePlayers;
-    const activePlayer = Object.keys(active)[0];
-    const stage = active[activePlayer];
-
-    if (!stack || stage === 'attack') return null;
+    if (!stack || stack.activeDecisions[0].action === 'attack') return null;
 
     const sourceEffect = stack.activeDecisions[0].opts?.source
       ? stack.activeDecisions[0].opts!.source!

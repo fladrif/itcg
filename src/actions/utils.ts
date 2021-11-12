@@ -5,14 +5,18 @@ import { isMonster, Monster, NonCharacter, SkillRequirements } from '../card';
 import { GameState } from '../game';
 import { upsertStack, parseSkill } from '../stack';
 import { removeGlobalState } from '../state';
-import { removeTrigger, pushTriggerStore } from '../trigger';
+import { removeTrigger, parseTriggerLifetime, pushTriggerStore } from '../trigger';
 import { getCardAtLocation, getCardLocation, rmCard } from '../utils';
 
 export function handleAbility(G: GameState, ctx: Ctx, card: NonCharacter): any {
   if (card.ability.triggers) {
-    card.ability.triggers.map((trigger) =>
-      pushTriggerStore(G, ctx, trigger.name, card, trigger.opts, trigger.lifetime)
-    );
+    card.ability.triggers.map((trigger) => {
+      const lifetime = trigger.lifetime
+        ? parseTriggerLifetime(trigger.lifetime, card)
+        : undefined;
+
+      pushTriggerStore(G, ctx, trigger.name, card, trigger.opts, lifetime);
+    });
   }
 
   if (card.ability.skills) {

@@ -161,6 +161,30 @@ export const jryeti: Omit<Monster, 'key' | 'owner'> = {
   ...defaultTypes,
 };
 
+export const officerskeleton: Omit<Monster, 'key' | 'owner'> = {
+  canonicalName: 'officerskeleton',
+  name: 'Officer Skeleton',
+  image: 'OfficerSkeleton',
+  level: 63,
+  attack: 50,
+  health: 60,
+  skill: [
+    {
+      action: 'buffall',
+      activated: false,
+      requirements: {
+        level: 50,
+        class: {
+          [CardClasses.Warrior]: 2,
+        },
+      },
+    },
+  ],
+  ability: {
+    triggers: [{ name: 'BoneRattleTrigger', opts: { damage: 20 } }],
+  },
+  ...defaultTypes,
+};
 export const pepe: Omit<Monster, 'key' | 'owner'> = {
   canonicalName: 'pepe',
   name: 'Pepe',

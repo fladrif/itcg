@@ -122,6 +122,10 @@ import TopRedApprenticeHat from './images/top-RedApprenticeHat.jpg';
 import SkillRedApprenticeHat from './images/skill-RedApprenticeHat.jpg';
 import TopLucida from './images/top-Lucida.jpg';
 import SkillLucida from './images/skill-Lucida.jpg';
+import TopOfficerSkeleton from './images/top-OfficerSkeleton.jpg';
+import SkillOfficerSkeleton from './images/skill-OfficerSkeleton.jpg';
+import TopHector from './images/top-Hector.jpg';
+import SkillHector from './images/skill-Hector.jpg';
 import TopSherman from './images/top-Sherman.jpg';
 import SkillSherman from './images/skill1-Sherman.jpg';
 import Skill2Sherman from './images/skill2-Sherman.jpg';
@@ -395,6 +399,14 @@ export const cardImages: Record<string, CardImages> = {
   Lucida: {
     top: TopLucida,
     skill: SkillLucida,
+  },
+  OfficerSkeleton: {
+    top: TopOfficerSkeleton,
+    skill: SkillOfficerSkeleton,
+  },
+  Hector: {
+    top: TopHector,
+    skill: SkillHector,
   },
   Sherman: {
     top: TopSherman,

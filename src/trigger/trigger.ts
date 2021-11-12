@@ -73,7 +73,7 @@ export abstract class Trigger {
     return this.shouldTriggerExtension(G, ctx, decision, prep);
   }
 
-  isOwner(decision: Decision): boolean {
+  sourceIsOwner(decision: Decision): boolean {
     return decision.opts?.source?.owner
       ? decision.opts.source.owner === this.owner
       : false;

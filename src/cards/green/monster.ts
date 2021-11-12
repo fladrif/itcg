@@ -248,6 +248,43 @@ export const greentrixter: Omit<Monster, 'key' | 'owner'> = {
   ...defaultTypes,
 };
 
+export const hector: Omit<Monster, 'key' | 'owner'> = {
+  canonicalName: 'hector',
+  name: 'Hector',
+  image: 'Hector',
+  level: 50,
+  attack: 50,
+  health: 50,
+  skill: [
+    {
+      action: 'play',
+      activated: false,
+      requirements: {
+        level: 60,
+        class: {
+          [CardClasses.Bowman]: 2,
+        },
+      },
+      targets: {
+        level: 70,
+        type: CardTypes.Monster,
+        location: Location.Hand,
+        quantity: 1,
+      },
+    },
+  ],
+  ability: {
+    triggers: [
+      {
+        name: 'BuffAllTrigger',
+        opts: { damage: 10 },
+        lifetime: { usableTurn: 'ETBTurn' },
+      },
+    ],
+  },
+  ...defaultTypes,
+};
+
 export const hornedmushroom: Omit<Monster, 'key' | 'owner'> = {
   canonicalName: 'hornedmushroom',
   name: 'Horned Mushroom',

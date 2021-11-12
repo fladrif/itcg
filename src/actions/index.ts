@@ -150,6 +150,19 @@ function buff(G: GameState, _ctx: Ctx, opts: ActionOpts): any {
   decision.opts.damage += opts.damage;
 }
 
+function buffall(G: GameState, ctx: Ctx, opts: ActionOpts): any {
+  if (!G.stack || !opts.source) return;
+
+  pushTriggerStore(
+    G,
+    ctx,
+    'BuffAllTrigger',
+    opts.source,
+    { damage: 10 },
+    { usableTurn: ctx.turn }
+  );
+}
+
 function conjure(G: GameState, ctx: Ctx, opts: ActionOpts): any {
   if (!G.stack) return;
   if (!opts.source) return;
@@ -613,6 +626,7 @@ export const actions = {
   attack,
   bounce,
   buff,
+  buffall,
   conjure,
   criticalshot,
   damage,
