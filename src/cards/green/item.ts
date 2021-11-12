@@ -1,5 +1,5 @@
 import { Item, CardTypes, CardClasses } from '../../card';
-import { Location } from '../../actions';
+import { Location } from '../../target';
 import { Choice } from '../../stack';
 
 const defaultTypes = {

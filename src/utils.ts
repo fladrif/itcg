@@ -12,7 +12,7 @@ import {
   NonCharacter,
   SkillRequirements,
 } from './card';
-import { Location } from './actions';
+import { Location } from './target';
 import { Selection } from './stack';
 import { getBlankCard } from './card';
 

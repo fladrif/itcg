@@ -1,6 +1,7 @@
 import { PlayerID } from 'boardgame.io';
 
-import { Action, ActionOpts, ActionTargets } from './actions';
+import { Action, ActionOpts } from './actions';
+import { ActionTargets } from './target';
 import { Keyword } from './keywords';
 import { Choice } from './stack';
 import { GlobalState } from './state';

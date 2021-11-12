@@ -1,6 +1,6 @@
 import { Ctx } from 'boardgame.io';
 
-import { ActionTargets, Location } from './index';
+import { ActionTargets, Location } from '../target';
 import { isMonster, Monster, NonCharacter, SkillRequirements } from '../card';
 import { GameState } from '../game';
 import { upsertStack, parseSkill } from '../stack';

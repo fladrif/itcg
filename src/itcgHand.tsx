@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Styles, ITCGCard, ITCGCardback } from './itcgCard';
 import { PlayerState } from './game';
-import { Location } from './actions';
+import { Location } from './target';
 import { nullMove } from './moves';
 import { BLANK_CARDNAME } from './card';
 

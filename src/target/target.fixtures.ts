@@ -1,7 +1,8 @@
-import { ActionTargets, Location } from './actions';
-import { PlayerState } from './game';
-import { instantiateCard } from './card';
-import { cards } from './cards';
+import { PlayerState } from '../game';
+import { instantiateCard } from '../card';
+import { cards } from '../cards';
+
+import { ActionTargets, Location } from './types';
 
 export const filterFinished: ActionTargets = {
   xor: [

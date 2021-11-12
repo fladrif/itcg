@@ -21,7 +21,7 @@ import {
   getRandomKey,
   meetsSkillReq,
 } from './utils';
-import { Location } from './actions';
+import { Location } from './target';
 
 export interface MoveOptions {
   card?: [Location, Character | NonCharacter];

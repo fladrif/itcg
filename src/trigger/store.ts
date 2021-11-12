@@ -1,7 +1,7 @@
 import { Ctx, PlayerID } from 'boardgame.io';
 
 import { GameState } from '../game';
-import { Location } from '../actions';
+import { Location } from '../target';
 import { isMonster, CardTypes, Monster, isItem, isTactic } from '../card';
 import { Choice, Decision } from '../stack';
 import { getMonsterHealth } from '../state';

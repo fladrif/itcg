@@ -3,7 +3,7 @@ import { Ctx } from 'boardgame.io';
 
 import { ITCGCard } from './itcgCard';
 import { GameState } from './game';
-import { Location } from './actions';
+import { Location } from './target';
 import { isCharacter } from './card';
 import { nullMove } from './moves';
 import { getCardLocation } from './utils';

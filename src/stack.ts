@@ -1,14 +1,8 @@
 import { Ctx } from 'boardgame.io';
 
 import { GameState, PlayerState } from './game';
-import {
-  actions,
-  isOpponentAction,
-  Action,
-  ActionOpts,
-  ActionTargets,
-  Location,
-} from './actions';
+import { actions, isOpponentAction, Action, ActionOpts } from './actions';
+import { ActionTargets, Location } from './target';
 import { endLevelStage, endActivateStage, endAttackStage } from './hook';
 import { isMonster, Skill, Character, NonCharacter } from './card';
 import { ensureFilter, filterSelections, isTargetable, mayFinished } from './target';

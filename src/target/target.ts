@@ -1,14 +1,9 @@
-import { PlayerState } from './game';
-import { ActionTargets, TargetFilter, Location } from './actions';
-import { Character, NonCharacter } from './card';
-import { Selection } from './stack';
-import { deepCardComp } from './utils';
+import { PlayerState } from '../game';
+import { Character, NonCharacter } from '../card';
+import { Selection } from '../stack';
+import { deepCardComp } from '../utils';
 
-interface FilterResponse {
-  selection: Selection;
-  finished: boolean;
-  usedRecent: boolean;
-}
+import { ActionTargets, FilterResponse, TargetFilter, Location } from './types';
 
 export function mayFinished(filter?: ActionTargets): boolean {
   if (!filter) return false;

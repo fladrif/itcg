@@ -1,9 +1,9 @@
 import React from 'react';
 
 import { State as BoardState } from './itcgBoard';
-import { Styles, ITCGCard, ITCGCardback } from './itcgCard';
+import { ITCGCard, ITCGCardback } from './itcgCard';
 import { PlayerState } from './game';
-import { Location } from './actions';
+import { Location } from './target';
 import { BLANK_CARDNAME, NonCharacter } from './card';
 
 interface DeckProp {

@@ -3,7 +3,7 @@ import { BoardProps } from 'boardgame.io/react';
 
 import { GameState } from './game';
 import { getOpponentID } from './utils';
-import { Location } from './actions';
+import { Location, mayFinished } from './target';
 
 import { ITCGCharacter } from './itcgCharacter';
 import { ITCGDialog, DialogBoxOpts } from './itcgDialog';
@@ -15,7 +15,6 @@ import { ITCGHand } from './itcgHand';
 import { ITCGHighlight } from './itcgHighlight';
 import { ITCGInteractive } from './itcgInteractive';
 import { ITCGStats } from './itcgStats';
-import { mayFinished } from './target';
 
 export interface State {
   dialogBox?: DialogBoxOpts;

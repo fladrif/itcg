@@ -1,9 +1,9 @@
 import React from 'react';
 
 import { State as BoardState } from './itcgBoard';
-import { Styles, ITCGCard } from './itcgCard';
+import { ITCGCard } from './itcgCard';
 import { PlayerState } from './game';
-import { Location } from './actions';
+import { Location } from './target';
 import { NonCharacter } from './card';
 
 interface DiscardProp {

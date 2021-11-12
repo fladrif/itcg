@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Location } from './actions';
+import { Location } from './target';
 import { BLANK_CARDNAME, NonCharacter } from './card';
 import { PlayerState } from './game';
 import { State as BoardState } from './itcgBoard';

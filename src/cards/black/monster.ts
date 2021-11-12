@@ -1,5 +1,5 @@
 import { Monster, CardTypes, CardClasses } from '../../card';
-import { Location } from '../../actions';
+import { Location } from '../../target';
 
 const defaultTypes = {
   type: CardTypes.Monster,

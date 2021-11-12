@@ -1,10 +1,10 @@
 import { Ctx, PlayerID } from 'boardgame.io';
 
-import { Action, ActionTargets, Location } from './actions';
+import { Action } from './actions';
 import { Monster, NonCharacter } from './card';
 import { GameState } from './game';
 import { checkDeadMonstersOnField } from './hook';
-import { filterSelections } from './target';
+import { filterSelections, ActionTargets, Location } from './target';
 import { getCardLocation } from './utils';
 
 export interface MonsterStateModifier {

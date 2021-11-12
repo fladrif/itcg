@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { PlayerState } from './game';
-import { Location } from './actions';
+import { Location } from './target';
 import { every, meetsSkillReq } from './utils';
 
 import { Styles, ITCGCard } from './itcgCard';
