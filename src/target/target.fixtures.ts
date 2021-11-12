@@ -122,6 +122,7 @@ export const playerState: PlayerState = {
   learnedSkills: [],
   field: [],
   discard: [],
+  temporary: [],
   hp: 10,
   maxHP: 10,
   level: 40,

@@ -396,8 +396,12 @@ function play(G: GameState, ctx: Ctx, opts: ActionOpts): any {
         player.field.push(card);
         handleAbility(G, ctx, card);
       } else if (isTactic(card)) {
-        // TODO: move to temporary zone first
-        player.discard.push(card);
+        if (!card.ability.skills || card.ability.skills.length <= 0) {
+          player.discard.push(card);
+        } else {
+          player.temporary.push(card);
+        }
+
         handleAbility(G, ctx, card);
       }
 

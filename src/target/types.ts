@@ -16,12 +16,14 @@ export enum Location {
   Discard = 'Discard',
   CharAction = 'CharAction',
   Character = 'Character',
+  Temporary = 'Temporary',
   OppField = 'OppField',
   OppHand = 'OppHand',
   OppDeck = 'OppDeck',
   OppDiscard = 'OppDiscard',
   OppCharAction = 'OppCharAction',
   OppCharacter = 'OppCharacter',
+  OppTemporary = 'OppTemporary',
 }
 
 export type LevelSelector = number | 'CurrentLevel';

@@ -1,8 +1,9 @@
 import { Ctx, PlayerID } from 'boardgame.io';
 
+import { Action, actions } from '../actions';
 import { GameState } from '../game';
 import { Location } from '../target';
-import { isMonster, CardTypes, Monster, isItem, isTactic } from '../card';
+import { isMonster, CardTypes, Monster, isItem, isTactic, Tactic } from '../card';
 import { Choice, Decision } from '../stack';
 import { getMonsterHealth } from '../state';
 import {
@@ -13,6 +14,7 @@ import {
   getOpponentID,
   getOpponentState,
   getRandomKey,
+  rmCard,
 } from '../utils';
 
 import { Trigger } from './trigger';
@@ -1373,15 +1375,63 @@ export class SuperGeniusTrigger extends Trigger {
   }
 }
 
+export class TacticResolutionTrigger extends Trigger {
+  constructor(
+    _cardOwner: string,
+    _player: PlayerID,
+    key: string,
+    _opts?: TriggerOptions,
+    _lifetime?: TriggerLifetime
+  ) {
+    super('tacticRes', 'After', Object.keys(actions) as Action[], key);
+  }
+
+  shouldTriggerExtension(
+    G: GameState,
+    _ctx: Ctx,
+    decision: Decision,
+    _prep: TriggerPrepostion
+  ) {
+    if (!G.stack) return false;
+
+    const sourceIsResolvedTactic = decision.opts?.source
+      ? isTactic(decision.opts.source) &&
+        G.player[decision.opts.source.owner].temporary.some(
+          (card) => card.key === decision.opts!.source!.key
+        ) &&
+        !G.stack.decisions.some(
+          (dec) => dec.opts?.source?.key === decision.opts!.source!.key
+        ) &&
+        !G.stack.queuedDecisions.some(
+          (dec) => dec.opts?.source?.key === decision.opts!.source!.key
+        )
+      : false;
+
+    return sourceIsResolvedTactic;
+  }
+
+  createDecision(G: GameState, ctx: Ctx, decision: Decision) {
+    const source = decision.opts!.source! as Tactic;
+    const curLocation = getCardLocation(G, ctx, source.key);
+
+    G.player[source.owner].discard.push(
+      getCardAtLocation(G, ctx, curLocation, source.key) as Tactic
+    );
+    rmCard(G, ctx, source, curLocation);
+
+    return [];
+  }
+}
+
 export class ToughTrigger extends Trigger {
   constructor(
-    cardOwner: string,
-    player: PlayerID,
+    _cardOwner: string,
+    _player: PlayerID,
     key: string,
-    opts?: TriggerOptions,
-    lifetime?: TriggerLifetime
+    _opts?: TriggerOptions,
+    _lifetime?: TriggerLifetime
   ) {
-    super(cardOwner, 'Before', 'damage', key, opts, player, lifetime);
+    super('tough', 'Before', 'damage', key);
   }
 
   shouldTriggerExtension(
@@ -1499,6 +1549,7 @@ export const triggers = {
   StartleTrigger,
   SteadyHandTrigger,
   SuperGeniusTrigger,
+  TacticResolutionTrigger,
   ToughTrigger,
   WickedTrigger,
 };
@@ -1506,6 +1557,7 @@ export const triggers = {
 export type TriggerNames = keyof typeof triggers;
 
 export const defaultTriggers: TriggerStore[] = [
+  { name: 'TacticResolutionTrigger', key: '_tactic', cardOwner: '-1', owner: '-1' },
   { name: 'ToughTrigger', key: '_tough', cardOwner: '-1', owner: '-1' },
   { name: 'ShieldTrigger', key: '_shield', cardOwner: '-1', owner: '-1' },
   { name: 'DmgDestroyTrigger', key: '_dmgDestroy', cardOwner: '-1', owner: '-1' },

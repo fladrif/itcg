@@ -33,6 +33,7 @@ export interface PlayerState {
   learnedSkills: NonCharacter[];
   field: NonCharacter[];
   discard: NonCharacter[];
+  temporary: NonCharacter[];
   name: string;
   hp: number;
   maxHP: number;
@@ -61,6 +62,7 @@ export function preConfigSetup(): GameState {
     learnedSkills: [],
     field: [],
     discard: [],
+    temporary: [],
     hp: shermanBase.character.health,
     maxHP: shermanBase.character.health,
     level: 0,
@@ -75,6 +77,7 @@ export function preConfigSetup(): GameState {
     learnedSkills: [],
     field: [],
     discard: [],
+    temporary: [],
     hp: nixieBase.character.health,
     maxHP: nixieBase.character.health,
     level: 0,
@@ -113,6 +116,7 @@ export function setup(_ctx: Ctx, setupData: SetupData): GameState {
       learnedSkills: [],
       field: [],
       discard: [],
+      temporary: [],
       hp: player.deck.character.health,
       maxHP: player.deck.character.health,
       level: 0,

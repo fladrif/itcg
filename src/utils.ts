@@ -108,6 +108,8 @@ export function getLocation(
       return player.discard;
     case Location.CharAction:
       return player.learnedSkills;
+    case Location.Temporary:
+      return player.temporary;
     case Location.Character:
       return [player.character];
     case Location.OppHand:
@@ -120,6 +122,8 @@ export function getLocation(
       return opponent.discard;
     case Location.OppCharAction:
       return opponent.learnedSkills;
+    case Location.OppTemporary:
+      return opponent.temporary;
     case Location.OppCharacter:
       return [opponent.character];
   }
