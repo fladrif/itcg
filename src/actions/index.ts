@@ -505,6 +505,28 @@ function refresh(G: GameState, ctx: Ctx, opts: ActionOpts): any {
   G.player[player].hp += opts.lifegain;
 }
 
+function roar(G: GameState, ctx: Ctx, opts: ActionOpts): any {
+  if (!G.stack || !opts.source) return;
+
+  const playerField = G.player[opts.source.owner].field;
+  const numMonsters = playerField.filter((card) => isMonster(card)).length;
+
+  const damage = opts.damage ? opts.damage : 0;
+
+  const decision: Decision = {
+    action: 'damage',
+    opts: {
+      ...opts,
+      damage: numMonsters * damage,
+    },
+    selection: { ...opts.selection },
+    finished: false,
+    key: getRandomKey(),
+  };
+
+  upsertStack(G, ctx, [decision]);
+}
+
 function scout(G: GameState, ctx: Ctx, _opts: ActionOpts): any {
   const player = G.player[ctx.currentPlayer];
 
@@ -644,6 +666,7 @@ export const actions = {
   quest,
   rainofarrows,
   refresh,
+  roar,
   scout,
   shield,
   shuffle,

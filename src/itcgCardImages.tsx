@@ -130,6 +130,10 @@ import TopSoulTeddy from './images/top-SoulTeddy.jpg';
 import SkillSoulTeddy from './images/skill-SoulTeddy.jpg';
 import TopFocus from './images/top-Focus.jpg';
 import SkillFocus from './images/skill-Focus.jpg';
+import TopSerpentsTongue from './images/top-SerpentsTongue.jpg';
+import SkillSerpentsTongue from './images/skill-SerpentsTongue.jpg';
+import TopDoombringer from './images/top-Doombringer.jpg';
+import SkillDoombringer from './images/skill-Doombringer.jpg';
 import TopSherman from './images/top-Sherman.jpg';
 import SkillSherman from './images/skill1-Sherman.jpg';
 import Skill2Sherman from './images/skill2-Sherman.jpg';
@@ -419,6 +423,14 @@ export const cardImages: Record<string, CardImages> = {
   Focus: {
     top: TopFocus,
     skill: SkillFocus,
+  },
+  SerpentsTongue: {
+    top: TopSerpentsTongue,
+    skill: SkillSerpentsTongue,
+  },
+  Doombringer: {
+    top: TopDoombringer,
+    skill: SkillDoombringer,
   },
   Sherman: {
     top: TopSherman,

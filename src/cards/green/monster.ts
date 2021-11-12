@@ -378,6 +378,7 @@ export const lunarpixie: Omit<Monster, 'key' | 'owner'> = {
       {
         action: 'damage',
         activated: false,
+        noReset: true,
         opts: {
           damage: 20,
         },

@@ -17,6 +17,7 @@ export type TriggerPrepostion = 'Before' | 'After';
 // TODO: dd & merge triggeroptions and triggerlifetime
 export interface TriggerOptions {
   damage?: number;
+  lifegain?: number;
 }
 
 export interface TriggerLifetime {

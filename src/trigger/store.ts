@@ -267,6 +267,55 @@ export class DmgDestroyTrigger extends Trigger {
   }
 }
 
+export class DoombringerTrigger extends Trigger {
+  constructor(
+    cardOwner: string,
+    player: PlayerID,
+    key: string,
+    opts?: TriggerOptions,
+    lifetime?: TriggerLifetime
+  ) {
+    super(cardOwner, 'Before', 'damage', key, opts, player, lifetime);
+  }
+
+  shouldTriggerExtension(
+    G: GameState,
+    ctx: Ctx,
+    decision: Decision,
+    _prep: TriggerPrepostion
+  ) {
+    const validLocations = [
+      Location.OppCharacter,
+      Location.OppCharAction,
+      Location.Character,
+      Location.CharAction,
+    ];
+
+    const sourceLocation = decision.opts?.source
+      ? getCardLocation(G, ctx, decision.opts.source.key)
+      : false;
+    const sourceIsChar = sourceLocation ? validLocations.includes(sourceLocation) : false;
+
+    return sourceIsChar && this.sourceIsOwner(decision);
+  }
+
+  createDecision(_G: GameState, _ctx: Ctx, decision: Decision) {
+    const buffDmg = this.opts?.damage || 0;
+
+    const buffDec: Decision = {
+      action: 'buff',
+      finished: false,
+      selection: {},
+      opts: {
+        damage: buffDmg,
+        decision: decision.key,
+      },
+      key: getRandomKey(),
+    };
+
+    return [buffDec];
+  }
+}
 export class EarthquakeTrigger extends Trigger {
   constructor(
     cardOwner: string,
@@ -976,6 +1025,64 @@ export class RevengeTrigger extends Trigger {
   }
 }
 
+export class SerpentsTrigger extends Trigger {
+  constructor(
+    cardOwner: string,
+    player: PlayerID,
+    key: string,
+    opts?: TriggerOptions,
+    lifetime?: TriggerLifetime
+  ) {
+    super(cardOwner, 'After', 'destroy', key, opts, player, lifetime);
+  }
+
+  shouldTriggerExtension(
+    _G: GameState,
+    _ctx: Ctx,
+    decision: Decision,
+    _prep: TriggerPrepostion
+  ) {
+    const ownerMonster = decision.opts?.source
+      ? decision.opts.source.owner === this.owner && isMonster(decision.opts.source)
+      : false;
+
+    return ownerMonster;
+  }
+
+  createDecision(G: GameState, ctx: Ctx, decision: Decision) {
+    const validLocations = [Location.Field, Location.OppField];
+    const decisions: Decision[] = [];
+
+    validLocations.map((location) => {
+      if (!decision.selection[location]) return;
+
+      decision.selection[location]!.forEach((card) => {
+        if (!isMonster(card)) return;
+
+        const thisCard = getCardAtLocation(
+          G,
+          ctx,
+          getCardLocation(G, ctx, this.cardOwner),
+          this.cardOwner
+        );
+
+        decisions.push({
+          action: 'refresh',
+          opts: {
+            lifegain: this.opts!.lifegain,
+            source: thisCard,
+          },
+          selection: {},
+          finished: false,
+          key: getRandomKey(),
+        });
+      });
+    });
+
+    return decisions;
+  }
+}
+
 // TODO: Currently triggers on the entire damage decision, should split damage decision into constituent parts so shield triggers only on character damage (for damage decisions that affect characters and monsters)
 // Perhaps replace decision instead of modifying, creates issue with triggering itself
 export class ShieldTrigger extends Trigger {
@@ -1372,6 +1479,7 @@ export const triggers = {
   BoneRattleTrigger,
   BuffAllTrigger,
   DmgDestroyTrigger,
+  DoombringerTrigger,
   EarthquakeTrigger,
   EmeraldEarringsTrigger,
   FairyTrigger,
@@ -1385,6 +1493,7 @@ export const triggers = {
   RedNightTrigger,
   RelentlessTrigger,
   RevengeTrigger,
+  SerpentsTrigger,
   ShieldTrigger,
   SlipperyTrigger,
   StartleTrigger,
