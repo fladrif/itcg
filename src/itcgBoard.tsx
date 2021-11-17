@@ -3,7 +3,7 @@ import { BoardProps } from 'boardgame.io/react';
 
 import { GameState } from './game';
 import { getOpponentID } from './utils';
-import { Location, mayFinished } from './target';
+import { getTargetLocations, Location, mayFinished } from './target';
 
 import { ITCGCharacter } from './itcgCharacter';
 import { ITCGDialog, DialogBoxOpts } from './itcgDialog';
@@ -156,6 +156,15 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
         ? stack.activeDecisions[0].choice || []
         : [];
 
+    const selectLocations =
+      currentPlayerStage === 'select' && stack
+        ? getTargetLocations(stack.activeDecisions[0].target)
+        : [];
+
+    const tempInSelectLoc = selectLocations.some((loc) =>
+      [Location.Temporary, Location.OppTemporary].includes(loc)
+    );
+
     return (
       <div style={containerStyle}>
         {gameOver}
@@ -276,6 +285,8 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
             selectChoice={this.props.moves.selectChoice}
             confirm={this.props.moves.confirmSkill}
             resetStack={this.props.moves.resetStack}
+            updateBoard={(state) => this.setState(state)}
+            tempInSelectLoc={tempInSelectLoc}
           />
         </div>
         <div style={discardStyle}>

@@ -6,7 +6,13 @@ import { PlayerState } from './game';
 import { State as BoardState } from './itcgBoard';
 import { Styles, ITCGCard, ITCGCardback } from './itcgCard';
 
-export type DialogBoxOpts = 'discard' | 'deck' | 'oppdiscard' | 'oppdeck';
+export type DialogBoxOpts =
+  | 'discard'
+  | 'deck'
+  | 'oppdiscard'
+  | 'oppdeck'
+  | 'temp'
+  | 'opptemp';
 
 interface DialogProp {
   playerState: PlayerState;
@@ -57,6 +63,8 @@ export class ITCGDialog extends React.Component<DialogProp> {
     if (this.props.dialogBox === 'oppdiscard') return "Opponent's Discard Pile";
     if (this.props.dialogBox === 'deck') return 'Deck';
     if (this.props.dialogBox === 'oppdeck') return "Opponent's Deck";
+    if (this.props.dialogBox === 'temp') return 'Temporary Zone';
+    if (this.props.dialogBox === 'opptemp') return 'Temporary Zone';
   }
 
   getDisplayPile(): NonCharacter[] {
@@ -64,6 +72,8 @@ export class ITCGDialog extends React.Component<DialogProp> {
     if (this.props.dialogBox === 'oppdiscard') return this.props.opponentState.discard;
     if (this.props.dialogBox === 'deck') return this.props.playerState.deck;
     if (this.props.dialogBox === 'oppdeck') return this.props.opponentState.deck;
+    if (this.props.dialogBox === 'temp') return this.props.playerState.temporary;
+    if (this.props.dialogBox === 'opptemp') return this.props.opponentState.temporary;
   }
 
   getLocation(): Location {
@@ -72,6 +82,9 @@ export class ITCGDialog extends React.Component<DialogProp> {
     }
     if (this.props.dialogBox === 'deck' || this.props.dialogBox === 'oppdeck') {
       return this.props.currentPlayer ? Location.Deck : Location.OppDeck;
+    }
+    if (this.props.dialogBox === 'temp' || this.props.dialogBox === 'opptemp') {
+      return this.props.currentPlayer ? Location.Temporary : Location.OppTemporary;
     }
   }
 

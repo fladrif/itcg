@@ -51,7 +51,7 @@ export interface NonCharacter extends Exclude<Card, Character> {
   level: number;
   skill: Skill[];
   ability: Ability;
-  reveal?: boolean;
+  reveal?: PlayerID[];
 }
 
 export interface Monster extends NonCharacter {

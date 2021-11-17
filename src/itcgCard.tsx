@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Character, NonCharacter, isMonster, CardTypes } from './card';
-import { Location } from './actions';
+import { Location } from './target';
 import { cardImages, cardback } from './itcgCardImages';
 import { MoveOptions } from './moves';
 

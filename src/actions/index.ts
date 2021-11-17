@@ -42,7 +42,7 @@ export interface ActionOpts {
    * Amount to regain hp. Used with refresh action
    */
   lifegain?: number;
-  dialogDecision?: Decision;
+  dialogDecision?: Decision[];
   /**
    * Should refresh increase hp over starting total. Defaults true if undef
    */
@@ -57,7 +57,7 @@ function ack(G: GameState, ctx: Ctx, opts: ActionOpts): any {
   if (!G.stack) return;
   if (!opts.choiceSelection || !opts.dialogDecision) return;
 
-  upsertStack(G, ctx, [opts.dialogDecision]);
+  upsertStack(G, ctx, opts.dialogDecision);
 }
 
 function attack(G: GameState, ctx: Ctx, opts: ActionOpts): any {
@@ -87,7 +87,7 @@ function bounce(G: GameState, ctx: Ctx, opts: ActionOpts): any {
       .filter((c) => !!cardsSel.find((cs) => deepCardComp(c, cs)))
       .map((card) => {
         const cardLoc = card as NonCharacter;
-        cardLoc.reveal = true;
+        cardLoc.reveal = Object.keys(G.player);
 
         G.player[card.owner].hand.push(cardLoc);
 
@@ -183,7 +183,7 @@ function criticalshot(G: GameState, ctx: Ctx, opts: ActionOpts): any {
     noReset: true,
     opts: {
       ...opts,
-      dialogDecision: didWin ? dmgDec : undefined,
+      dialogDecision: didWin ? [dmgDec] : undefined,
     },
     dialogPrompt: didWin
       ? `${flippedCoin}, you won the flip!`
@@ -368,6 +368,10 @@ function nomercy(G: GameState, ctx: Ctx, opts: ActionOpts): any {
   upsertStack(G, ctx, [decision]);
 }
 
+function noop(_G: GameState, _ctx: Ctx, _opts: ActionOpts): any {
+  return;
+}
+
 function optional(G: GameState, ctx: Ctx, opts: ActionOpts): any {
   if (!G.stack) return;
   if (!opts.choiceSelection || !opts.dialogDecision) return;
@@ -377,7 +381,7 @@ function optional(G: GameState, ctx: Ctx, opts: ActionOpts): any {
   const trigger = G.triggers.filter((trigger) => trigger.key === opts.triggerKey)[0];
   if (trigger?.lifetime?.turn !== undefined) trigger.lifetime.turn = ctx.turn + 1;
 
-  upsertStack(G, ctx, [opts.dialogDecision]);
+  upsertStack(G, ctx, opts.dialogDecision);
 }
 
 function play(G: GameState, ctx: Ctx, opts: ActionOpts): any {
@@ -464,6 +468,15 @@ function refresh(G: GameState, ctx: Ctx, opts: ActionOpts): any {
   G.player[player].hp += opts.lifegain;
 }
 
+function replacement(G: GameState, _ctx: Ctx, opts: ActionOpts): any {
+  if (!G.stack || !opts.decision) return;
+
+  const decision = G.stack.decisions.filter((dec) => dec.key === opts.decision)[0];
+  if (!decision) return;
+
+  decision.action = 'noop';
+}
+
 function roar(G: GameState, ctx: Ctx, opts: ActionOpts): any {
   if (!G.stack || !opts.source) return;
 
@@ -491,7 +504,7 @@ function scout(G: GameState, ctx: Ctx, _opts: ActionOpts): any {
 
   if (player.deck.length <= 0) return INVALID_MOVE;
 
-  player.deck[0].reveal = true;
+  player.deck[0].reveal = Object.keys(G.player);
   if (isMonster(player.deck[0])) player.hand.push(player.deck.shift()!);
 }
 
@@ -500,10 +513,63 @@ function shuffle(G: GameState, ctx: Ctx, _opts: ActionOpts): any {
   const deck = G.player[id].deck;
 
   deck.map((card) => {
-    if (card.reveal) card.reveal = false;
+    if (card.reveal) card.reveal = undefined;
   });
 
   G.player[id].deck = ctx.random!.Shuffle!(deck);
+}
+
+function seer(G: GameState, ctx: Ctx, opts: ActionOpts): any {
+  if (!G.stack || !opts.source) return;
+
+  const playerID = opts.source.owner;
+  const state = G.player[playerID];
+
+  if (state.deck.length == 0) return;
+
+  if (state.deck.length <= 2) {
+    state.deck[0].reveal = [playerID];
+  } else {
+    state.deck[0].reveal = [playerID];
+    state.deck[1].reveal = [playerID];
+  }
+
+  const seerChoiceDec: Decision = {
+    action: 'seerChoice',
+    finished: false,
+    selection: {},
+    noReset: true,
+    target: {
+      location: playerID === ctx.currentPlayer ? Location.Deck : Location.OppDeck,
+      quantity: 1,
+    },
+    opts: {
+      ...opts,
+      activePlayer: playerID,
+    },
+    key: getRandomKey(),
+  };
+
+  upsertStack(G, ctx, [seerChoiceDec]);
+}
+
+function seerChoice(G: GameState, ctx: Ctx, opts: ActionOpts): any {
+  if (!G.stack || !opts.selection) return;
+
+  const locations = [Location.Deck, Location.OppDeck];
+  locations.forEach((location) => {
+    !!opts.selection![location] &&
+      opts.selection![location]!.forEach((card) => {
+        const realCard = getCardAtLocation(G, ctx, location, card.key);
+
+        G.player[card.owner].hand.push(realCard as NonCharacter);
+        rmCard(G, ctx, card, location);
+
+        if (G.player[card.owner].deck.length >= 1) {
+          G.player[card.owner].discard.push(G.player[card.owner].deck.shift()!);
+        }
+      });
+  });
 }
 
 // TODO: take into account shield abilities
@@ -574,7 +640,7 @@ function trainhard(G: GameState, ctx: Ctx, opts: ActionOpts): any {
     selection: {},
     finished: false,
     opts: {
-      dialogDecision: levelDec,
+      dialogDecision: [levelDec],
       ...opts,
     },
     noReset: true,
@@ -593,7 +659,7 @@ function tuck(G: GameState, ctx: Ctx, opts: ActionOpts): any {
   for (const location of Object.keys(opts.selection) as Location[]) {
     opts.selection[location]!.map((card) => {
       const cardLoc = getCardAtLocation(G, ctx, location, card.key) as NonCharacter;
-      cardLoc.reveal = true;
+      cardLoc.reveal = Object.keys(G.player);
 
       G.player[card.owner].deck.splice(opts.position!, 0, cardLoc);
 
@@ -618,6 +684,7 @@ export const actions = {
   level,
   loot,
   nomercy,
+  noop,
   optional,
   play,
   putIntoPlay,
@@ -625,8 +692,11 @@ export const actions = {
   quest,
   rainofarrows,
   refresh,
+  replacement,
   roar,
   scout,
+  seer,
+  seerChoice,
   shield,
   shuffle,
   steadyhand,

@@ -141,6 +141,7 @@ export function setup(_ctx: Ctx, setupData: SetupData): GameState {
   return state;
 }
 
+// TODO: Handle temporary zones
 export function playerView(
   G: GameState,
   _ctx: Ctx,
@@ -154,8 +155,8 @@ export function playerView(
   playerIDs.map((id) => {
     const { deck, hand, ...nonDeckState } = G.player[id];
 
-    const playerDeck = scrubPile(G.player[id].deck);
-    const playerHand = playerID === id ? hand : scrubPile(hand);
+    const playerDeck = scrubPile(G.player[id].deck, id);
+    const playerHand = playerID === id ? hand : scrubPile(hand, id);
 
     newState.player[id] = { ...nonDeckState, deck: playerDeck, hand: playerHand };
   });

@@ -33,7 +33,6 @@ export const buffy: Omit<Monster, 'key' | 'owner'> = {
       },
     },
   ],
-  // TODO: de level char
   ability: {
     skills: [
       {

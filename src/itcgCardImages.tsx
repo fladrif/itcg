@@ -134,6 +134,8 @@ import TopSerpentsTongue from './images/top-SerpentsTongue.jpg';
 import SkillSerpentsTongue from './images/skill-SerpentsTongue.jpg';
 import TopDoombringer from './images/top-Doombringer.jpg';
 import SkillDoombringer from './images/skill-Doombringer.jpg';
+import TopMapleStaff from './images/top-MapleStaff.jpg';
+import SkillMapleStaff from './images/skill-MapleStaff.jpg';
 import TopSherman from './images/top-Sherman.jpg';
 import SkillSherman from './images/skill1-Sherman.jpg';
 import Skill2Sherman from './images/skill2-Sherman.jpg';
@@ -431,6 +433,10 @@ export const cardImages: Record<string, CardImages> = {
   Doombringer: {
     top: TopDoombringer,
     skill: SkillDoombringer,
+  },
+  MapleStaff: {
+    top: TopMapleStaff,
+    skill: SkillMapleStaff,
   },
   Sherman: {
     top: TopSherman,

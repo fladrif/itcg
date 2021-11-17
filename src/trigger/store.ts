@@ -76,7 +76,7 @@ export class BattleBowTrigger extends Trigger {
       choice: [Choice.Yes, Choice.No],
       noReset: true,
       opts: {
-        dialogDecision: buffDec,
+        dialogDecision: [buffDec],
         triggerKey: this.key,
         source: getCardAtLocation(
           G,
@@ -415,7 +415,7 @@ export class EmeraldEarringsTrigger extends Trigger {
     if (!triggerOwner) return [];
 
     const player = G.player[triggerOwner];
-    player.deck[0].reveal = true;
+    player.deck[0].reveal = Object.keys(G.player);
 
     const dec: Decision = {
       action: 'putIntoHand',
@@ -628,7 +628,7 @@ export class GoldenCrowTrigger extends Trigger {
       choice: [Choice.Yes, Choice.No],
       noReset: true,
       opts: {
-        dialogDecision: buffDec,
+        dialogDecision: [buffDec],
         triggerKey: this.key,
         source: getCardAtLocation(
           G,
@@ -754,6 +754,76 @@ export class NoMercyTrigger extends Trigger {
     };
 
     return [dec];
+  }
+}
+
+export class MapleStaffTrigger extends Trigger {
+  constructor(
+    cardOwner: string,
+    player: PlayerID,
+    key: string,
+    opts?: TriggerOptions,
+    lifetime?: TriggerLifetime
+  ) {
+    super(cardOwner, 'Before', 'quest', key, opts, player, lifetime);
+  }
+
+  shouldTriggerExtension(
+    _G: GameState,
+    _ctx: Ctx,
+    decision: Decision,
+    _prep: TriggerPrepostion
+  ) {
+    return this.sourceIsOwner(decision);
+  }
+
+  createDecision(G: GameState, ctx: Ctx, decision: Decision) {
+    const triggerOwner = decision.opts?.source?.owner;
+    if (!triggerOwner) return [];
+
+    const source = getCardAtLocation(
+      G,
+      ctx,
+      getCardLocation(G, ctx, this.cardOwner),
+      this.cardOwner
+    );
+
+    const replaceDec: Decision = {
+      action: 'replacement',
+      selection: {},
+      finished: false,
+      opts: {
+        decision: decision.key,
+        source,
+      },
+      key: getRandomKey(),
+    };
+
+    const seerDec: Decision = {
+      action: 'seer',
+      selection: {},
+      finished: false,
+      opts: {
+        source,
+      },
+      key: getRandomKey(),
+    };
+
+    const optionDec: Decision = {
+      action: 'optional',
+      selection: {},
+      choice: [Choice.Yes, Choice.No],
+      finished: false,
+      dialogPrompt: `Use ${source.name} Ability?`,
+      noReset: true,
+      opts: {
+        dialogDecision: [seerDec, replaceDec],
+        source,
+      },
+      key: getRandomKey(),
+    };
+
+    return [optionDec];
   }
 }
 
@@ -907,7 +977,7 @@ export class RedNightTrigger extends Trigger {
       noReset: true,
       opts: {
         activePlayer: this.owner,
-        dialogDecision: discardDec,
+        dialogDecision: [discardDec],
         source: getCardAtLocation(
           G,
           ctx,
@@ -1183,7 +1253,7 @@ export class SlipperyTrigger extends Trigger {
       selection: {},
       choice: [Choice.Heads, Choice.Tails],
       opts: {
-        dialogDecision: slipperyDecision,
+        dialogDecision: [slipperyDecision],
         source: card,
       },
       finished: false,
@@ -1317,7 +1387,7 @@ export class SuperGeniusTrigger extends Trigger {
     if (!triggerOwner) return [];
 
     const player = G.player[triggerOwner];
-    player.deck[0].reveal = true;
+    player.deck[0].reveal = Object.keys(G.player);
 
     const putDec: Decision = {
       action: 'putIntoHand',
@@ -1359,7 +1429,7 @@ export class SuperGeniusTrigger extends Trigger {
       dialogPrompt: `Play ${player.deck[0].name}?`,
       noReset: true,
       opts: {
-        dialogDecision: playDec,
+        dialogDecision: [playDec],
         source: getCardAtLocation(
           G,
           ctx,
@@ -1538,6 +1608,7 @@ export const triggers = {
   GoldenCrowTrigger,
   LootTrigger,
   NoMercyTrigger,
+  MapleStaffTrigger,
   PrevailTrigger,
   RedApprenticeHatTrigger,
   RedNightTrigger,

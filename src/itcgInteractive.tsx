@@ -3,12 +3,14 @@ import React from 'react';
 import { Choice } from './stack';
 import { MoveOptions } from './moves';
 import { getRandomKey } from './utils';
+import { State as BoardState } from './itcgBoard';
 
 interface InteractiveProp {
   stage: string;
   decisionFinished: boolean;
   decMaybeFinished: boolean;
   showReset: boolean;
+  tempInSelectLoc: boolean;
   choices: Choice[];
   noLevel: () => any;
   noActivate: () => any;
@@ -16,6 +18,7 @@ interface InteractiveProp {
   confirm: (opts?: MoveOptions) => any;
   selectChoice: () => any;
   resetStack: () => any;
+  updateBoard: (state: BoardState) => any;
 }
 
 export interface DialogButtons {
@@ -118,6 +121,12 @@ export class ITCGInteractive extends React.Component<InteractiveProp> {
         prompt: 'Select a card',
         buttons: [
           {
+            label: 'Show Temporary Zone',
+            sentiment: 'neu',
+            move: () => this.updateBoard(),
+            condition: 'tempInSelectLoc',
+          },
+          {
             label: 'Confirm',
             sentiment: 'pos',
             move: this.props.decMaybeFinished
@@ -206,6 +215,14 @@ export class ITCGInteractive extends React.Component<InteractiveProp> {
 
   componentDidUnMount() {
     document.removeEventListener('keydown', this.keydownFn);
+  }
+
+  updateBoard() {
+    const newBoardState: BoardState = {
+      dialogBox: 'temp',
+    };
+
+    this.props.updateBoard(newBoardState);
   }
 
   render() {
