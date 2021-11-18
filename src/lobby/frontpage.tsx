@@ -77,6 +77,11 @@ export class ITCGFrontPage extends React.Component<FrontPageProps> {
     return (
       <>
         <p style={paragraphStyle}>
+          <b>November 18, 2021</b> Added more cards: all cards available in game are fully
+          functional, and all characters are now available. Included a 'How to Play'
+          guide, helpful images to be added in next update.
+        </p>
+        <p style={paragraphStyle}>
           <b>October 28, 2021</b> Added more cards: Most easily added cards are now
           available, technically more difficult cards are in the pipeline; Common
           characters for all classes now available. Updated UI: View discard piles and
