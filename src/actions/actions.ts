@@ -3,7 +3,6 @@ import { INVALID_MOVE } from 'boardgame.io/core';
 
 import { GameState } from '../game';
 import {
-  CardTypes,
   CardClasses,
   Monster,
   isItem,

@@ -7,6 +7,38 @@ const defaultTypes = {
   selected: false,
 };
 
+export const bloodslain: Omit<Item, 'key' | 'owner'> = {
+  canonicalName: 'bloodslain',
+  name: 'Blood Slain',
+  image: 'BloodSlain',
+  level: 50,
+  skill: [
+    {
+      action: 'play',
+      activated: false,
+      requirements: {
+        level: 70,
+        class: {
+          [CardClasses.Thief]: 3,
+        },
+      },
+      targets: {
+        xor: [
+          {
+            level: 'CurrentLevel',
+            location: Location.Hand,
+            quantity: 1,
+          },
+        ],
+      },
+    },
+  ],
+  ability: {
+    triggers: [{ name: 'BloodSlainTrigger', opts: { damage: 10 } }],
+  },
+  ...defaultTypes,
+};
+
 export const coconutknife: Omit<Item, 'key' | 'owner'> = {
   canonicalName: 'coconutknife',
   name: 'Coconut Knife',
