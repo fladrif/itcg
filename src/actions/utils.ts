@@ -1,12 +1,14 @@
 import { Ctx } from 'boardgame.io';
 
 import { ActionTargets, Location } from '../target';
-import { isMonster, Monster, NonCharacter, SkillRequirements } from '../card';
-import { GameState } from '../game';
-import { upsertStack, parseSkill } from '../stack';
+import { isMonster, Monster, Character, NonCharacter, SkillRequirements } from '../card';
+import { GameState, PlayerState } from '../game';
+import { upsertStack, parseSkill, Decision } from '../stack';
 import { removeGlobalState } from '../state';
 import { removeTrigger, parseTriggerLifetime, pushTriggerStore } from '../trigger';
 import { getCardAtLocation, getCardLocation, rmCard } from '../utils';
+
+import { Damage } from './types';
 
 export function handleAbility(G: GameState, ctx: Ctx, card: NonCharacter): any {
   if (card.ability.triggers) {
@@ -79,4 +81,26 @@ export function checkReqs(reqs: SkillRequirements): (G: GameState, ctx: Ctx) => 
 
     return true;
   };
+}
+
+export function resolveDamage(player: PlayerState, damage: Damage): number {
+  if (damage === 'CurrentLevel') return player.level;
+  return damage;
+}
+
+export function ensureDecision(
+  decisions: Decision[],
+  source: Character | NonCharacter
+): Decision[] {
+  return decisions.map((dec) => {
+    if (!!dec.opts?.source) return dec;
+
+    return {
+      ...dec,
+      opts: {
+        ...dec.opts,
+        source,
+      },
+    };
+  });
 }
