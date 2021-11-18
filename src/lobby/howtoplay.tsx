@@ -21,29 +21,29 @@ export class ITCGHowToPlay extends React.Component {
           Maplestory iTCG is a card game played between two players, with the main goal to
           reduce the opponent's hit points (hp) to 0. Each player will start with a{' '}
           <b>Character</b> that will level up with activatable skills, and a deck of{' '}
-          <b>Monsters</b>, <b>Items</b>, and <b>Tactics</b>.
+          <b>Monster</b>, <b>Item</b>, and <b>Tactic</b> cards.
         </p>
         <p style={paragraphStyle}>
           The <b>Character</b> card starts the game face up on the player's right, and
           will increase in level and gain skills as the game progresses. The skills of the
-          character will allow players to spawn <b>Monster</b>s, equip <b>Item</b>s, and
-          think fast to execute <b>Tactic</b>s.
+          character will allow players to spawn <b>Monster</b>, equip <b>Item</b>, and
+          think fast to execute <b>Tactic</b> cards.
         </p>
         <p style={paragraphStyle}>
-          <b>Monster</b>s in play on the <i>field</i> can be used to attack your
-          opponent's <b>Character</b> or other <b>Monster</b>s. Equipped <b>Item</b>s
-          exists on the <i>field</i>, and can buff damage, protect monsters and
-          characters, and other various effects. <b>Tactic</b>s have a one time effect
-          that occurs when they're played, ranging from dealing damage, destroying items
-          and monsters, to gaining health and drawing cards. They do not enter the{' '}
+          <b>Monster</b> cards in play on the <i>field</i> can be used to attack your
+          opponent's <b>Character</b> or other <b>Monster</b> cards. Equipped <b>Item</b>{' '}
+          cards exists on the <i>field</i>, and can buff damage, protect monsters and
+          characters, and other various effects. <b>Tactic</b> cards have a one time
+          effect that occurs when they're played, ranging from dealing damage, destroying
+          items and monsters, to gaining health and drawing cards. They do not enter the{' '}
           <i>field</i> but instead go to the <i>discard</i> pile after being played.
         </p>
         <p style={paragraphStyle}>
-          Non<b>Character</b> cards each have two parts to them, a played upper portion,
-          and a lower level-up section. When a non<b>Character</b> card is played with a{' '}
+          Non-<b>Character</b> cards each have two parts to them, a played upper portion,
+          and a lower level-up section. When a non-<b>Character</b> card is played with a{' '}
           <b>Character</b> skill, the lower level-up portion is ignored, and only the
-          upper played section is utilized. Alternately when a non<b>Character</b> card is
-          used to level-up, only the bottom portion is utilized, and the top portion
+          upper played section is utilized. Alternately when a non-<b>Character</b> card
+          is used to level-up, only the bottom portion is utilized, and the top portion
           hidden beneath the <b>Character</b> card.
         </p>
         <p style={paragraphStyle}>
@@ -73,7 +73,7 @@ export class ITCGHowToPlay extends React.Component {
         <h3>Level</h3>
         <p style={paragraphStyle}>
           During the <b>Level</b> phase, the player will have the opportunity to level up
-          with a card from their hand. These non<b>Character</b> cards in the hand will
+          with a card from their hand. These non-<b>Character</b> cards in the hand will
           have a lower level-up section that contains a skill that the character will
           gain. In addition to the skill, the character will also gain 20 hp (hit points)
           and 10 levels. This health gain can increase beyond the starting life total of
@@ -113,28 +113,30 @@ export class ITCGHowToPlay extends React.Component {
         <p style={paragraphStyle}>
           <b>Play Tip:</b> When in the <b>Activate</b> phase, click on the{' '}
           <b>Character</b> skill you wish to activate. Skills will be shaded if your
-          character doesn't meet the requirements, or if they've been activated already or
+          character doesn't meet the requirements, or if they've been already activated or
           skipped. Click on the <i>Go to Attack Stage</i> button if you are done
           activating skills.
         </p>
         <h3>Attack</h3>
         <p style={paragraphStyle}>
           The <b>Attack</b> phase is the last phase of a player's turn, and the time when
-          spawned <b>Monster</b>s are able to attack. Each <b>Monster</b> can typically
-          attack the turn they're played (unless they have a keyword or effect that says
-          otherwise), and will attack only once (unless otherwise stated). They can attack
-          either your opponent's <b>Monster</b>s, or their <b>Character</b>. Attacking
-          your opponent's <b>Monster</b>s will only deal damage to the opposing{' '}
-          <b>Monster</b> without taking damage itself. Damage to <b>Monster</b>s, if not
-          enough to destroy them, will be removed after the turn ends. Attacks to{' '}
-          <b>Character</b>s will be <i>shield</i>ed (explained below).
+          spawned <b>Monster</b> cards are able to attack. Each <b>Monster</b> can
+          typically attack the turn they're played (unless they have a keyword or effect
+          that says otherwise), and will attack only once (unless otherwise stated). They
+          can attack either your opponent's <b>Monster</b> cards, or their{' '}
+          <b>Character</b>. Attacking your opponent's <b>Monster</b> cards will only deal
+          damage to the opposing <b>Monster</b> without taking damage itself. Damage to{' '}
+          <b>Monster</b> cards, if not enough to destroy them, will be removed after the
+          turn ends. Attacks to <b>Character</b> cards will be <i>shield</i>ed (explained
+          below).
         </p>
         <p style={paragraphStyle}>
           <b>Play Tip:</b> When in the <b>Attack</b> phase, click on the <b>Monster</b>{' '}
           you wish to attack with, then the <b>Monster</b> or <b>Character</b> you wish to
           attack with that <b>Monster</b>. <b>Monster</b>s that cannot attack, or have
           already attacked will be shaded. Click on <i>Pass Turn</i> if you do not want to
-          attack with any other <b>Monster</b>s.
+          attack with any other <b>Monster</b> cards, and to pass the turn to your
+          opponent.
         </p>
       </>
     );
@@ -145,13 +147,14 @@ export class ITCGHowToPlay extends React.Component {
       <>
         <h2>Shield</h2>
         <p style={paragraphStyle}>
-          <b>Character</b>'s are inherently <i>shield</i>ed from damage by their{' '}
-          <b>Monster</b>s and other effects with <i>shield</i>. <i>Shield</i> prevents 10
-          damage to a character for each <b>Monster</b> that player controls from each
-          damage source. For example, if a player controls 1 <b>Monster</b>, a 20 damage{' '}
-          <b>Tactic</b> will only deal 10 damage to the <b>Character</b>, and a{' '}
-          <b>Monster</b> with 10 attack will deal 0 damage. The <b>Monster</b> controlled
-          by the player will not take damage when the <b>Character</b> is <i>shield</i>
+          <b>Character</b> cards are inherently <i>shield</i>ed from damage by their{' '}
+          <b>Monster</b> cards and other effects with <i>shield</i>. <i>Shield</i>{' '}
+          prevents 10 damage to a <b>Character</b> for each <b>Monster</b> that player
+          controls from each damage source. For example, if a player controls 1{' '}
+          <b>Monster</b>, a 20 damage <b>Tactic</b> will only deal 10 damage to the{' '}
+          <b>Character</b>, and a <b>Monster</b> with 10 attack will deal 0 damage. The{' '}
+          <b>Monster</b> controlled by the player will not take damage when the{' '}
+          <b>Character</b> is <i>shield</i>
           ed from damage.
         </p>
       </>
@@ -162,7 +165,9 @@ export class ITCGHowToPlay extends React.Component {
     return (
       <div style={baseStyle}>
         {this.overview()}
+        ----------------------------------------------------------
         {this.partsOfTurn()}
+        ----------------------------------------------------------
         {this.shield()}
       </div>
     );

@@ -104,7 +104,7 @@ class App extends React.Component {
               </Route>
               <Route path={'/howtoplay'}>
                 <ITCGHeader username={this.state.username} />
-                {this.state.username && <ITCGHowToPlay />}
+                <ITCGHowToPlay />
               </Route>
               <Route path={'/signup'}>
                 <ITCGHeader />

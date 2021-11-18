@@ -84,6 +84,19 @@ export class ITCGHeader extends React.Component<HeaderProps> {
     );
   }
 
+  loggedOutMenu() {
+    return (
+      <>
+        <NavLink activeStyle={selectedMenuItem} exact={true} style={menuItem} to={'/'}>
+          Home
+        </NavLink>
+        <NavLink activeStyle={selectedMenuItem} style={menuItem} to={'/howtoplay'}>
+          How To Play
+        </NavLink>
+      </>
+    );
+  }
+
   loggedInMenu() {
     return (
       <>
@@ -117,7 +130,10 @@ export class ITCGHeader extends React.Component<HeaderProps> {
           <h1>Maplestory iTCG</h1>
           Maplestory card game web client
         </div>
-        <div style={menuStyle}>{loggedIn && this.loggedInMenu()}</div>
+        <div style={menuStyle}>
+          {!loggedIn && this.loggedOutMenu()}
+          {loggedIn && this.loggedInMenu()}
+        </div>
         <div style={UIStyle}>
           {!loggedIn && this.loggedOutUI()}
           {loggedIn && this.loggedInUI()}
