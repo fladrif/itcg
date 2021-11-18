@@ -119,14 +119,14 @@ function buff(G: GameState, _ctx: Ctx, opts: ActionOpts): any {
 }
 
 function buffall(G: GameState, ctx: Ctx, opts: ActionOpts): any {
-  if (!G.stack || !opts.source) return;
+  if (!G.stack || !opts.source || !opts.damage) return;
 
   pushTriggerStore(
     G,
     ctx,
     'BuffAllTrigger',
     opts.source,
-    { damage: 10 },
+    { damage: opts.damage },
     { usableTurn: ctx.turn }
   );
 }

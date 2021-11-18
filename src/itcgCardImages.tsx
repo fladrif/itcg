@@ -158,6 +158,22 @@ import TopMaya from './images/top-Maya.jpg';
 import SkillMaya from './images/skill1-Maya.jpg';
 import Skill2Maya from './images/skill2-Maya.jpg';
 import Skill3Maya from './images/skill3-Maya.jpg';
+import TopSkyhawk from './images/top-Skyhawk.jpg';
+import SkillSkyhawk from './images/skill1-Skyhawk.jpg';
+import Skill2Skyhawk from './images/skill2-Skyhawk.jpg';
+import Skill3Skyhawk from './images/skill3-Skyhawk.jpg';
+import TopStormwind from './images/top-Stormwind.jpg';
+import SkillStormwind from './images/skill1-Stormwind.jpg';
+import Skill2Stormwind from './images/skill2-Stormwind.jpg';
+import Skill3Stormwind from './images/skill3-Stormwind.jpg';
+import TopMistmoon from './images/top-Mistmoon.jpg';
+import SkillMistmoon from './images/skill1-Mistmoon.jpg';
+import Skill2Mistmoon from './images/skill2-Mistmoon.jpg';
+import Skill3Mistmoon from './images/skill3-Mistmoon.jpg';
+import TopStarblade from './images/top-Starblade.jpg';
+import SkillStarblade from './images/skill1-Starblade.jpg';
+import Skill2Starblade from './images/skill2-Starblade.jpg';
+import Skill3Starblade from './images/skill3-Starblade.jpg';
 import Cardback from './images/cardback.jpg';
 
 interface CardImages {
@@ -479,6 +495,30 @@ export const cardImages: Record<string, CardImages> = {
     skill: SkillMaya,
     skill2: Skill2Maya,
     skill3: Skill3Maya,
+  },
+  Skyhawk: {
+    top: TopSkyhawk,
+    skill: SkillSkyhawk,
+    skill2: Skill2Skyhawk,
+    skill3: Skill3Skyhawk,
+  },
+  Stormwind: {
+    top: TopStormwind,
+    skill: SkillStormwind,
+    skill2: Skill2Stormwind,
+    skill3: Skill3Stormwind,
+  },
+  Mistmoon: {
+    top: TopMistmoon,
+    skill: SkillMistmoon,
+    skill2: Skill2Mistmoon,
+    skill3: Skill3Mistmoon,
+  },
+  Starblade: {
+    top: TopStarblade,
+    skill: SkillStarblade,
+    skill2: Skill2Starblade,
+    skill3: Skill3Starblade,
   },
 };
 

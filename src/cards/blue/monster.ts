@@ -172,6 +172,7 @@ export const officerskeleton: Omit<Monster, 'key' | 'owner'> = {
     {
       action: 'buffall',
       activated: false,
+      opts: { damage: 10 },
       requirements: {
         level: 50,
         class: {

@@ -11,6 +11,7 @@ const avengerDestroyAbility: Skill = {
   requirements: { level: 0 },
   action: 'destroy',
   activated: false,
+  noReset: true,
   targets: {
     xor: [
       {
@@ -95,6 +96,7 @@ export const doublestrike: Omit<Tactic, 'key' | 'owner'> = {
         action: 'destroy',
         activated: false,
         requirements: { level: 0 },
+        noReset: true,
         targets: {
           xor: [
             {

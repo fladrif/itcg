@@ -1,6 +1,6 @@
 import { Ctx } from 'boardgame.io';
 
-import { Character, isItem, isMonster, NonCharacter } from '../card';
+import { Character, NonCharacter } from '../card';
 import { GameState } from '../game';
 import { upsertStack, Decision } from '../stack';
 import { getRandomKey } from '../utils';

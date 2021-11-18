@@ -25,6 +25,7 @@ export const itemtrade: Omit<Tactic, 'key' | 'owner'> = {
         requirements: { level: 0 },
         action: 'destroy',
         activated: false,
+        noReset: true,
         targets: {
           xor: [
             {
@@ -73,6 +74,7 @@ export const pull: Omit<Tactic, 'key' | 'owner'> = {
           type: CardTypes.Monster,
           location: Location.Deck,
           quantity: 1,
+          quantityUpTo: true,
         },
       },
       {

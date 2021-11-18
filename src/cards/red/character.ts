@@ -66,3 +66,54 @@ export const maya: Omit<Character, 'key' | 'owner'> = {
   ],
   ...defaultTypes,
 };
+
+export const stormwind: Omit<Character, 'key' | 'owner'> = {
+  canonicalName: 'stormwind',
+  name: 'Stormwind',
+  image: 'Stormwind',
+  health: 180,
+  skills: [
+    [
+      {
+        requirements: { level: 10 },
+        action: 'quest',
+        activated: false,
+      },
+    ],
+    [
+      {
+        requirements: { level: 30, class: { [CardClasses.Magician]: 2 } },
+        action: 'play',
+        activated: false,
+        targets: {
+          level: 'CurrentLevel',
+          type: CardTypes.Tactic,
+          location: Location.Hand,
+          quantity: 1,
+        },
+      },
+    ],
+    [
+      {
+        requirements: { level: 70, class: { [CardClasses.Magician]: 3 } },
+        action: 'damage',
+        opts: { damage: 40 },
+        activated: false,
+        dialogPrompt: 'Select a character',
+        targets: {
+          xor: [
+            {
+              location: Location.Character,
+              quantity: 1,
+            },
+            {
+              location: Location.OppCharacter,
+              quantity: 1,
+            },
+          ],
+        },
+      },
+    ],
+  ],
+  ...defaultTypes,
+};

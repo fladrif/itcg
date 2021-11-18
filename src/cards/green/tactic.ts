@@ -49,6 +49,7 @@ export const arrowblow: Omit<Tactic, 'key' | 'owner'> = {
           damage: 30,
         },
         requirements: { level: 0 },
+        noReset: true,
         targets: {
           xor: [
             {
@@ -90,6 +91,7 @@ export const rainofarrows: Omit<Tactic, 'key' | 'owner'> = {
           damage: 20,
         },
         requirements: { level: 0 },
+        noReset: true,
         targets: {
           xor: [
             {
@@ -152,6 +154,7 @@ export const soularrow: Omit<Tactic, 'key' | 'owner'> = {
           damage: 40,
         },
         requirements: { level: 0 },
+        noReset: true,
         targets: {
           xor: [
             {
@@ -270,6 +273,7 @@ export const powerknockback: Omit<Tactic, 'key' | 'owner'> = {
           position: 1,
         },
         requirements: { level: 0 },
+        noReset: true,
         targets: {
           type: CardTypes.Monster,
           location: Location.OppField,

@@ -70,6 +70,7 @@ export const energybolt: Omit<Tactic, 'key' | 'owner'> = {
         activated: false,
         opts: { damage: 80 },
         requirements: { level: 0 },
+        noReset: true,
         targets: {
           xor: [
             {
@@ -173,6 +174,7 @@ export const knowledgeispower: Omit<Tactic, 'key' | 'owner'> = {
           type: CardTypes.Tactic,
           location: Location.Deck,
           quantity: 1,
+          quantityUpTo: true,
         },
       },
       {

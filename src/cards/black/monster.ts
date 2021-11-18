@@ -39,6 +39,7 @@ export const buffy: Omit<Monster, 'key' | 'owner'> = {
         action: 'destroy',
         activated: false,
         requirements: { level: 0 },
+        noReset: true,
         targets: {
           xor: [
             {

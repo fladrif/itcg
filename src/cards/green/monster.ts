@@ -132,6 +132,7 @@ export const drake: Omit<Monster, 'key' | 'owner'> = {
           damage: 30,
         },
         requirements: { level: 0 },
+        noReset: true,
         targets: {
           xor: [
             {
@@ -228,6 +229,7 @@ export const greentrixter: Omit<Monster, 'key' | 'owner'> = {
           damage: 10,
         },
         requirements: { level: 0 },
+        noReset: true,
         targets: {
           xor: [
             {

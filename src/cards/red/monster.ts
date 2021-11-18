@@ -238,6 +238,7 @@ export const peachmonkey: Omit<Monster, 'key' | 'owner'> = {
         action: 'destroy',
         activated: false,
         requirements: { level: 0 },
+        noReset: true,
         targets: {
           xor: [
             {
@@ -300,6 +301,7 @@ export const zombielupin: Omit<Monster, 'key' | 'owner'> = {
         action: 'bounce',
         activated: false,
         requirements: { level: 0 },
+        noReset: true,
         targets: {
           type: CardTypes.Tactic,
           location: Location.Discard,
