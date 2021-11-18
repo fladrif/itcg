@@ -68,7 +68,10 @@
     { "name": "Focus" },
     { "name": "SerpentsTongue" },
     { "name": "Doombringer" },
-    { "name": "MapleStaff" }
+    { "name": "MapleStaff" },
+    { "name": "KnowledgeIsPower" },
+    { "name": "Pull" },
+    { "name": "Meditation" }
   ],
   "characters": [
     { "name": "Sherman" },

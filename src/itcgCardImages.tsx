@@ -136,6 +136,12 @@ import TopDoombringer from './images/top-Doombringer.jpg';
 import SkillDoombringer from './images/skill-Doombringer.jpg';
 import TopMapleStaff from './images/top-MapleStaff.jpg';
 import SkillMapleStaff from './images/skill-MapleStaff.jpg';
+import TopKnowledgeIsPower from './images/top-KnowledgeIsPower.jpg';
+import SkillKnowledgeIsPower from './images/skill-KnowledgeIsPower.jpg';
+import TopPull from './images/top-Pull.jpg';
+import SkillPull from './images/skill-Pull.jpg';
+import TopMeditation from './images/top-Meditation.jpg';
+import SkillMeditation from './images/skill-Meditation.jpg';
 import TopSherman from './images/top-Sherman.jpg';
 import SkillSherman from './images/skill1-Sherman.jpg';
 import Skill2Sherman from './images/skill2-Sherman.jpg';
@@ -437,6 +443,18 @@ export const cardImages: Record<string, CardImages> = {
   MapleStaff: {
     top: TopMapleStaff,
     skill: SkillMapleStaff,
+  },
+  KnowledgeIsPower: {
+    top: TopKnowledgeIsPower,
+    skill: SkillKnowledgeIsPower,
+  },
+  Pull: {
+    top: TopPull,
+    skill: SkillPull,
+  },
+  Meditation: {
+    top: TopMeditation,
+    skill: SkillMeditation,
   },
   Sherman: {
     top: TopSherman,

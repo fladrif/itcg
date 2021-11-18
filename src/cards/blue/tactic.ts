@@ -44,6 +44,47 @@ export const itemtrade: Omit<Tactic, 'key' | 'owner'> = {
   },
   ...defaultTypes,
 };
+
+export const pull: Omit<Tactic, 'key' | 'owner'> = {
+  canonicalName: 'pull',
+  name: 'Pull',
+  image: 'Pull',
+  level: 40,
+  skill: [
+    {
+      action: 'scout',
+      activated: false,
+      requirements: { level: 0, oneshot: true },
+    },
+  ],
+  ability: {
+    skills: [
+      {
+        action: 'revealDeck',
+        activated: false,
+        requirements: { level: 0 },
+      },
+      {
+        action: 'bounce',
+        activated: false,
+        requirements: { level: 0 },
+        noReset: true,
+        targets: {
+          type: CardTypes.Monster,
+          location: Location.Deck,
+          quantity: 1,
+        },
+      },
+      {
+        action: 'shuffle',
+        activated: false,
+        requirements: { level: 0 },
+      },
+    ],
+  },
+  ...defaultTypes,
+};
+
 export const resting: Omit<Tactic, 'key' | 'owner'> = {
   canonicalName: 'resting',
   name: 'Resting',

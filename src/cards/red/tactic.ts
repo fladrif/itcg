@@ -134,6 +134,57 @@ export const heal: Omit<Tactic, 'key' | 'owner'> = {
   ...defaultTypes,
 };
 
+export const knowledgeispower: Omit<Tactic, 'key' | 'owner'> = {
+  canonicalName: 'knowledgeispower',
+  name: 'Knowledge Is Power',
+  image: 'KnowledgeIsPower',
+  level: 20,
+  skill: [
+    {
+      action: 'play',
+      activated: false,
+      requirements: {
+        level: 40,
+        class: {
+          [CardClasses.Magician]: 3,
+        },
+      },
+      targets: {
+        level: 'CurrentLevel',
+        type: CardTypes.Tactic,
+        location: Location.Hand,
+        quantity: 1,
+      },
+    },
+  ],
+  ability: {
+    skills: [
+      {
+        action: 'revealDeck',
+        activated: false,
+        requirements: { level: 0 },
+      },
+      {
+        action: 'bounce',
+        activated: false,
+        requirements: { level: 0 },
+        noReset: true,
+        targets: {
+          type: CardTypes.Tactic,
+          location: Location.Deck,
+          quantity: 1,
+        },
+      },
+      {
+        action: 'shuffle',
+        activated: false,
+        requirements: { level: 0 },
+      },
+    ],
+  },
+  ...defaultTypes,
+};
+
 export const magicclaw: Omit<Tactic, 'key' | 'owner'> = {
   canonicalName: 'magicclaw',
   name: 'Magic Claw',
@@ -159,6 +210,48 @@ export const magicclaw: Omit<Tactic, 'key' | 'owner'> = {
   ],
   ability: {
     skills: [magicclawAbility, magicclawAbility],
+  },
+  ...defaultTypes,
+};
+
+export const meditation: Omit<Tactic, 'key' | 'owner'> = {
+  canonicalName: 'meditation',
+  name: 'Meditation',
+  image: 'Meditation',
+  level: 30,
+  skill: [
+    {
+      action: 'assist',
+      activated: false,
+      requirements: {
+        level: 10,
+        class: {
+          [CardClasses.Magician]: 1,
+        },
+      },
+      opts: { damage: 10 },
+    },
+  ],
+  ability: {
+    triggers: [
+      {
+        name: 'MeditationTrigger',
+        opts: {
+          damage: 40,
+        },
+        lifetime: {
+          usableTurn: 'ETBTurn',
+          once: true,
+        },
+      },
+    ],
+    skills: [
+      {
+        action: 'quest',
+        activated: false,
+        requirements: { level: 0 },
+      },
+    ],
   },
   ...defaultTypes,
 };

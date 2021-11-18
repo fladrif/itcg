@@ -60,6 +60,19 @@ function ack(G: GameState, ctx: Ctx, opts: ActionOpts): any {
   upsertStack(G, ctx, opts.dialogDecision);
 }
 
+function assist(G: GameState, ctx: Ctx, opts: ActionOpts): any {
+  if (!G.stack || !opts.damage || !opts.source) return;
+
+  pushTriggerStore(
+    G,
+    ctx,
+    'MeditationTrigger',
+    opts.source,
+    { damage: opts.damage },
+    { usableTurn: ctx.turn, once: true }
+  );
+}
+
 function attack(G: GameState, ctx: Ctx, opts: ActionOpts): any {
   if (!G.stack) return;
 
@@ -477,6 +490,16 @@ function replacement(G: GameState, _ctx: Ctx, opts: ActionOpts): any {
   decision.action = 'noop';
 }
 
+function revealDeck(G: GameState, _ctx: Ctx, opts: ActionOpts): any {
+  if (!G.stack || !opts.source) return;
+
+  const id = opts.source.owner;
+
+  G.player[id].deck = G.player[id].deck.map((card) => {
+    return { ...card, reveal: card.reveal ? card.reveal.concat(id) : [id] };
+  });
+}
+
 function roar(G: GameState, ctx: Ctx, opts: ActionOpts): any {
   if (!G.stack || !opts.source) return;
 
@@ -508,8 +531,8 @@ function scout(G: GameState, ctx: Ctx, _opts: ActionOpts): any {
   if (isMonster(player.deck[0])) player.hand.push(player.deck.shift()!);
 }
 
-function shuffle(G: GameState, ctx: Ctx, _opts: ActionOpts): any {
-  const id = ctx.currentPlayer;
+function shuffle(G: GameState, ctx: Ctx, opts: ActionOpts): any {
+  const id = opts.source ? opts.source.owner : ctx.currentPlayer;
   const deck = G.player[id].deck;
 
   deck.map((card) => {
@@ -670,6 +693,7 @@ function tuck(G: GameState, ctx: Ctx, opts: ActionOpts): any {
 
 export const actions = {
   ack,
+  assist,
   attack,
   bounce,
   buff,
@@ -693,6 +717,7 @@ export const actions = {
   rainofarrows,
   refresh,
   replacement,
+  revealDeck,
   roar,
   scout,
   seer,
