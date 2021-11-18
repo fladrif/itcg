@@ -4,7 +4,7 @@ import lodash from 'lodash';
 import { Button, FormGroup, FormLabel, FormControl } from 'react-bootstrap';
 import axios from 'axios';
 
-import { Location } from '../actions';
+import { Location } from '../target';
 import { CardClasses, CardTypes, NonCharacter, instantiateCard } from '../card';
 import { ITCGCard, ITCGCardback } from '../itcgCard';
 import { Deck } from '../game';
