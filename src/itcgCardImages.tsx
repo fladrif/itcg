@@ -142,6 +142,12 @@ import TopPull from './images/top-Pull.jpg';
 import SkillPull from './images/skill-Pull.jpg';
 import TopMeditation from './images/top-Meditation.jpg';
 import SkillMeditation from './images/skill-Meditation.jpg';
+import TopSeacle from './images/top-Seacle.jpg';
+import SkillSeacle from './images/skill-Seacle.jpg';
+import TopPropelly from './images/top-Propelly.jpg';
+import SkillPropelly from './images/skill-Propelly.jpg';
+import TopPinkTeddy from './images/top-PinkTeddy.jpg';
+import SkillPinkTeddy from './images/skill-PinkTeddy.jpg';
 import TopSherman from './images/top-Sherman.jpg';
 import SkillSherman from './images/skill1-Sherman.jpg';
 import Skill2Sherman from './images/skill2-Sherman.jpg';
@@ -471,6 +477,18 @@ export const cardImages: Record<string, CardImages> = {
   Meditation: {
     top: TopMeditation,
     skill: SkillMeditation,
+  },
+  Seacle: {
+    top: TopSeacle,
+    skill: SkillSeacle,
+  },
+  Propelly: {
+    top: TopPropelly,
+    skill: SkillPropelly,
+  },
+  PinkTeddy: {
+    top: TopPinkTeddy,
+    skill: SkillPinkTeddy,
   },
   Sherman: {
     top: TopSherman,

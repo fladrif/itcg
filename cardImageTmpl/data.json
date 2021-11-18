@@ -71,7 +71,10 @@
     { "name": "MapleStaff" },
     { "name": "KnowledgeIsPower" },
     { "name": "Pull" },
-    { "name": "Meditation" }
+    { "name": "Meditation" },
+    { "name": "Seacle" },
+    { "name": "Propelly" },
+    { "name": "PinkTeddy" }
   ],
   "characters": [
     { "name": "Sherman" },
