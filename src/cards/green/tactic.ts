@@ -1,5 +1,7 @@
 import { CardTypes, CardClasses, Tactic } from '../../card';
+import { Choice, Decision } from '../../stack';
 import { Location } from '../../target';
+import { getRandomKey } from '../../utils';
 
 const defaultTypes = {
   type: CardTypes.Tactic,
@@ -278,6 +280,78 @@ export const powerknockback: Omit<Tactic, 'key' | 'owner'> = {
           type: CardTypes.Monster,
           location: Location.OppField,
           quantity: 1,
+        },
+      },
+    ],
+  },
+  ...defaultTypes,
+};
+
+const riskyshotDecision: Decision = {
+  action: 'damage',
+  selection: {},
+  noReset: true,
+  opts: { damage: 'CurrentLevel' },
+  target: {
+    type: CardTypes.Character,
+    location: Location.OppCharacter,
+    quantity: 1,
+  },
+  finished: false,
+  key: getRandomKey(),
+};
+
+const questDecision: Decision = {
+  action: 'quest',
+  selection: {},
+  finished: false,
+  key: getRandomKey(),
+};
+
+export const riskyshot: Omit<Tactic, 'key' | 'owner'> = {
+  canonicalName: 'riskyshot',
+  name: 'Risky Shot',
+  image: 'RiskyShot',
+  level: 40,
+  skill: [
+    {
+      action: 'play',
+      activated: false,
+      requirements: {
+        level: 60,
+        class: {
+          [CardClasses.Bowman]: 2,
+        },
+      },
+      targets: {
+        xor: [
+          {
+            level: 50,
+            type: CardTypes.Tactic,
+            location: Location.Hand,
+            quantity: 1,
+          },
+          {
+            level: 50,
+            type: CardTypes.Item,
+            location: Location.Hand,
+            quantity: 1,
+          },
+        ],
+      },
+    },
+  ],
+  ability: {
+    skills: [
+      {
+        action: 'flip',
+        activated: false,
+        requirements: { level: 0 },
+        noReset: true,
+        dialogPrompt: 'Choose heads or tails',
+        choice: [Choice.Heads, Choice.Tails],
+        opts: {
+          dialogDecision: [questDecision, riskyshotDecision],
         },
       },
     ],
