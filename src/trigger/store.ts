@@ -1183,27 +1183,31 @@ export class RevengeTrigger extends Trigger {
 
   shouldTriggerExtension(
     _G: GameState,
-    ctx: Ctx,
-    _decision: Decision,
+    _ctx: Ctx,
+    decision: Decision,
     _prep: TriggerPrepostion
   ) {
-    const isOppTurn = this.owner !== ctx.currentPlayer;
+    const isOppTurn = decision.opts?.source?.owner !== this.owner;
     return isOppTurn;
   }
 
-  createDecision(G: GameState, ctx: Ctx, _decision: Decision) {
+  createDecision(G: GameState, ctx: Ctx, decision: Decision) {
+    if (!this.opts?.damage) return [];
+
     const cardLoc = getCardLocation(G, ctx, this.cardOwner);
     const card = getCardAtLocation(G, ctx, cardLoc, this.cardOwner);
 
+    const oppLoc =
+      decision.opts!.source!.owner === ctx.currentPlayer
+        ? Location.Character
+        : Location.OppCharacter;
+    const oppChar = getOpponentState(G, ctx, this.owner).character;
+
     const dec: Decision = {
       action: 'damage',
-      selection: {
-        [Location.Character]: [G.player[ctx.currentPlayer].character],
-      },
+      selection: { [oppLoc]: [oppChar] },
       finished: false,
-      opts: {
-        source: card,
-      },
+      opts: { source: card, damage: this.opts.damage },
       key: getRandomKey(),
     };
 

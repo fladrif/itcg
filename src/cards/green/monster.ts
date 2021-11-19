@@ -507,7 +507,7 @@ export const tweeter: Omit<Monster, 'key' | 'owner'> = {
     },
   ],
   ability: {
-    triggers: [{ name: 'RevengeTrigger' }],
+    triggers: [{ name: 'RevengeTrigger', opts: { damage: 20 } }],
   },
   ...defaultTypes,
 };
