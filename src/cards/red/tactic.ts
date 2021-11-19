@@ -292,3 +292,44 @@ export const sidequest: Omit<Tactic, 'key' | 'owner'> = {
   },
   ...defaultTypes,
 };
+
+export const thunderbolt: Omit<Tactic, 'key' | 'owner'> = {
+  canonicalName: 'thunderbolt',
+  name: 'Thunder Bolt',
+  image: 'ThunderBolt',
+  level: 60,
+  skill: [
+    {
+      action: 'damage',
+      activated: false,
+      opts: { damage: 30 },
+      requirements: {
+        level: 60,
+        class: {
+          [CardClasses.Magician]: 3,
+        },
+      },
+      targets: {
+        location: Location.OppCharacter,
+        quantity: 1,
+      },
+    },
+  ],
+  ability: {
+    skills: [
+      {
+        action: 'damage',
+        activated: false,
+        opts: { damage: 50, allOppMonster: true },
+        requirements: { level: 0 },
+      },
+      {
+        action: 'damage',
+        activated: false,
+        opts: { damage: 50, oppCharacter: true },
+        requirements: { level: 0 },
+      },
+    ],
+  },
+  ...defaultTypes,
+};

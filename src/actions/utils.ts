@@ -24,9 +24,9 @@ export function handleAbility(G: GameState, ctx: Ctx, card: NonCharacter): any {
   if (card.ability.skills) {
     card.ability.skills.map((skill, idx) => {
       if (idx === 0) {
-        upsertStack(G, ctx, [parseSkill(skill, card)]);
+        upsertStack(G, ctx, [parseSkill(G, ctx, skill, card)]);
       } else {
-        G.stack!.queuedDecisions.push(parseSkill(skill, card));
+        G.stack!.queuedDecisions.push(parseSkill(G, ctx, skill, card));
       }
     });
   }

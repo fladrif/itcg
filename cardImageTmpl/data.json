@@ -76,7 +76,9 @@
     { "name": "Propelly" },
     { "name": "PinkTeddy" },
     { "name": "RiskyShot" },
-    { "name": "BloodSlain" }
+    { "name": "BloodSlain" },
+    { "name": "Swipe" },
+    { "name": "ThunderBolt" }
   ],
   "characters": [
     { "name": "Sherman" },

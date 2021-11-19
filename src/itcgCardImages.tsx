@@ -152,6 +152,10 @@ import TopRiskyShot from './images/top-RiskyShot.jpg';
 import SkillRiskyShot from './images/skill-RiskyShot.jpg';
 import TopBloodSlain from './images/top-BloodSlain.jpg';
 import SkillBloodSlain from './images/skill-BloodSlain.jpg';
+import TopSwipe from './images/top-Swipe.jpg';
+import SkillSwipe from './images/skill-Swipe.jpg';
+import TopThunderBolt from './images/top-ThunderBolt.jpg';
+import SkillThunderBolt from './images/skill-ThunderBolt.jpg';
 import TopSherman from './images/top-Sherman.jpg';
 import SkillSherman from './images/skill1-Sherman.jpg';
 import Skill2Sherman from './images/skill2-Sherman.jpg';
@@ -501,6 +505,14 @@ export const cardImages: Record<string, CardImages> = {
   BloodSlain: {
     top: TopBloodSlain,
     skill: SkillBloodSlain,
+  },
+  Swipe: {
+    top: TopSwipe,
+    skill: SkillSwipe,
+  },
+  ThunderBolt: {
+    top: TopThunderBolt,
+    skill: SkillThunderBolt,
   },
   Sherman: {
     top: TopSherman,

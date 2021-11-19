@@ -159,13 +159,11 @@ function damage(G: GameState, ctx: Ctx, opts: ActionOpts): any {
   for (const location of Object.keys(opts.selection) as Location[]) {
     opts.selection[location]!.map((card) => {
       if (isCharacter(card)) {
-        getOpponentState(G, ctx).hp -= damage;
+        G.player[card.owner].hp -= damage;
       }
 
       if (isMonster(card)) {
-        getLocation(G, ctx, location)
-          .filter((c) => deepCardComp(c, card))
-          .map((card) => ((card as Monster).damageTaken += damage));
+        (getCardAtLocation(G, ctx, location, card.key) as Monster).damageTaken += damage;
       }
     });
   }
@@ -262,11 +260,13 @@ function level(G: GameState, ctx: Ctx, opts: ActionOpts): any {
 
       const oneshot = selCard.skill.some((skill) => skill.requirements.oneshot);
       if (oneshot) {
-        upsertStack(
-          G,
-          ctx,
-          selCard.skill.map((skill) => parseSkill(skill, selCard))
-        );
+        selCard.skill.map((sk, idx) => {
+          if (idx === 0) {
+            upsertStack(G, ctx, [parseSkill(G, ctx, sk, card)]);
+          } else {
+            G.stack!.queuedDecisions.push(parseSkill(G, ctx, sk, card));
+          }
+        });
       }
 
       player.learnedSkills.push({ ...selCard });

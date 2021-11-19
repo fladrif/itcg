@@ -116,3 +116,39 @@ export const doublestrike: Omit<Tactic, 'key' | 'owner'> = {
   },
   ...defaultTypes,
 };
+
+export const swipe: Omit<Tactic, 'key' | 'owner'> = {
+  canonicalName: 'swipe',
+  name: 'Swipe',
+  image: 'Swipe',
+  level: 30,
+  skill: [
+    {
+      action: 'quest',
+      activated: false,
+      requirements: { level: 0, oneshot: true },
+    },
+    {
+      action: 'discard',
+      activated: false,
+      requirements: { level: 0, oneshot: true },
+      noReset: true,
+      targets: {
+        location: Location.Hand,
+        quantity: 1,
+      },
+    },
+  ],
+  ability: {
+    skills: [
+      {
+        action: 'discard',
+        activated: false,
+        requirements: { level: 0 },
+        noReset: true,
+        opts: { randomDiscard: true },
+      },
+    ],
+  },
+  ...defaultTypes,
+};

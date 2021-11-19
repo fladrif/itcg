@@ -82,7 +82,7 @@ export function activateSkill(G: GameState, ctx: Ctx, opts?: MoveOptions) {
   upsertStack(
     G,
     ctx,
-    skill.map((skill) => parseSkill(skill, selCard, true)),
+    skill.map((skill) => parseSkill(G, ctx, skill, selCard, true)),
     'activate',
     prevPos
   );

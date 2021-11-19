@@ -15,6 +15,7 @@ import {
   getCardAtLocation,
   getRandomKey,
   mergeSelections,
+  getOpponentState,
 } from './utils';
 import { GlobalState } from './state';
 
@@ -196,15 +197,43 @@ export function resolveStack(G: GameState, ctx: Ctx, opts?: ResolveStackOptions)
 }
 
 export function parseSkill(
+  G: GameState,
+  ctx: Ctx,
   skill: Skill,
   source: Character | NonCharacter,
   main?: boolean
 ): Decision {
+  const selection: Selection = {};
+  const oppState = getOpponentState(G, ctx, source.owner);
+
+  if (skill.opts?.allOppMonster) {
+    const location: Location =
+      source.owner === ctx.currentPlayer ? Location.OppField : Location.Field;
+
+    selection[location] = [...oppState.field.filter((card) => isMonster(card))];
+  }
+
+  if (skill.opts?.oppCharacter) {
+    const location: Location =
+      source.owner === ctx.currentPlayer ? Location.OppCharacter : Location.Character;
+
+    selection[location] = [oppState.character];
+  }
+
+  if (skill.opts?.randomDiscard && oppState.hand.length > 0) {
+    const location =
+      source.owner === ctx.currentPlayer ? Location.OppHand : Location.Hand;
+    const randomCardIdx = Math.floor(Math.random() * oppState.hand.length);
+    const randomCard = oppState.hand[randomCardIdx];
+
+    selection[location] = [randomCard];
+  }
+
   return {
     action: skill.action,
     opts: { ...skill.opts, source },
     target: skill.targets,
-    selection: {},
+    selection,
     dialogPrompt: skill.dialogPrompt,
     choice: skill.choice,
     noReset: skill.noReset,
