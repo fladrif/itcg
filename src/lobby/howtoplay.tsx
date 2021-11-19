@@ -148,14 +148,13 @@ export class ITCGHowToPlay extends React.Component {
         <h2>Shield</h2>
         <p style={paragraphStyle}>
           <b>Character</b> cards are inherently <i>shield</i>ed from damage by their{' '}
-          <b>Monster</b> cards and other effects with <i>shield</i>. <i>Shield</i>{' '}
-          prevents 10 damage to a <b>Character</b> for each <b>Monster</b> that player
-          controls from each damage source. For example, if a player controls 1{' '}
+          <b>Monster</b> cards and effects with <i>shield</i>. <i>Shield</i> prevents 10
+          damage to a <b>Character</b> for each <b>Monster</b> that player controls, and
+          applies to each damage source. For example, if a player controls 1{' '}
           <b>Monster</b>, a 20 damage <b>Tactic</b> will only deal 10 damage to the{' '}
-          <b>Character</b>, and a <b>Monster</b> with 10 attack will deal 0 damage. The{' '}
-          <b>Monster</b> controlled by the player will not take damage when the{' '}
-          <b>Character</b> is <i>shield</i>
-          ed from damage.
+          <b>Character</b>, and a <b>Monster</b> with 10 attack will deal 0 damage.{' '}
+          <b>Monster</b> cards that <i>shield</i> the <b>Character</b> do not take damage
+          themeselves when <i>shield</i>ing.
         </p>
       </>
     );
