@@ -160,6 +160,19 @@ export class ITCGHowToPlay extends React.Component {
     );
   }
 
+  endGame() {
+    return (
+      <>
+        <h2>End of Game</h2>
+        <p style={paragraphStyle}>
+          The game ends when one player is at 0 hit points (hp). When a player runs out of
+          cards in their deck, they don't lose like in other games, the player just loses
+          the ability to draw further cards.
+        </p>
+      </>
+    );
+  }
+
   render() {
     return (
       <div style={baseStyle}>
@@ -168,6 +181,8 @@ export class ITCGHowToPlay extends React.Component {
         {this.partsOfTurn()}
         ----------------------------------------------------------
         {this.shield()}
+        ----------------------------------------------------------
+        {this.endGame()}
       </div>
     );
   }
