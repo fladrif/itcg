@@ -1,4 +1,4 @@
-import { CardTypes, CardClasses, Tactic } from '../../card';
+import { CardTypes, CardSubTypes, CardClasses, Tactic } from '../../card';
 import { Location } from '../../target';
 
 const defaultTypes = {
@@ -43,6 +43,7 @@ export const itemtrade: Omit<Tactic, 'key' | 'owner'> = {
       },
     ],
   },
+  subtypes: [CardSubTypes.strategy],
   ...defaultTypes,
 };
 
@@ -84,6 +85,7 @@ export const pull: Omit<Tactic, 'key' | 'owner'> = {
       },
     ],
   },
+  subtypes: [CardSubTypes.strategy],
   ...defaultTypes,
 };
 
@@ -137,5 +139,6 @@ export const resting: Omit<Tactic, 'key' | 'owner'> = {
       },
     ],
   },
+  subtypes: [CardSubTypes.strategy],
   ...defaultTypes,
 };

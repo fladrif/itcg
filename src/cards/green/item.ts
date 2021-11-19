@@ -1,4 +1,4 @@
-import { Item, CardTypes, CardClasses } from '../../card';
+import { Item, CardTypes, CardSubTypes, CardClasses } from '../../card';
 import { Location } from '../../target';
 import { Choice, Decision } from '../../stack';
 import { getRandomKey } from '../../utils';
@@ -53,6 +53,7 @@ export const battlebow: Omit<Item, 'key' | 'owner'> = {
   ability: {
     triggers: [{ name: 'BattleBowTrigger', lifetime: { turn: 0 }, opts: { damage: 20 } }],
   },
+  subtypes: [CardSubTypes.weapon],
   ...defaultTypes,
 };
 
@@ -89,5 +90,6 @@ export const goldencrow: Omit<Item, 'key' | 'owner'> = {
     },
   ],
   ability: { triggers: [{ name: 'GoldenCrowTrigger' }] },
+  subtypes: [CardSubTypes.weapon],
   ...defaultTypes,
 };

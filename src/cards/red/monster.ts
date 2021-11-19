@@ -1,4 +1,4 @@
-import { Monster, CardTypes, CardClasses } from '../../card';
+import { Monster, CardTypes, CardSubTypes, CardClasses } from '../../card';
 import { Location } from '../../target';
 
 const defaultTypes = {
@@ -45,6 +45,7 @@ export const bellflowerroot: Omit<Monster, 'key' | 'owner'> = {
     },
   ],
   ability: {},
+  subtypes: [CardSubTypes.flora],
   ...defaultTypes,
 };
 
@@ -63,6 +64,7 @@ export const chiefgray: Omit<Monster, 'key' | 'owner'> = {
     },
   ],
   ability: { triggers: [{ name: 'SuperGeniusTrigger' }] },
+  subtypes: [CardSubTypes.alien],
   ...defaultTypes,
 };
 
@@ -92,6 +94,7 @@ export const darkaxestump: Omit<Monster, 'key' | 'owner'> = {
     },
   ],
   ability: {},
+  subtypes: [CardSubTypes.dark, CardSubTypes.flora],
   ...defaultTypes,
 };
 
@@ -121,6 +124,7 @@ export const jrnecki: Omit<Monster, 'key' | 'owner'> = {
     },
   ],
   ability: {},
+  subtypes: [CardSubTypes.worm],
   ...defaultTypes,
 };
 
@@ -160,6 +164,7 @@ export const lioner: Omit<Monster, 'key' | 'owner'> = {
     },
   ],
   ability: {},
+  subtypes: [CardSubTypes.kitty],
   ...defaultTypes,
 };
 
@@ -183,6 +188,7 @@ export const lucida: Omit<Monster, 'key' | 'owner'> = {
   ability: {
     triggers: [{ name: 'WickedTrigger' }],
   },
+  subtypes: [CardSubTypes.dark, CardSubTypes.kitty],
   ...defaultTypes,
 };
 
@@ -206,6 +212,7 @@ export const octopus: Omit<Monster, 'key' | 'owner'> = {
   ability: {
     triggers: [{ name: 'GeniusTrigger' }],
   },
+  subtypes: [CardSubTypes.alien],
   ...defaultTypes,
 };
 
@@ -258,6 +265,7 @@ export const peachmonkey: Omit<Monster, 'key' | 'owner'> = {
       },
     ],
   },
+  subtypes: [CardSubTypes.monkey],
   ...defaultTypes,
 };
 
@@ -278,6 +286,7 @@ export const zetagray: Omit<Monster, 'key' | 'owner'> = {
   ability: {
     triggers: [{ name: 'GeniusTrigger' }],
   },
+  subtypes: [CardSubTypes.alien],
   ...defaultTypes,
 };
 
@@ -311,5 +320,6 @@ export const zombielupin: Omit<Monster, 'key' | 'owner'> = {
       },
     ],
   },
+  subtypes: [CardSubTypes.undead, CardSubTypes.monkey],
   ...defaultTypes,
 };

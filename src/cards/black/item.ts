@@ -1,4 +1,4 @@
-import { Item, CardTypes, CardClasses } from '../../card';
+import { Item, CardTypes, CardSubTypes, CardClasses } from '../../card';
 import { Location } from '../../target';
 
 const defaultTypes = {
@@ -36,6 +36,7 @@ export const bloodslain: Omit<Item, 'key' | 'owner'> = {
   ability: {
     triggers: [{ name: 'BloodSlainTrigger', opts: { damage: 10 } }],
   },
+  subtypes: [CardSubTypes.weapon],
   ...defaultTypes,
 };
 
@@ -70,6 +71,7 @@ export const coconutknife: Omit<Item, 'key' | 'owner'> = {
   ability: {
     triggers: [{ name: 'BattleBowTrigger', lifetime: { turn: 0 }, opts: { damage: 10 } }],
   },
+  subtypes: [CardSubTypes.weapon],
   ...defaultTypes,
 };
 
@@ -109,6 +111,7 @@ export const darkshadow: Omit<Item, 'key' | 'owner'> = {
   ability: {
     triggers: [{ name: 'DarkShadowTrigger', opts: { damage: -10 } }],
   },
+  subtypes: [CardSubTypes.armor],
   ...defaultTypes,
 };
 
@@ -135,6 +138,7 @@ export const emeraldearrings: Omit<Item, 'key' | 'owner'> = {
     },
   ],
   ability: { triggers: [{ name: 'EmeraldEarringsTrigger' }] },
+  subtypes: [CardSubTypes.armor],
   ...defaultTypes,
 };
 
@@ -168,6 +172,7 @@ export const kumbithrowingstar: Omit<Item, 'key' | 'owner'> = {
   ability: {
     triggers: [{ name: 'KumbiTrigger', opts: { damage: 20 } }],
   },
+  subtypes: [CardSubTypes.weapon],
   ...defaultTypes,
 };
 
@@ -202,5 +207,6 @@ export const rednight: Omit<Item, 'key' | 'owner'> = {
   ability: {
     triggers: [{ name: 'RedNightTrigger' }],
   },
+  subtypes: [CardSubTypes.armor],
   ...defaultTypes,
 };

@@ -1,4 +1,4 @@
-import { CardTypes, CardClasses, Skill, Tactic } from '../../card';
+import { CardTypes, CardSubTypes, CardClasses, Skill, Tactic } from '../../card';
 import { Location } from '../../target';
 
 const defaultTypes = {
@@ -96,6 +96,7 @@ export const energybolt: Omit<Tactic, 'key' | 'owner'> = {
       },
     ],
   },
+  subtypes: [CardSubTypes.skill],
   ...defaultTypes,
 };
 
@@ -132,6 +133,7 @@ export const heal: Omit<Tactic, 'key' | 'owner'> = {
       },
     ],
   },
+  subtypes: [CardSubTypes.skill],
   ...defaultTypes,
 };
 
@@ -184,6 +186,7 @@ export const knowledgeispower: Omit<Tactic, 'key' | 'owner'> = {
       },
     ],
   },
+  subtypes: [CardSubTypes.strategy],
   ...defaultTypes,
 };
 
@@ -213,6 +216,7 @@ export const magicclaw: Omit<Tactic, 'key' | 'owner'> = {
   ability: {
     skills: [magicclawAbility, magicclawAbility],
   },
+  subtypes: [CardSubTypes.skill],
   ...defaultTypes,
 };
 
@@ -255,6 +259,7 @@ export const meditation: Omit<Tactic, 'key' | 'owner'> = {
       },
     ],
   },
+  subtypes: [CardSubTypes.skill],
   ...defaultTypes,
 };
 
@@ -290,6 +295,7 @@ export const sidequest: Omit<Tactic, 'key' | 'owner'> = {
   ability: {
     skills: [questSkill, questSkill],
   },
+  subtypes: [CardSubTypes.strategy],
   ...defaultTypes,
 };
 
@@ -331,5 +337,6 @@ export const thunderbolt: Omit<Tactic, 'key' | 'owner'> = {
       },
     ],
   },
+  subtypes: [CardSubTypes.skill],
   ...defaultTypes,
 };

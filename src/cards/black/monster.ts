@@ -1,4 +1,4 @@
-import { Monster, CardTypes, CardClasses } from '../../card';
+import { Monster, CardTypes, CardSubTypes, CardClasses } from '../../card';
 import { Location } from '../../target';
 
 const defaultTypes = {
@@ -55,6 +55,7 @@ export const buffy: Omit<Monster, 'key' | 'owner'> = {
       },
     ],
   },
+  subtypes: [CardSubTypes.undead, CardSubTypes.clown],
   ...defaultTypes,
 };
 
@@ -96,6 +97,7 @@ export const cico: Omit<Monster, 'key' | 'owner'> = {
   ability: {
     triggers: [{ name: 'LootTrigger' }],
   },
+  subtypes: [CardSubTypes.water, CardSubTypes.beast],
   ...defaultTypes,
 };
 
@@ -125,6 +127,7 @@ export const croco: Omit<Monster, 'key' | 'owner'> = {
     },
   ],
   ability: {},
+  subtypes: [CardSubTypes.reptile],
   ...defaultTypes,
 };
 
@@ -171,6 +174,7 @@ export const krappy: Omit<Monster, 'key' | 'owner'> = {
     },
   ],
   ability: { keywords: ['confused'] },
+  subtypes: [CardSubTypes.water, CardSubTypes.fish],
   ...defaultTypes,
 };
 
@@ -217,6 +221,7 @@ export const krip: Omit<Monster, 'key' | 'owner'> = {
     },
   ],
   ability: {},
+  subtypes: [CardSubTypes.water, CardSubTypes.shrimp],
   ...defaultTypes,
 };
 
@@ -246,6 +251,7 @@ export const lorang: Omit<Monster, 'key' | 'owner'> = {
     },
   ],
   ability: { keywords: ['tough'] },
+  subtypes: [CardSubTypes.water, CardSubTypes.crab],
   ...defaultTypes,
 };
 
@@ -277,6 +283,7 @@ export const orangemushroom: Omit<Monster, 'key' | 'owner'> = {
   ability: {
     triggers: [{ name: 'LootTrigger' }],
   },
+  subtypes: [CardSubTypes.mushroom],
   ...defaultTypes,
 };
 
@@ -295,6 +302,7 @@ export const pinkteddy: Omit<Monster, 'key' | 'owner'> = {
     },
   ],
   ability: {},
+  subtypes: [CardSubTypes.toy, CardSubTypes.bear],
   ...defaultTypes,
 };
 
@@ -313,6 +321,7 @@ export const propelly: Omit<Monster, 'key' | 'owner'> = {
     },
   ],
   ability: {},
+  subtypes: [CardSubTypes.flying, CardSubTypes.toy],
   ...defaultTypes,
 };
 
@@ -342,6 +351,7 @@ export const redsnail: Omit<Monster, 'key' | 'owner'> = {
     },
   ],
   ability: { keywords: ['tough'] },
+  subtypes: [CardSubTypes.pest],
   ...defaultTypes,
 };
 
@@ -381,6 +391,7 @@ export const seacle: Omit<Monster, 'key' | 'owner'> = {
     },
   ],
   ability: { triggers: [{ name: 'SlipperyTrigger' }] },
+  subtypes: [CardSubTypes.water, CardSubTypes.beast],
   ...defaultTypes,
 };
 
@@ -402,5 +413,6 @@ export const soulteddy: Omit<Monster, 'key' | 'owner'> = {
     keywords: ['tough'],
     triggers: [{ name: 'StartleTrigger' }],
   },
+  subtypes: [CardSubTypes.undead, CardSubTypes.toy, CardSubTypes.bear],
   ...defaultTypes,
 };

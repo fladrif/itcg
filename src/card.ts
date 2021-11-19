@@ -31,6 +31,51 @@ export enum CardClasses {
   Warrior = 'Warrior',
 }
 
+export enum CardSubTypes {
+  strategy = 'strategy',
+  skill = 'skill',
+  armor = 'armor',
+  shield = 'shield',
+  wand = 'wand',
+  weapon = 'weapon',
+  flying = 'flying',
+  dark = 'dark',
+  fire = 'fire',
+  ice = 'ice',
+  water = 'water',
+  undead = 'undead',
+  mechanical = 'mechanical',
+  king = 'king',
+  flora = 'flora',
+  guardian = 'guardian',
+  clown = 'clown',
+  dog = 'dog',
+  alien = 'alien',
+  beast = 'beast',
+  reptile = 'reptile',
+  worm = 'worm',
+  dragon = 'dragon',
+  fairy = 'fairy',
+  boar = 'boar',
+  mushroom = 'mushroom',
+  pest = 'pest',
+  bear = 'bear',
+  wolf = 'wolf',
+  spook = 'spook',
+  fish = 'fish',
+  shrimp = 'shrimp',
+  kitty = 'kitty',
+  crab = 'crab',
+  soldier = 'soldier',
+  monkey = 'monkey',
+  bird = 'bird',
+  toy = 'toy',
+  goo = 'goo',
+  bat = 'bat',
+  bull = 'bull',
+  human = 'human',
+}
+
 export interface Card {
   canonicalName: CardName;
   name: string;
@@ -48,6 +93,7 @@ export interface Character extends Card {
 }
 
 export interface NonCharacter extends Exclude<Card, Character> {
+  subtypes: CardSubTypes[];
   level: number;
   skill: Skill[];
   ability: Ability;
@@ -162,6 +208,7 @@ export const blankCard: Omit<NonCharacter, 'key' | 'owner'> = {
   image: '',
   ability: {},
   skill: [],
+  subtypes: [],
 };
 
 export function getBlankCard(owner: string, key: string): NonCharacter {

@@ -1,4 +1,4 @@
-import { CardTypes, CardClasses, Tactic } from '../../card';
+import { CardTypes, CardSubTypes, CardClasses, Tactic } from '../../card';
 import { Choice, Decision } from '../../stack';
 import { Location } from '../../target';
 import { getRandomKey } from '../../utils';
@@ -69,6 +69,7 @@ export const arrowblow: Omit<Tactic, 'key' | 'owner'> = {
       },
     ],
   },
+  subtypes: [CardSubTypes.skill],
   ...defaultTypes,
 };
 
@@ -110,6 +111,7 @@ export const rainofarrows: Omit<Tactic, 'key' | 'owner'> = {
       },
     ],
   },
+  subtypes: [CardSubTypes.strategy],
   ...defaultTypes,
 };
 
@@ -189,6 +191,7 @@ export const soularrow: Omit<Tactic, 'key' | 'owner'> = {
       },
     ],
   },
+  subtypes: [CardSubTypes.skill],
   ...defaultTypes,
 };
 
@@ -229,6 +232,7 @@ export const focus: Omit<Tactic, 'key' | 'owner'> = {
       },
     ],
   },
+  subtypes: [CardSubTypes.skill],
   ...defaultTypes,
 };
 
@@ -284,6 +288,7 @@ export const powerknockback: Omit<Tactic, 'key' | 'owner'> = {
       },
     ],
   },
+  subtypes: [CardSubTypes.skill],
   ...defaultTypes,
 };
 
@@ -356,5 +361,6 @@ export const riskyshot: Omit<Tactic, 'key' | 'owner'> = {
       },
     ],
   },
+  subtypes: [CardSubTypes.strategy],
   ...defaultTypes,
 };

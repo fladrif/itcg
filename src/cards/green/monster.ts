@@ -1,4 +1,4 @@
-import { Monster, CardTypes, CardClasses } from '../../card';
+import { Monster, CardTypes, CardSubTypes, CardClasses } from '../../card';
 import { Location } from '../../target';
 
 const defaultTypes = {
@@ -45,6 +45,7 @@ export const cerebes: Omit<Monster, 'key' | 'owner'> = {
     },
   ],
   ability: { triggers: [{ name: 'EarthquakeTrigger', opts: { damage: 40 } }] },
+  subtypes: [CardSubTypes.dog],
   ...defaultTypes,
 };
 
@@ -84,6 +85,7 @@ export const curseeye: Omit<Monster, 'key' | 'owner'> = {
     },
   ],
   ability: {},
+  subtypes: [CardSubTypes.worm],
   ...defaultTypes,
 };
 
@@ -150,6 +152,7 @@ export const drake: Omit<Monster, 'key' | 'owner'> = {
       },
     ],
   },
+  subtypes: [CardSubTypes.worm, CardSubTypes.dragon],
   ...defaultTypes,
 };
 
@@ -181,6 +184,7 @@ export const fairy: Omit<Monster, 'key' | 'owner'> = {
   ability: {
     triggers: [{ name: 'FairyTrigger' }],
   },
+  subtypes: [CardSubTypes.flying, CardSubTypes.fairy],
   ...defaultTypes,
 };
 
@@ -247,6 +251,7 @@ export const greentrixter: Omit<Monster, 'key' | 'owner'> = {
       },
     ],
   },
+  subtypes: [CardSubTypes.pest],
   ...defaultTypes,
 };
 
@@ -284,6 +289,7 @@ export const hector: Omit<Monster, 'key' | 'owner'> = {
       },
     ],
   },
+  subtypes: [CardSubTypes.wolf],
   ...defaultTypes,
 };
 
@@ -323,6 +329,7 @@ export const hornedmushroom: Omit<Monster, 'key' | 'owner'> = {
     },
   ],
   ability: {},
+  subtypes: [CardSubTypes.mushroom],
   ...defaultTypes,
 };
 
@@ -349,6 +356,7 @@ export const jrboogie: Omit<Monster, 'key' | 'owner'> = {
     },
   ],
   ability: { keywords: ['stealthy'] },
+  subtypes: [CardSubTypes.flying, CardSubTypes.spook],
   ...defaultTypes,
 };
 
@@ -402,6 +410,7 @@ export const lunarpixie: Omit<Monster, 'key' | 'owner'> = {
       },
     ],
   },
+  subtypes: [CardSubTypes.flying, CardSubTypes.spook],
   ...defaultTypes,
 };
 
@@ -428,6 +437,7 @@ export const platoonchronos: Omit<Monster, 'key' | 'owner'> = {
     },
   ],
   ability: { keywords: ['stealthy'] },
+  subtypes: [CardSubTypes.undead, CardSubTypes.spook],
   ...defaultTypes,
 };
 
@@ -467,6 +477,7 @@ export const stirge: Omit<Monster, 'key' | 'owner'> = {
     },
   ],
   ability: {},
+  subtypes: [CardSubTypes.flying, CardSubTypes.bat],
   ...defaultTypes,
 };
 
@@ -509,5 +520,6 @@ export const tweeter: Omit<Monster, 'key' | 'owner'> = {
   ability: {
     triggers: [{ name: 'RevengeTrigger', opts: { damage: 20 } }],
   },
+  subtypes: [CardSubTypes.flying, CardSubTypes.bird],
   ...defaultTypes,
 };

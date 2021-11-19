@@ -1,4 +1,4 @@
-import { Item, CardTypes, CardClasses } from '../../card';
+import { Item, CardTypes, CardSubTypes, CardClasses } from '../../card';
 import { Location } from '../../target';
 
 const defaultTypes = {
@@ -59,6 +59,7 @@ export const battleshield: Omit<Item, 'key' | 'owner'> = {
       modifier: { monster: { health: 20 } },
     },
   },
+  subtypes: [CardSubTypes.shield],
   ...defaultTypes,
 };
 
@@ -109,6 +110,7 @@ export const doombringer: Omit<Item, 'key' | 'owner'> = {
   ability: {
     triggers: [{ name: 'DoombringerTrigger', opts: { damage: 30 } }],
   },
+  subtypes: [CardSubTypes.weapon],
   ...defaultTypes,
 };
 
@@ -149,6 +151,7 @@ export const serpentstongue: Omit<Item, 'key' | 'owner'> = {
   ability: {
     triggers: [{ name: 'SerpentsTrigger', opts: { lifegain: 30 } }],
   },
+  subtypes: [CardSubTypes.weapon],
   ...defaultTypes,
 };
 
@@ -194,5 +197,6 @@ export const theninedragons: Omit<Item, 'key' | 'owner'> = {
       modifier: { monster: { attack: 20 } },
     },
   },
+  subtypes: [CardSubTypes.weapon],
   ...defaultTypes,
 };

@@ -1,4 +1,4 @@
-import { Monster, CardTypes, CardClasses } from '../../card';
+import { Monster, CardTypes, CardSubTypes, CardClasses } from '../../card';
 import { Location } from '../../target';
 
 const defaultTypes = {
@@ -24,6 +24,7 @@ export const blockgolem: Omit<Monster, 'key' | 'owner'> = {
     },
   ],
   ability: {},
+  subtypes: [CardSubTypes.guardian],
   ...defaultTypes,
 };
 
@@ -53,6 +54,7 @@ export const fireboar: Omit<Monster, 'key' | 'owner'> = {
     },
   ],
   ability: { keywords: ['fierce'] },
+  subtypes: [CardSubTypes.fire, CardSubTypes.boar],
   ...defaultTypes,
 };
 
@@ -92,6 +94,7 @@ export const greenmushroom: Omit<Monster, 'key' | 'owner'> = {
     },
   ],
   ability: {},
+  subtypes: [CardSubTypes.mushroom],
   ...defaultTypes,
 };
 
@@ -121,6 +124,7 @@ export const grizzly: Omit<Monster, 'key' | 'owner'> = {
     },
   ],
   ability: {},
+  subtypes: [CardSubTypes.bear],
   ...defaultTypes,
 };
 
@@ -158,6 +162,7 @@ export const jryeti: Omit<Monster, 'key' | 'owner'> = {
     },
   ],
   ability: { keywords: ['fierce'] },
+  subtypes: [CardSubTypes.ice, CardSubTypes.beast],
   ...defaultTypes,
 };
 
@@ -184,6 +189,7 @@ export const officerskeleton: Omit<Monster, 'key' | 'owner'> = {
   ability: {
     triggers: [{ name: 'BoneRattleTrigger', opts: { damage: 20 } }],
   },
+  subtypes: [CardSubTypes.undead, CardSubTypes.soldier],
   ...defaultTypes,
 };
 export const pepe: Omit<Monster, 'key' | 'owner'> = {
@@ -224,6 +230,7 @@ export const pepe: Omit<Monster, 'key' | 'owner'> = {
   ability: {
     triggers: [{ name: 'RelentlessTrigger', opts: { damage: 10 } }],
   },
+  subtypes: [CardSubTypes.king, CardSubTypes.ice, CardSubTypes.bird],
   ...defaultTypes,
 };
 
@@ -253,6 +260,7 @@ export const ribbonpig: Omit<Monster, 'key' | 'owner'> = {
     },
   ],
   ability: {},
+  subtypes: [CardSubTypes.boar],
   ...defaultTypes,
 };
 
@@ -271,6 +279,7 @@ export const sentinel: Omit<Monster, 'key' | 'owner'> = {
     },
   ],
   ability: {},
+  subtypes: [CardSubTypes.mechanical, CardSubTypes.guardian],
   ...defaultTypes,
 };
 
@@ -312,6 +321,7 @@ export const slime: Omit<Monster, 'key' | 'owner'> = {
       },
     ],
   },
+  subtypes: [CardSubTypes.goo],
   ...defaultTypes,
 };
 
@@ -330,6 +340,7 @@ export const stonegolem: Omit<Monster, 'key' | 'owner'> = {
     },
   ],
   ability: { triggers: [{ name: 'RelentlessTrigger', opts: { damage: 40 } }] },
+  subtypes: [CardSubTypes.goo],
   ...defaultTypes,
 };
 
@@ -350,6 +361,7 @@ export const tauromacis: Omit<Monster, 'key' | 'owner'> = {
   ability: {
     triggers: [{ name: 'PrevailTrigger' }],
   },
+  subtypes: [CardSubTypes.bull, CardSubTypes.human],
   ...defaultTypes,
 };
 
@@ -389,6 +401,7 @@ export const wildboar: Omit<Monster, 'key' | 'owner'> = {
     },
   ],
   ability: {},
+  subtypes: [CardSubTypes.boar],
   ...defaultTypes,
 };
 
@@ -431,5 +444,6 @@ export const yetipepe: Omit<Monster, 'key' | 'owner'> = {
     keywords: ['fierce'],
     triggers: [{ name: 'RelentlessTrigger', opts: { damage: 20 } }],
   },
+  subtypes: [CardSubTypes.ice, CardSubTypes.bird, CardSubTypes.beast],
   ...defaultTypes,
 };

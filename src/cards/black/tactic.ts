@@ -1,4 +1,4 @@
-import { CardTypes, CardClasses, Skill, Tactic } from '../../card';
+import { CardTypes, CardSubTypes, CardClasses, Skill, Tactic } from '../../card';
 import { Location } from '../../target';
 
 const defaultTypes = {
@@ -56,6 +56,7 @@ export const avenger: Omit<Tactic, 'key' | 'owner'> = {
   ability: {
     skills: [avengerDestroyAbility, avengerDrawAbility],
   },
+  subtypes: [CardSubTypes.skill],
   ...defaultTypes,
 };
 
@@ -114,6 +115,7 @@ export const doublestrike: Omit<Tactic, 'key' | 'owner'> = {
       },
     ],
   },
+  subtypes: [CardSubTypes.skill],
   ...defaultTypes,
 };
 
@@ -150,5 +152,6 @@ export const swipe: Omit<Tactic, 'key' | 'owner'> = {
       },
     ],
   },
+  subtypes: [CardSubTypes.strategy],
   ...defaultTypes,
 };

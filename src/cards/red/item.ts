@@ -1,4 +1,4 @@
-import { CardTypes, CardClasses, Item } from '../../card';
+import { CardTypes, CardSubTypes, CardClasses, Item } from '../../card';
 import { Location } from '../../target';
 
 const defaultTypes = {
@@ -41,6 +41,7 @@ export const eviltale: Omit<Item, 'key' | 'owner'> = {
     },
   ],
   ability: { triggers: [{ name: 'EvilTaleTrigger', opts: { damage: 30 } }] },
+  subtypes: [CardSubTypes.wand],
   ...defaultTypes,
 };
 
@@ -68,6 +69,7 @@ export const maplestaff: Omit<Item, 'key' | 'owner'> = {
     },
   ],
   ability: { triggers: [{ name: 'MapleStaffTrigger' }] },
+  subtypes: [CardSubTypes.weapon],
   ...defaultTypes,
 };
 
@@ -104,5 +106,6 @@ export const redapprenticehat: Omit<Item, 'key' | 'owner'> = {
     ],
     triggers: [{ name: 'RedApprenticeHatTrigger' }],
   },
+  subtypes: [CardSubTypes.armor],
   ...defaultTypes,
 };
