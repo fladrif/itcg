@@ -78,7 +78,9 @@
     { "name": "RiskyShot" },
     { "name": "BloodSlain" },
     { "name": "Swipe" },
-    { "name": "ThunderBolt" }
+    { "name": "ThunderBolt" },
+    { "name": "EvilTale" },
+    { "name": "KumbiThrowingStar" }
   ],
   "characters": [
     { "name": "Sherman" },

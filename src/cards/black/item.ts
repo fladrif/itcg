@@ -99,6 +99,39 @@ export const emeraldearrings: Omit<Item, 'key' | 'owner'> = {
   ...defaultTypes,
 };
 
+export const kumbithrowingstar: Omit<Item, 'key' | 'owner'> = {
+  canonicalName: 'kumbithrowingstar',
+  name: 'Kumbi Throwing-Star',
+  image: 'KumbiThrowingStar',
+  level: 30,
+  skill: [
+    {
+      action: 'play',
+      activated: false,
+      requirements: {
+        level: 10,
+        class: {
+          [CardClasses.Thief]: 1,
+        },
+      },
+      targets: {
+        xor: [
+          {
+            level: 20,
+            type: CardTypes.Item,
+            location: Location.Hand,
+            quantity: 1,
+          },
+        ],
+      },
+    },
+  ],
+  ability: {
+    triggers: [{ name: 'KumbiTrigger', opts: { damage: 20 } }],
+  },
+  ...defaultTypes,
+};
+
 export const rednight: Omit<Item, 'key' | 'owner'> = {
   canonicalName: 'rednight',
   name: 'Red Night',

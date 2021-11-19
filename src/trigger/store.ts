@@ -382,6 +382,7 @@ export class DoombringerTrigger extends Trigger {
     return [buffDec];
   }
 }
+
 export class EarthquakeTrigger extends Trigger {
   constructor(
     cardOwner: string,
@@ -409,9 +410,9 @@ export class EarthquakeTrigger extends Trigger {
     const dmgSource = decision.opts?.source;
     const sourceIsMonster = dmgSource ? dmgSource.type === CardTypes.Monster : false;
 
-    const triggerDamageExists = this.opts?.damage;
+    const damageExists = decision.opts?.damage && decision.opts.damage > 0;
 
-    return cardIsDamaged && sourceIsMonster && !!triggerDamageExists;
+    return cardIsDamaged && sourceIsMonster && !!damageExists;
   }
 
   createDecision(G: GameState, ctx: Ctx, decision: Decision) {
@@ -498,6 +499,71 @@ export class EmeraldEarringsTrigger extends Trigger {
 
     if (isItem(player.deck[0])) return [dec];
     return [];
+  }
+}
+
+export class EvilTaleTrigger extends Trigger {
+  constructor(
+    cardOwner: string,
+    player: PlayerID,
+    key: string,
+    opts?: TriggerOptions,
+    lifetime?: TriggerLifetime
+  ) {
+    super(cardOwner, 'Before', 'play', key, opts, player, lifetime);
+  }
+
+  shouldTriggerExtension(
+    _G: GameState,
+    _ctx: Ctx,
+    decision: Decision,
+    _prep: TriggerPrepostion
+  ) {
+    const sourceIsTactic = decision.opts?.source
+      ? decision.opts.source.type === CardTypes.Tactic
+      : false;
+
+    return sourceIsTactic && this.sourceIsOwner(decision);
+  }
+
+  createDecision(G: GameState, ctx: Ctx, _decision: Decision) {
+    if (!this.opts?.damage) return [];
+
+    const cardLoc = getCardLocation(G, ctx, this.cardOwner);
+    const card = getCardAtLocation(G, ctx, cardLoc, this.cardOwner);
+
+    const dec: Decision = {
+      action: 'damage',
+      selection: {},
+      noReset: true,
+      target: {
+        xor: [
+          {
+            location: Location.Character,
+            quantity: 1,
+          },
+          {
+            location: Location.OppCharacter,
+            quantity: 1,
+          },
+          {
+            type: CardTypes.Monster,
+            location: Location.Field,
+            quantity: 1,
+          },
+          {
+            type: CardTypes.Monster,
+            location: Location.OppField,
+            quantity: 1,
+          },
+        ],
+      },
+      finished: false,
+      opts: { source: card, damage: this.opts.damage },
+      key: getRandomKey(),
+    };
+
+    return [dec];
   }
 }
 
@@ -705,6 +771,69 @@ export class GoldenCrowTrigger extends Trigger {
     };
 
     return [optionalDec];
+  }
+}
+
+export class KumbiTrigger extends Trigger {
+  constructor(
+    cardOwner: string,
+    player: PlayerID,
+    key: string,
+    opts?: TriggerOptions,
+    lifetime?: TriggerLifetime
+  ) {
+    super(cardOwner, 'After', 'damage', key, opts, player, lifetime);
+  }
+
+  shouldTriggerExtension(
+    G: GameState,
+    ctx: Ctx,
+    decision: Decision,
+    _prep: TriggerPrepostion
+  ) {
+    if (!decision.opts?.source) return false;
+
+    const targetSourceLoc = [
+      Location.Character,
+      Location.OppCharacter,
+      Location.CharAction,
+      Location.OppCharAction,
+    ];
+
+    const dmgSourceLoc = getCardLocation(G, ctx, decision.opts.source.key);
+    const sourceIsChar = targetSourceLoc.includes(dmgSourceLoc);
+
+    const damageExists = decision.opts?.damage && decision.opts.damage > 0;
+
+    return !this.sourceIsOwner(decision) && sourceIsChar && !!damageExists;
+  }
+
+  createDecision(G: GameState, ctx: Ctx, decision: Decision) {
+    const charTarget = G.player[decision.opts!.source!.owner].character;
+    const cardLoc = getCardLocation(G, ctx, charTarget.key);
+
+    const isDamaged = decision.opts?.damage ? decision.opts.damage > 0 : false;
+    if (!isDamaged) return [];
+
+    const dec: Decision = {
+      action: 'damage',
+      selection: {
+        [cardLoc]: [charTarget],
+      },
+      finished: false,
+      opts: {
+        damage: this.opts!.damage,
+        source: getCardAtLocation(
+          G,
+          ctx,
+          getCardLocation(G, ctx, this.cardOwner),
+          this.cardOwner
+        ),
+      },
+      key: getRandomKey(),
+    };
+
+    return [dec];
   }
 }
 
@@ -1178,7 +1307,7 @@ export class RevengeTrigger extends Trigger {
     opts?: TriggerOptions,
     lifetime?: TriggerLifetime
   ) {
-    super(cardOwner, 'After', 'play', key, opts, player, lifetime);
+    super(cardOwner, 'Before', 'play', key, opts, player, lifetime);
   }
 
   shouldTriggerExtension(
@@ -1187,8 +1316,7 @@ export class RevengeTrigger extends Trigger {
     decision: Decision,
     _prep: TriggerPrepostion
   ) {
-    const isOppTurn = decision.opts?.source?.owner !== this.owner;
-    return isOppTurn;
+    return !this.sourceIsOwner(decision);
   }
 
   createDecision(G: GameState, ctx: Ctx, decision: Decision) {
@@ -1721,10 +1849,12 @@ export const triggers = {
   DoombringerTrigger,
   EarthquakeTrigger,
   EmeraldEarringsTrigger,
+  EvilTaleTrigger,
   FairyTrigger,
   FocusTrigger,
   GeniusTrigger,
   GoldenCrowTrigger,
+  KumbiTrigger,
   LootTrigger,
   MeditationTrigger,
   NoMercyTrigger,

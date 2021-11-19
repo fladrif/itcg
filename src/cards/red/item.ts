@@ -7,6 +7,43 @@ const defaultTypes = {
   selected: false,
 };
 
+export const eviltale: Omit<Item, 'key' | 'owner'> = {
+  canonicalName: 'eviltale',
+  name: 'Evil Tale',
+  image: 'EvilTale',
+  level: 58,
+  skill: [
+    {
+      action: 'play',
+      activated: false,
+      requirements: {
+        level: 60,
+        class: {
+          [CardClasses.Magician]: 2,
+        },
+      },
+      targets: {
+        xor: [
+          {
+            level: 70,
+            type: CardTypes.Tactic,
+            location: Location.Hand,
+            quantity: 1,
+          },
+          {
+            level: 70,
+            type: CardTypes.Item,
+            location: Location.Hand,
+            quantity: 1,
+          },
+        ],
+      },
+    },
+  ],
+  ability: { triggers: [{ name: 'EvilTaleTrigger', opts: { damage: 30 } }] },
+  ...defaultTypes,
+};
+
 export const maplestaff: Omit<Item, 'key' | 'owner'> = {
   canonicalName: 'maplestaff',
   name: 'Maple Staff',
