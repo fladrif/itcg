@@ -80,7 +80,8 @@
     { "name": "Swipe" },
     { "name": "ThunderBolt" },
     { "name": "EvilTale" },
-    { "name": "KumbiThrowingStar" }
+    { "name": "KumbiThrowingStar" },
+    { "name": "DarkShadow" }
   ],
   "characters": [
     { "name": "Sherman" },

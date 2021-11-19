@@ -73,6 +73,45 @@ export const coconutknife: Omit<Item, 'key' | 'owner'> = {
   ...defaultTypes,
 };
 
+export const darkshadow: Omit<Item, 'key' | 'owner'> = {
+  canonicalName: 'darkshadow',
+  name: 'Dark Shadow',
+  image: 'DarkShadow',
+  level: 10,
+  skill: [
+    {
+      action: 'play',
+      activated: false,
+      requirements: {
+        level: 60,
+        class: {
+          [CardClasses.Thief]: 2,
+        },
+      },
+      targets: {
+        xor: [
+          {
+            level: 70,
+            type: CardTypes.Monster,
+            location: Location.Hand,
+            quantity: 1,
+          },
+          {
+            level: 70,
+            type: CardTypes.Item,
+            location: Location.Hand,
+            quantity: 1,
+          },
+        ],
+      },
+    },
+  ],
+  ability: {
+    triggers: [{ name: 'DarkShadowTrigger', opts: { damage: -10 } }],
+  },
+  ...defaultTypes,
+};
+
 export const emeraldearrings: Omit<Item, 'key' | 'owner'> = {
   canonicalName: 'emeraldearrings',
   name: 'Emerald Earrings',

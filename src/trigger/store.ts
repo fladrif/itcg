@@ -262,6 +262,59 @@ export class BuffAllTrigger extends Trigger {
   }
 }
 
+export class DarkShadowTrigger extends Trigger {
+  constructor(
+    cardOwner: string,
+    player: PlayerID,
+    key: string,
+    opts?: TriggerOptions,
+    lifetime?: TriggerLifetime
+  ) {
+    super(cardOwner, 'Before', 'attack', key, opts, player, lifetime);
+  }
+
+  shouldTriggerExtension(
+    _G: GameState,
+    _ctx: Ctx,
+    decision: Decision,
+    _prep: TriggerPrepostion
+  ) {
+    if (!decision.selection) return false;
+
+    const locations = [Location.Character, Location.OppCharacter];
+
+    const charIsTarget = locations.some((location) => {
+      return (
+        !!decision.selection[location] &&
+        decision.selection[location]!.some((card) => card.owner === this.owner)
+      );
+    });
+
+    return charIsTarget && !this.sourceIsOwner(decision);
+  }
+
+  createDecision(G: GameState, ctx: Ctx, decision: Decision) {
+    const buffDec: Decision = {
+      action: 'buff',
+      finished: false,
+      selection: {},
+      opts: {
+        damage: this.opts?.damage ? this.opts.damage : 0,
+        decision: decision.key,
+        source: getCardAtLocation(
+          G,
+          ctx,
+          getCardLocation(G, ctx, this.cardOwner),
+          this.cardOwner
+        ),
+      },
+      key: getRandomKey(),
+    };
+
+    return [buffDec];
+  }
+}
+
 export class DmgDestroyTrigger extends Trigger {
   constructor(
     _cardOwner: string,
@@ -1845,6 +1898,7 @@ export const triggers = {
   BloodSlainTrigger,
   BoneRattleTrigger,
   BuffAllTrigger,
+  DarkShadowTrigger,
   DmgDestroyTrigger,
   DoombringerTrigger,
   EarthquakeTrigger,
