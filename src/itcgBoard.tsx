@@ -132,7 +132,7 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
       : '';
 
     // TODO: should display opponent's prompt as well
-    const dialogPrompt = stack ? stack.activeDecisions[0].dialogPrompt || '' : '';
+    const dialogPrompt = stack ? stack.activeDecisions[0].dialogPrompt : undefined;
 
     const curDecisionFinished = stack ? stack.activeDecisions[0].finished : false;
     const decMaybeFinished =

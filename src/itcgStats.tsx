@@ -75,7 +75,9 @@ export class ITCGStats extends React.Component<StatProp> {
   render() {
     const confModal = (
       <div style={confirmationStyle}>
-        <div style={highlightModalStyle}>{this.props.prompt}</div>
+        <div style={highlightModalStyle}>
+          {this.props.prompt ? this.props.prompt : 'Choose one'}
+        </div>
       </div>
     );
 

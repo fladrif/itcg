@@ -75,6 +75,7 @@ export class BattleBowTrigger extends Trigger {
       selection: {},
       choice: [Choice.Yes, Choice.No],
       noReset: true,
+      dialogPrompt: 'Use effect?',
       opts: {
         dialogDecision: [buffDec],
         triggerKey: this.key,
@@ -809,6 +810,7 @@ export class GoldenCrowTrigger extends Trigger {
       finished: false,
       selection: {},
       choice: [Choice.Yes, Choice.No],
+      dialogPrompt: 'Use effect?',
       noReset: true,
       opts: {
         dialogDecision: [buffDec],
@@ -1551,6 +1553,7 @@ export class SlipperyTrigger extends Trigger {
       action: 'flip',
       selection: {},
       choice: [Choice.Heads, Choice.Tails],
+      dialogPrompt: 'Choose heads or tails',
       opts: {
         dialogDecision: [slipperyDecision],
         source: card,
