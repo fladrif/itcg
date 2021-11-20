@@ -106,6 +106,7 @@ export const blackrobinhat: Omit<Item, 'key' | 'owner'> = {
         ],
       },
       modifier: { monster: { attack: 10 } },
+      lifetime: {},
     },
   },
   subtypes: [CardSubTypes.armor],
