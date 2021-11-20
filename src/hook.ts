@@ -4,7 +4,7 @@ import { Location } from './target';
 import { Skill, isMonster, Monster } from './card';
 import { GameState } from './game';
 import { Decision, upsertStack } from './stack';
-import { getMonsterHealth } from './state';
+import { getMonsterHealth, pruneStateStore } from './state';
 import { pruneTriggerStore } from './trigger';
 import { getCardLocation, getLocation, getRandomKey, meetsSkillReq } from './utils';
 
@@ -97,6 +97,7 @@ export function endActivateStage(G: GameState, ctx: Ctx, now?: boolean) {
 
 export function endAttack(G: GameState, ctx: Ctx) {
   pruneTriggerStore(G, ctx);
+  pruneStateStore(G, ctx);
   ctx.events!.endTurn!();
 }
 

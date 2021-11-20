@@ -1,7 +1,9 @@
-import { PlayerState } from '../game';
+import { Ctx } from 'boardgame.io';
+
+import { GameState, PlayerState } from '../game';
 import { Character, NonCharacter } from '../card';
 import { Selection } from '../stack';
-import { deepCardComp } from '../utils';
+import { deepCardComp, getCardLocation } from '../utils';
 
 import { ActionTargets, FilterResponse, TargetFilter, Location } from './types';
 
@@ -25,17 +27,19 @@ export function ensureFilter(filter: ActionTargets, state: PlayerState): ActionT
   return { ...filter, level };
 }
 
-export function isTargetable(
-  filter: ActionTargets,
+export function meetsTarget(
+  G: GameState,
+  ctx: Ctx,
+  targets: ActionTargets,
   card: Character | NonCharacter
 ): boolean {
-  if ('location' in filter) return cardInFilter(filter, card);
+  const cardLoc = getCardLocation(G, ctx, card.key);
+  const selection = { [cardLoc]: [card] };
+  const recent: [Location, Character | NonCharacter] = [cardLoc, card];
 
-  if ('and' in filter) return filter.and!.some((filt) => isTargetable(filt, card));
+  const response = filterSelections(targets, selection, recent);
 
-  if ('xor' in filter) return filter.xor!.some((filt) => isTargetable(filt, card));
-
-  throw new Error(`Filter composed incorrectly: ${filter}`);
+  return response.finished;
 }
 
 export function filterSelections(
@@ -129,10 +133,17 @@ function handleXOR(
 function cardInFilter(filter: TargetFilter, card: Character | NonCharacter): boolean {
   if (filter.excludeCardKey?.includes(card.key)) return false;
   if (filter.type && filter.type !== card.type) return false;
+  if (
+    filter.subtype &&
+    (!('subtypes' in card) ||
+      !filter.subtype.some((type) => card.subtypes.includes(type)))
+  )
+    return false;
   if (filter.class && !filter.class.includes(card.class)) return false;
   if (filter.level !== undefined && filter.level !== 'CurrentLevel') {
     if (filter.level < (card as NonCharacter).level) return false;
   }
+
   return true;
 }
 

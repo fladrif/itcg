@@ -81,7 +81,9 @@
     { "name": "ThunderBolt" },
     { "name": "EvilTale" },
     { "name": "KumbiThrowingStar" },
-    { "name": "DarkShadow" }
+    { "name": "DarkShadow" },
+    { "name": "BlackRobinHat" },
+    { "name": "Teleport" }
   ],
   "characters": [
     { "name": "Sherman" },

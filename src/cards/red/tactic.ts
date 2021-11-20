@@ -299,6 +299,46 @@ export const sidequest: Omit<Tactic, 'key' | 'owner'> = {
   ...defaultTypes,
 };
 
+export const teleport: Omit<Tactic, 'key' | 'owner'> = {
+  canonicalName: 'teleport',
+  name: 'Teleport',
+  image: 'Teleport',
+  level: 50,
+  skill: [
+    {
+      action: 'quest',
+      activated: false,
+      requirements: { level: 0, oneshot: true },
+    },
+  ],
+  ability: {
+    state: {
+      targets: {
+        xor: [
+          {
+            type: CardTypes.Character,
+            location: Location.OppCharacter,
+            quantity: 1,
+          },
+          {
+            type: CardTypes.Character,
+            location: Location.Character,
+            quantity: 1,
+          },
+        ],
+      },
+      modifier: {
+        target: {
+          action: 'attack',
+        },
+      },
+      lifetime: { setTurn: 'NextTurn' },
+    },
+  },
+  subtypes: [CardSubTypes.weapon],
+  ...defaultTypes,
+};
+
 export const thunderbolt: Omit<Tactic, 'key' | 'owner'> = {
   canonicalName: 'thunderbolt',
   name: 'Thunder Bolt',

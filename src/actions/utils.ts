@@ -4,9 +4,9 @@ import { ActionTargets, Location } from '../target';
 import { isMonster, Monster, Character, NonCharacter, SkillRequirements } from '../card';
 import { GameState, PlayerState } from '../game';
 import { upsertStack, parseSkill, Decision } from '../stack';
-import { removeGlobalState } from '../state';
+import { parseStateLifetime, removeGlobalState } from '../state';
 import { removeTrigger, parseTriggerLifetime, pushTriggerStore } from '../trigger';
-import { getCardAtLocation, getCardLocation, rmCard } from '../utils';
+import { getCardAtLocation, getCardLocation, getOpponentID, rmCard } from '../utils';
 
 import { Damage } from './types';
 
@@ -34,9 +34,12 @@ export function handleAbility(G: GameState, ctx: Ctx, card: NonCharacter): any {
   if (card.ability.state) {
     G.state.push({
       owner: card.key,
-      player: card.owner,
+      player: card.ability.state.targetOpponent
+        ? getOpponentID(G, ctx, card.owner)
+        : card.owner,
       targets: card.ability.state.targets,
       modifier: card.ability.state.modifier,
+      lifetime: parseStateLifetime(ctx, card.ability.state.lifetime),
     });
   }
 }

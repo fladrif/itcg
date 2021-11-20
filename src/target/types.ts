@@ -1,4 +1,4 @@
-import { CardTypes, CardClasses } from '../card';
+import { CardTypes, CardSubTypes, CardClasses } from '../card';
 import { Selection } from '../stack';
 
 export interface FilterResponse {
@@ -34,8 +34,10 @@ export interface TargetFilter {
   quantityUpTo?: boolean;
   level?: LevelSelector;
   type?: CardTypes;
+  subtype?: CardSubTypes[];
   class?: CardClasses[];
   excludeCardKey?: string[];
+  cardKey?: string[];
 
   and?: never;
   xor?: never;

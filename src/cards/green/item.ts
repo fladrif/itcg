@@ -57,6 +57,61 @@ export const battlebow: Omit<Item, 'key' | 'owner'> = {
   ...defaultTypes,
 };
 
+export const blackrobinhat: Omit<Item, 'key' | 'owner'> = {
+  canonicalName: 'blackrobinhat',
+  name: 'Black Robin Hat',
+  image: 'BlackRobinHat',
+  level: 20,
+  skill: [
+    {
+      action: 'damage',
+      activated: false,
+      requirements: {
+        level: 60,
+        class: {
+          [CardClasses.Bowman]: 2,
+        },
+      },
+      targets: {
+        xor: [
+          {
+            type: CardTypes.Monster,
+            location: Location.OppField,
+            quantity: 1,
+          },
+          {
+            location: Location.OppCharacter,
+            quantity: 1,
+          },
+        ],
+      },
+    },
+  ],
+  ability: {
+    state: {
+      targets: {
+        xor: [
+          {
+            type: CardTypes.Monster,
+            subtype: [CardSubTypes.flying],
+            location: Location.OppField,
+            quantity: 1,
+          },
+          {
+            type: CardTypes.Monster,
+            subtype: [CardSubTypes.flying],
+            location: Location.Field,
+            quantity: 1,
+          },
+        ],
+      },
+      modifier: { monster: { attack: 10 } },
+    },
+  },
+  subtypes: [CardSubTypes.armor],
+  ...defaultTypes,
+};
+
 export const goldencrow: Omit<Item, 'key' | 'owner'> = {
   canonicalName: 'goldencrow',
   name: 'Golden Crow',

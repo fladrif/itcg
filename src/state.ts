@@ -1,11 +1,10 @@
 import { Ctx, PlayerID } from 'boardgame.io';
 
 import { Action } from './actions';
-import { Monster, NonCharacter } from './card';
+import { Monster, Character, NonCharacter } from './card';
 import { GameState } from './game';
 import { checkDeadMonstersOnField } from './hook';
-import { filterSelections, ActionTargets, Location } from './target';
-import { getCardLocation } from './utils';
+import { meetsTarget, ActionTargets } from './target';
 
 export interface MonsterStateModifier {
   health?: number;
@@ -21,16 +20,23 @@ export interface StateModifier {
   target?: TargetStateModifier;
 }
 
+export interface StateLifetime {
+  turn?: number;
+  setTurn?: 'ThisTurn' | 'NextTurn';
+}
+
 export interface GlobalState {
   owner: string;
   player: PlayerID;
-  targets: ActionTargets;
+  targets: ActionTargets; // TODO: Location not respected in this filter
   modifier: StateModifier;
+  lifetime: StateLifetime;
+  targetOpponent?: boolean;
 }
 
 export function getMonsterAtt(G: GameState, ctx: Ctx, card: Monster) {
-  const modifiers = G.state.filter(
-    (state) => state.player === card.owner && meetsTarget(G, ctx, state.targets, card)
+  const modifiers = getRelevantState(ctx, G.state, card).filter((state) =>
+    meetsTarget(G, ctx, state.targets, card)
   );
 
   const attMod = modifiers.reduce(
@@ -42,8 +48,8 @@ export function getMonsterAtt(G: GameState, ctx: Ctx, card: Monster) {
 }
 
 export function getMonsterHealth(G: GameState, ctx: Ctx, card: Monster) {
-  const modifiers = G.state.filter(
-    (state) => state.player === card.owner && meetsTarget(G, ctx, state.targets, card)
+  const modifiers = getRelevantState(ctx, G.state, card).filter((state) =>
+    meetsTarget(G, ctx, state.targets, card)
   );
   const healthMod = modifiers.reduce(
     (acc, mod) =>
@@ -61,17 +67,31 @@ export function removeGlobalState(G: GameState, ctx: Ctx, card: NonCharacter) {
   }
 }
 
-function meetsTarget(
-  G: GameState,
+export function parseStateLifetime(ctx: Ctx, lifetime: StateLifetime): StateLifetime {
+  if (!lifetime.setTurn) return lifetime;
+
+  const turn = lifetime.setTurn === 'NextTurn' ? ctx.turn + 1 : ctx.turn;
+
+  return { turn };
+}
+
+export function pruneStateStore(G: GameState, ctx: Ctx) {
+  const unPrunedStates = G.state.filter(
+    (state) => !state.lifetime.turn || state.lifetime.turn > ctx.turn
+  );
+
+  G.state = unPrunedStates;
+}
+
+export function getRelevantState(
   ctx: Ctx,
-  targets: ActionTargets,
-  card: NonCharacter
-): boolean {
-  const cardLoc = getCardLocation(G, ctx, card.key);
-  const selection = { [cardLoc]: [card] };
-  const recent: [Location, NonCharacter] = [cardLoc, card];
+  states: GlobalState[],
+  card: Character | NonCharacter
+): GlobalState[] {
+  return states.filter((state) => {
+    const turn = state.lifetime.turn ? state.lifetime.turn === ctx.turn : true;
+    const applicableState = state.player === card.owner;
 
-  const response = filterSelections(targets, selection, recent);
-
-  return response.finished;
+    return turn && applicableState;
+  });
 }

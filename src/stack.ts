@@ -5,7 +5,7 @@ import { actions, isOpponentAction, Action, ActionOpts } from './actions';
 import { ActionTargets, Location } from './target';
 import { endLevelStage, endActivateStage, endAttackStage } from './hook';
 import { isMonster, Skill, Character, NonCharacter } from './card';
-import { ensureFilter, filterSelections, isTargetable, mayFinished } from './target';
+import { ensureFilter, filterSelections, meetsTarget, mayFinished } from './target';
 import { getTriggerFns, stackTriggerFns, stackTriggers } from './trigger';
 import {
   deepCardComp,
@@ -17,7 +17,7 @@ import {
   mergeSelections,
   getOpponentState,
 } from './utils';
-import { GlobalState } from './state';
+import { getRelevantState, GlobalState } from './state';
 
 export type Selection = Partial<Record<Location, (Character | NonCharacter)[]>>;
 
@@ -298,7 +298,7 @@ export function selectCard(
 
   if (!curDecision.selection[cardLoc]) curDecision.selection[cardLoc] = [];
 
-  if (!isSelectable(G.state, playerState, curDecision, selCard)) return;
+  if (!isSelectable(G, ctx, G.state, playerState, curDecision, selCard)) return;
 
   if (!selCard.selected) {
     curDecision.selection[cardLoc]!.push(selCard);
@@ -321,27 +321,34 @@ export function selectCard(
 }
 
 function isSelectable(
+  G: GameState,
+  ctx: Ctx,
   globalState: GlobalState[],
   playerState: PlayerState,
   decision: Decision,
   card: Character | NonCharacter
 ): boolean {
-  if (!isTargetable(ensureFilter(decision.target!, playerState), card)) return false;
-  if (!validationGate(globalState, playerState, decision, card)) return false;
+  if (!meetsTarget(G, ctx, ensureFilter(decision.target!, playerState), card))
+    return false;
+  if (!validationGate(G, ctx, globalState, playerState, decision, card)) return false;
 
   return true;
 }
 
 function validationGate(
+  G: GameState,
+  ctx: Ctx,
   globalState: GlobalState[],
   playerState: PlayerState,
   decision: Decision,
   card: Character | NonCharacter
 ): boolean {
+  // Cannot attack monsters with stealthy
   if (decision.action === 'attack' && isMonster(card)) {
     if (card.ability.keywords && card.ability.keywords.includes('stealthy')) return false;
   }
 
+  // Cannot play cards of a class that is not in your party
   if (decision.action === 'play') {
     const charClasses = new Set([playerState.character.class]);
     playerState.learnedSkills.map((card) => charClasses.add(card.class));
@@ -349,21 +356,19 @@ function validationGate(
     return charClasses.has(card.class);
   }
 
-  const stateTarget = globalState.filter(
-    (state) =>
-      state.player == card.owner &&
-      !!state.modifier.target &&
-      state.modifier.target.action === decision.action
+  // Cannot use action against targets belonging to player
+  // Seems a bit too specific, should be refactored in the future probably
+  // TODO: currently doesn't account for location, needs to for fully functioning filter
+  const stateTarget = getRelevantState(ctx, globalState, card).filter(
+    (state) => !!state.modifier.target && state.modifier.target.action === decision.action
   );
 
-  if (stateTarget.some((target) => isStateTargetable(target, card))) return false;
-
-  return true;
-}
-
-function isStateTargetable(target: GlobalState, card: Character | NonCharacter): boolean {
-  // TODO: add specific card targetted effects in future if necessary.
-  if (isTargetable(target.targets, card)) return false;
+  if (
+    stateTarget.some((target) =>
+      meetsTarget(G, ctx, ensureFilter(target.targets, playerState), card)
+    )
+  )
+    return false;
 
   return true;
 }

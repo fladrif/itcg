@@ -162,6 +162,10 @@ import TopKumbiThrowingStar from './images/top-KumbiThrowingStar.jpg';
 import SkillKumbiThrowingStar from './images/skill-KumbiThrowingStar.jpg';
 import TopDarkShadow from './images/top-DarkShadow.jpg';
 import SkillDarkShadow from './images/skill-DarkShadow.jpg';
+import TopBlackRobinHat from './images/top-BlackRobinHat.jpg';
+import SkillBlackRobinHat from './images/skill-BlackRobinHat.jpg';
+import TopTeleport from './images/top-Teleport.jpg';
+import SkillTeleport from './images/skill-Teleport.jpg';
 import TopSherman from './images/top-Sherman.jpg';
 import SkillSherman from './images/skill1-Sherman.jpg';
 import Skill2Sherman from './images/skill2-Sherman.jpg';
@@ -531,6 +535,14 @@ export const cardImages: Record<string, CardImages> = {
   DarkShadow: {
     top: TopDarkShadow,
     skill: SkillDarkShadow,
+  },
+  BlackRobinHat: {
+    top: TopBlackRobinHat,
+    skill: SkillBlackRobinHat,
+  },
+  Teleport: {
+    top: TopTeleport,
+    skill: SkillTeleport,
   },
   Sherman: {
     top: TopSherman,
