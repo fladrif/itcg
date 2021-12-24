@@ -7,6 +7,54 @@ const defaultTypes = {
   selected: false,
 };
 
+export const bluenightfox: Omit<Item, 'key' | 'owner'> = {
+  canonicalName: 'bluenightfox',
+  name: 'Blue Nightfox',
+  image: 'BlueNightfox',
+  level: 70,
+  skill: [
+    {
+      action: 'play',
+      activated: false,
+      requirements: {
+        level: 40,
+        class: {
+          [CardClasses.Thief]: 3,
+        },
+      },
+      targets: {
+        level: 'CurrentLevel',
+        class: [CardClasses.Thief],
+        location: Location.Hand,
+        quantity: 1,
+      },
+    },
+  ],
+  ability: {
+    state: {
+      targets: {
+        xor: [
+          {
+            location: Location.OppField,
+            quantity: 1,
+            type: CardTypes.Monster,
+          },
+          {
+            location: Location.Field,
+            quantity: 1,
+            type: CardTypes.Monster,
+          },
+        ],
+      },
+      modifier: { monster: { keywords: ['confused'] } },
+      targetOpponent: true,
+      lifetime: {},
+    },
+  },
+  subtypes: [CardSubTypes.armor],
+  ...defaultTypes,
+};
+
 export const bloodslain: Omit<Item, 'key' | 'owner'> = {
   canonicalName: 'bloodslain',
   name: 'Blood Slain',

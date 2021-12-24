@@ -4,11 +4,13 @@ import { Action } from './actions';
 import { Monster, Character, NonCharacter } from './card';
 import { GameState } from './game';
 import { checkDeadMonstersOnField } from './hook';
+import { Keyword } from './keywords';
 import { meetsTarget, ActionTargets } from './target';
 
 export interface MonsterStateModifier {
   health?: number;
   attack?: number;
+  keywords?: Keyword[];
 }
 
 export interface TargetStateModifier {
@@ -57,6 +59,22 @@ export function getMonsterHealth(G: GameState, ctx: Ctx, card: Monster) {
     0
   );
   return healthMod + card.health;
+}
+
+export function getMonsterKeywords(G: GameState, ctx: Ctx, card: Monster): Keyword[] {
+  const modifiers = getRelevantState(ctx, G.state, card).filter((state) =>
+    meetsTarget(G, ctx, state.targets, card)
+  );
+
+  const extraKeywords = modifiers.reduce<Keyword[]>(
+    (acc, mod) =>
+      mod.modifier.monster?.keywords ? acc.concat(mod.modifier.monster.keywords) : acc,
+    []
+  );
+
+  return card.ability.keywords
+    ? ([] as Keyword[]).concat(card.ability.keywords, extraKeywords)
+    : extraKeywords;
 }
 
 export function removeGlobalState(G: GameState, ctx: Ctx, card: NonCharacter) {

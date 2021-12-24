@@ -83,7 +83,8 @@
     { "name": "KumbiThrowingStar" },
     { "name": "DarkShadow" },
     { "name": "BlackRobinHat" },
-    { "name": "Teleport" }
+    { "name": "Teleport" },
+    { "name": "BlueNightfox" }
   ],
   "characters": [
     { "name": "Sherman" },

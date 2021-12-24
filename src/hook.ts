@@ -4,7 +4,7 @@ import { Location } from './target';
 import { Skill, isMonster, Monster } from './card';
 import { GameState } from './game';
 import { Decision, upsertStack } from './stack';
-import { getMonsterHealth, pruneStateStore } from './state';
+import { getMonsterKeywords, getMonsterHealth, pruneStateStore } from './state';
 import { pruneTriggerStore } from './trigger';
 import { getCardLocation, getLocation, getRandomKey, meetsSkillReq } from './utils';
 
@@ -58,8 +58,7 @@ function resetAttacks(G: GameState, ctx: Ctx) {
     .map((card) => {
       const mon = card as Monster;
 
-      // TODO: get keywords through state
-      const keywords = mon.ability.keywords;
+      const keywords = getMonsterKeywords(G, ctx, mon);
 
       if (!keywords) {
         mon.attacks = 1;
