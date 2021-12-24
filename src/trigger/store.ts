@@ -1516,7 +1516,7 @@ export class SlipperyTrigger extends Trigger {
     opts?: TriggerOptions,
     lifetime?: TriggerLifetime
   ) {
-    super(cardOwner, 'Before', 'destroy', key, opts, player, lifetime);
+    super(cardOwner, 'After', 'destroy', key, opts, player, lifetime);
   }
 
   shouldTriggerExtension(
@@ -1556,8 +1556,10 @@ export class SlipperyTrigger extends Trigger {
       dialogPrompt: 'Choose heads or tails',
       opts: {
         dialogDecision: [slipperyDecision],
+        activePlayer: this.owner,
         source: card,
       },
+      noReset: true,
       finished: false,
       key: getRandomKey(),
     };
@@ -1641,12 +1643,18 @@ export class SteadyHandTrigger extends Trigger {
     return sourceIsChar;
   }
 
-  createDecision(_G: GameState, _ctx: Ctx, decision: Decision) {
+  createDecision(G: GameState, ctx: Ctx, decision: Decision) {
     const retDec: Decision = {
       action: 'buff',
       opts: {
         decision: decision.key,
         damage: 10,
+        source: getCardAtLocation(
+          G,
+          ctx,
+          getCardLocation(G, ctx, this.cardOwner),
+          this.cardOwner
+        ),
       },
       selection: {},
       finished: false,

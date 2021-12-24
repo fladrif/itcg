@@ -344,7 +344,8 @@ function play(G: GameState, ctx: Ctx, opts: ActionOpts): any {
   if (!G.stack) return;
   if (!opts.selection) return;
 
-  const player = G.player[ctx.currentPlayer];
+  const playerID = opts.source?.owner ? opts.source.owner : ctx.currentPlayer;
+  const player = G.player[playerID];
   const locations = Object.keys(opts.selection) as Location[];
 
   locations.forEach((location) => {
@@ -577,8 +578,8 @@ function tough(G: GameState, _ctx: Ctx, opts: ActionOpts): any {
 function steadyhand(G: GameState, ctx: Ctx, opts: ActionOpts): any {
   if (!G.stack) return;
 
-  const level = G.player[ctx.currentPlayer].level;
   const source = opts.source as NonCharacter;
+  const level = G.player[source.owner].level;
   if (!source || level < 50) return;
 
   pushTriggerStore(G, ctx, 'SteadyHandTrigger', source, undefined, {
