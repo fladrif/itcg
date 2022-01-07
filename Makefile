@@ -12,6 +12,12 @@ stop-server:
 network:
 	docker network create itcg-backend || true
 
+create-local-db:
+	docker run --rm -d --name itcg-db -e POSTGRES_DB=itcg -e POSTGRES_PASSWORD=itcg -p 5432:5432 postgres
+	echo 'Run the following to run migrations'
+	echo 'npm run create-db-local'
+	echo 'npm run migrate-up-local'
+
 run-migration: network
 	docker run -d --rm --name itcg-migration -e POSTGRES_DB=user -e POSTGRES_PASSWORD=itcg --network itcg-backend itcg npm run migrate-up
 
