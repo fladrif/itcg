@@ -25,3 +25,4 @@ yarn-debug.log*
 yarn-error.log*
 
 !/src/images/itcgCBsk2.jpg
+!/src/images/itcgCBsk2-sm.jpg
