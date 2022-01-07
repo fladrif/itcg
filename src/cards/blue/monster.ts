@@ -145,6 +145,7 @@ export const jryeti: Omit<Monster, 'key' | 'owner'> = {
           [CardClasses.Warrior]: 2,
         },
       },
+      opts: { damage: 20 },
       targets: {
         xor: [
           {

@@ -72,6 +72,7 @@ export const blackrobinhat: Omit<Item, 'key' | 'owner'> = {
           [CardClasses.Bowman]: 2,
         },
       },
+      opts: { damage: 20 },
       targets: {
         xor: [
           {
