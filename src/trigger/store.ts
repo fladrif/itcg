@@ -1235,24 +1235,28 @@ export class RedNightTrigger extends Trigger {
     _prep: TriggerPrepostion
   ) {
     const locations = [Location.Field, Location.OppField];
-    const isOwners = locations.some(
+    const isOwnersMonster = locations.some(
       (location) =>
         !!decision.selection[location] &&
-        decision.selection[location]!.some((card) => card.owner === this.owner)
+        decision.selection[location]!.some(
+          (card) => card.owner === this.owner && isMonster(card)
+        )
     );
 
-    return isOwners;
+    return isOwnersMonster;
   }
 
   createDecision(G: GameState, ctx: Ctx, _decision: Decision) {
-    // TODO: need check for no valid targets (skip target selection step)
+    const targetLocation =
+      this.owner === ctx.currentPlayer ? Location.OppHand : Location.Hand;
+
     const discardDec: Decision = {
       action: 'discard',
       selection: {},
       finished: false,
       noReset: true,
       target: {
-        location: this.owner === ctx.currentPlayer ? Location.OppHand : Location.Hand,
+        location: targetLocation,
         quantity: 1,
       },
       opts: {
@@ -1286,7 +1290,9 @@ export class RedNightTrigger extends Trigger {
       key: getRandomKey(),
     };
 
-    return [flipDec];
+    const isHandEmpty = getLocation(G, ctx, targetLocation).length <= 0;
+
+    return isHandEmpty ? [] : [flipDec];
   }
 }
 
