@@ -1,11 +1,11 @@
 import 'jest';
 
-import { Selection } from './stack';
-import { ensureFilter, filterSelections } from './target';
-import { Location } from './actions';
+import { cards } from '../cards';
+import { instantiateCard } from '../card';
 
-import * as cards from './cards';
-import { instantiateCard } from './card';
+import { ensureFilter, filterSelections } from './target';
+import { Location } from './types';
+import { Selection } from './stack';
 import * as fix from './target.fixtures';
 
 describe('filterSelections', () => {
