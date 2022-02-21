@@ -30,12 +30,7 @@ export interface MoveOptions {
   finished?: boolean;
 }
 
-export const levelUp = {
-  move: levelUpMove,
-  client: false,
-};
-
-function levelUpMove(G: GameState, ctx: Ctx, opts?: MoveOptions) {
+export function levelUp(G: GameState, ctx: Ctx, opts?: MoveOptions) {
   if (!opts || !opts.card) return INVALID_MOVE;
 
   const cardLoc = opts.card[0];
@@ -56,12 +51,7 @@ function levelUpMove(G: GameState, ctx: Ctx, opts?: MoveOptions) {
   resolveStack(G, ctx);
 }
 
-export const activateSkill = {
-  move: activateSkillMove,
-  client: false,
-};
-
-function activateSkillMove(G: GameState, ctx: Ctx, opts?: MoveOptions) {
+export function activateSkill(G: GameState, ctx: Ctx, opts?: MoveOptions) {
   if (!opts || !opts.card) return INVALID_MOVE;
 
   const card = opts.card;
@@ -99,12 +89,7 @@ function activateSkillMove(G: GameState, ctx: Ctx, opts?: MoveOptions) {
   resolveStack(G, ctx);
 }
 
-export const attack = {
-  move: attackMove,
-  client: false,
-};
-
-function attackMove(G: GameState, ctx: Ctx, opts?: MoveOptions) {
+export function attack(G: GameState, ctx: Ctx, opts?: MoveOptions) {
   if (!opts || !opts.card) return INVALID_MOVE;
 
   const card = opts.card;
@@ -144,31 +129,21 @@ function attackMove(G: GameState, ctx: Ctx, opts?: MoveOptions) {
   resolveStack(G, ctx);
 }
 
-export const selectChoice = {
-  move: selectChoiceMove,
-  client: false,
-};
-
-function selectChoiceMove(G: GameState, ctx: Ctx, opts?: MoveOptions) {
+export function selectChoice(G: GameState, ctx: Ctx, opts?: MoveOptions) {
   if (!opts || !opts.choice) return INVALID_MOVE;
 
   makeChoice(G, ctx, opts.choice);
   resolveStack(G, ctx);
 }
 
-export const confirmSkill = {
-  move: confirmSkillMove,
-  client: false,
-};
-
-function confirmSkillMove(G: GameState, ctx: Ctx, opts?: MoveOptions) {
-  resolveStack(G, ctx, { finished: opts?.finished });
-}
-
 export function selectTarget(G: GameState, ctx: Ctx, opts?: MoveOptions) {
   if (!opts || !opts.card) return INVALID_MOVE;
 
   selectCard(G, ctx, opts.card);
+}
+
+export function confirmSkill(G: GameState, ctx: Ctx, opts?: MoveOptions) {
+  resolveStack(G, ctx, { finished: opts?.finished });
 }
 
 export function resetStack(G: GameState, ctx: Ctx, _opts?: MoveOptions) {
