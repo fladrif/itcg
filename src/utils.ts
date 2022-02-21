@@ -160,13 +160,15 @@ export function scrubPile(deck: NonCharacter[], curPlayer?: PlayerID): NonCharac
     console.log('Card reveal status:', card.reveal, curPlayer);
     if (card.reveal && curPlayer)
       console.log(
-        card.reveal.includes(curPlayer),
-        typeof card.reveal,
-        typeof card.reveal[0],
+        (card.reveal as PlayerID[]).includes(curPlayer),
+        typeof (card.reveal as PlayerID[]),
+        typeof (card.reveal as PlayerID[])[0],
         typeof curPlayer
       );
 
-    if (card.reveal && curPlayer && card.reveal.includes(curPlayer)) return card;
+    if (card.reveal && curPlayer && (card.reveal as PlayerID[]).includes(curPlayer)) {
+      return card;
+    }
     return getBlankCard(card.owner, getRandomKey());
   });
   return newDeck;
