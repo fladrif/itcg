@@ -154,6 +154,8 @@ export function playerView(
 
   const curPlayer = playerID ? playerID : undefined;
 
+  console.log('Current player from playerView', curPlayer);
+
   playerIDs.map((id) => {
     const { deck, hand, ...nonDeckState } = G.player[id];
 
