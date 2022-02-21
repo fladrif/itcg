@@ -154,12 +154,12 @@ export function playerView(
 
   const curPlayer = playerID ? playerID : undefined;
 
-  console.log('Current player from playerView', curPlayer);
-
   playerIDs.map((id) => {
     const { deck, hand, ...nonDeckState } = G.player[id];
 
     const playerDeck = scrubPile(G.player[id].deck, curPlayer);
+    console.log('Current player', curPlayer);
+    console.log('Player deck post scrub', playerDeck);
     const playerHand = curPlayer === id ? hand : scrubPile(hand, curPlayer);
 
     newState.player[id] = { ...nonDeckState, deck: playerDeck, hand: playerHand };
