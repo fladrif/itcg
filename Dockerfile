@@ -20,3 +20,5 @@ COPY database.json database.json
 
 RUN npm run build
 RUN cd server && npm run build-server
+
+COPY migrations migrations

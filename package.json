@@ -52,7 +52,7 @@
     "migrate-down-local": "db-migrate -e local down",
     "migrate-down": "db-migrate -e prod down",
     "migrate-up-local": "db-migrate -e local up",
-    "migrate-up": "npm run create-db && db-migrate -e prod up"
+    "migrate-up": "npm run create-db || true && db-migrate -e prod up"
   },
   "eslintConfig": {
     "extends": [
