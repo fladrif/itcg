@@ -1,4 +1,5 @@
 import React from 'react';
+import * as lodash from 'lodash';
 
 import { Styles, ITCGCard, ITCGCardback } from './itcgCard';
 import { PlayerState } from './game';
@@ -18,8 +19,13 @@ export class ITCGHand extends React.Component<HandProp> {
   render() {
     if (!this.props.select || !this.props.level) {
       const opponentLine = [];
-      for (let i = 0; i < this.props.playerState.hand.length; i++) {
-        const card = this.props.playerState.hand[i];
+      const playerHand = lodash.sortBy(
+        this.props.playerState.hand,
+        (card) => card.name !== BLANK_CARDNAME
+      );
+
+      for (let i = 0; i < playerHand.length; i++) {
+        const card = playerHand[i];
 
         if (card.name !== BLANK_CARDNAME) {
           opponentLine.push(
