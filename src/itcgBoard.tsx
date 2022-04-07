@@ -116,6 +116,14 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
     this.state = {};
   }
 
+  setBoardState(state: State) {
+    if (this.state.dialogBox === state.dialogBox) {
+      this.setState({ dialogBox: undefined });
+    } else {
+      this.setState(state);
+    }
+  }
+
   render() {
     const stack = this.props.G.stack;
 
@@ -177,7 +185,7 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
             stage={
               this.props.ctx.activePlayers ? this.props.ctx.activePlayers[playerID] : ''
             }
-            updateBoard={(state) => this.setState(state)}
+            updateBoard={(state) => this.setBoardState(state)}
             dialogBox={this.state.dialogBox}
           />
         </div>
@@ -186,14 +194,14 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
             playerState={opponentState}
             currentPlayer={this.props.ctx.currentPlayer === this.props.playerID}
             select={this.props.moves.selectTarget}
-            updateBoard={(state) => this.setState(state)}
+            updateBoard={(state) => this.setBoardState(state)}
             mainPlayer={false}
           />
           <ITCGDiscard
             playerState={opponentState}
             currentPlayer={this.props.ctx.currentPlayer === this.props.playerID}
             select={this.props.moves.selectTarget}
-            updateBoard={(state) => this.setState(state)}
+            updateBoard={(state) => this.setBoardState(state)}
             mainPlayer={false}
           />
         </div>
@@ -285,7 +293,7 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
             selectChoice={this.props.moves.selectChoice}
             confirm={this.props.moves.confirmSkill}
             resetStack={this.props.moves.resetStack}
-            updateBoard={(state) => this.setState(state)}
+            updateBoard={(state) => this.setBoardState(state)}
             tempInSelectLoc={tempInSelectLoc}
           />
         </div>
@@ -294,14 +302,14 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
             playerState={playerState}
             currentPlayer={this.props.ctx.currentPlayer === this.props.playerID}
             select={this.props.moves.selectTarget}
-            updateBoard={(state) => this.setState(state)}
+            updateBoard={(state) => this.setBoardState(state)}
             mainPlayer={true}
           />
           <ITCGDeck
             playerState={playerState}
             currentPlayer={this.props.ctx.currentPlayer === this.props.playerID}
             select={this.props.moves.selectTarget}
-            updateBoard={(state) => this.setState(state)}
+            updateBoard={(state) => this.setBoardState(state)}
             mainPlayer={true}
           />
         </div>
