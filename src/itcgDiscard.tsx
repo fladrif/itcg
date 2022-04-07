@@ -20,6 +20,8 @@ const baseStyle: React.CSSProperties = {
   overflow: 'auto',
   alignItems: 'center',
   width: '50%',
+  textShadow:
+    '1px 0 0 #fff, -1px 0 0 #fff, 0 1px 0 #fff, 0 -1px 0 #fff, 1px 1px 0 #fff, -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff',
 };
 
 export class ITCGDiscard extends React.Component<DiscardProp> {
