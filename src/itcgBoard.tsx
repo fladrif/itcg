@@ -35,9 +35,9 @@ const containerStyle: React.CSSProperties = {
   backgroundSize: 'cover',
 };
 
-// const highlightAction: React.CSSProperties = {
-//   boxShadow: 'inset -10px -10px 10px white, inset 10px 10px 10px white',
-// };
+const highlightAction: React.CSSProperties = {
+  boxShadow: 'inset -10px -10px 10px white, inset 10px 10px 10px white',
+};
 
 const dialogStyle: React.CSSProperties = {
   zIndex: 3,
@@ -262,7 +262,13 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
             }
           />
         </div>
-        <div style={charStyle}>
+        <div
+          style={
+            currentPlayerStage === 'activate'
+              ? { ...charStyle, ...highlightAction }
+              : charStyle
+          }
+        >
           <ITCGCharacter
             playerState={playerState}
             currentPlayer={true}
@@ -272,7 +278,13 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
             select={this.props.moves.selectTarget}
           />
         </div>
-        <div style={handStyle}>
+        <div
+          style={
+            currentPlayerStage === 'level'
+              ? { ...handStyle, ...highlightAction }
+              : handStyle
+          }
+        >
           <ITCGHand
             playerState={playerState}
             currentPlayer={this.props.ctx.currentPlayer === this.props.playerID}
