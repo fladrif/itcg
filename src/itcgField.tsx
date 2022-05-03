@@ -24,12 +24,12 @@ const fieldStyle: React.CSSProperties = {
 
 const activeStyle: React.CSSProperties = {
   ...fieldStyle,
-  backgroundColor: '#c9def2',
+  backgroundColor: '#c9def2aa',
 };
 
 const inactiveStyle: React.CSSProperties = {
   ...fieldStyle,
-  backgroundColor: '#a0b1c1',
+  backgroundColor: '#a0b1c150',
 };
 
 export class ITCGField extends React.Component<FieldProps> {

@@ -16,6 +16,8 @@ import { ITCGHighlight } from './itcgHighlight';
 import { ITCGInteractive } from './itcgInteractive';
 import { ITCGStats } from './itcgStats';
 
+import bgi from './images/red-scene.svg';
+
 export interface State {
   dialogBox?: DialogBoxOpts;
 }
@@ -28,8 +30,14 @@ const containerStyle: React.CSSProperties = {
   height: '100vh',
   gridTemplateAreas:
     "'odiscard ohand ohand char' 'ochar ostat ostat char' 'ochar field field char' 'ochar stat stat char' 'ochar hand interface discard'",
-  backgroundColor: '#A3FFB4',
+  backgroundImage: `url(${bgi})`,
+  backgroundRepeat: 'no-repeat',
+  backgroundSize: 'cover',
 };
+
+// const highlightAction: React.CSSProperties = {
+//   boxShadow: 'inset -10px -10px 10px white, inset 10px 10px 10px white',
+// };
 
 const dialogStyle: React.CSSProperties = {
   zIndex: 3,
@@ -40,7 +48,6 @@ const dialogStyle: React.CSSProperties = {
 
 const handStyle: React.CSSProperties = {
   display: 'flex',
-  backgroundColor: '#36896e',
   gridArea: 'hand',
   padding: '1%',
   alignItems: 'flex-end',
@@ -59,13 +66,11 @@ const innerFieldStyle: React.CSSProperties = {
 
 const interactiveStyle: React.CSSProperties = {
   display: 'flex',
-  // backgroundColor: '#ffd700',
   gridArea: 'interface',
 };
 
 const discardStyle: React.CSSProperties = {
   display: 'flex',
-  backgroundColor: '#ffd700',
   gridArea: 'discard',
 };
 
@@ -76,14 +81,12 @@ const statStyle: React.CSSProperties = {
 };
 
 const charStyle: React.CSSProperties = {
-  backgroundColor: '#40e0d0',
   paddingTop: '1em',
   gridArea: 'char',
 };
 
 const oppHandStyle: React.CSSProperties = {
   display: 'flex',
-  backgroundColor: '#36896e',
   padding: '1%',
   gridArea: 'ohand',
 };
@@ -97,12 +100,10 @@ const oppStatStyle: React.CSSProperties = {
 const oppDiscardStyle: React.CSSProperties = {
   display: 'flex',
   flex: '1',
-  backgroundColor: '#ffd700',
   gridArea: 'odiscard',
 };
 
 const oppCharStyle: React.CSSProperties = {
-  backgroundColor: '#40e0d0',
   paddingTop: '1em',
   gridArea: 'ochar',
 };
