@@ -59,9 +59,10 @@ export class ITCGFrontPage extends React.Component<FrontPageProps> {
           This site is an enthusiast attempt to make the game available online without
           having to install applications and manage game rules on your own. (For example
           with LackeyCCG, or Tabletop Simulator). Because of this, there will undoubtedly
-          be issues or missing features that you would expect from a more mature site. You
-          can use the discord link below to report those issues as they come up and I'll
-          do my best to address them. This application uses{' '}
+          be issues or missing features that you would expect from a more mature site.
+          This site is also optimized for desktop use, mobile is viable but not supported.
+          You can use the discord link below to report those issues as they come up and
+          I'll do my best to address them. This application uses{' '}
           <a target="_blank" ref="noopener noreferrer" href="https://boardgame.io">
             BoardGame IO
           </a>{' '}
@@ -76,6 +77,12 @@ export class ITCGFrontPage extends React.Component<FrontPageProps> {
   devNotes() {
     return (
       <>
+        <p style={paragraphStyle}>
+          <b>May 6, 2022</b> Updated UI and UX in game and included a background image.
+          Only cards not yet implemented in Set 1 are 'MP Eater' and 'Blue Diros', and
+          included cards that are not currently working are 'Knowledge is Power' and
+          'Pull'.
+        </p>
         <p style={paragraphStyle}>
           <b>November 18, 2021</b> Added more cards: all cards available in game are fully
           functional, and all characters are now available. Included a 'How to Play'
@@ -136,6 +143,12 @@ export class ITCGFrontPage extends React.Component<FrontPageProps> {
             Discord
           </a>{' '}
           server
+        </p>
+        <p>
+          Background art and music credit to{' '}
+          <a target="_blank" rel="noopener noreferrer" href="https://knhy.me/">
+            knhy.me
+          </a>
         </p>
       </>
     );
