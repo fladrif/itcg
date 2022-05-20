@@ -8,6 +8,7 @@ export interface User {
   username: string;
   password: string;
   id: string;
+  created_at: Date;
 }
 
 export class DB {
@@ -95,6 +96,7 @@ export class DB {
     const decs = await dec.find({
       relations: ['owner'],
       where: [{ owner: userID }, { owner: null }],
+      order: { owner: 'DESC', modified_at: 'DESC' },
     });
 
     return decs;
@@ -119,7 +121,17 @@ export class DB {
     const user = owner ? await this.getUserByID(owner) : undefined;
 
     const dec = this.connection!.getRepository(Decks);
-    await dec.save(new Decks(id, name, deckList, user));
+    const existingDeck = await dec.findOne({ id });
+
+    if (!existingDeck) {
+      await dec.save(new Decks(id, name, deckList, user));
+    } else if (existingDeck.name !== name || existingDeck.deck_list !== deckList) {
+      existingDeck.name = name;
+      existingDeck.deck_list = deckList;
+      existingDeck.modified_at = new Date();
+
+      await dec.save(existingDeck);
+    }
 
     return id;
   }
