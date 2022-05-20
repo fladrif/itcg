@@ -81,8 +81,9 @@ export class ITCGHowToPlay extends React.Component {
           base (ie. <b>260</b>/180 hp).
         </p>
         <p style={paragraphStyle}>
-          <i>Oneshot</i> skills are also activated here. You can read about those further
-          down in the <b>Activate</b> phase.
+          <i>Oneshot</i> skills (skills with a lighting bolt icon instead of a level and
+          class requirement) are activated here. They are activated immediately after the
+          card is used to level up, and only once during the game at this time.
         </p>
         <p style={paragraphStyle}>
           <b>Play Tip:</b> When in the <b>Level</b> phase, click on a card in your hand to
@@ -106,9 +107,8 @@ export class ITCGHowToPlay extends React.Component {
           leveled up with at least 2 <b>Magician</b> cards.
         </p>
         <p style={paragraphStyle}>
-          Skills without a level requirement but instead with a lightning bolt is a{' '}
-          <i>oneshot</i> skill. These skills are activated immediately when the card is
-          used to level up, and will only activate once during the game at that time.
+          Skills with a lighting bolt instead of a level requirement are <i>oneshot</i>{' '}
+          skills. You can read about these in the previous <b>Level</b> phase.{' '}
         </p>
         <p style={paragraphStyle}>
           <b>Play Tip:</b> When in the <b>Activate</b> phase, click on the{' '}
