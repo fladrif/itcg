@@ -1,4 +1,6 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+import { ParagraphStyle } from './overall.css';
 
 interface FrontPageProps {
   username?: string;
@@ -11,24 +13,36 @@ const baseStyle: React.CSSProperties = {
   width: '60vw',
 };
 
-const paragraphStyle: React.CSSProperties = {
-  textIndent: '5%',
-  lineHeight: '175%',
+const buttonDivStyle: React.CSSProperties = {
+  display: 'flex',
+  flexDirection: 'row',
+  justifyContent: 'center',
+};
+
+const buttonStyle: React.CSSProperties = {
+  padding: '2em',
+  margin: '1em',
 };
 
 export class ITCGFrontPage extends React.Component<FrontPageProps> {
   navigation() {
     return (
       <>
-        <h3>Navigation</h3>
-        <p style={paragraphStyle}>
-          <b>Rooms</b>: Find opponents to play games against. You can use the discord to
-          prearrange games with other players.
-        </p>
-        <p style={paragraphStyle}>
-          <b>Decks</b>: Create and modify your own decks. Deck lists without buttons are
-          public and available to be viewed and used by anyone, but cannot be modified.
-        </p>
+        <h2>Welcome back {this.props.username}!</h2>
+        <div style={buttonDivStyle}>
+          <Link to={'/rooms'}>
+            <button style={buttonStyle}>
+              <h3>Room</h3>
+              Challenge others to a game
+            </button>
+          </Link>
+          <Link to={'/decks'}>
+            <button style={buttonStyle}>
+              <h3>Deck</h3>
+              Build and modify decks
+            </button>
+          </Link>
+        </div>
       </>
     );
   }
@@ -36,8 +50,8 @@ export class ITCGFrontPage extends React.Component<FrontPageProps> {
   welcome() {
     return (
       <>
-        <h3>Welcome!</h3>
-        <p style={paragraphStyle}>
+        <h2>Welcome!</h2>
+        <p style={ParagraphStyle}>
           To create your own decks and play games, please log in or sign up above for an
           account to start. We do not ask for or use your email address.
         </p>
@@ -48,14 +62,14 @@ export class ITCGFrontPage extends React.Component<FrontPageProps> {
   intro() {
     return (
       <>
-        <p style={paragraphStyle}>
+        <p style={ParagraphStyle}>
           Maplestory iTCG is an interactive trading card game developed by Wizards of the
           Coasts in partnership with Nexon based on the Korean MMO (massive multiplayer
           online) game Maplestory. The game was printed in physical card form with codes
           redeemable in the Maplestory MMO for unique items, and released as a short-lived
           online game which has since been taken down.
         </p>
-        <p style={paragraphStyle}>
+        <p style={ParagraphStyle}>
           This site is an enthusiast attempt to make the game available online without
           having to install applications and manage game rules on your own. (For example
           with LackeyCCG, or Tabletop Simulator). Because of this, there will undoubtedly
@@ -74,86 +88,6 @@ export class ITCGFrontPage extends React.Component<FrontPageProps> {
     );
   }
 
-  devNotes() {
-    return (
-      <>
-        <p style={paragraphStyle}>
-          <b>May 6, 2022</b> Updated UI and UX in game and included a background image.
-          Only cards not yet implemented in Set 1 are 'MP Eater' and 'Blue Diros', and
-          included cards that are not currently working are 'Knowledge is Power' and
-          'Pull'.
-        </p>
-        <p style={paragraphStyle}>
-          <b>November 18, 2021</b> Added more cards: all cards available in game are fully
-          functional, and all characters are now available. Included a 'How to Play'
-          guide, helpful images to be added in next update.
-        </p>
-        <p style={paragraphStyle}>
-          <b>October 28, 2021</b> Added more cards: Most easily added cards are now
-          available, technically more difficult cards are in the pipeline; Common
-          characters for all classes now available. Updated UI: View discard piles and
-          decks, interact with them through a pop-up dialog box; Added card viewer in deck
-          builder. Backend game state updated: Clients now do not have access to all game
-          data (deck and deck order, opponent's hand). Upcoming updates will include more
-          cards and fix those currently broken (Golden Crow, Buffy, Emerald Earrings).
-        </p>
-        <p style={paragraphStyle}>
-          <b>October 2021</b> Currently only part of the first set (base set) is
-          available, and I'll be adding cards over the next week. If there are cards from
-          the first set you'd like to be prioritized, please let me know in the discord
-          server. If you would like to contribute and/or submit PR's, please note so in
-          the discord server and I'll make the repository public.
-          <br />
-        </p>
-      </>
-    );
-  }
-
-  links() {
-    return (
-      <>
-        <p>
-          For a database (deck lists, documents) of the game, you can visit{' '}
-          <a
-            target="_blank"
-            rel="noopener noreferrer"
-            href="https://cardgamegeek.com/games/msitcg"
-          >
-            Card Game Geek
-          </a>
-        </p>
-        <p>
-          For a guide to the game, you can reference the fan site{' '}
-          <a
-            target="_blank"
-            rel="noopener noreferrer"
-            href="http://itcg.maplestorygameguide.com/"
-          >
-            Maplestory Game Guide
-          </a>
-        </p>
-        <p>
-          For matchmaking and/or finding players, help on this site in particular, or to
-          report issues, please use the{' '}
-          <a
-            target="_blank"
-            rel="noopener noreferrer"
-            href="https://discord.gg/bSDu2UaJwK"
-          >
-            Discord
-          </a>{' '}
-          server
-        </p>
-        <p>
-          Background art and music credit to{' '}
-          <a target="_blank" rel="noopener noreferrer" href="https://knhy.me/">
-            knhy.me
-          </a>
-        </p>
-      </>
-    );
-  }
-
   render() {
     const loggedIn = !!this.props.username;
 
@@ -163,10 +97,6 @@ export class ITCGFrontPage extends React.Component<FrontPageProps> {
         {loggedIn && this.navigation()}
         <h3>Intro</h3>
         {this.intro()}
-        <h3>Dev Notes</h3>
-        {this.devNotes()}
-        <h3>Links</h3>
-        {this.links()}
       </div>
     );
   }

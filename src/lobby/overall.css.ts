@@ -14,3 +14,8 @@ export const OverallButtonStyle: React.CSSProperties = {
   marginLeft: '80%',
   fontSize: '130%',
 };
+
+export const ParagraphStyle: React.CSSProperties = {
+  textIndent: '5%',
+  lineHeight: '175%',
+};
