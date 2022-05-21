@@ -1,18 +1,23 @@
 import React from 'react';
 
 import { State as BoardState } from './itcgBoard';
+import gear from './images/gear.png';
 
 interface MenuProp {
   updateBoard: (state: BoardState) => any;
 }
 
-const baseStyle: React.CSSProperties = {};
+const baseStyle: React.CSSProperties = {
+  display: 'flex',
+};
 
 const buttonStyle: React.CSSProperties = {
-  alignSelf: 'center',
-  width: '20%',
-  fontSize: '50%',
-  borderRadius: '0.5em',
+  borderRadius: '0.3em',
+  backgroundImage: `url(${gear})`,
+  backgroundSize: 'contain',
+  backgroundRepeat: 'no-repeat',
+  backgroundPosition: 'center center',
+  margin: '10%',
 };
 
 export class ITCGMenu extends React.Component<MenuProp> {
@@ -20,16 +25,14 @@ export class ITCGMenu extends React.Component<MenuProp> {
     super(props);
   }
 
-  concede() {
+  openMenu() {
     this.props.updateBoard({ menuBox: 'menu' });
   }
 
   render() {
     return (
       <div style={baseStyle}>
-        <button style={buttonStyle} onClick={() => this.concede()}>
-          Menu
-        </button>
+        <button style={buttonStyle} onClick={() => this.openMenu()}></button>
       </div>
     );
   }

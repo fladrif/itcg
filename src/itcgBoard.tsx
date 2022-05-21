@@ -60,16 +60,17 @@ const turnAlertStyle: React.CSSProperties = {
     '1px 0 0 #fff, -1px 0 0 #fff, 0 1px 0 #fff, 0 -1px 0 #fff, 1px 1px 0 #fff, -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff',
 };
 
-const menuStyle: React.CSSProperties = {
-  display: 'flex',
-  gridArea: 'menu',
+const menuBoxStyle: React.CSSProperties = {
+  zIndex: 5,
+  position: 'absolute',
 };
 
-const menuBoxStyle: React.CSSProperties = {
-  zIndex: 4,
-  position: 'absolute',
-  top: '33%',
-  left: '33%',
+const menuStyle: React.CSSProperties = {
+  display: 'flex',
+  flexDirection: 'row',
+  justifyContent: 'flex-end',
+  alignItems: 'start',
+  gridArea: 'menu',
 };
 
 const handStyle: React.CSSProperties = {
@@ -144,11 +145,10 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
   }
 
   setBoardState(state: State) {
-    if (this.state.dialogBox === state.dialogBox) {
-      this.setState({ dialogBox: undefined });
-    } else {
-      this.setState(state);
-    }
+    const newState: State = state;
+    if (this.state.dialogBox === state.dialogBox) newState.dialogBox = undefined;
+
+    this.setState(newState);
   }
 
   render() {
