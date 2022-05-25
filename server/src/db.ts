@@ -96,7 +96,7 @@ export class DB {
     const decs = await dec.find({
       relations: ['owner'],
       where: [{ owner: userID }, { owner: null }],
-      order: { owner: 'DESC', modified_at: 'DESC' },
+      order: { owner: 'ASC', modified_at: 'DESC' },
     });
 
     return decs;
