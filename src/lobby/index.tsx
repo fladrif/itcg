@@ -7,3 +7,5 @@ export * from './deck';
 export * from './deckBuilder';
 export * from './frontpage';
 export * from './howtoplay';
+export * from './devlog';
+export * from './resources';

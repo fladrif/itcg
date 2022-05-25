@@ -4,7 +4,7 @@ import axios from 'axios';
 
 import { ITCGDeckBuilder } from './deckBuilder';
 import { OverallListStyle, ListItemStyle } from './list.css';
-import { ButtonStyle, OverallButtonStyle } from './overall.css';
+import { ButtonStyle, OverallButtonStyle, ParagraphStyle } from './overall.css';
 
 import { Deck } from '../game';
 
@@ -106,6 +106,10 @@ export class ITCGDeck extends React.Component<DeckProp> {
           Create new Deck
         </Button>
         <h1>Decks</h1>
+        <p style={ParagraphStyle}>
+          Deck lists without buttons are public and available to everyone, but cannot be
+          modified.
+        </p>
         {this.parseDeckLists()}
       </>
     );

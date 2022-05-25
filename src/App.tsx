@@ -17,6 +17,8 @@ import {
   ITCGRoom,
   ITCGFrontPage,
   ITCGHowToPlay,
+  ITCGDevLog,
+  ITCGResources,
 } from './lobby';
 import { SERVER, USER_COOKIE_NAME } from './config';
 
@@ -105,6 +107,14 @@ class App extends React.Component {
               <Route path={'/howtoplay'}>
                 <ITCGHeader username={this.state.username} />
                 <ITCGHowToPlay />
+              </Route>
+              <Route path={'/devlog'}>
+                <ITCGHeader username={this.state.username} />
+                <ITCGDevLog />
+              </Route>
+              <Route path={'/resources'}>
+                <ITCGHeader username={this.state.username} />
+                <ITCGResources />
               </Route>
               <Route path={'/signup'}>
                 <ITCGHeader />

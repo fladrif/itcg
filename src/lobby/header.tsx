@@ -58,6 +58,28 @@ const headerImageStyle: React.CSSProperties = {
 };
 
 export class ITCGHeader extends React.Component<HeaderProps> {
+  baseMenu = (
+    <>
+      <NavLink activeStyle={selectedMenuItem} exact={true} style={menuItem} to={'/'}>
+        Home
+      </NavLink>
+    </>
+  );
+
+  addtlMenu = (
+    <>
+      <NavLink activeStyle={selectedMenuItem} style={menuItem} to={'/howtoplay'}>
+        How To Play
+      </NavLink>
+      <NavLink activeStyle={selectedMenuItem} style={menuItem} to={'/devlog'}>
+        Dev Log
+      </NavLink>
+      <NavLink activeStyle={selectedMenuItem} style={menuItem} to={'/resources'}>
+        Resources
+      </NavLink>
+    </>
+  );
+
   loggedInUI() {
     return (
       <>
@@ -87,12 +109,8 @@ export class ITCGHeader extends React.Component<HeaderProps> {
   loggedOutMenu() {
     return (
       <>
-        <NavLink activeStyle={selectedMenuItem} exact={true} style={menuItem} to={'/'}>
-          Home
-        </NavLink>
-        <NavLink activeStyle={selectedMenuItem} style={menuItem} to={'/howtoplay'}>
-          How To Play
-        </NavLink>
+        {this.baseMenu}
+        {this.addtlMenu}
       </>
     );
   }
@@ -100,18 +118,14 @@ export class ITCGHeader extends React.Component<HeaderProps> {
   loggedInMenu() {
     return (
       <>
-        <NavLink activeStyle={selectedMenuItem} exact={true} style={menuItem} to={'/'}>
-          Home
-        </NavLink>
-        <NavLink activeStyle={selectedMenuItem} style={menuItem} to={'/howtoplay'}>
-          How To Play
-        </NavLink>
+        {this.baseMenu}
         <NavLink activeStyle={selectedMenuItem} style={menuItem} to={'/rooms'}>
           Rooms
         </NavLink>
         <NavLink activeStyle={selectedMenuItem} style={menuItem} to={'/decks'}>
           Decks
         </NavLink>
+        {this.addtlMenu}
       </>
     );
   }

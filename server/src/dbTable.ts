@@ -16,10 +16,14 @@ export class Users {
   @Column('text')
   password: string;
 
+  @Column('timestamptz')
+  created_at: Date;
+
   constructor(id: string, username: string, password: string) {
     this.id = id;
     this.username = username;
     this.password = password;
+    this.created_at = new Date();
   }
 }
 
@@ -34,6 +38,12 @@ export class Decks {
   @Column('json')
   deck_list: Deck;
 
+  @Column('timestamptz')
+  created_at: Date;
+
+  @Column('timestamptz')
+  modified_at: Date;
+
   @ManyToOne(() => Users)
   @JoinColumn({ name: 'owner_id' })
   owner?: Users;
@@ -43,5 +53,7 @@ export class Decks {
     this.name = name;
     this.deck_list = deckList;
     this.owner = owner;
+    this.created_at = new Date();
+    this.modified_at = new Date();
   }
 }

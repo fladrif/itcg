@@ -3,7 +3,7 @@ import { Button, FormControl } from 'react-bootstrap';
 import axios from 'axios';
 
 import { OverallListStyle, ListItemStyle } from './list.css';
-import { ButtonStyle, OverallButtonStyle } from './overall.css';
+import { ButtonStyle, OverallButtonStyle, ParagraphStyle } from './overall.css';
 import { DeckMetaData } from './deck';
 
 import { AppState } from '../App';
@@ -92,6 +92,13 @@ export class ITCGRoom extends React.Component<RoomProp, State> {
     }
   }
 
+  roomBlurb = (
+    <p style={ParagraphStyle}>
+      Challenge others to a game by <b>joining</b> or <b>creating</b> a room. Use the
+      Discord to prearrange games with other players.
+    </p>
+  );
+
   shouldComponentUpdate(_nextProps: RoomProp, nextState: State) {
     if (!nextState.activeRoom && this.state.activeRoom) this.props.update({});
     return true;
@@ -142,6 +149,7 @@ export class ITCGRoom extends React.Component<RoomProp, State> {
             <FormControl
               as={'select'}
               style={formHeaderCompStyle}
+              value={cur.deck || ''}
               onChange={(e) => this.updateRoom(room.id, { deckID: e.target.value })}
               disabled={cur?.ready}
             >
@@ -179,6 +187,7 @@ export class ITCGRoom extends React.Component<RoomProp, State> {
     return (
       <div>
         <h1>Rooms</h1>
+        {this.roomBlurb}
         {styledRooms}
       </div>
     );
@@ -193,7 +202,12 @@ export class ITCGRoom extends React.Component<RoomProp, State> {
     if (rooms.length > 0) {
       return this.getRoomList(rooms);
     } else {
-      return <h2>No Open Rooms</h2>;
+      return (
+        <>
+          <h2>No Open Rooms</h2>
+          {this.roomBlurb}
+        </>
+      );
     }
   }
 
