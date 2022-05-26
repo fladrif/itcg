@@ -41,8 +41,14 @@ export interface PlayerState {
   activationPos: number;
 }
 
+export interface SetupPlayerData {
+  id: PlayerID;
+  playerName: string;
+  deck: Deck;
+}
+
 export interface SetupData {
-  players: [{ id: PlayerID; playerName: string; deck: Deck }];
+  players: SetupPlayerData[];
 }
 
 export interface GameState {

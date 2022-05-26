@@ -6,6 +6,7 @@ import { LobbyAPI } from 'boardgame.io';
 import { SERVER, GAME_NAME } from '../../src/config';
 import { BLANK_CARDNAME, Character, NonCharacter } from '../../src/card';
 import { cards, CardName } from '../../src/cards';
+import { SetupData, SetupPlayerData } from '../../src/game';
 
 import { db } from './db';
 import { Decks } from './dbTable';
@@ -101,7 +102,7 @@ export async function getGames(isGameover?: boolean): Promise<LobbyAPI.Match[]> 
 
 export async function startGame(room: Room) {
   const randUsers = lodash.shuffle(room.users);
-  const players = await Bluebird.map(randUsers, async (usr, idx) => {
+  const players: SetupPlayerData[] = await Bluebird.map(randUsers, async (usr, idx) => {
     const playerDeck = await db.getDeck(usr.deck!);
     return {
       id: idx.toString(),
@@ -110,12 +111,14 @@ export async function startGame(room: Room) {
     };
   });
 
+  const setupData: SetupData = { players };
+
   const resp = await axios
     .post(
       `/games/${GAME_NAME}/create`,
       {
         numPlayers: 2,
-        setupData: { players },
+        SetupPlayerData: setupData,
       },
       {
         baseURL: SERVER,
