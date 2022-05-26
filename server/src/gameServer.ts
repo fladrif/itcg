@@ -118,7 +118,7 @@ export async function startGame(room: Room) {
       `/games/${GAME_NAME}/create`,
       {
         numPlayers: 2,
-        SetupPlayerData: setupData,
+        setupData,
       },
       {
         baseURL: SERVER,
