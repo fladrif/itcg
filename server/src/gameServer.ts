@@ -104,7 +104,7 @@ export async function startGame(room: Room) {
   const players = await Bluebird.map(randUsers, async (usr, idx) => {
     const playerDeck = await db.getDeck(usr.deck!);
     return {
-      id: idx,
+      id: idx.toString(),
       playerName: usr.name,
       deck: playerDeck!.deck_list,
     };
