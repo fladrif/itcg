@@ -2,7 +2,7 @@ import Router from '@koa/router';
 import bodyParser from 'koa-bodyparser';
 import { Server as ServerTypes } from 'boardgame.io';
 
-import { db } from '../db';
+import * as db from '../db';
 import { AUTH_HEADER } from '../utils';
 import { gameRooms } from '../gameRooms';
 import { inGame, shouldStartGame, startGame } from '../gameServer';

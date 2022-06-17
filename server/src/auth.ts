@@ -6,7 +6,7 @@ import {
   SERVER_ID,
   verifyJWT,
 } from './utils';
-import { db } from './db';
+import * as db from './db';
 
 export async function extractAuth(ctx: any, next: any) {
   const authCookie = ctx.cookies.get(AUTH_COOKIE_NAME);

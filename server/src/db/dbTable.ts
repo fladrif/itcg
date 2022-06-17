@@ -1,6 +1,6 @@
 import { Entity, PrimaryColumn, Column, JoinColumn, ManyToOne } from 'typeorm';
 
-import { Deck } from '../../src/game';
+import { Deck } from '../../../src/game';
 
 @Entity()
 export class Users {

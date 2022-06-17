@@ -26,7 +26,7 @@ import {
   authenticateCredentials,
 } from './auth';
 import { UserNonce } from './types';
-import { CardRouter, DeckRouter, LobbyRouter, RoomRouter } from './routes';
+import { CardRouter, DeckRouter, LobbyRouter, RoomRouter, StatsRouter } from './routes';
 const BCRYPT_SALT_ROUNDS = 10;
 
 const gameServerDB = new PostgresStore({
@@ -49,7 +49,7 @@ const server = Server({
 
 server.app.use(cors({ credentials: true }));
 
-server.router.use(['/cards', '/decks', '/lobby', '/rooms'], extractAuth);
+server.router.use(['/cards', '/decks', '/lobby', '/rooms', '/stats'], extractAuth);
 server.router.use(['/games'], serverAuth);
 
 server.router.get('/', (ctx: any) => {
@@ -121,5 +121,6 @@ server.router.use('/cards', CardRouter.routes());
 server.router.use('/decks', DeckRouter.routes());
 server.router.use('/lobby', LobbyRouter.routes());
 server.router.use('/rooms', RoomRouter.routes());
+server.router.use('/stats', StatsRouter.routes());
 
 server.run(18000);

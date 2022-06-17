@@ -8,8 +8,7 @@ import { BLANK_CARDNAME, Character, NonCharacter } from '../../src/card';
 import { cards, CardName } from '../../src/cards';
 import { SetupData, SetupPlayerData } from '../../src/game';
 
-import { db } from './db';
-import { Decks } from './dbTable';
+import * as db from './db';
 import { Room, RoomUser } from './types';
 import { SERVER_AUTH_HEADER, SERVER_CLIENT_HEADER, SERVER_ID, signJWT } from './utils';
 
@@ -27,7 +26,7 @@ function getCard(name: string): Omit<Character | NonCharacter, 'owner' | 'key'> 
   return cards['blankCard'];
 }
 
-export function updateDeck(deck: Decks): boolean {
+export function updateDeck(deck: db.Decks): boolean {
   const updatedDeckList = deck.deck_list.deck.map((card) => {
     const isV1 = card[0].canonicalName === undefined;
 
