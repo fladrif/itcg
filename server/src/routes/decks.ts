@@ -3,7 +3,7 @@ import bodyParser from 'koa-bodyparser';
 import { Server as ServerTypes } from 'boardgame.io';
 import { v4 as uuidv4 } from 'uuid';
 
-import { db } from '../db';
+import * as db from '../db';
 import { AUTH_HEADER } from '../utils';
 
 import { validateDeck } from '../../../src/decks';

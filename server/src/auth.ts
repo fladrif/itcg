@@ -6,7 +6,7 @@ import {
   SERVER_ID,
   verifyJWT,
 } from './utils';
-import { db } from './db';
+import * as db from './db';
 
 export async function extractAuth(ctx: any, next: any) {
   const authCookie = ctx.cookies.get(AUTH_COOKIE_NAME);
@@ -17,6 +17,16 @@ export async function extractAuth(ctx: any, next: any) {
   if (!userIDExists) ctx.throw(400, 'User not authenticated');
 
   ctx.header[AUTH_HEADER] = userID;
+  await next();
+}
+
+export async function adminAuth(ctx: any, next: any) {
+  const userID = ctx.header[AUTH_HEADER];
+  const roles = await db.getRolesById(userID);
+  if (!roles.some((r) => r.name === 'admin')) {
+    ctx.throw(400, 'User not authenticated');
+  }
+
   await next();
 }
 

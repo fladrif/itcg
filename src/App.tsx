@@ -15,6 +15,7 @@ import {
   ITCGLogIn,
   ITCGLogOut,
   ITCGRoom,
+  ITCGAdmin,
   ITCGFrontPage,
   ITCGHowToPlay,
   ITCGDevLog,
@@ -112,6 +113,9 @@ class App extends React.Component {
                   </Route>
                   <Route path={'/decks'}>
                     {this.state.username && <ITCGDeck server={SERVER} />}
+                  </Route>
+                  <Route path={'/admin'}>
+                    {this.state.username && <ITCGAdmin server={SERVER} />}
                   </Route>
                   <Route path={'/howtoplay'}>
                     <ITCGHowToPlay />

@@ -1,6 +1,13 @@
-import { Entity, PrimaryColumn, Column, JoinColumn, ManyToOne } from 'typeorm';
+import {
+  Entity,
+  PrimaryColumn,
+  Column,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
-import { Deck } from '../../src/game';
+import { Deck } from '../../../src/game';
 
 @Entity()
 export class Users {
@@ -24,6 +31,39 @@ export class Users {
     this.username = username;
     this.password = password;
     this.created_at = new Date();
+  }
+}
+
+@Entity()
+export class Roles {
+  @PrimaryGeneratedColumn('increment')
+  id: number;
+
+  @Column({
+    type: 'text',
+    unique: true,
+  })
+  name: string;
+
+  constructor(id: number, name: string) {
+    this.id = id;
+    this.name = name;
+  }
+}
+
+@Entity()
+export class Userroles {
+  @ManyToOne(() => Users, { primary: true })
+  @JoinColumn({ name: 'user_id' })
+  user: Users;
+
+  @ManyToOne(() => Roles, { primary: true })
+  @JoinColumn({ name: 'role_id' })
+  role: Roles;
+
+  constructor(user: Users, role: Roles) {
+    this.user = user;
+    this.role = role;
   }
 }
 
