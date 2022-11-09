@@ -1,6 +1,4 @@
-import { Ctx } from 'boardgame.io';
-
-import { GameState, PlayerState } from './game';
+import { FuncContext, PlayerState } from './game';
 import { actions, isOpponentAction, Action, ActionOpts } from './actions';
 import { ActionTargets, Location } from './target';
 import { endLevelStage, endActivateStage, endAttackStage } from './hook';
@@ -88,7 +86,7 @@ function stage(
   return stageOutput;
 }
 
-function setStages(G: GameState, ctx: Ctx, decisions: Decision[]) {
+function setStages({ G, ctx, events }: FuncContext, decisions: Decision[]) {
   if (!G.stack) return;
   const loopbackStage = stage(G.stack.currentStage, false);
 
@@ -110,36 +108,37 @@ function setStages(G: GameState, ctx: Ctx, decisions: Decision[]) {
 
   decisions.reverse();
 
-  ctx.events!.setActivePlayers!(otherStages);
+  events.setActivePlayers(otherStages);
 }
 
-export function resolveStack(G: GameState, ctx: Ctx, opts?: ResolveStackOptions) {
+export function resolveStack(fnCtx: FuncContext, opts?: ResolveStackOptions) {
+  const { G, ctx, events } = fnCtx;
   const stack = G.stack;
   if (!stack) return;
 
   if (stack.activeDecisions.length <= 0) {
     if (stack.decisions.length <= 0) {
-      resetSkillActivations(G, ctx);
+      resetSkillActivations(fnCtx);
 
       if (stack.queuedDecisions.length > 0) {
-        upsertStack(G, ctx, [stack.queuedDecisions.shift()!]);
-        resolveStack(G, ctx);
+        upsertStack(fnCtx, [stack.queuedDecisions.shift()!]);
+        resolveStack(fnCtx);
         return;
       }
 
-      if (stack.currentStage == 'level') endLevelStage(G, ctx);
-      if (stack.currentStage == 'activate') endActivateStage(G, ctx);
-      if (stack.currentStage == 'attack') endAttackStage(G, ctx);
+      if (stack.currentStage == 'level') endLevelStage(fnCtx);
+      if (stack.currentStage == 'activate') endActivateStage(fnCtx);
+      if (stack.currentStage == 'attack') endAttackStage(fnCtx);
 
       G.stack = undefined;
       return;
     }
 
     const nextDecision = stack.decisions[stack.decisions.length - 1];
-    const didAddTrigger = stackTriggers(G, ctx, nextDecision, 'Before');
+    const didAddTrigger = stackTriggers(fnCtx, nextDecision, 'Before');
 
     if (didAddTrigger) {
-      resolveStack(G, ctx);
+      resolveStack(fnCtx);
       return;
     }
 
@@ -159,19 +158,19 @@ export function resolveStack(G: GameState, ctx: Ctx, opts?: ResolveStackOptions)
      * Used so that cards being destroyed with death triggers can see their own death.
      * Cards that ignore their own death trigger will need to explicitly check for themselves
      */
-    const afterTrigFns = getTriggerFns(G, ctx, decision, 'After');
+    const afterTrigFns = getTriggerFns(fnCtx, decision, 'After');
 
-    actions[decision.action](G, ctx, actionOpts);
+    actions[decision.action](fnCtx, actionOpts);
     if (decision.mainDecision) stack.prevActivatePos = undefined;
 
     /**
      * Triggers will not duplicate, inherent check if triggered for particular decision
      */
-    afterTrigFns.push(...getTriggerFns(G, ctx, decision, 'After'));
-    stackTriggerFns(G, ctx, decision, afterTrigFns);
+    afterTrigFns.push(...getTriggerFns(fnCtx, decision, 'After'));
+    stackTriggerFns(fnCtx, decision, afterTrigFns);
 
-    pruneSelection(G, ctx, decision.selection, decision.selection); // Removes select tag from card (ui)
-    resolveStack(G, ctx);
+    pruneSelection(fnCtx, decision.selection, decision.selection); // Removes select tag from card (ui)
+    resolveStack(fnCtx);
   } else if (
     opts?.resetStack !== true &&
     (!isDecisionNeeded(stack.activeDecisions[0]) || opts?.finished)
@@ -179,32 +178,33 @@ export function resolveStack(G: GameState, ctx: Ctx, opts?: ResolveStackOptions)
     if (!mayFinished(stack.activeDecisions[0].target) && opts?.finished) return; // finished option can only be used if quantityUpTo is true
 
     stack.decisions.push(stack.activeDecisions.shift()!);
-    ctx.events!.endStage!();
+    events.endStage!();
 
-    resolveStack(G, ctx);
+    resolveStack(fnCtx);
   } else if (opts?.resetStack) {
-    pruneDecisions(G, ctx, stack.decisions);
-    pruneDecisions(G, ctx, stack.activeDecisions);
+    pruneDecisions(fnCtx, stack.decisions);
+    pruneDecisions(fnCtx, stack.activeDecisions);
 
     if (stack.prevActivatePos !== undefined) {
       G.player[ctx.currentPlayer].activationPos = stack.prevActivatePos;
-      resetSkillActivations(G, ctx);
+      resetSkillActivations(fnCtx);
     }
 
-    setStages(G, ctx, []);
+    setStages(fnCtx, []);
     G.stack = undefined;
   }
 }
 
 export function parseSkill(
-  G: GameState,
-  ctx: Ctx,
+  fnCtx: FuncContext,
   skill: Skill,
   source: Character | NonCharacter,
   main?: boolean
 ): Decision {
+  const { ctx } = fnCtx;
+
   const selection: Selection = {};
-  const oppState = getOpponentState(G, ctx, source.owner);
+  const oppState = getOpponentState(fnCtx, source.owner);
 
   if (skill.opts?.allOppMonster) {
     const location: Location =
@@ -244,14 +244,15 @@ export function parseSkill(
 }
 
 export function upsertStack(
-  G: GameState,
-  ctx: Ctx,
+  fnCtx: FuncContext,
   decisions: Decision[],
   currentStage?: string,
   prevActivatePos?: number
 ) {
+  const { G } = fnCtx;
+
   if (!G.stack) {
-    const stage = currentStage ? currentStage : getCurrentStage(G, ctx);
+    const stage = currentStage ? currentStage : getCurrentStage(fnCtx);
 
     G.stack = {
       decisions: [],
@@ -269,10 +270,12 @@ export function upsertStack(
     decisions.map((dec) => (G.stack!.decisionTriggers[dec.key] = []));
   }
 
-  setStages(G, ctx, G.stack.activeDecisions);
+  setStages(fnCtx, G.stack.activeDecisions);
 }
 
-export function makeChoice(G: GameState, _ctx: Ctx, choice: Choice) {
+export function makeChoice(fnCtx: FuncContext, choice: Choice) {
+  const { G } = fnCtx;
+
   if (!G.stack) return;
 
   const curDecision = G.stack.activeDecisions[0];
@@ -283,22 +286,22 @@ export function makeChoice(G: GameState, _ctx: Ctx, choice: Choice) {
 }
 
 export function selectCard(
-  G: GameState,
-  ctx: Ctx,
+  fnCtx: FuncContext,
   card: [Location, Character | NonCharacter]
 ) {
+  const { G, ctx } = fnCtx;
   if (!G.stack) return;
 
   const playerState = G.player[ctx.currentPlayer];
 
   const cardLoc = card[0];
-  const selCard = getCardAtLocation(G, ctx, cardLoc, card[1].key);
+  const selCard = getCardAtLocation(fnCtx, cardLoc, card[1].key);
 
   const curDecision = G.stack.activeDecisions[0];
 
   if (!curDecision.selection[cardLoc]) curDecision.selection[cardLoc] = [];
 
-  if (!isSelectable(G, ctx, G.state, playerState, curDecision, selCard)) return;
+  if (!isSelectable(fnCtx, G.state, playerState, curDecision, selCard)) return;
 
   if (!selCard.selected) {
     curDecision.selection[cardLoc]!.push(selCard);
@@ -317,32 +320,32 @@ export function selectCard(
 
   curDecision.finished = finished;
 
-  pruneSelection(G, ctx, curDecision.selection, selection);
+  pruneSelection(fnCtx, curDecision.selection, selection);
 }
 
 function isSelectable(
-  G: GameState,
-  ctx: Ctx,
+  fnCtx: FuncContext,
   globalState: GlobalState[],
   playerState: PlayerState,
   decision: Decision,
   card: Character | NonCharacter
 ): boolean {
-  if (!meetsTarget(G, ctx, ensureFilter(decision.target!, playerState), card))
+  if (!meetsTarget(fnCtx, ensureFilter(decision.target!, playerState), card))
     return false;
-  if (!validationGate(G, ctx, globalState, playerState, decision, card)) return false;
+  if (!validationGate(fnCtx, globalState, playerState, decision, card)) return false;
 
   return true;
 }
 
 function validationGate(
-  G: GameState,
-  ctx: Ctx,
+  fnCtx: FuncContext,
   globalState: GlobalState[],
   playerState: PlayerState,
   decision: Decision,
   card: Character | NonCharacter
 ): boolean {
+  const { ctx } = fnCtx;
+
   // Cannot attack monsters with stealthy
   if (decision.action === 'attack' && isMonster(card)) {
     if (card.ability.keywords && card.ability.keywords.includes('stealthy')) return false;
@@ -365,7 +368,7 @@ function validationGate(
 
   if (
     stateTarget.some((target) =>
-      meetsTarget(G, ctx, ensureFilter(target.targets, playerState), card)
+      meetsTarget(fnCtx, ensureFilter(target.targets, playerState), card)
     )
   )
     return false;
@@ -373,20 +376,15 @@ function validationGate(
   return true;
 }
 
-function pruneDecisions(G: GameState, ctx: Ctx, decisions: Decision[]) {
+function pruneDecisions(fnCtx: FuncContext, decisions: Decision[]) {
   decisions.map((decision) => {
-    pruneSelection(G, ctx, decision.selection, decision.selection);
+    pruneSelection(fnCtx, decision.selection, decision.selection);
   });
 }
 
-function pruneSelection(
-  G: GameState,
-  ctx: Ctx,
-  selection: Selection,
-  overflow: Selection
-) {
+function pruneSelection(fnCtx: FuncContext, selection: Selection, overflow: Selection) {
   for (const location of Object.keys(overflow) as Location[]) {
-    unselectGameCards(G, ctx, location, overflow[location]!);
+    unselectGameCards(fnCtx, location, overflow[location]!);
     pruneCardsFromSelection(selection, location, overflow[location]!);
   }
 }
@@ -407,24 +405,21 @@ function pruneCardsFromSelection(
 }
 
 function unselectGameCards(
-  G: GameState,
-  ctx: Ctx,
+  fnCtx: FuncContext,
   location: Location,
   cards: (Character | NonCharacter)[]
 ) {
-  getLocation(G, ctx, location)
+  getLocation(fnCtx, location)
     .filter((gameCard) => !!cards.find((card) => deepCardComp(gameCard, card)))
     .map((gameCard) => (gameCard.selected = false));
 
   cards
     .filter((card) => {
-      return !getLocation(G, ctx, location).find((locCard) =>
-        deepCardComp(locCard, card)
-      );
+      return !getLocation(fnCtx, location).find((locCard) => deepCardComp(locCard, card));
     })
     .map((movedCard) => {
-      const currentLocation = getCardLocation(G, ctx, movedCard.key);
-      getCardAtLocation(G, ctx, currentLocation, movedCard.key).selected = false;
+      const currentLocation = getCardLocation(fnCtx, movedCard.key);
+      getCardAtLocation(fnCtx, currentLocation, movedCard.key).selected = false;
     });
 }
 
@@ -435,13 +430,14 @@ function isDecisionNeeded(dec: Decision): boolean {
   return false;
 }
 
-function resetSkillActivations(G: GameState, ctx: Ctx) {
-  (getLocation(G, ctx, Location.Character)[0] as Character).skills.map((skill) =>
+function resetSkillActivations(fnCtx: FuncContext) {
+  const { G, ctx } = fnCtx;
+  (getLocation(fnCtx, Location.Character)[0] as Character).skills.map((skill) =>
     skill.map((sk) => (sk.activated = false))
   );
 
   G.player[ctx.currentPlayer].learnedSkills = (
-    getLocation(G, ctx, Location.CharAction) as NonCharacter[]
+    getLocation(fnCtx, Location.CharAction) as NonCharacter[]
   ).map((card) => {
     return {
       ...card,

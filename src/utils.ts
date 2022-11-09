@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
-import { Ctx, PlayerID } from 'boardgame.io';
+import { PlayerID } from 'boardgame.io';
 
-import { GameState, PlayerState } from './game';
+import { FuncContext, PlayerState } from './game';
 import {
   Card,
   CardClasses,
@@ -41,8 +41,8 @@ export function meetsSkillReq(req: SkillRequirements, P: PlayerState): boolean {
   return true;
 }
 
-export function rmCard(G: GameState, ctx: Ctx, card: Card, location: Location) {
-  const loc = getLocation(G, ctx, location);
+export function rmCard(fnCtx: FuncContext, card: Card, location: Location) {
+  const loc = getLocation(fnCtx, location);
 
   const index = loc.findIndex((searchCard) => deepCardComp(searchCard, card));
 
@@ -51,8 +51,8 @@ export function rmCard(G: GameState, ctx: Ctx, card: Card, location: Location) {
   loc.splice(index, 1);
 }
 
-export function toggleCardSelect(G: GameState, ctx: Ctx, card: Card, location: Location) {
-  const loc = getLocation(G, ctx, location);
+export function toggleCardSelect(fnCtx: FuncContext, card: Card, location: Location) {
+  const loc = getLocation(fnCtx, location);
 
   const index = loc.findIndex((searchCard) => searchCard.name === card.name);
 
@@ -61,41 +61,42 @@ export function toggleCardSelect(G: GameState, ctx: Ctx, card: Card, location: L
   loc[index].selected = !loc[index].selected;
 }
 
-export function getOpponentID(G: GameState, ctx: Ctx, player?: PlayerID): PlayerID {
+export function getOpponentID(fnCtx: FuncContext, player?: PlayerID): PlayerID {
+  const { G, ctx } = fnCtx;
+
   const playerID = player ?? ctx.currentPlayer;
   return Object.keys(G.player).filter((id) => id != playerID)[0];
 }
 
-export function getOpponentState(G: GameState, ctx: Ctx, player?: PlayerID): PlayerState {
-  return G.player[getOpponentID(G, ctx, player)];
+export function getOpponentState(fnCtx: FuncContext, player?: PlayerID): PlayerState {
+  return fnCtx.G.player[getOpponentID(fnCtx, player)];
 }
 
 export function getCardAtLocation(
-  G: GameState,
-  ctx: Ctx,
+  fnCtx: FuncContext,
   location: Location,
   key: string
 ): Character | NonCharacter {
-  const cards = getLocation(G, ctx, location).filter((card) => card.key === key);
+  const cards = getLocation(fnCtx, location).filter((card) => card.key === key);
 
   return cards[0];
 }
 
-export function getCardLocation(G: GameState, ctx: Ctx, key: string): Location {
+export function getCardLocation(fnCtx: FuncContext, key: string): Location {
   const locations = Object.keys(Location) as Location[];
 
   return locations.find((location) =>
-    getLocation(G, ctx, location).some((card) => card.key === key)
+    getLocation(fnCtx, location).some((card) => card.key === key)
   )!;
 }
 
 export function getLocation(
-  G: GameState,
-  ctx: Ctx,
+  fnCtx: FuncContext,
   location: Location
 ): (Character | NonCharacter)[] {
+  const { G, ctx } = fnCtx;
   const player = G.player[ctx.currentPlayer];
-  const opponent = getOpponentState(G, ctx);
+  const opponent = getOpponentState(fnCtx);
 
   switch (location) {
     case Location.Hand:
@@ -137,7 +138,8 @@ export function getRandomKey(): string {
   return uuidv4().split('-')[0];
 }
 
-export function getCurrentStage(_G: GameState, ctx: Ctx): string {
+export function getCurrentStage(fnCtx: FuncContext): string {
+  const { ctx } = fnCtx;
   return ctx.activePlayers ? ctx.activePlayers[ctx.currentPlayer] : '';
 }
 

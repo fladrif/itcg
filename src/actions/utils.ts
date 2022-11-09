@@ -1,8 +1,6 @@
-import { Ctx } from 'boardgame.io';
-
 import { ActionTargets, Location } from '../target';
 import { isMonster, Monster, Character, NonCharacter, SkillRequirements } from '../card';
-import { GameState, PlayerState } from '../game';
+import { FuncContext, PlayerState } from '../game';
 import { upsertStack, parseSkill, Decision } from '../stack';
 import { parseStateLifetime, removeGlobalState } from '../state';
 import { removeTrigger, parseTriggerLifetime, pushTriggerStore } from '../trigger';
@@ -10,23 +8,25 @@ import { getCardAtLocation, getCardLocation, getOpponentID, rmCard } from '../ut
 
 import { Damage } from './types';
 
-export function handleAbility(G: GameState, ctx: Ctx, card: NonCharacter): any {
+export function handleAbility(fnCtx: FuncContext, card: NonCharacter): any {
+  const { G, ctx } = fnCtx;
+
   if (card.ability.triggers) {
     card.ability.triggers.map((trigger) => {
       const lifetime = trigger.lifetime
         ? parseTriggerLifetime(ctx, trigger.lifetime)
         : undefined;
 
-      pushTriggerStore(G, ctx, trigger.name, card, trigger.opts, lifetime);
+      pushTriggerStore(fnCtx, trigger.name, card, trigger.opts, lifetime);
     });
   }
 
   if (card.ability.skills) {
     card.ability.skills.map((skill, idx) => {
       if (idx === 0) {
-        upsertStack(G, ctx, [parseSkill(G, ctx, skill, card)]);
+        upsertStack(fnCtx, [parseSkill(fnCtx, skill, card)]);
       } else {
-        G.stack!.queuedDecisions.push(parseSkill(G, ctx, skill, card));
+        G.stack!.queuedDecisions.push(parseSkill(fnCtx, skill, card));
       }
     });
   }
@@ -35,7 +35,7 @@ export function handleAbility(G: GameState, ctx: Ctx, card: NonCharacter): any {
     G.state.push({
       owner: card.key,
       player: card.ability.state.targetOpponent
-        ? getOpponentID(G, ctx, card.owner)
+        ? getOpponentID(fnCtx, card.owner)
         : card.owner,
       targets: card.ability.state.targets,
       modifier: card.ability.state.modifier,
@@ -45,25 +45,25 @@ export function handleAbility(G: GameState, ctx: Ctx, card: NonCharacter): any {
 }
 
 export function handleCardLeaveField(
-  G: GameState,
-  ctx: Ctx,
+  fnCtx: FuncContext,
   card: NonCharacter,
   location: Location
 ) {
+  const { G } = fnCtx;
   if (location === Location.OppCharAction || location === Location.CharAction) {
     G.player[card.owner].level -= 10;
   }
-  removeTrigger(G, ctx, card.key);
-  rmCard(G, ctx, card, location);
-  resetMonsterDamage(G, ctx, card);
-  removeGlobalState(G, ctx, card);
+  removeTrigger(G, card.key);
+  rmCard(fnCtx, card, location);
+  resetMonsterDamage(fnCtx, card);
+  removeGlobalState(fnCtx, card);
 }
 
-function resetMonsterDamage(G: GameState, ctx: Ctx, card: NonCharacter) {
+function resetMonsterDamage(fnCtx: FuncContext, card: NonCharacter) {
   if (!isMonster(card)) return;
 
-  const newLocation = getCardLocation(G, ctx, card.key);
-  const c = getCardAtLocation(G, ctx, newLocation, card.key);
+  const newLocation = getCardLocation(fnCtx, card.key);
+  const c = getCardAtLocation(fnCtx, newLocation, card.key);
   (c as Monster).damageTaken = 0;
 }
 
@@ -78,8 +78,9 @@ export function isOpponentAction(target: ActionTargets): boolean {
   throw new Error(`Filter composed incorrectly: ${target}`);
 }
 
-export function checkReqs(reqs: SkillRequirements): (G: GameState, ctx: Ctx) => boolean {
-  return (G: GameState, ctx: Ctx) => {
+export function checkReqs(reqs: SkillRequirements): (fnCtx: FuncContext) => boolean {
+  return (fnCtx: FuncContext) => {
+    const { G, ctx } = fnCtx;
     if (reqs.level < G.player[ctx.currentPlayer].level) return false;
 
     return true;

@@ -1,4 +1,4 @@
-import { Ctx, PlayerID } from 'boardgame.io';
+import { Ctx, FnContext, PlayerID } from 'boardgame.io';
 import lodash from 'lodash';
 
 import { instantiateCard, Character, NonCharacter } from './card';
@@ -50,6 +50,8 @@ export interface SetupPlayerData {
 export interface SetupData {
   players: SetupPlayerData[];
 }
+
+export type FuncContext = FnContext<GameState>;
 
 export interface GameState {
   player: Record<PlayerID, PlayerState>;
@@ -107,7 +109,11 @@ export function preConfigSetup(): GameState {
   return state;
 }
 
-export function setup(_ctx: Ctx, setupData: SetupData): GameState {
+interface SetupCtx {
+  ctx: Ctx;
+}
+
+export function setup(_context: SetupCtx, setupData: SetupData): GameState {
   const state: GameState = {
     player: {},
     triggers: [...defaultTriggers],
@@ -131,28 +137,26 @@ export function setup(_ctx: Ctx, setupData: SetupData): GameState {
     };
   }
 
-  state.player['0'].hand.push(state.player['0'].deck.pop()!);
-  state.player['0'].hand.push(state.player['0'].deck.pop()!);
-  state.player['0'].hand.push(state.player['0'].deck.pop()!);
-  state.player['0'].hand.push(state.player['0'].deck.pop()!);
-  state.player['0'].hand.push(state.player['0'].deck.pop()!);
+  Array(5).map((_) => {
+    state.player['0'].hand.push(state.player['0'].deck.pop()!);
+  });
 
-  state.player['1'].hand.push(state.player['1'].deck.pop()!);
-  state.player['1'].hand.push(state.player['1'].deck.pop()!);
-  state.player['1'].hand.push(state.player['1'].deck.pop()!);
-  state.player['1'].hand.push(state.player['1'].deck.pop()!);
-  state.player['1'].hand.push(state.player['1'].deck.pop()!);
-  state.player['1'].hand.push(state.player['1'].deck.pop()!);
+  Array(6).map((_) => {
+    state.player['1'].hand.push(state.player['1'].deck.pop()!);
+  });
 
   return state;
 }
 
+interface PlayerViewCtx {
+  G: GameState;
+  ctx: Ctx;
+  playerID: PlayerID | null;
+}
+
 // TODO: Handle temporary zones
-export function playerView(
-  G: GameState,
-  _ctx: Ctx,
-  playerID: PlayerID | null
-): GameState {
+export function playerView(context: PlayerViewCtx): GameState {
+  const { G, playerID } = context;
   const playerIDs = Object.keys(G.player);
 
   const { player, ...restGame } = G;
@@ -185,11 +189,11 @@ export const ITCG = {
   },
 
   turn: {
-    onBegin: (_G: GameState, ctx: Ctx) => {
-      ctx.events!.setActivePlayers!({ currentPlayer: 'level' });
+    onBegin: ({ events }: FuncContext) => {
+      events.setActivePlayers({ currentPlayer: 'level' });
     },
-    onEnd: (G: GameState, ctx: Ctx) => {
-      resetMonsterDamageOnField(G, ctx);
+    onEnd: (fnCtx: FuncContext) => {
+      resetMonsterDamageOnField(fnCtx);
     },
     stages: {
       level: {
@@ -213,8 +217,9 @@ export const ITCG = {
     },
   },
 
-  endIf: (G: GameState, ctx: Ctx) => {
-    const opponentID = getOpponentID(G, ctx);
+  endIf: (fnCtx: FuncContext) => {
+    const { G, ctx } = fnCtx;
+    const opponentID = getOpponentID(fnCtx);
 
     if (G.player[ctx.currentPlayer].hp <= 0) {
       return { winner: opponentID };

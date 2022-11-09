@@ -1,7 +1,7 @@
 import { Ctx } from 'boardgame.io';
 
 import { Character, NonCharacter } from '../card';
-import { GameState } from '../game';
+import { GameState, FuncContext } from '../game';
 import { upsertStack, Decision } from '../stack';
 import { getRandomKey } from '../utils';
 
@@ -15,47 +15,45 @@ import {
 } from './types';
 
 export function stackTriggers(
-  G: GameState,
-  ctx: Ctx,
+  fnCtx: FuncContext,
   decision: Decision,
   prep: TriggerPrepostion
 ): boolean {
   // TODO: Maybe should split this into multiple calls, one for ea selection, or split decision, one for ea selection
   // edit: probably for shield, but maybe not if trigger order works + splitting damage decisions
-  const decisions = getTriggerFns(G, ctx, decision, prep);
+  const decisions = getTriggerFns(fnCtx, decision, prep);
 
-  stackTriggerFns(G, ctx, decision, decisions);
+  stackTriggerFns(fnCtx, decision, decisions);
 
   if (prep === 'Before' && decisions.length > 0) return true;
   return false;
 }
 
 export function stackTriggerFns(
-  G: GameState,
-  ctx: Ctx,
+  fnCtx: FuncContext,
   decision: Decision,
-  decisionFns: ((G: GameState, ctx: Ctx, decision: Decision) => Decision[])[]
+  decisionFns: ((fnCtx: FuncContext, decision: Decision) => Decision[])[]
 ): void {
-  const decisions = decisionFns.map((decFn) => decFn(G, ctx, decision)).flat();
+  const decisions = decisionFns.map((decFn) => decFn(fnCtx, decision)).flat();
 
-  upsertStack(G, ctx, decisions);
+  upsertStack(fnCtx, decisions);
 }
 
 export function getTriggerFns(
-  G: GameState,
-  ctx: Ctx,
+  fnCtx: FuncContext,
   decision: Decision,
   prep: TriggerPrepostion
-): ((G: GameState, ctx: Ctx, decision: Decision) => Decision[])[] {
+): ((fnCtx: FuncContext, decision: Decision) => Decision[])[] {
+  const { G } = fnCtx;
+
   const processedTriggers = G.triggers.map((store) => processTriggers(store));
-  const triggerDecisions: ((G: GameState, ctx: Ctx, decision: Decision) => Decision[])[] =
-    [];
+  const triggerDecisions: ((fnCtx: FuncContext, decision: Decision) => Decision[])[] = [];
 
   for (const trigger of processedTriggers) {
-    if (trigger.shouldTrigger(G, ctx, decision, prep)) {
+    if (trigger.shouldTrigger(fnCtx, decision, prep)) {
       G.stack!.decisionTriggers[decision.key].push(trigger.key);
       if (trigger.lifetime?.usableTurn && trigger.lifetime?.once) {
-        removeTrigger(G, ctx, trigger.cardOwner);
+        removeTrigger(G, trigger.cardOwner);
       }
 
       triggerDecisions.push(trigger.createDecision.bind(trigger));
@@ -75,7 +73,9 @@ function processTriggers(trig: TriggerStore): Trigger {
   );
 }
 
-export function pruneTriggerStore(G: GameState, ctx: Ctx) {
+export function pruneTriggerStore(fnCtx: FuncContext) {
+  const { G, ctx } = fnCtx;
+
   const unPrunedTriggers = G.triggers.filter((trig) => {
     const uTurn = trig.lifetime?.usableTurn;
 
@@ -85,7 +85,7 @@ export function pruneTriggerStore(G: GameState, ctx: Ctx) {
   G.triggers = unPrunedTriggers;
 }
 
-export function removeTrigger(G: GameState, _ctx: Ctx, cardOwner: string) {
+export function removeTrigger(G: GameState, cardOwner: string) {
   const index = G.triggers.findIndex((trig) => trig.cardOwner === cardOwner);
   if (index < 0) return;
 
@@ -93,14 +93,13 @@ export function removeTrigger(G: GameState, _ctx: Ctx, cardOwner: string) {
 }
 
 export function pushTriggerStore(
-  G: GameState,
-  _ctx: Ctx,
+  fnCtx: FuncContext,
   triggerName: TriggerNames,
   card: NonCharacter | Character,
   opts?: TriggerOptions,
   lifetime?: TriggerLifetime
 ) {
-  G.triggers.push({
+  fnCtx.G.triggers.push({
     name: triggerName,
     cardOwner: card.key,
     key: getRandomKey(),

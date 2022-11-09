@@ -1,42 +1,42 @@
-import { Ctx } from 'boardgame.io';
-
 import { Location } from './target';
 import { Skill, isMonster, Monster } from './card';
-import { GameState } from './game';
+import { FuncContext } from './game';
 import { Decision, upsertStack } from './stack';
 import { getMonsterKeywords, getMonsterHealth, pruneStateStore } from './state';
 import { pruneTriggerStore } from './trigger';
 import { getCardLocation, getLocation, getRandomKey, meetsSkillReq } from './utils';
 
-export function endLevelStage(G: GameState, ctx: Ctx) {
+export function endLevelStage(fnCtx: FuncContext) {
+  const { G, ctx, events } = fnCtx;
+
   G.player[ctx.currentPlayer].activationPos = 0;
-  ctx.events!.endStage!();
-  endActivateStage(G, ctx);
+  events.endStage();
+  endActivateStage(fnCtx);
 }
 
-export function resetMonsterDamageOnField(G: GameState, ctx: Ctx) {
+export function resetMonsterDamageOnField(fnCtx: FuncContext) {
   const locations = [Location.Field, Location.OppField];
 
   locations.map((location) => {
-    getLocation(G, ctx, location)
+    getLocation(fnCtx, location)
       .filter((card) => isMonster(card))
       .map((card) => ((card as Monster).damageTaken = 0));
   });
 }
 
-export function checkDeadMonstersOnField(G: GameState, ctx: Ctx) {
+export function checkDeadMonstersOnField(fnCtx: FuncContext) {
   const locations = [Location.Field, Location.OppField];
 
   locations.map((location) => {
-    const decisions = getLocation(G, ctx, location)
+    const decisions = getLocation(fnCtx, location)
       .filter((card) => {
         return (
           isMonster(card) &&
-          (card as Monster).damageTaken >= getMonsterHealth(G, ctx, card as Monster)
+          (card as Monster).damageTaken >= getMonsterHealth(fnCtx, card as Monster)
         );
       })
       .map((card) => {
-        const cardLoc = getCardLocation(G, ctx, card.key);
+        const cardLoc = getCardLocation(fnCtx, card.key);
 
         const decision: Decision = {
           action: 'destroy',
@@ -48,17 +48,19 @@ export function checkDeadMonstersOnField(G: GameState, ctx: Ctx) {
         return decision;
       });
 
-    upsertStack(G, ctx, decisions);
+    upsertStack(fnCtx, decisions);
   });
 }
 
-function resetAttacks(G: GameState, ctx: Ctx) {
+function resetAttacks(fnCtx: FuncContext) {
+  const { G, ctx } = fnCtx;
+
   G.player[ctx.currentPlayer].field
     .filter((card) => isMonster(card))
     .map((card) => {
       const mon = card as Monster;
 
-      const keywords = getMonsterKeywords(G, ctx, mon);
+      const keywords = getMonsterKeywords(fnCtx, mon);
 
       if (!keywords) {
         mon.attacks = 1;
@@ -71,14 +73,18 @@ function resetAttacks(G: GameState, ctx: Ctx) {
     });
 }
 
-function endActivate(G: GameState, ctx: Ctx) {
-  ctx.events!.endStage!();
-  resetAttacks(G, ctx);
-  endAttackStage(G, ctx);
+function endActivate(fnCtx: FuncContext) {
+  const { events } = fnCtx;
+
+  events.endStage();
+  resetAttacks(fnCtx);
+  endAttackStage(fnCtx);
 }
 
-export function endActivateStage(G: GameState, ctx: Ctx, now?: boolean) {
-  if (now) return endActivate(G, ctx);
+export function endActivateStage(fnCtx: FuncContext, now?: boolean) {
+  const { G, ctx } = fnCtx;
+
+  if (now) return endActivate(fnCtx);
 
   const player = G.player[ctx.currentPlayer];
   const skills: Skill[][] = [];
@@ -91,22 +97,26 @@ export function endActivateStage(G: GameState, ctx: Ctx, now?: boolean) {
   });
 
   const noTargets = availableSkills.length == 0;
-  if (noTargets) endActivate(G, ctx);
+  if (noTargets) endActivate(fnCtx);
 }
 
-export function endAttack(G: GameState, ctx: Ctx) {
-  pruneTriggerStore(G, ctx);
-  pruneStateStore(G, ctx);
-  ctx.events!.endTurn!();
+export function endAttack(fnCtx: FuncContext) {
+  const { events } = fnCtx;
+
+  pruneTriggerStore(fnCtx);
+  pruneStateStore(fnCtx);
+  events.endTurn();
 }
 
 // TODO: add prune triggers for turn only triggers
-export function endAttackStage(G: GameState, ctx: Ctx, now?: boolean) {
-  if (now) return endAttack(G, ctx);
+export function endAttackStage(fnCtx: FuncContext, now?: boolean) {
+  const { G, ctx } = fnCtx;
+
+  if (now) return endAttack(fnCtx);
 
   const currentField = G.player[ctx.currentPlayer].field;
 
   if (!currentField.some((card) => isMonster(card) && card.attacks > 0)) {
-    endAttack(G, ctx);
+    endAttack(fnCtx);
   }
 }

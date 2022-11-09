@@ -1,7 +1,7 @@
-import { Ctx, PlayerID } from 'boardgame.io';
+import { PlayerID } from 'boardgame.io';
 
 import { Action, actions } from '../actions';
-import { GameState } from '../game';
+import { FuncContext } from '../game';
 import { Location } from '../target';
 import { isMonster, CardTypes, Monster, isItem, isTactic, Tactic } from '../card';
 import { Choice, Decision } from '../stack';
@@ -37,8 +37,7 @@ export class BattleBowTrigger extends Trigger {
   }
 
   shouldTriggerExtension(
-    G: GameState,
-    ctx: Ctx,
+    fnCtx: FuncContext,
     decision: Decision,
     _prep: TriggerPrepostion
   ) {
@@ -50,14 +49,14 @@ export class BattleBowTrigger extends Trigger {
     ];
 
     const sourceLocation = decision.opts?.source
-      ? getCardLocation(G, ctx, decision.opts.source.key)
+      ? getCardLocation(fnCtx, decision.opts.source.key)
       : false;
     const sourceIsChar = sourceLocation ? validLocations.includes(sourceLocation) : false;
 
     return sourceIsChar && this.sourceIsOwner(decision);
   }
 
-  createDecision(G: GameState, ctx: Ctx, decision: Decision) {
+  createDecision(fnCtx: FuncContext, decision: Decision) {
     const buffDec: Decision = {
       action: 'buff',
       finished: false,
@@ -80,9 +79,8 @@ export class BattleBowTrigger extends Trigger {
         dialogDecision: [buffDec],
         triggerKey: this.key,
         source: getCardAtLocation(
-          G,
-          ctx,
-          getCardLocation(G, ctx, this.cardOwner),
+          fnCtx,
+          getCardLocation(fnCtx, this.cardOwner),
           this.cardOwner
         ),
       },
@@ -105,8 +103,7 @@ export class BloodSlainTrigger extends Trigger {
   }
 
   shouldTriggerExtension(
-    G: GameState,
-    ctx: Ctx,
+    fnCtx: FuncContext,
     decision: Decision,
     _prep: TriggerPrepostion
   ) {
@@ -122,7 +119,7 @@ export class BloodSlainTrigger extends Trigger {
       : false;
 
     const sourceIsCharAction = decision.opts?.source
-      ? validLocation.includes(getCardLocation(G, ctx, decision.opts.source.key))
+      ? validLocation.includes(getCardLocation(fnCtx, decision.opts.source.key))
       : false;
 
     const sourceIsTactic = decision.opts?.source
@@ -135,7 +132,7 @@ export class BloodSlainTrigger extends Trigger {
     );
   }
 
-  createDecision(G: GameState, ctx: Ctx, decision: Decision) {
+  createDecision(fnCtx: FuncContext, decision: Decision) {
     const buffDec: Decision = {
       action: 'buff',
       finished: false,
@@ -144,9 +141,8 @@ export class BloodSlainTrigger extends Trigger {
         damage: this.opts?.damage ? this.opts.damage : 0,
         decision: decision.key,
         source: getCardAtLocation(
-          G,
-          ctx,
-          getCardLocation(G, ctx, this.cardOwner),
+          fnCtx,
+          getCardLocation(fnCtx, this.cardOwner),
           this.cardOwner
         ),
       },
@@ -169,8 +165,7 @@ export class BoneRattleTrigger extends Trigger {
   }
 
   shouldTriggerExtension(
-    _G: GameState,
-    _ctx: Ctx,
+    _fnCtx: FuncContext,
     decision: Decision,
     _prep: TriggerPrepostion
   ) {
@@ -183,7 +178,7 @@ export class BoneRattleTrigger extends Trigger {
     return ownerMonster && damageOptsExists;
   }
 
-  createDecision(G: GameState, ctx: Ctx, decision: Decision) {
+  createDecision(fnCtx: FuncContext, decision: Decision) {
     const validLocations = [Location.Field, Location.OppField];
     const decisions: Decision[] = [];
 
@@ -194,13 +189,12 @@ export class BoneRattleTrigger extends Trigger {
         if (!isMonster(card)) return;
 
         const thisCard = getCardAtLocation(
-          G,
-          ctx,
-          getCardLocation(G, ctx, this.cardOwner),
+          fnCtx,
+          getCardLocation(fnCtx, this.cardOwner),
           this.cardOwner
         );
-        const oppCharCard = getOpponentState(G, ctx, this.owner).character;
-        const oppCharLocation = getCardLocation(G, ctx, oppCharCard.key);
+        const oppCharCard = getOpponentState(fnCtx, this.owner).character;
+        const oppCharLocation = getCardLocation(fnCtx, oppCharCard.key);
 
         decisions.push({
           action: 'damage',
@@ -233,15 +227,14 @@ export class BuffAllTrigger extends Trigger {
   }
 
   shouldTriggerExtension(
-    _G: GameState,
-    _ctx: Ctx,
+    _fnCtx: FuncContext,
     decision: Decision,
     _prep: TriggerPrepostion
   ) {
     return this.sourceIsOwner(decision);
   }
 
-  createDecision(G: GameState, ctx: Ctx, decision: Decision) {
+  createDecision(fnCtx: FuncContext, decision: Decision) {
     const buffDec: Decision = {
       action: 'buff',
       finished: false,
@@ -250,9 +243,8 @@ export class BuffAllTrigger extends Trigger {
         damage: this.opts?.damage ? this.opts.damage : 0,
         decision: decision.key,
         source: getCardAtLocation(
-          G,
-          ctx,
-          getCardLocation(G, ctx, this.cardOwner),
+          fnCtx,
+          getCardLocation(fnCtx, this.cardOwner),
           this.cardOwner
         ),
       },
@@ -275,8 +267,7 @@ export class DarkShadowTrigger extends Trigger {
   }
 
   shouldTriggerExtension(
-    _G: GameState,
-    _ctx: Ctx,
+    _fnCtx: FuncContext,
     decision: Decision,
     _prep: TriggerPrepostion
   ) {
@@ -294,7 +285,7 @@ export class DarkShadowTrigger extends Trigger {
     return charIsTarget && !this.sourceIsOwner(decision);
   }
 
-  createDecision(G: GameState, ctx: Ctx, decision: Decision) {
+  createDecision(fnCtx: FuncContext, decision: Decision) {
     const buffDec: Decision = {
       action: 'buff',
       finished: false,
@@ -303,9 +294,8 @@ export class DarkShadowTrigger extends Trigger {
         damage: this.opts?.damage ? this.opts.damage : 0,
         decision: decision.key,
         source: getCardAtLocation(
-          G,
-          ctx,
-          getCardLocation(G, ctx, this.cardOwner),
+          fnCtx,
+          getCardLocation(fnCtx, this.cardOwner),
           this.cardOwner
         ),
       },
@@ -328,8 +318,7 @@ export class DmgDestroyTrigger extends Trigger {
   }
 
   shouldTriggerExtension(
-    G: GameState,
-    ctx: Ctx,
+    fnCtx: FuncContext,
     decision: Decision,
     _prep: TriggerPrepostion
   ) {
@@ -341,12 +330,12 @@ export class DmgDestroyTrigger extends Trigger {
         decision.selection[location]!.some(
           (card) =>
             isMonster(card) &&
-            getLocation(G, ctx, location)
+            getLocation(fnCtx, location)
               .filter((c) => deepCardComp(c, card))
               .some(
                 (card) =>
                   (card as Monster).damageTaken >=
-                  getMonsterHealth(G, ctx, card as Monster)
+                  getMonsterHealth(fnCtx, card as Monster)
               )
         )
     );
@@ -355,19 +344,19 @@ export class DmgDestroyTrigger extends Trigger {
     return true;
   }
 
-  createDecision(G: GameState, ctx: Ctx, decision: Decision) {
+  createDecision(fnCtx: FuncContext, decision: Decision) {
     const validLocations = [Location.Field, Location.OppField];
     const decisions: Decision[] = [];
 
     validLocations.map((location) => {
       if (!decision.selection[location]) return;
 
-      getLocation(G, ctx, location)
+      getLocation(fnCtx, location)
         .filter(
           (card) => !!decision.selection[location]!.find((c) => deepCardComp(c, card))
         )
         .map((card) => {
-          if (isMonster(card) && card.damageTaken >= getMonsterHealth(G, ctx, card)) {
+          if (isMonster(card) && card.damageTaken >= getMonsterHealth(fnCtx, card)) {
             decisions.push({
               action: 'destroy',
               opts: {
@@ -399,8 +388,7 @@ export class DoombringerTrigger extends Trigger {
   }
 
   shouldTriggerExtension(
-    G: GameState,
-    ctx: Ctx,
+    fnCtx: FuncContext,
     decision: Decision,
     _prep: TriggerPrepostion
   ) {
@@ -412,14 +400,14 @@ export class DoombringerTrigger extends Trigger {
     ];
 
     const sourceLocation = decision.opts?.source
-      ? getCardLocation(G, ctx, decision.opts.source.key)
+      ? getCardLocation(fnCtx, decision.opts.source.key)
       : false;
     const sourceIsChar = sourceLocation ? validLocations.includes(sourceLocation) : false;
 
     return sourceIsChar && this.sourceIsOwner(decision);
   }
 
-  createDecision(_G: GameState, _ctx: Ctx, decision: Decision) {
+  createDecision(_fnCtx: FuncContext, decision: Decision) {
     const buffDmg = this.opts?.damage || 0;
 
     const buffDec: Decision = {
@@ -449,8 +437,7 @@ export class EarthquakeTrigger extends Trigger {
   }
 
   shouldTriggerExtension(
-    _G: GameState,
-    _ctx: Ctx,
+    _fnCtx: FuncContext,
     decision: Decision,
     _prep: TriggerPrepostion
   ) {
@@ -469,11 +456,11 @@ export class EarthquakeTrigger extends Trigger {
     return cardIsDamaged && sourceIsMonster && !!damageExists;
   }
 
-  createDecision(G: GameState, ctx: Ctx, decision: Decision) {
+  createDecision(fnCtx: FuncContext, decision: Decision) {
     const source = decision.opts!.source!;
 
-    const cardLoc = getCardLocation(G, ctx, source.key);
-    const card = getCardAtLocation(G, ctx, cardLoc, source.key);
+    const cardLoc = getCardLocation(fnCtx, source.key);
+    const card = getCardAtLocation(fnCtx, cardLoc, source.key);
 
     const isDamaged = decision.opts?.damage ? decision.opts.damage > 0 : false;
     if (!isDamaged) return [];
@@ -487,9 +474,8 @@ export class EarthquakeTrigger extends Trigger {
       opts: {
         damage: this.opts!.damage,
         source: getCardAtLocation(
-          G,
-          ctx,
-          getCardLocation(G, ctx, this.cardOwner),
+          fnCtx,
+          getCardLocation(fnCtx, this.cardOwner),
           this.cardOwner
         ),
       },
@@ -512,8 +498,7 @@ export class EmeraldEarringsTrigger extends Trigger {
   }
 
   shouldTriggerExtension(
-    _G: GameState,
-    _ctx: Ctx,
+    _fnCtx: FuncContext,
     decision: Decision,
     _prep: TriggerPrepostion
   ) {
@@ -529,7 +514,8 @@ export class EmeraldEarringsTrigger extends Trigger {
     return anotherItemPlayed && this.sourceIsOwner(decision);
   }
 
-  createDecision(G: GameState, ctx: Ctx, decision: Decision) {
+  createDecision(fnCtx: FuncContext, decision: Decision) {
+    const { G } = fnCtx;
     const triggerOwner = decision.opts?.source?.owner;
     if (!triggerOwner) return [];
 
@@ -542,9 +528,8 @@ export class EmeraldEarringsTrigger extends Trigger {
       finished: false,
       opts: {
         source: getCardAtLocation(
-          G,
-          ctx,
-          getCardLocation(G, ctx, this.cardOwner),
+          fnCtx,
+          getCardLocation(fnCtx, this.cardOwner),
           this.cardOwner
         ),
       },
@@ -568,8 +553,7 @@ export class EvilTaleTrigger extends Trigger {
   }
 
   shouldTriggerExtension(
-    _G: GameState,
-    _ctx: Ctx,
+    _fnCtx: FuncContext,
     decision: Decision,
     _prep: TriggerPrepostion
   ) {
@@ -580,11 +564,11 @@ export class EvilTaleTrigger extends Trigger {
     return sourceIsTactic && this.sourceIsOwner(decision);
   }
 
-  createDecision(G: GameState, ctx: Ctx, _decision: Decision) {
+  createDecision(fnCtx: FuncContext, _decision: Decision) {
     if (!this.opts?.damage) return [];
 
-    const cardLoc = getCardLocation(G, ctx, this.cardOwner);
-    const card = getCardAtLocation(G, ctx, cardLoc, this.cardOwner);
+    const cardLoc = getCardLocation(fnCtx, this.cardOwner);
+    const card = getCardAtLocation(fnCtx, cardLoc, this.cardOwner);
 
     const dec: Decision = {
       action: 'damage',
@@ -633,19 +617,19 @@ export class FairyTrigger extends Trigger {
   }
 
   shouldTriggerExtension(
-    _G: GameState,
-    ctx: Ctx,
+    fnCtx: FuncContext,
     _decision: Decision,
     _prep: TriggerPrepostion
   ) {
+    const { ctx } = fnCtx;
     const isOppTurn = this.owner !== ctx.currentPlayer;
 
     return isOppTurn;
   }
 
-  createDecision(G: GameState, ctx: Ctx, _decision: Decision) {
-    const cardLoc = getCardLocation(G, ctx, this.cardOwner);
-    const card = getCardAtLocation(G, ctx, cardLoc, this.cardOwner);
+  createDecision(fnCtx: FuncContext, _decision: Decision) {
+    const cardLoc = getCardLocation(fnCtx, this.cardOwner);
+    const card = getCardAtLocation(fnCtx, cardLoc, this.cardOwner);
 
     const dec: Decision = {
       action: 'bounce',
@@ -675,8 +659,7 @@ export class FocusTrigger extends Trigger {
   }
 
   shouldTriggerExtension(
-    G: GameState,
-    ctx: Ctx,
+    fnCtx: FuncContext,
     decision: Decision,
     _prep: TriggerPrepostion
   ) {
@@ -692,13 +675,13 @@ export class FocusTrigger extends Trigger {
       : false;
 
     const sourceIsCharAction = decision.opts?.source
-      ? validLocation.includes(getCardLocation(G, ctx, decision.opts.source.key))
+      ? validLocation.includes(getCardLocation(fnCtx, decision.opts.source.key))
       : false;
 
     return (sourceIsCharAction || sourceIsMonster) && this.sourceIsOwner(decision);
   }
 
-  createDecision(G: GameState, ctx: Ctx, decision: Decision) {
+  createDecision(fnCtx: FuncContext, decision: Decision) {
     const buffDec: Decision = {
       action: 'buff',
       finished: false,
@@ -707,9 +690,8 @@ export class FocusTrigger extends Trigger {
         damage: this.opts?.damage ? this.opts.damage : 0,
         decision: decision.key,
         source: getCardAtLocation(
-          G,
-          ctx,
-          getCardLocation(G, ctx, this.cardOwner),
+          fnCtx,
+          getCardLocation(fnCtx, this.cardOwner),
           this.cardOwner
         ),
       },
@@ -732,8 +714,7 @@ export class GeniusTrigger extends Trigger {
   }
 
   shouldTriggerExtension(
-    _G: GameState,
-    _ctx: Ctx,
+    _fnCtx: FuncContext,
     decision: Decision,
     _prep: TriggerPrepostion
   ) {
@@ -747,7 +728,7 @@ export class GeniusTrigger extends Trigger {
     return cardIsPlayed;
   }
 
-  createDecision(_G: GameState, _ctx: Ctx, _decision: Decision) {
+  createDecision(_fnCtx: FuncContext, _decision: Decision) {
     const dec: Decision = {
       action: 'quest',
       selection: {},
@@ -771,8 +752,7 @@ export class GoldenCrowTrigger extends Trigger {
   }
 
   shouldTriggerExtension(
-    G: GameState,
-    ctx: Ctx,
+    fnCtx: FuncContext,
     decision: Decision,
     _prep: TriggerPrepostion
   ) {
@@ -784,14 +764,14 @@ export class GoldenCrowTrigger extends Trigger {
     ];
 
     const sourceLocation = decision.opts?.source
-      ? getCardLocation(G, ctx, decision.opts.source.key)
+      ? getCardLocation(fnCtx, decision.opts.source.key)
       : false;
     const sourceIsChar = sourceLocation ? validLocations.includes(sourceLocation) : false;
 
     return sourceIsChar && this.sourceIsOwner(decision);
   }
 
-  createDecision(G: GameState, ctx: Ctx, decision: Decision) {
+  createDecision(fnCtx: FuncContext, decision: Decision) {
     const decisionDmg = decision.opts?.damage || 0;
 
     const buffDec: Decision = {
@@ -816,9 +796,8 @@ export class GoldenCrowTrigger extends Trigger {
         dialogDecision: [buffDec],
         triggerKey: this.key,
         source: getCardAtLocation(
-          G,
-          ctx,
-          getCardLocation(G, ctx, this.cardOwner),
+          fnCtx,
+          getCardLocation(fnCtx, this.cardOwner),
           this.cardOwner
         ),
       },
@@ -841,8 +820,7 @@ export class KumbiTrigger extends Trigger {
   }
 
   shouldTriggerExtension(
-    G: GameState,
-    ctx: Ctx,
+    fnCtx: FuncContext,
     decision: Decision,
     _prep: TriggerPrepostion
   ) {
@@ -855,7 +833,7 @@ export class KumbiTrigger extends Trigger {
       Location.OppCharAction,
     ];
 
-    const dmgSourceLoc = getCardLocation(G, ctx, decision.opts.source.key);
+    const dmgSourceLoc = getCardLocation(fnCtx, decision.opts.source.key);
     const sourceIsChar = targetSourceLoc.includes(dmgSourceLoc);
 
     const damageExists = decision.opts?.damage && decision.opts.damage > 0;
@@ -863,9 +841,10 @@ export class KumbiTrigger extends Trigger {
     return !this.sourceIsOwner(decision) && sourceIsChar && !!damageExists;
   }
 
-  createDecision(G: GameState, ctx: Ctx, decision: Decision) {
+  createDecision(fnCtx: FuncContext, decision: Decision) {
+    const { G } = fnCtx;
     const charTarget = G.player[decision.opts!.source!.owner].character;
-    const cardLoc = getCardLocation(G, ctx, charTarget.key);
+    const cardLoc = getCardLocation(fnCtx, charTarget.key);
 
     const isDamaged = decision.opts?.damage ? decision.opts.damage > 0 : false;
     if (!isDamaged) return [];
@@ -879,9 +858,8 @@ export class KumbiTrigger extends Trigger {
       opts: {
         damage: this.opts!.damage,
         source: getCardAtLocation(
-          G,
-          ctx,
-          getCardLocation(G, ctx, this.cardOwner),
+          fnCtx,
+          getCardLocation(fnCtx, this.cardOwner),
           this.cardOwner
         ),
       },
@@ -904,23 +882,23 @@ export class LootTrigger extends Trigger {
   }
 
   shouldTriggerExtension(
-    G: GameState,
-    ctx: Ctx,
+    fnCtx: FuncContext,
     decision: Decision,
     _prep: TriggerPrepostion
   ) {
+    const { G } = fnCtx;
     const locations = Object.keys(decision.selection) as Location[];
     const cardIsPlayed = locations.some(
       (loc) =>
         decision.selection[loc] &&
         decision.selection[loc]!.some((card) => card.key === this.cardOwner)
     );
-    const oppHandSize = G.player[getOpponentID(G, ctx, this.owner)].hand.length >= 3;
+    const oppHandSize = G.player[getOpponentID(fnCtx, this.owner)].hand.length >= 3;
 
     return cardIsPlayed && oppHandSize;
   }
 
-  createDecision(G: GameState, ctx: Ctx, _decision: Decision) {
+  createDecision(fnCtx: FuncContext, _decision: Decision) {
     const dec: Decision = {
       action: 'discard',
       selection: {},
@@ -932,9 +910,8 @@ export class LootTrigger extends Trigger {
       },
       opts: {
         source: getCardAtLocation(
-          G,
-          ctx,
-          getCardLocation(G, ctx, this.cardOwner),
+          fnCtx,
+          getCardLocation(fnCtx, this.cardOwner),
           this.cardOwner
         ),
       },
@@ -957,8 +934,7 @@ export class MeditationTrigger extends Trigger {
   }
 
   shouldTriggerExtension(
-    _G: GameState,
-    _ctx: Ctx,
+    _fnCtx: FuncContext,
     decision: Decision,
     _prep: TriggerPrepostion
   ) {
@@ -973,7 +949,7 @@ export class MeditationTrigger extends Trigger {
     return (sourceIsTactic || sourceIsMonster) && this.sourceIsOwner(decision);
   }
 
-  createDecision(G: GameState, ctx: Ctx, decision: Decision) {
+  createDecision(fnCtx: FuncContext, decision: Decision) {
     const buffDec: Decision = {
       action: 'buff',
       finished: false,
@@ -982,9 +958,8 @@ export class MeditationTrigger extends Trigger {
         damage: this.opts?.damage ? this.opts.damage : 0,
         decision: decision.key,
         source: getCardAtLocation(
-          G,
-          ctx,
-          getCardLocation(G, ctx, this.cardOwner),
+          fnCtx,
+          getCardLocation(fnCtx, this.cardOwner),
           this.cardOwner
         ),
       },
@@ -1007,8 +982,7 @@ export class NoMercyTrigger extends Trigger {
   }
 
   shouldTriggerExtension(
-    _G: GameState,
-    _ctx: Ctx,
+    _fnCtx: FuncContext,
     decision: Decision,
     _prep: TriggerPrepostion
   ) {
@@ -1019,7 +993,7 @@ export class NoMercyTrigger extends Trigger {
     return isSource;
   }
 
-  createDecision(G: GameState, ctx: Ctx, _decision: Decision) {
+  createDecision(fnCtx: FuncContext, _decision: Decision) {
     const dec: Decision = {
       action: 'damage',
       selection: {},
@@ -1042,9 +1016,8 @@ export class NoMercyTrigger extends Trigger {
       opts: {
         damage: 10,
         source: getCardAtLocation(
-          G,
-          ctx,
-          getCardLocation(G, ctx, this.cardOwner),
+          fnCtx,
+          getCardLocation(fnCtx, this.cardOwner),
           this.cardOwner
         ),
       },
@@ -1067,22 +1040,20 @@ export class MapleStaffTrigger extends Trigger {
   }
 
   shouldTriggerExtension(
-    _G: GameState,
-    _ctx: Ctx,
+    _fnCtx: FuncContext,
     decision: Decision,
     _prep: TriggerPrepostion
   ) {
     return this.sourceIsOwner(decision);
   }
 
-  createDecision(G: GameState, ctx: Ctx, decision: Decision) {
+  createDecision(fnCtx: FuncContext, decision: Decision) {
     const triggerOwner = decision.opts?.source?.owner;
     if (!triggerOwner) return [];
 
     const source = getCardAtLocation(
-      G,
-      ctx,
-      getCardLocation(G, ctx, this.cardOwner),
+      fnCtx,
+      getCardLocation(fnCtx, this.cardOwner),
       this.cardOwner
     );
 
@@ -1137,8 +1108,7 @@ export class PrevailTrigger extends Trigger {
   }
 
   shouldTriggerExtension(
-    _G: GameState,
-    _ctx: Ctx,
+    _fnCtx: FuncContext,
     decision: Decision,
     _prep: TriggerPrepostion
   ) {
@@ -1152,9 +1122,9 @@ export class PrevailTrigger extends Trigger {
     return monsterDestroyed;
   }
 
-  createDecision(G: GameState, ctx: Ctx, _decision: Decision) {
-    const currentLocation = getCardLocation(G, ctx, this.cardOwner);
-    const card = getCardAtLocation(G, ctx, currentLocation, this.cardOwner);
+  createDecision(fnCtx: FuncContext, _decision: Decision) {
+    const currentLocation = getCardLocation(fnCtx, this.cardOwner);
+    const card = getCardAtLocation(fnCtx, currentLocation, this.cardOwner);
 
     const decision: Decision = {
       action: 'bounce',
@@ -1181,8 +1151,7 @@ export class RedApprenticeHatTrigger extends Trigger {
   }
 
   shouldTriggerExtension(
-    _G: GameState,
-    _ctx: Ctx,
+    _fnCtx: FuncContext,
     decision: Decision,
     _prep: TriggerPrepostion
   ) {
@@ -1196,7 +1165,7 @@ export class RedApprenticeHatTrigger extends Trigger {
     return levelIsOwner;
   }
 
-  createDecision(G: GameState, ctx: Ctx, _decision: Decision) {
+  createDecision(fnCtx: FuncContext, _decision: Decision) {
     const healDec: Decision = {
       action: 'refresh',
       selection: {},
@@ -1204,9 +1173,8 @@ export class RedApprenticeHatTrigger extends Trigger {
       opts: {
         lifegain: 10,
         source: getCardAtLocation(
-          G,
-          ctx,
-          getCardLocation(G, ctx, this.cardOwner),
+          fnCtx,
+          getCardLocation(fnCtx, this.cardOwner),
           this.cardOwner
         ),
       },
@@ -1229,8 +1197,7 @@ export class RedNightTrigger extends Trigger {
   }
 
   shouldTriggerExtension(
-    _G: GameState,
-    _ctx: Ctx,
+    _fnCtx: FuncContext,
     decision: Decision,
     _prep: TriggerPrepostion
   ) {
@@ -1246,7 +1213,8 @@ export class RedNightTrigger extends Trigger {
     return isOwnersMonster;
   }
 
-  createDecision(G: GameState, ctx: Ctx, _decision: Decision) {
+  createDecision(fnCtx: FuncContext, _decision: Decision) {
+    const { ctx } = fnCtx;
     const targetLocation =
       this.owner === ctx.currentPlayer ? Location.OppHand : Location.Hand;
 
@@ -1261,9 +1229,8 @@ export class RedNightTrigger extends Trigger {
       },
       opts: {
         source: getCardAtLocation(
-          G,
-          ctx,
-          getCardLocation(G, ctx, this.cardOwner),
+          fnCtx,
+          getCardLocation(fnCtx, this.cardOwner),
           this.cardOwner
         ),
       },
@@ -1281,16 +1248,15 @@ export class RedNightTrigger extends Trigger {
         activePlayer: this.owner,
         dialogDecision: [discardDec],
         source: getCardAtLocation(
-          G,
-          ctx,
-          getCardLocation(G, ctx, this.cardOwner),
+          fnCtx,
+          getCardLocation(fnCtx, this.cardOwner),
           this.cardOwner
         ),
       },
       key: getRandomKey(),
     };
 
-    const isHandEmpty = getLocation(G, ctx, targetLocation).length <= 0;
+    const isHandEmpty = getLocation(fnCtx, targetLocation).length <= 0;
 
     return isHandEmpty ? [] : [flipDec];
   }
@@ -1308,8 +1274,7 @@ export class RelentlessTrigger extends Trigger {
   }
 
   shouldTriggerExtension(
-    _G: GameState,
-    _ctx: Ctx,
+    _fnCtx: FuncContext,
     decision: Decision,
     _prep: TriggerPrepostion
   ) {
@@ -1322,7 +1287,7 @@ export class RelentlessTrigger extends Trigger {
     return monsterDestroyed && damageOptsExists;
   }
 
-  createDecision(G: GameState, ctx: Ctx, decision: Decision) {
+  createDecision(fnCtx: FuncContext, decision: Decision) {
     const validLocations = [Location.Field, Location.OppField];
     const decisions: Decision[] = [];
 
@@ -1333,13 +1298,12 @@ export class RelentlessTrigger extends Trigger {
         if (!isMonster(card)) return;
 
         const thisCard = getCardAtLocation(
-          G,
-          ctx,
-          getCardLocation(G, ctx, this.cardOwner),
+          fnCtx,
+          getCardLocation(fnCtx, this.cardOwner),
           this.cardOwner
         );
-        const oppCharCard = getOpponentState(G, ctx, this.owner).character;
-        const oppCharLocation = getCardLocation(G, ctx, oppCharCard.key);
+        const oppCharCard = getOpponentState(fnCtx, this.owner).character;
+        const oppCharLocation = getCardLocation(fnCtx, oppCharCard.key);
 
         decisions.push({
           action: 'damage',
@@ -1372,25 +1336,25 @@ export class RevengeTrigger extends Trigger {
   }
 
   shouldTriggerExtension(
-    _G: GameState,
-    _ctx: Ctx,
+    _fnCtx: FuncContext,
     decision: Decision,
     _prep: TriggerPrepostion
   ) {
     return !this.sourceIsOwner(decision);
   }
 
-  createDecision(G: GameState, ctx: Ctx, decision: Decision) {
+  createDecision(fnCtx: FuncContext, decision: Decision) {
+    const { ctx } = fnCtx;
     if (!this.opts?.damage) return [];
 
-    const cardLoc = getCardLocation(G, ctx, this.cardOwner);
-    const card = getCardAtLocation(G, ctx, cardLoc, this.cardOwner);
+    const cardLoc = getCardLocation(fnCtx, this.cardOwner);
+    const card = getCardAtLocation(fnCtx, cardLoc, this.cardOwner);
 
     const oppLoc =
       decision.opts!.source!.owner === ctx.currentPlayer
         ? Location.Character
         : Location.OppCharacter;
-    const oppChar = getOpponentState(G, ctx, this.owner).character;
+    const oppChar = getOpponentState(fnCtx, this.owner).character;
 
     const dec: Decision = {
       action: 'damage',
@@ -1416,8 +1380,7 @@ export class SerpentsTrigger extends Trigger {
   }
 
   shouldTriggerExtension(
-    _G: GameState,
-    _ctx: Ctx,
+    _fnCtx: FuncContext,
     decision: Decision,
     _prep: TriggerPrepostion
   ) {
@@ -1428,7 +1391,7 @@ export class SerpentsTrigger extends Trigger {
     return ownerMonster;
   }
 
-  createDecision(G: GameState, ctx: Ctx, decision: Decision) {
+  createDecision(fnCtx: FuncContext, decision: Decision) {
     const validLocations = [Location.Field, Location.OppField];
     const decisions: Decision[] = [];
 
@@ -1439,9 +1402,8 @@ export class SerpentsTrigger extends Trigger {
         if (!isMonster(card)) return;
 
         const thisCard = getCardAtLocation(
-          G,
-          ctx,
-          getCardLocation(G, ctx, this.cardOwner),
+          fnCtx,
+          getCardLocation(fnCtx, this.cardOwner),
           this.cardOwner
         );
 
@@ -1476,8 +1438,7 @@ export class ShieldTrigger extends Trigger {
   }
 
   shouldTriggerExtension(
-    _G: GameState,
-    _ctx: Ctx,
+    _fnCtx: FuncContext,
     decision: Decision,
     _prep: TriggerPrepostion
   ) {
@@ -1492,7 +1453,7 @@ export class ShieldTrigger extends Trigger {
     return targetsAChar;
   }
 
-  createDecision(_G: GameState, _ctx: Ctx, decision: Decision) {
+  createDecision(_fnCtx: FuncContext, decision: Decision) {
     const validLocations = [Location.Character, Location.OppCharacter];
     const decisions: Decision[] = [];
 
@@ -1526,8 +1487,7 @@ export class SlipperyTrigger extends Trigger {
   }
 
   shouldTriggerExtension(
-    _G: GameState,
-    _ctx: Ctx,
+    _fnCtx: FuncContext,
     decision: Decision,
     _prep: TriggerPrepostion
   ) {
@@ -1541,9 +1501,9 @@ export class SlipperyTrigger extends Trigger {
     return monsterDestroyed;
   }
 
-  createDecision(G: GameState, ctx: Ctx, _decision: Decision) {
-    const currentLocation = getCardLocation(G, ctx, this.cardOwner);
-    const card = getCardAtLocation(G, ctx, currentLocation, this.cardOwner);
+  createDecision(fnCtx: FuncContext, _decision: Decision) {
+    const currentLocation = getCardLocation(fnCtx, this.cardOwner);
+    const card = getCardAtLocation(fnCtx, currentLocation, this.cardOwner);
 
     const slipperyDecision: Decision = {
       action: 'putIntoPlay',
@@ -1586,8 +1546,7 @@ export class StartleTrigger extends Trigger {
   }
 
   shouldTriggerExtension(
-    _G: GameState,
-    _ctx: Ctx,
+    _fnCtx: FuncContext,
     decision: Decision,
     _prep: TriggerPrepostion
   ) {
@@ -1601,16 +1560,17 @@ export class StartleTrigger extends Trigger {
     return oppCharAttacked && this.sourceIsOwner(decision);
   }
 
-  createDecision(G: GameState, ctx: Ctx, _decision: Decision) {
-    const oppHand = getOpponentState(G, ctx, this.owner).hand;
+  createDecision(fnCtx: FuncContext, _decision: Decision) {
+    const { random } = fnCtx;
+    const oppHand = getOpponentState(fnCtx, this.owner).hand;
     if (oppHand.length <= 0) return [];
 
-    const randomIndex = ctx.random!.Die(oppHand.length);
+    const randomIndex = random.Die(oppHand.length);
     const card = oppHand[randomIndex - 1];
 
     const discardDec: Decision = {
       action: 'discard',
-      selection: { [getCardLocation(G, ctx, card.key)]: [card] },
+      selection: { [getCardLocation(fnCtx, card.key)]: [card] },
       finished: false,
       key: getRandomKey(),
       opts: {
@@ -1634,31 +1594,29 @@ export class SteadyHandTrigger extends Trigger {
   }
 
   shouldTriggerExtension(
-    G: GameState,
-    ctx: Ctx,
+    fnCtx: FuncContext,
     decision: Decision,
     _prep: TriggerPrepostion
   ) {
     const validLocations = [Location.CharAction, Location.Character];
 
     const sourceLocation = decision.opts?.source
-      ? getCardLocation(G, ctx, decision.opts.source.key)
+      ? getCardLocation(fnCtx, decision.opts.source.key)
       : false;
     const sourceIsChar = sourceLocation ? validLocations.includes(sourceLocation) : false;
 
     return sourceIsChar;
   }
 
-  createDecision(G: GameState, ctx: Ctx, decision: Decision) {
+  createDecision(fnCtx: FuncContext, decision: Decision) {
     const retDec: Decision = {
       action: 'buff',
       opts: {
         decision: decision.key,
         damage: 10,
         source: getCardAtLocation(
-          G,
-          ctx,
-          getCardLocation(G, ctx, this.cardOwner),
+          fnCtx,
+          getCardLocation(fnCtx, this.cardOwner),
           this.cardOwner
         ),
       },
@@ -1683,8 +1641,7 @@ export class SuperGeniusTrigger extends Trigger {
   }
 
   shouldTriggerExtension(
-    _G: GameState,
-    _ctx: Ctx,
+    _fnCtx: FuncContext,
     decision: Decision,
     _prep: TriggerPrepostion
   ) {
@@ -1698,7 +1655,8 @@ export class SuperGeniusTrigger extends Trigger {
     return cardPlayed && this.sourceIsOwner(decision);
   }
 
-  createDecision(G: GameState, ctx: Ctx, decision: Decision) {
+  createDecision(fnCtx: FuncContext, decision: Decision) {
+    const { G } = fnCtx;
     const triggerOwner = decision.opts?.source?.owner;
     if (!triggerOwner) return [];
 
@@ -1711,9 +1669,8 @@ export class SuperGeniusTrigger extends Trigger {
       finished: false,
       opts: {
         source: getCardAtLocation(
-          G,
-          ctx,
-          getCardLocation(G, ctx, this.cardOwner),
+          fnCtx,
+          getCardLocation(fnCtx, this.cardOwner),
           this.cardOwner
         ),
       },
@@ -1728,9 +1685,8 @@ export class SuperGeniusTrigger extends Trigger {
       finished: false,
       opts: {
         source: getCardAtLocation(
-          G,
-          ctx,
-          getCardLocation(G, ctx, this.cardOwner),
+          fnCtx,
+          getCardLocation(fnCtx, this.cardOwner),
           this.cardOwner
         ),
       },
@@ -1747,9 +1703,8 @@ export class SuperGeniusTrigger extends Trigger {
       opts: {
         dialogDecision: [playDec],
         source: getCardAtLocation(
-          G,
-          ctx,
-          getCardLocation(G, ctx, this.cardOwner),
+          fnCtx,
+          getCardLocation(fnCtx, this.cardOwner),
           this.cardOwner
         ),
       },
@@ -1773,11 +1728,11 @@ export class TacticResolutionTrigger extends Trigger {
   }
 
   shouldTriggerExtension(
-    G: GameState,
-    _ctx: Ctx,
+    fnCtx: FuncContext,
     decision: Decision,
     _prep: TriggerPrepostion
   ) {
+    const { G } = fnCtx;
     if (!G.stack) return false;
 
     const sourceIsResolvedTactic = decision.opts?.source
@@ -1796,14 +1751,15 @@ export class TacticResolutionTrigger extends Trigger {
     return sourceIsResolvedTactic;
   }
 
-  createDecision(G: GameState, ctx: Ctx, decision: Decision) {
+  createDecision(fnCtx: FuncContext, decision: Decision) {
+    const { G } = fnCtx;
     const source = decision.opts!.source! as Tactic;
-    const curLocation = getCardLocation(G, ctx, source.key);
+    const curLocation = getCardLocation(fnCtx, source.key);
 
     G.player[source.owner].discard.push(
-      getCardAtLocation(G, ctx, curLocation, source.key) as Tactic
+      getCardAtLocation(fnCtx, curLocation, source.key) as Tactic
     );
-    rmCard(G, ctx, source, curLocation);
+    rmCard(fnCtx, source, curLocation);
 
     return [];
   }
@@ -1821,8 +1777,7 @@ export class ToughTrigger extends Trigger {
   }
 
   shouldTriggerExtension(
-    G: GameState,
-    ctx: Ctx,
+    fnCtx: FuncContext,
     decision: Decision,
     _prep: TriggerPrepostion
   ) {
@@ -1843,14 +1798,14 @@ export class ToughTrigger extends Trigger {
     );
 
     const sourceLocation = decision.opts?.source
-      ? getCardLocation(G, ctx, decision.opts.source.key)
+      ? getCardLocation(fnCtx, decision.opts.source.key)
       : false;
     const sourceIsChar = sourceLocation ? validLocations.includes(sourceLocation) : false;
 
     return monsterIsTough && sourceIsChar;
   }
 
-  createDecision(_G: GameState, _ctx: Ctx, decision: Decision) {
+  createDecision(_fnCtx: FuncContext, decision: Decision) {
     const retDec: Decision = {
       action: 'tough',
       opts: {
@@ -1877,8 +1832,7 @@ export class WickedTrigger extends Trigger {
   }
 
   shouldTriggerExtension(
-    _G: GameState,
-    ctx: Ctx,
+    { ctx }: FuncContext,
     decision: Decision,
     _prep: TriggerPrepostion
   ) {
@@ -1889,8 +1843,10 @@ export class WickedTrigger extends Trigger {
     return sourceIsOwner;
   }
 
-  createDecision(G: GameState, ctx: Ctx, decision: Decision) {
-    const oppID = getOpponentID(G, ctx, this.owner);
+  createDecision(fnCtx: FuncContext, decision: Decision) {
+    const { G, ctx } = fnCtx;
+
+    const oppID = getOpponentID(fnCtx, this.owner);
     const oppCharLoc =
       oppID === ctx.currentPlayer ? Location.Character : Location.OppCharacter;
     const oppChar = G.player[oppID].character;
