@@ -3,7 +3,7 @@ import lodash from 'lodash';
 
 import { instantiateCard, Character, NonCharacter } from './card';
 import { hydrateDeck, nixieBase, shermanBase } from './decks';
-import { resetMonsterDamageOnField } from './hook';
+import { resetMonsterDamageOnField, eogReveal } from './hook';
 import {
   levelUp,
   noLevel,
@@ -217,8 +217,10 @@ export const ITCG = {
     const opponentID = getOpponentID(G, ctx);
 
     if (G.player[ctx.currentPlayer].hp <= 0) {
+      eogReveal(G, ctx);
       return { winner: opponentID };
     } else if (G.player[opponentID].hp <= 0) {
+      eogReveal(G, ctx);
       return { winner: ctx.currentPlayer };
     }
   },

@@ -110,3 +110,9 @@ export function endAttackStage(G: GameState, ctx: Ctx, now?: boolean) {
     endAttack(G, ctx);
   }
 }
+
+export function eogReveal(G: GameState, _ctx: Ctx) {
+  Object.keys(G.player).map((player) => {
+    G.player[player].deck.map((card) => (card.reveal = [player]));
+  });
+}
