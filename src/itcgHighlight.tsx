@@ -21,7 +21,7 @@ const highlightStyle: React.CSSProperties = {
   paddingLeft: '1%',
   paddingRight: '1%',
   border: 'groove',
-  fontSize: '150%',
+  fontSize: '1.5vw',
   color: 'white',
   textShadow: '2px 0 5px #000, -2px 0 5px #000, 0 2px 5px #000, 0 -2px 5px #000',
   textAlign: 'center',

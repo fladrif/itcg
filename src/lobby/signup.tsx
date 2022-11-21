@@ -26,17 +26,14 @@ interface State {
 const baseStyle: React.CSSProperties = {
   display: 'flex',
   flexDirection: 'column',
-  width: '50vw',
-  height: '50vh',
-  border: 'groove',
   alignItems: 'center',
   justifyContent: 'center',
+  margin: '1%',
 };
 
 const buttonStyle: React.CSSProperties = {
   textShadow: '1px 1px 2px grey',
   fontSize: '140%',
-  borderRadius: '0.5em',
   alignItems: 'center',
   margin: '10%',
 };
@@ -142,7 +139,7 @@ export class ITCGSignUp extends React.Component<SignUpProp> {
 
   render() {
     return (
-      <div style={baseStyle}>
+      <div className="border border-primary" style={baseStyle}>
         {this.state.completed && <Redirect to={'/'} />}
         <h1>Create an account</h1>
         <form onSubmit={async (e) => await this.handleSubmit(e)} style={formStyle}>

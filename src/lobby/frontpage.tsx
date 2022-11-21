@@ -1,67 +1,37 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+
 import { ParagraphStyle } from './overall.css';
 
-interface FrontPageProps {
-  username?: string;
-}
-
 const baseStyle: React.CSSProperties = {
-  marginTop: '1%',
+  margin: '1%',
   display: 'flex',
   flexDirection: 'column',
-  width: '60vw',
 };
 
-const buttonDivStyle: React.CSSProperties = {
-  display: 'flex',
-  flexDirection: 'row',
-  justifyContent: 'center',
-};
-
-const buttonStyle: React.CSSProperties = {
-  padding: '2em',
-  margin: '1em',
-};
-
-export class ITCGFrontPage extends React.Component<FrontPageProps> {
-  navigation() {
-    return (
-      <>
-        <h2>Welcome back {this.props.username}!</h2>
-        <div style={buttonDivStyle}>
-          <Link to={'/rooms'}>
-            <button style={buttonStyle}>
-              <h3>Room</h3>
-              Challenge others to a game
-            </button>
-          </Link>
-          <Link to={'/decks'}>
-            <button style={buttonStyle}>
-              <h3>Deck</h3>
-              Build and modify decks
-            </button>
-          </Link>
-        </div>
-      </>
-    );
-  }
-
-  welcome() {
-    return (
-      <>
-        <h2>Welcome!</h2>
-        <p style={ParagraphStyle}>
-          To create your own decks and play games, please log in or sign up above for an
-          account to start. We do not ask for or use your email address.
-        </p>
-      </>
-    );
-  }
-
+export class ITCGFrontPage extends React.Component {
   intro() {
     return (
       <>
+        <p style={ParagraphStyle}>
+          <b>
+            To build decks and/or play games against others, please log in or sign up.
+          </b>
+        </p>
+        <div className="row flex-spaces">
+          <div className="lrg-6 col">
+            <a className="paper-btn btn-large btn-block btn-success" href="/login">
+              Log In
+            </a>
+          </div>
+          <div className="lrg-6 col">
+            <a
+              className="paper-btn btn-large btn-block btn-success-outline"
+              href="/signup"
+            >
+              Sign Up
+            </a>
+          </div>
+        </div>
         <p style={ParagraphStyle}>
           Maplestory iTCG is an interactive trading card game developed by Wizards of the
           Coasts in partnership with Nexon based on the Korean MMO (massive multiplayer
@@ -75,8 +45,9 @@ export class ITCGFrontPage extends React.Component<FrontPageProps> {
           with LackeyCCG, or Tabletop Simulator). Because of this, there will undoubtedly
           be issues or missing features that you would expect from a more mature site.
           This site is also optimized for desktop use, mobile is viable but not supported.
-          You can use the discord link below to report those issues as they come up and
-          I'll do my best to address them. This application uses{' '}
+          You can use the discord server on the <a href="/about">about page</a> to report
+          those issues as they come up and I'll do my best to address them. This
+          application uses{' '}
           <a target="_blank" ref="noopener noreferrer" href="https://boardgame.io">
             BoardGame IO
           </a>{' '}
@@ -89,13 +60,9 @@ export class ITCGFrontPage extends React.Component<FrontPageProps> {
   }
 
   render() {
-    const loggedIn = !!this.props.username;
-
     return (
       <div style={baseStyle}>
-        {!loggedIn && this.welcome()}
-        {loggedIn && this.navigation()}
-        <h3>Intro</h3>
+        <h2>Welcome Maplers!</h2>
         {this.intro()}
       </div>
     );

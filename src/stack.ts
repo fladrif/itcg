@@ -201,10 +201,10 @@ export function parseSkill(
   source: Character | NonCharacter,
   main?: boolean
 ): Decision {
-  const { ctx } = fnCtx;
+  const { G, ctx } = fnCtx;
 
   const selection: Selection = {};
-  const oppState = getOpponentState(fnCtx, source.owner);
+  const oppState = getOpponentState(G, ctx, source.owner);
 
   if (skill.opts?.allOppMonster) {
     const location: Location =
@@ -295,7 +295,7 @@ export function selectCard(
   const playerState = G.player[ctx.currentPlayer];
 
   const cardLoc = card[0];
-  const selCard = getCardAtLocation(fnCtx, cardLoc, card[1].key);
+  const selCard = getCardAtLocation(G, ctx, cardLoc, card[1].key);
 
   const curDecision = G.stack.activeDecisions[0];
 
@@ -409,17 +409,21 @@ function unselectGameCards(
   location: Location,
   cards: (Character | NonCharacter)[]
 ) {
-  getLocation(fnCtx, location)
+  const { G, ctx } = fnCtx;
+
+  getLocation(G, ctx, location)
     .filter((gameCard) => !!cards.find((card) => deepCardComp(gameCard, card)))
     .map((gameCard) => (gameCard.selected = false));
 
   cards
     .filter((card) => {
-      return !getLocation(fnCtx, location).find((locCard) => deepCardComp(locCard, card));
+      return !getLocation(G, ctx, location).find((locCard) =>
+        deepCardComp(locCard, card)
+      );
     })
     .map((movedCard) => {
-      const currentLocation = getCardLocation(fnCtx, movedCard.key);
-      getCardAtLocation(fnCtx, currentLocation, movedCard.key).selected = false;
+      const currentLocation = getCardLocation(G, ctx, movedCard.key);
+      getCardAtLocation(G, ctx, currentLocation, movedCard.key).selected = false;
     });
 }
 
@@ -432,12 +436,12 @@ function isDecisionNeeded(dec: Decision): boolean {
 
 function resetSkillActivations(fnCtx: FuncContext) {
   const { G, ctx } = fnCtx;
-  (getLocation(fnCtx, Location.Character)[0] as Character).skills.map((skill) =>
+  (getLocation(G, ctx, Location.Character)[0] as Character).skills.map((skill) =>
     skill.map((sk) => (sk.activated = false))
   );
 
   G.player[ctx.currentPlayer].learnedSkills = (
-    getLocation(fnCtx, Location.CharAction) as NonCharacter[]
+    getLocation(G, ctx, Location.CharAction) as NonCharacter[]
   ).map((card) => {
     return {
       ...card,

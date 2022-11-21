@@ -1,9 +1,8 @@
 import React from 'react';
 import axios from 'axios';
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import { SocketIO } from 'boardgame.io/multiplayer';
 import { Client } from 'boardgame.io/react';
-// import { Local } from 'boardgame.io/multiplayer';
 import Cookies from 'js-cookie';
 
 import { ITCG } from './game';
@@ -28,6 +27,8 @@ const style: React.CSSProperties = {
   alignItems: 'center',
   verticalAlign: 'middle',
   overflowY: 'auto',
+  backgroundColor: '#FAF8F0',
+  height: '100vh',
 };
 
 const clientStyle: React.CSSProperties = {
@@ -82,53 +83,45 @@ class App extends React.Component {
     });
 
     return (
-      <div style={style}>
-        <Router>
+      <>
+        <BrowserRouter>
           {!this.state.inGame && (
-            <Switch>
-              <Route exact path={'/'}>
-                <ITCGHeader username={this.state.username} />
-                <ITCGFrontPage username={this.state.username} />
-              </Route>
-              <Route path={'/rooms'}>
-                <ITCGHeader username={this.state.username} />
-                {this.state.username && (
-                  <ITCGRoom
-                    server={SERVER}
-                    username={this.state.username}
-                    update={this.updateState.bind(this)}
-                  />
-                )}
-              </Route>
-              <Route path={'/decks'}>
-                <ITCGHeader username={this.state.username} />
-                {this.state.username && <ITCGDeck server={SERVER} />}
-              </Route>
-              <Route path={'/howtoplay'}>
-                <ITCGHeader username={this.state.username} />
-                <ITCGHowToPlay />
-              </Route>
-              <Route path={'/devlog'}>
-                <ITCGHeader username={this.state.username} />
-                <ITCGDevLog />
-              </Route>
-              <Route path={'/resources'}>
-                <ITCGHeader username={this.state.username} />
-                <ITCGResources />
-              </Route>
-              <Route path={'/signup'}>
-                <ITCGHeader />
-                <ITCGSignUp server={SERVER} update={this.updateState.bind(this)} />
-              </Route>
-              <Route path={'/login'}>
-                <ITCGHeader />
-                <ITCGLogIn server={SERVER} update={this.updateState.bind(this)} />
-              </Route>
-              <Route path={'/logout'}>
-                <ITCGHeader />
-                <ITCGLogOut server={SERVER} update={this.updateState.bind(this)} />
-              </Route>
-            </Switch>
+            <div style={style}>
+              <ITCGHeader username={this.state.username} />
+              <div style={{ maxWidth: '1000px', width: '100%' }}>
+                <Switch>
+                  <Route exact path={'/'}>
+                    {!this.state.username && <ITCGFrontPage />}
+                    {this.state.username && (
+                      <ITCGRoom
+                        server={SERVER}
+                        username={this.state.username}
+                        update={this.updateState.bind(this)}
+                      />
+                    )}
+                  </Route>
+                  <Route path={'/decks'}>
+                    {this.state.username && <ITCGDeck server={SERVER} />}
+                  </Route>
+                  <Route path={'/howtoplay'}>
+                    <ITCGHowToPlay />
+                  </Route>
+                  <Route path={'/about'}>
+                    <ITCGResources />
+                    <ITCGDevLog />
+                  </Route>
+                  <Route path={'/signup'}>
+                    <ITCGSignUp server={SERVER} update={this.updateState.bind(this)} />
+                  </Route>
+                  <Route path={'/login'}>
+                    <ITCGLogIn server={SERVER} update={this.updateState.bind(this)} />
+                  </Route>
+                  <Route path={'/logout'}>
+                    <ITCGLogOut server={SERVER} update={this.updateState.bind(this)} />
+                  </Route>
+                </Switch>
+              </div>
+            </div>
           )}
           {!!this.state.inGame && (
             <div style={clientStyle}>
@@ -139,8 +132,8 @@ class App extends React.Component {
               />
             </div>
           )}
-        </Router>
-      </div>
+        </BrowserRouter>
+      </>
     );
   }
 }

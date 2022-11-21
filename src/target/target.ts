@@ -30,7 +30,9 @@ export function meetsTarget(
   targets: ActionTargets,
   card: Character | NonCharacter
 ): boolean {
-  const cardLoc = getCardLocation(fnCtx, card.key);
+  const { G, ctx } = fnCtx;
+
+  const cardLoc = getCardLocation(G, ctx, card.key);
   const selection = { [cardLoc]: [card] };
   const recent: [Location, Character | NonCharacter] = [cardLoc, card];
 

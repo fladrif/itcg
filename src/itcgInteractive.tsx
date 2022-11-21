@@ -46,7 +46,7 @@ const buttonStyle: React.CSSProperties = {
   flex: '1',
   color: 'white',
   textShadow: '1px 1px 2px black',
-  fontSize: '150%',
+  fontSize: '1.5vw',
   borderRadius: '0.5em',
   margin: '2%',
 };
@@ -247,7 +247,7 @@ export class ITCGInteractive extends React.Component<InteractiveProp> {
           : () => button.move();
 
       return (
-        <button style={style} onClick={move} key={getRandomKey()}>
+        <button className="btn-block" style={style} onClick={move} key={getRandomKey()}>
           {button.label}
         </button>
       );

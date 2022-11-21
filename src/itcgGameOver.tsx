@@ -29,13 +29,13 @@ const lossStyle: React.CSSProperties = {
 };
 
 const mesgStyle: React.CSSProperties = {
-  fontSize: '42px',
+  fontSize: '3vw',
   alignSelf: 'center',
   gridArea: 'mesg',
 };
 
 const buttonStyle: React.CSSProperties = {
-  fontSize: '120%',
+  fontSize: '1.3vw',
   borderRadius: '0.25em',
   gridArea: 'button',
 };

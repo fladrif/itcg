@@ -15,20 +15,22 @@ export function endLevelStage(fnCtx: FuncContext) {
 }
 
 export function resetMonsterDamageOnField(fnCtx: FuncContext) {
+  const { G, ctx } = fnCtx;
   const locations = [Location.Field, Location.OppField];
 
   locations.map((location) => {
-    getLocation(fnCtx, location)
+    getLocation(G, ctx, location)
       .filter((card) => isMonster(card))
       .map((card) => ((card as Monster).damageTaken = 0));
   });
 }
 
 export function checkDeadMonstersOnField(fnCtx: FuncContext) {
+  const { G, ctx } = fnCtx;
   const locations = [Location.Field, Location.OppField];
 
   locations.map((location) => {
-    const decisions = getLocation(fnCtx, location)
+    const decisions = getLocation(G, ctx, location)
       .filter((card) => {
         return (
           isMonster(card) &&
@@ -36,7 +38,7 @@ export function checkDeadMonstersOnField(fnCtx: FuncContext) {
         );
       })
       .map((card) => {
-        const cardLoc = getCardLocation(fnCtx, card.key);
+        const cardLoc = getCardLocation(G, ctx, card.key);
 
         const decision: Decision = {
           action: 'destroy',

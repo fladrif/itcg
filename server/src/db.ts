@@ -17,7 +17,7 @@ export class DB {
   async init() {
     this.connection = await createConnection({
       type: 'postgres',
-      host: 'itcg-db',
+      host: 'localhost',
       port: 5432,
       username: 'postgres',
       password: 'itcg',
@@ -114,11 +114,11 @@ export class DB {
     id: string,
     name: string,
     deckList: Deck,
-    owner?: string
+    ownerID?: string
   ): Promise<string> {
     if (!this.connection) await this.init();
 
-    const user = owner ? await this.getUserByID(owner) : undefined;
+    const user = ownerID ? await this.getUserByID(ownerID) : undefined;
 
     const dec = this.connection!.getRepository(Decks);
     const existingDeck = await dec.findOne({ id });

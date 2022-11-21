@@ -5,6 +5,7 @@ import { ITCGCard } from './itcgCard';
 import { PlayerState } from './game';
 import { Location } from './target';
 import { NonCharacter } from './card';
+import { nullMove } from './moves';
 
 interface DiscardProp {
   playerState: PlayerState;
@@ -20,6 +21,7 @@ const baseStyle: React.CSSProperties = {
   overflow: 'auto',
   alignItems: 'center',
   width: '50%',
+  fontSize: '1vw',
   textShadow:
     '1px 0 0 #fff, -1px 0 0 #fff, 0 1px 0 #fff, 0 -1px 0 #fff, 1px 1px 0 #fff, -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff',
 };
@@ -28,7 +30,7 @@ export class ITCGDiscard extends React.Component<DiscardProp> {
   formatCard(card: NonCharacter) {
     return (
       <ITCGCard
-        move={this.props.select}
+        move={nullMove}
         location={this.props.currentPlayer ? Location.Discard : Location.OppDiscard}
         card={card}
         key={card.key}

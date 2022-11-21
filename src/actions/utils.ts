@@ -35,7 +35,7 @@ export function handleAbility(fnCtx: FuncContext, card: NonCharacter): any {
     G.state.push({
       owner: card.key,
       player: card.ability.state.targetOpponent
-        ? getOpponentID(fnCtx, card.owner)
+        ? getOpponentID(G, ctx, card.owner)
         : card.owner,
       targets: card.ability.state.targets,
       modifier: card.ability.state.modifier,
@@ -49,21 +49,22 @@ export function handleCardLeaveField(
   card: NonCharacter,
   location: Location
 ) {
-  const { G } = fnCtx;
+  const { G, ctx } = fnCtx;
   if (location === Location.OppCharAction || location === Location.CharAction) {
     G.player[card.owner].level -= 10;
   }
   removeTrigger(G, card.key);
-  rmCard(fnCtx, card, location);
+  rmCard(G, ctx, card, location);
   resetMonsterDamage(fnCtx, card);
   removeGlobalState(fnCtx, card);
 }
 
 function resetMonsterDamage(fnCtx: FuncContext, card: NonCharacter) {
+  const { G, ctx } = fnCtx;
   if (!isMonster(card)) return;
 
-  const newLocation = getCardLocation(fnCtx, card.key);
-  const c = getCardAtLocation(fnCtx, newLocation, card.key);
+  const newLocation = getCardLocation(G, ctx, card.key);
+  const c = getCardAtLocation(G, ctx, newLocation, card.key);
   (c as Monster).damageTaken = 0;
 }
 

@@ -55,10 +55,10 @@ function assist(fnCtx: FuncContext, opts: ActionOpts): any {
 }
 
 function attack(fnCtx: FuncContext, opts: ActionOpts): any {
-  const { G } = fnCtx;
+  const { G, ctx } = fnCtx;
   if (!G.stack) return;
 
-  (getCardAtLocation(fnCtx, Location.Field, opts.source!.key) as Monster).attacks--;
+  (getCardAtLocation(G, ctx, Location.Field, opts.source!.key) as Monster).attacks--;
 
   const decision: Decision = {
     action: 'damage',
@@ -72,14 +72,14 @@ function attack(fnCtx: FuncContext, opts: ActionOpts): any {
 }
 
 function bounce(fnCtx: FuncContext, opts: ActionOpts): any {
-  const { G } = fnCtx;
+  const { G, ctx } = fnCtx;
   if (!G.stack) return;
   if (!opts.selection) return;
 
   for (const location of Object.keys(opts.selection) as Location[]) {
     const cardsSel = opts.selection[location] || [];
 
-    getLocation(fnCtx, location)
+    getLocation(G, ctx, location)
       .filter((c) => !!cardsSel.find((cs) => deepCardComp(c, cs)))
       .map((card) => {
         const cardLoc = card as NonCharacter;
@@ -153,7 +153,7 @@ function conjure(fnCtx: FuncContext, opts: ActionOpts): any {
 }
 
 function damage(fnCtx: FuncContext, opts: ActionOpts): any {
-  const { G } = fnCtx;
+  const { G, ctx } = fnCtx;
   if (!G.stack) return;
   if (!opts.selection || !opts.source || opts.damage === undefined) return;
 
@@ -167,21 +167,21 @@ function damage(fnCtx: FuncContext, opts: ActionOpts): any {
       }
 
       if (isMonster(card)) {
-        (getCardAtLocation(fnCtx, location, card.key) as Monster).damageTaken += damage;
+        (getCardAtLocation(G, ctx, location, card.key) as Monster).damageTaken += damage;
       }
     });
   }
 }
 
 function destroy(fnCtx: FuncContext, opts: ActionOpts): any {
-  const { G } = fnCtx;
+  const { G, ctx } = fnCtx;
   if (!G.stack) return;
   if (!opts.selection) return;
 
   for (const location of Object.keys(opts.selection) as Location[]) {
     const cardsSel = opts.selection[location] || [];
 
-    getLocation(fnCtx, location)
+    getLocation(G, ctx, location)
       .filter((c) => !!cardsSel.find((cs) => deepCardComp(c, cs)))
       .map((card) => {
         G.player[card.owner].discard.push(card as NonCharacter);
@@ -243,7 +243,7 @@ const flip = (fnCtx: FuncContext, opts: ActionOpts) => {
 };
 
 function level(fnCtx: FuncContext, opts: ActionOpts): any {
-  const { G } = fnCtx;
+  const { G, ctx } = fnCtx;
 
   if (!G.stack || !opts.selection) return;
 
@@ -282,7 +282,7 @@ function level(fnCtx: FuncContext, opts: ActionOpts): any {
 
       player.learnedSkills.push({ ...selCard });
 
-      rmCard(fnCtx, selCard, location);
+      rmCard(G, ctx, selCard, location);
 
       player.level += 10;
       dec.push(refreshDec(selCard));
@@ -293,10 +293,10 @@ function level(fnCtx: FuncContext, opts: ActionOpts): any {
 }
 
 function loot(fnCtx: FuncContext, opts: ActionOpts): any {
-  const { G } = fnCtx;
+  const { G, ctx } = fnCtx;
   if (!G.stack) return;
 
-  const oppState = getOpponentState(fnCtx);
+  const oppState = getOpponentState(G, ctx);
   if (oppState.hand.length < 3) return;
 
   const discardDecision: Decision = {
@@ -381,7 +381,7 @@ function play(fnCtx: FuncContext, opts: ActionOpts): any {
         handleAbility(fnCtx, card);
       }
 
-      rmCard(fnCtx, card, location);
+      rmCard(G, ctx, card, location);
     });
   });
 }
@@ -406,15 +406,16 @@ function quest(fnCtx: FuncContext, opts: ActionOpts): any {
 }
 
 function rainofarrows(fnCtx: FuncContext, opts: ActionOpts): any {
-  const { G } = fnCtx;
+  const { G, ctx } = fnCtx;
   if (!G.stack || !opts.source || !opts.damage) return;
 
-  const oppCards = getOpponentState(fnCtx, opts.source.owner).hand.length;
+  const oppCards = getOpponentState(G, ctx, opts.source.owner).hand.length;
   const damage = resolveDamage(G.player[opts.source.owner], opts.damage);
 
   const decision: Decision = {
     action: 'damage',
     opts: {
+      ...opts,
       damage: oppCards * damage,
     },
     selection: { ...opts.selection } || {},
@@ -546,17 +547,17 @@ function seer(fnCtx: FuncContext, opts: ActionOpts): any {
 }
 
 function seerChoice(fnCtx: FuncContext, opts: ActionOpts): any {
-  const { G } = fnCtx;
+  const { G, ctx } = fnCtx;
   if (!G.stack || !opts.selection) return;
 
   const locations = [Location.Deck, Location.OppDeck];
   locations.forEach((location) => {
     !!opts.selection![location] &&
       opts.selection![location]!.forEach((card) => {
-        const realCard = getCardAtLocation(fnCtx, location, card.key);
+        const realCard = getCardAtLocation(G, ctx, location, card.key);
 
         G.player[card.owner].hand.push(realCard as NonCharacter);
-        rmCard(fnCtx, card, location);
+        rmCard(G, ctx, card, location);
 
         if (G.player[card.owner].deck.length >= 1) {
           G.player[card.owner].discard.push(G.player[card.owner].deck.shift()!);
@@ -567,7 +568,7 @@ function seerChoice(fnCtx: FuncContext, opts: ActionOpts): any {
 
 // TODO: take into account shield abilities
 function shield(fnCtx: FuncContext, opts: ActionOpts): any {
-  const { G } = fnCtx;
+  const { G, ctx } = fnCtx;
   if (!G.stack || !opts.decision) return;
   const validLocations = [Location.OppCharacter, Location.Character];
 
@@ -579,7 +580,7 @@ function shield(fnCtx: FuncContext, opts: ActionOpts): any {
   const selectedChars = selectionLocations
     .map((loc) => (validLocations.includes(loc) ? decision.selection[loc] : []))
     .flat();
-  const owner = selectedChars[0] ? selectedChars[0].owner : getOpponentID(fnCtx);
+  const owner = selectedChars[0] ? selectedChars[0].owner : getOpponentID(G, ctx);
 
   const numMonsters = G.player[owner].field.filter((card) => isMonster(card)).length;
 
@@ -656,13 +657,13 @@ function trainhard(fnCtx: FuncContext, opts: ActionOpts): any {
 }
 
 function tuck(fnCtx: FuncContext, opts: ActionOpts): any {
-  const { G } = fnCtx;
+  const { G, ctx } = fnCtx;
   if (!G.stack) return;
   if (!opts.selection || !opts.position) return;
 
   for (const location of Object.keys(opts.selection) as Location[]) {
     opts.selection[location]!.map((card) => {
-      const cardLoc = getCardAtLocation(fnCtx, location, card.key) as NonCharacter;
+      const cardLoc = getCardAtLocation(G, ctx, location, card.key) as NonCharacter;
       cardLoc.reveal = Object.keys(G.player);
 
       G.player[card.owner].deck.splice(opts.position!, 0, cardLoc);

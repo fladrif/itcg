@@ -2,7 +2,6 @@ import React from 'react';
 import { BoardProps } from 'boardgame.io/react';
 
 import { GameState } from './game';
-import { getOpponentID } from './utils';
 import { getTargetLocations, Location, mayFinished } from './target';
 
 import { ITCGCharacter } from './itcgCharacter';
@@ -44,6 +43,18 @@ const dialogStyle: React.CSSProperties = {
   position: 'absolute',
   top: '33%',
   left: '25%',
+};
+
+const turnAlertStyle: React.CSSProperties = {
+  pointerEvents: 'none',
+  zIndex: 4,
+  top: '40%',
+  left: '30%',
+  position: 'absolute',
+  fontSize: '9vw',
+  color: '#ee5f00',
+  textShadow:
+    '1px 0 0 #fff, -1px 0 0 #fff, 0 1px 0 #fff, 0 -1px 0 #fff, 1px 1px 0 #fff, -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff',
 };
 
 const handStyle: React.CSSProperties = {
@@ -133,8 +144,7 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
     const currentPlayerStage = this.props.ctx.activePlayers
       ? this.props.ctx.activePlayers[playerID]
       : '';
-
-    const opponentID = getOpponentID(this.props.G, this.props.ctx, playerID);
+    const opponentID = Object.keys(this.props.G.player).filter((id) => id != playerID)[0];
     const opponentState = this.props.G.player[opponentID];
     const opponentStage = this.props.ctx.activePlayers
       ? this.props.ctx.activePlayers[opponentID]
@@ -248,6 +258,9 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
               attack={this.props.moves.attack}
               source={stack?.activeDecisions[0].opts?.source}
             />
+            {currentPlayerStage === 'level' && !this.props.G.stack && (
+              <div style={turnAlertStyle}>Your Turn</div>
+            )}
           </div>
           <ITCGHighlight state={this.props.G} ctx={this.props.ctx} />
         </div>

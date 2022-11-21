@@ -1,10 +1,8 @@
 import React from 'react';
-import { Button } from 'react-bootstrap';
 import axios from 'axios';
 
 import { ITCGDeckBuilder } from './deckBuilder';
-import { OverallListStyle, ListItemStyle } from './list.css';
-import { ButtonStyle, OverallButtonStyle, ParagraphStyle } from './overall.css';
+import { CardStyle, CardWrapperStyle, ParagraphStyle } from './overall.css';
 
 import { Deck } from '../game';
 
@@ -26,9 +24,9 @@ export interface State {
 }
 
 const baseStyle: React.CSSProperties = {
+  margin: '1%',
   display: 'flex',
   flexDirection: 'column',
-  width: '70vw',
 };
 
 export class ITCGDeck extends React.Component<DeckProp> {
@@ -59,6 +57,19 @@ export class ITCGDeck extends React.Component<DeckProp> {
     this.setState({ build: true, buildDeck: id });
   }
 
+  newDeck() {
+    return (
+      <div className="col" style={CardWrapperStyle}>
+        <div className="card" key="new" style={CardStyle}>
+          <div className="card-body">
+            <h2 className="card-title">New Deck</h2>
+            <button onClick={() => this.buildDeck()}>Create</button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   parseDeckList(deck: Deck) {
     if (!deck.character) return;
     return (
@@ -78,37 +89,39 @@ export class ITCGDeck extends React.Component<DeckProp> {
     const decks = this.state.decks;
 
     const parsedList = decks.map((deck) => {
+      const formatted = (
+        <div className="card" key={deck.id} style={CardStyle}>
+          {!deck.modify && <div className="card-header">public</div>}
+          <div className="card-body">
+            <h2 className="card-title">{deck.name}</h2>
+            <h3 className="card-subtitle">{deck.deck_list.character.name}</h3>
+            <div className="card-text">{this.parseDeckList(deck.deck_list)}</div>
+            {deck.modify && <button onClick={() => this.buildDeck(deck.id)}>edit</button>}
+          </div>
+        </div>
+      );
+
       return (
-        <div style={OverallListStyle} key={deck.id}>
-          <div style={ListItemStyle}>
-            Name: <h2>{deck.name}</h2>
-          </div>
-          <div style={ListItemStyle}>
-            Character: <h3>{deck.deck_list.character.name}</h3>
-          </div>
-          <div style={ListItemStyle}>{this.parseDeckList(deck.deck_list)}</div>
-          {deck.modify && (
-            <Button style={ButtonStyle} onClick={() => this.buildDeck(deck.id)}>
-              Modify Deck
-            </Button>
-          )}
+        <div className="col" style={CardWrapperStyle}>
+          {formatted}
         </div>
       );
     });
 
-    return <>{parsedList}</>;
+    return (
+      <div className="row flex-left" style={{ width: '100%' }}>
+        {this.newDeck()}
+        {parsedList}
+      </div>
+    );
   }
 
   getDeckList() {
     return (
       <>
-        <Button style={OverallButtonStyle} onClick={() => this.buildDeck()}>
-          Create new Deck
-        </Button>
-        <h1>Decks</h1>
+        <h2>Decks</h2>
         <p style={ParagraphStyle}>
-          Deck lists without buttons are public and available to everyone, but cannot be
-          modified.
+          Public decks are available to everyone and cannot be modified.
         </p>
         {this.parseDeckLists()}
       </>

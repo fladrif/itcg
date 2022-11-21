@@ -137,13 +137,18 @@ export function setup(_context: SetupCtx, setupData: SetupData): GameState {
     };
   }
 
-  Array(5).map((_) => {
-    state.player['0'].hand.push(state.player['0'].deck.pop()!);
-  });
+  state.player['0'].hand.push(state.player['0'].deck.pop()!);
+  state.player['0'].hand.push(state.player['0'].deck.pop()!);
+  state.player['0'].hand.push(state.player['0'].deck.pop()!);
+  state.player['0'].hand.push(state.player['0'].deck.pop()!);
+  state.player['0'].hand.push(state.player['0'].deck.pop()!);
 
-  Array(6).map((_) => {
-    state.player['1'].hand.push(state.player['1'].deck.pop()!);
-  });
+  state.player['1'].hand.push(state.player['1'].deck.pop()!);
+  state.player['1'].hand.push(state.player['1'].deck.pop()!);
+  state.player['1'].hand.push(state.player['1'].deck.pop()!);
+  state.player['1'].hand.push(state.player['1'].deck.pop()!);
+  state.player['1'].hand.push(state.player['1'].deck.pop()!);
+  state.player['1'].hand.push(state.player['1'].deck.pop()!);
 
   return state;
 }
@@ -219,7 +224,7 @@ export const ITCG = {
 
   endIf: (fnCtx: FuncContext) => {
     const { G, ctx } = fnCtx;
-    const opponentID = getOpponentID(fnCtx);
+    const opponentID = getOpponentID(G, ctx);
 
     if (G.player[ctx.currentPlayer].hp <= 0) {
       return { winner: opponentID };
