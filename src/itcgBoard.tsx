@@ -4,6 +4,7 @@ import { BoardProps } from 'boardgame.io/react';
 import { GameState } from './game';
 import { getTargetLocations, Location, mayFinished } from './target';
 
+import { ITCGAudio, SoundOpts } from './itcgAudio';
 import { ITCGCharacter } from './itcgCharacter';
 import { ITCGDialog, DialogBoxOpts } from './itcgDialog';
 import { ITCGDiscard } from './itcgDiscard';
@@ -22,6 +23,7 @@ import bgi from './images/red-scene.svg';
 export interface State {
   dialogBox?: DialogBoxOpts;
   menuBox?: MenuBoxOpts;
+  soundOpts?: SoundOpts;
 }
 
 const containerStyle: React.CSSProperties = {
@@ -42,7 +44,7 @@ const highlightAction: React.CSSProperties = {
 };
 
 const dialogStyle: React.CSSProperties = {
-  zIndex: 3,
+  zIndex: 4,
   position: 'absolute',
   top: '33%',
   left: '25%',
@@ -50,7 +52,7 @@ const dialogStyle: React.CSSProperties = {
 
 const turnAlertStyle: React.CSSProperties = {
   pointerEvents: 'none',
-  zIndex: 4,
+  zIndex: 3,
   top: '40%',
   left: '30%',
   position: 'absolute',
@@ -141,7 +143,7 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
   constructor(props: BoardProps<GameState>) {
     super(props);
 
-    this.state = {};
+    this.state = { soundOpts: { mute: false, volume: 50 } };
   }
 
   setBoardState(state: State) {
@@ -199,8 +201,11 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
       [Location.Temporary, Location.OppTemporary].includes(loc)
     );
 
+    const audio = <ITCGAudio soundOpts={this.state.soundOpts} />;
+
     return (
       <div style={containerStyle}>
+        {audio}
         {gameOver}
         <div style={dialogStyle}>
           <ITCGDialog
@@ -218,7 +223,10 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
         <div style={menuBoxStyle}>
           <ITCGMenuBox
             updateBoard={(state) => this.setBoardState(state)}
+            playerID={this.props.playerID}
+            concede={this.props.moves.concede}
             menuBox={this.state.menuBox}
+            soundOpts={this.state.soundOpts}
           />
         </div>
         <div style={oppDiscardStyle}>

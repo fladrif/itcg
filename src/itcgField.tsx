@@ -64,7 +64,7 @@ export class ITCGField extends React.Component<FieldProps> {
       );
     });
     const stage = this.props.stage;
-    const parsedStyle = stage && stage !== '' ? activeStyle : inactiveStyle;
+    const parsedStyle = stage && stage !== 'unactive' ? activeStyle : inactiveStyle;
     return <div style={parsedStyle}>{field}</div>;
   }
 }

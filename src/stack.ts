@@ -55,13 +55,13 @@ export interface Stack {
 
 interface OpponentActiveStage {
   others: string;
-  currentPlayer?: never;
+  currentPlayer: string;
   next?: SetActiveStage;
 }
 
 interface CurrentActiveStage {
   currentPlayer: string;
-  others?: never;
+  others: string;
   next?: SetActiveStage;
 }
 
@@ -78,8 +78,8 @@ function stage(
   prev?: SetActiveStage
 ): SetActiveStage {
   const stageOutput: SetActiveStage = !opponentAction
-    ? { currentPlayer: stg }
-    : { others: stg };
+    ? { currentPlayer: stg, others: 'unactive' }
+    : { others: stg, currentPlayer: 'unactive' };
 
   if (prev) stageOutput.next = prev;
 
@@ -125,6 +125,15 @@ export function resolveStack(fnCtx: FuncContext, opts?: ResolveStackOptions) {
         resolveStack(fnCtx);
         return;
       }
+
+      // console.log('------------ stack ----------------');
+      // console.log('active', JSON.stringify(stack.activeDecisions));
+      // console.log('decision', JSON.stringify(stack.decisions));
+      // console.log('queuedDecisions', JSON.stringify(stack.queuedDecisions));
+      // console.log('current', stack.currentStage);
+      // console.log('aplay', JSON.stringify(ctx.activePlayers));
+      // console.log('nextaplay', JSON.stringify(ctx._nextActivePlayers));
+      // console.log('------------- eos -----------------');
 
       if (stack.currentStage == 'level') endLevelStage(fnCtx);
       if (stack.currentStage == 'activate') endActivateStage(fnCtx);

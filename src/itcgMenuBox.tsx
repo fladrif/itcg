@@ -1,10 +1,16 @@
 import React from 'react';
+import { PlayerID } from 'boardgame.io';
 
+import { SoundOpts } from './itcgAudio';
 import { State as BoardState } from './itcgBoard';
+import { MoveOptions } from './moves';
 
 interface MenuBoxProp {
   updateBoard: (state: BoardState) => any;
+  concede: (opts: MoveOptions) => any;
+  playerID: PlayerID;
   menuBox?: MenuBoxOpts;
+  soundOpts?: SoundOpts;
 }
 
 export type MenuBoxOpts = 'menu' | 'concede' | 'music';
@@ -50,6 +56,7 @@ export class ITCGMenuBox extends React.Component<MenuBoxProp> {
 
   yes() {
     this.props.updateBoard({ menuBox: undefined });
+    this.props.concede({ playerConcession: this.props.playerID });
   }
 
   menu() {
@@ -60,25 +67,41 @@ export class ITCGMenuBox extends React.Component<MenuBoxProp> {
     this.props.updateBoard({ menuBox: 'music' });
   }
 
+  toggleMute() {
+    this.props.updateBoard({
+      soundOpts: {
+        mute: !this.props.soundOpts?.mute,
+        volume: this.props.soundOpts?.volume || 100,
+      },
+    });
+  }
+
+  changeVolume(vol: number) {
+    this.props.updateBoard({
+      soundOpts: { mute: this.props.soundOpts?.mute, volume: vol },
+    });
+  }
+
   mainMenu = (
     <>
       Menu
       <button style={buttonStyle} onClick={() => this.music()}>
         Music
       </button>
-      <button
-        className="btn-primary-outline"
-        style={buttonStyle}
-        onClick={() => this.back()}
-      >
-        Back
-      </button>
+      <div style={buttonStyle} />
       <button
         className="btn-danger-outline"
         style={buttonStyle}
         onClick={() => this.concede()}
       >
         Concede
+      </button>
+      <button
+        className="btn-secondary-outline"
+        style={buttonStyle}
+        onClick={() => this.back()}
+      >
+        Back
       </button>
     </>
   );
@@ -87,37 +110,56 @@ export class ITCGMenuBox extends React.Component<MenuBoxProp> {
     <>
       Concede the game?
       <button
-        className="btn-primary-outline"
-        style={buttonStyle}
-        onClick={() => this.menu()}
-      >
-        No
-      </button>
-      <button
         className="btn-danger-outline"
         style={buttonStyle}
         onClick={() => this.yes()}
       >
         Yes
       </button>
-    </>
-  );
-
-  musicMenu = (
-    <>
-      Music Control
-      <button style={buttonStyle} onClick={() => this.yes()}>
-        Mute
-      </button>
       <button
-        className="btn-primary-outline"
+        className="btn-secondary-outline"
         style={buttonStyle}
         onClick={() => this.menu()}
       >
-        Back
+        No
       </button>
     </>
   );
+
+  musicMenu() {
+    return (
+      <>
+        Music Control
+        <div style={buttonStyle}>
+          Volume
+          <input
+            className="input-block"
+            type="range"
+            min="0"
+            max="100"
+            defaultValue={
+              this.props.soundOpts?.volume ? this.props.soundOpts?.volume : 100
+            }
+            onInput={(e) => this.changeVolume(e.target.value)}
+          />
+          <button
+            className={this.props.soundOpts?.mute ? 'btn-primary' : 'btn-primary-outline'}
+            style={buttonStyle}
+            onClick={() => this.toggleMute()}
+          >
+            {this.props.soundOpts?.mute ? 'Unmute' : 'Mute'}
+          </button>
+        </div>
+        <button
+          className="btn-secondary-outline"
+          style={buttonStyle}
+          onClick={() => this.menu()}
+        >
+          Back
+        </button>
+      </>
+    );
+  }
 
   render() {
     if (this.props.menuBox === undefined) return null;
@@ -127,7 +169,7 @@ export class ITCGMenuBox extends React.Component<MenuBoxProp> {
         <div style={innerBoxStyle}>
           {this.props.menuBox === 'menu' && this.mainMenu}
           {this.props.menuBox === 'concede' && this.concedeMenu}
-          {this.props.menuBox === 'music' && this.musicMenu}
+          {this.props.menuBox === 'music' && this.musicMenu()}
         </div>
       </div>
     );

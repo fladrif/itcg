@@ -1,4 +1,4 @@
-import { Move } from 'boardgame.io';
+import { Move, PlayerID } from 'boardgame.io';
 import { INVALID_MOVE } from 'boardgame.io/core';
 
 import { FuncContext, GameState } from './game';
@@ -18,6 +18,7 @@ import {
   deepCardComp,
   getCardAtLocation,
   getLocation,
+  getOpponentID,
   getRandomKey,
   meetsSkillReq,
 } from './utils';
@@ -28,7 +29,15 @@ export interface MoveOptions {
   choice?: Choice;
   position?: number;
   finished?: boolean;
+  playerConcession?: PlayerID;
 }
+
+export const concede: Move<GameState> = (fnCtx: FuncContext, opts?: MoveOptions) => {
+  const { G, ctx, events } = fnCtx;
+  if (!opts || !opts.playerConcession) return INVALID_MOVE;
+
+  events.endGame({ winner: getOpponentID(G, ctx, opts?.playerConcession) });
+};
 
 export const levelUp: Move<GameState> = (fnCtx: FuncContext, opts?: MoveOptions) => {
   const { G, ctx } = fnCtx;
