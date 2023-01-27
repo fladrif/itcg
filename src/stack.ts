@@ -111,8 +111,18 @@ function setStages({ G, ctx, events }: FuncContext, decisions: Decision[]) {
   events.setActivePlayers(otherStages);
 }
 
+export function overrideStage(
+  { events }: FuncContext,
+  stg: string,
+  opponentAction: boolean
+): void {
+  const setStages = stage(stg, opponentAction);
+
+  events.setActivePlayers(setStages);
+}
+
 export function resolveStack(fnCtx: FuncContext, opts?: ResolveStackOptions) {
-  const { G, ctx, events } = fnCtx;
+  const { G, ctx } = fnCtx;
   const stack = G.stack;
   if (!stack) return;
 
@@ -169,7 +179,11 @@ export function resolveStack(fnCtx: FuncContext, opts?: ResolveStackOptions) {
     afterTrigFns.push(...getTriggerFns(fnCtx, decision, 'After'));
     stackTriggerFns(fnCtx, decision, afterTrigFns);
 
-    pruneSelection(fnCtx, decision.selection, decision.selection); // Removes select tag from card (ui)
+    /**
+     * Removes select tag from card (ui)
+     */
+    pruneSelection(fnCtx, decision.selection, decision.selection);
+
     resolveStack(fnCtx);
   } else if (
     opts?.resetStack !== true &&
@@ -178,7 +192,7 @@ export function resolveStack(fnCtx: FuncContext, opts?: ResolveStackOptions) {
     if (!mayFinished(stack.activeDecisions[0].target) && opts?.finished) return; // finished option can only be used if quantityUpTo is true
 
     stack.decisions.push(stack.activeDecisions.shift()!);
-    events.endStage!();
+    setStages(fnCtx, stack.activeDecisions);
 
     resolveStack(fnCtx);
   } else if (opts?.resetStack) {
