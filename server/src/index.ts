@@ -10,7 +10,13 @@ import { ITCG } from '../../src/game';
 import { CLIENT, SERVER } from '../../src/config';
 
 import { db } from './db';
-import { AUTH_COOKIE_NAME, USER_COOKIE_NAME, setCookies, verify } from './utils';
+import {
+  AUTH_COOKIE_NAME,
+  USER_COOKIE_NAME,
+  setCookies,
+  verify,
+  validUsername,
+} from './utils';
 import {
   extractAuth,
   serverAuth,
@@ -66,6 +72,8 @@ server.router.post('/login', bodyParser(), async (ctx: any) => {
 
 server.router.post('/signup', bodyParser(), async (ctx: any) => {
   const { username, passhash } = await verify(ctx, userNonces);
+
+  if (!validUsername(username)) ctx.throw(400, 'Username must be alphanumeric');
 
   const usernameUsed = await db.userExist(username);
   if (usernameUsed) ctx.throw(400, 'Username already used');
