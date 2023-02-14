@@ -2,16 +2,26 @@ import React from 'react';
 import { ParagraphStyle } from './overall.css';
 
 const baseStyle: React.CSSProperties = {
-  marginTop: '1%',
+  margin: '1%',
   display: 'flex',
   flexDirection: 'column',
-  width: '60vw',
 };
 
 export class ITCGDevLog extends React.Component {
   devNotes() {
     return (
       <>
+        <p style={ParagraphStyle}>
+          <b>November 28, 2022</b> Reworked website look and feel. Used{' '}
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            href="https://www.getpapercss.com/"
+          >
+            Paper CSS
+          </a>
+          , changed wording, added color, and moved content.
+        </p>
         <p style={ParagraphStyle}>
           <b>May 6, 2022</b> Updated UI and UX in game and included a background image.
           Only cards not yet implemented in Set 1 are 'MP Eater' and 'Blue Diros', and

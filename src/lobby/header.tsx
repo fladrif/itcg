@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link, NavLink } from 'react-router-dom';
 
 import header from '../images/itcgCBsk2.jpg';
 
@@ -8,125 +7,78 @@ interface HeaderProps {
 }
 
 const baseStyle: React.CSSProperties = {
+  position: 'sticky',
+  background: 'linear-gradient(0.25turn, #FC4336, 20%, #F08C56)',
+};
+
+const headerStyle: React.CSSProperties = {
   display: 'flex',
   flexDirection: 'row',
-  width: '100vw',
-};
-
-const titleImageStyle: React.CSSProperties = {
-  marginTop: '1%',
-  marginLeft: '3%',
-  alignSelf: 'start',
-};
-
-const titleStyle: React.CSSProperties = {
-  marginTop: '1%',
-  marginLeft: '1%',
-  alignSelf: 'start',
-};
-
-const menuStyle: React.CSSProperties = {
-  flex: '1',
-  display: 'flex',
-  marginLeft: '3%',
-  alignSelf: 'end',
-};
-
-const menuItem: React.CSSProperties = {
-  padding: '1%',
-  marginLeft: '1%',
-  borderTop: 'groove',
-  borderLeft: 'groove',
-  borderRight: 'groove',
-  textDecoration: 'none',
-  color: 'black',
-};
-
-const selectedMenuItem: React.CSSProperties = {
-  ...menuItem,
-  backgroundColor: 'grey',
-};
-
-const UIStyle: React.CSSProperties = {
-  marginTop: '1%',
-  marginRight: '3%',
-  alignSelf: 'center',
 };
 
 const headerImageStyle: React.CSSProperties = {
-  width: '6em',
+  width: '2em',
 };
 
 export class ITCGHeader extends React.Component<HeaderProps> {
-  baseMenu = (
-    <>
-      <NavLink activeStyle={selectedMenuItem} exact={true} style={menuItem} to={'/'}>
-        Home
-      </NavLink>
-    </>
-  );
-
   addtlMenu = (
     <>
-      <NavLink activeStyle={selectedMenuItem} style={menuItem} to={'/howtoplay'}>
-        How To Play
-      </NavLink>
-      <NavLink activeStyle={selectedMenuItem} style={menuItem} to={'/devlog'}>
-        Dev Log
-      </NavLink>
-      <NavLink activeStyle={selectedMenuItem} style={menuItem} to={'/resources'}>
-        Resources
-      </NavLink>
+      <li>
+        <a href="/howtoplay">How To Play</a>
+      </li>
+      <li>
+        <a href="/about">About</a>
+      </li>
     </>
   );
 
   loggedInUI() {
     return (
-      <>
-        <div>
-          Welcome <b>{this.props.username}</b>
-        </div>
-        <Link to={'/logout'}>
-          <button type={'button'}>Log Out</button>
-        </Link>
-      </>
+      <li>
+        <a href="/logout">Log Out</a>
+      </li>
     );
   }
 
   loggedOutUI() {
     return (
       <>
-        <Link to={'/login'}>
-          <button type={'button'}>Log In</button>
-        </Link>
-        <Link to={'/signup'}>
-          <button type={'button'}>Sign Up</button>
-        </Link>
+        <li>
+          <a href="/login"> Log In </a>
+        </li>
+        <li>
+          <a href="/signup"> Sign Up </a>
+        </li>
       </>
     );
   }
 
   loggedOutMenu() {
     return (
-      <>
-        {this.baseMenu}
+      <ul className="inline">
+        <li>
+          <a href="/">Home</a>
+        </li>
         {this.addtlMenu}
-      </>
+        <li>|</li>
+        {this.loggedOutUI()}
+      </ul>
     );
   }
 
   loggedInMenu() {
     return (
-      <>
-        {this.baseMenu}
-        <NavLink activeStyle={selectedMenuItem} style={menuItem} to={'/rooms'}>
-          Rooms
-        </NavLink>
-        <NavLink activeStyle={selectedMenuItem} style={menuItem} to={'/decks'}>
-          Decks
-        </NavLink>
+      <ul className="inline">
+        <li>
+          <a href="/">Tables</a>
+        </li>
+        <li>
+          <a href="/decks">Decks</a>
+        </li>
         {this.addtlMenu}
-      </>
+        <li>|</li>
+        {this.loggedInUI()}
+      </ul>
     );
   }
 
@@ -134,25 +86,29 @@ export class ITCGHeader extends React.Component<HeaderProps> {
     const loggedIn = !!this.props.username;
 
     return (
-      <div style={baseStyle}>
-        <div style={titleImageStyle}>
-          <Link to={'/'}>
+      <nav style={baseStyle} className="border fixed split-nav">
+        <div className="nav-brand" style={headerStyle}>
+          <a href="/">
             <img src={header} style={headerImageStyle} />
-          </Link>
+          </a>
+          <div>
+            <h3>
+              <a href="/">Maplestory iTCG</a>
+            </h3>
+          </div>
         </div>
-        <div style={titleStyle}>
-          <h1>Maplestory iTCG</h1>
-          Maplestory card game web client
+        <div className="collapsible">
+          <input id="collapsible1" type="checkbox" name="collapsible1" />
+          <label htmlFor="collapsible1">
+            <div className="bar1">-</div>
+            <div className="bar3">-</div>
+          </label>
+          <div className="collapsible-body">
+            {!loggedIn && this.loggedOutMenu()}
+            {loggedIn && this.loggedInMenu()}
+          </div>
         </div>
-        <div style={menuStyle}>
-          {!loggedIn && this.loggedOutMenu()}
-          {loggedIn && this.loggedInMenu()}
-        </div>
-        <div style={UIStyle}>
-          {!loggedIn && this.loggedOutUI()}
-          {loggedIn && this.loggedInUI()}
-        </div>
-      </div>
+      </nav>
     );
   }
 }

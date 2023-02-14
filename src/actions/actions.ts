@@ -1,7 +1,6 @@
-import { Ctx } from 'boardgame.io';
 import { INVALID_MOVE } from 'boardgame.io/core';
 
-import { GameState } from '../game';
+import { FuncContext } from '../game';
 import {
   CardClasses,
   Monster,
@@ -33,21 +32,21 @@ import {
   resolveDamage,
 } from './utils';
 
-function ack(G: GameState, ctx: Ctx, opts: ActionOpts): any {
-  if (!G.stack) return;
+function ack(fnCtx: FuncContext, opts: ActionOpts): any {
+  if (!fnCtx.G.stack) return;
   if (!opts.choiceSelection || !opts.dialogDecision || !opts.source) return;
 
-  upsertStack(G, ctx, ensureDecision(opts.dialogDecision, opts.source));
+  upsertStack(fnCtx, ensureDecision(opts.dialogDecision, opts.source));
 }
 
-function assist(G: GameState, ctx: Ctx, opts: ActionOpts): any {
+function assist(fnCtx: FuncContext, opts: ActionOpts): any {
+  const { G, ctx } = fnCtx;
   if (!G.stack || !opts.damage || !opts.source) return;
 
   const playerState = G.player[opts.source.owner];
 
   pushTriggerStore(
-    G,
-    ctx,
+    fnCtx,
     'MeditationTrigger',
     opts.source,
     { damage: resolveDamage(playerState, opts.damage) },
@@ -55,7 +54,8 @@ function assist(G: GameState, ctx: Ctx, opts: ActionOpts): any {
   );
 }
 
-function attack(G: GameState, ctx: Ctx, opts: ActionOpts): any {
+function attack(fnCtx: FuncContext, opts: ActionOpts): any {
+  const { G, ctx } = fnCtx;
   if (!G.stack) return;
 
   (getCardAtLocation(G, ctx, Location.Field, opts.source!.key) as Monster).attacks--;
@@ -68,10 +68,11 @@ function attack(G: GameState, ctx: Ctx, opts: ActionOpts): any {
     key: getRandomKey(),
   };
 
-  upsertStack(G, ctx, [decision]);
+  upsertStack(fnCtx, [decision]);
 }
 
-function bounce(G: GameState, ctx: Ctx, opts: ActionOpts): any {
+function bounce(fnCtx: FuncContext, opts: ActionOpts): any {
+  const { G, ctx } = fnCtx;
   if (!G.stack) return;
   if (!opts.selection) return;
 
@@ -86,12 +87,13 @@ function bounce(G: GameState, ctx: Ctx, opts: ActionOpts): any {
 
         G.player[card.owner].hand.push(cardLoc);
 
-        handleCardLeaveField(G, ctx, cardLoc, location);
+        handleCardLeaveField(fnCtx, cardLoc, location);
       });
   }
 }
 
-function buff(G: GameState, _ctx: Ctx, opts: ActionOpts): any {
+function buff(fnCtx: FuncContext, opts: ActionOpts): any {
+  const { G } = fnCtx;
   if (!G.stack || !opts.decision || !opts.damage || !opts.source) return;
 
   const decision = G.stack.decisions.filter((dec) => dec.key === opts.decision)[0];
@@ -107,14 +109,14 @@ function buff(G: GameState, _ctx: Ctx, opts: ActionOpts): any {
   decision.opts.damage = decDmg + dmgInc;
 }
 
-function buffall(G: GameState, ctx: Ctx, opts: ActionOpts): any {
+function buffall(fnCtx: FuncContext, opts: ActionOpts): any {
+  const { G, ctx } = fnCtx;
   if (!G.stack || !opts.source || !opts.damage) return;
 
   const playerState = G.player[opts.source.owner];
 
   pushTriggerStore(
-    G,
-    ctx,
+    fnCtx,
     'BuffAllTrigger',
     opts.source,
     { damage: resolveDamage(playerState, opts.damage) },
@@ -122,7 +124,8 @@ function buffall(G: GameState, ctx: Ctx, opts: ActionOpts): any {
   );
 }
 
-function conjure(G: GameState, ctx: Ctx, opts: ActionOpts): any {
+function conjure(fnCtx: FuncContext, opts: ActionOpts): any {
+  const { G } = fnCtx;
   if (!G.stack) return;
   if (!opts.source) return;
 
@@ -146,10 +149,11 @@ function conjure(G: GameState, ctx: Ctx, opts: ActionOpts): any {
       (card) => card.class === CardClasses.Magician
     ).length >= 2;
 
-  if (hasMageLevel) upsertStack(G, ctx, [bounceDec]);
+  if (hasMageLevel) upsertStack(fnCtx, [bounceDec]);
 }
 
-function damage(G: GameState, ctx: Ctx, opts: ActionOpts): any {
+function damage(fnCtx: FuncContext, opts: ActionOpts): any {
+  const { G, ctx } = fnCtx;
   if (!G.stack) return;
   if (!opts.selection || !opts.source || opts.damage === undefined) return;
 
@@ -169,7 +173,8 @@ function damage(G: GameState, ctx: Ctx, opts: ActionOpts): any {
   }
 }
 
-function destroy(G: GameState, ctx: Ctx, opts: ActionOpts): any {
+function destroy(fnCtx: FuncContext, opts: ActionOpts): any {
+  const { G, ctx } = fnCtx;
   if (!G.stack) return;
   if (!opts.selection) return;
 
@@ -181,16 +186,17 @@ function destroy(G: GameState, ctx: Ctx, opts: ActionOpts): any {
       .map((card) => {
         G.player[card.owner].discard.push(card as NonCharacter);
 
-        handleCardLeaveField(G, ctx, card as NonCharacter, location);
+        handleCardLeaveField(fnCtx, card as NonCharacter, location);
       });
   }
 }
 
-function discard(G: GameState, ctx: Ctx, opts: ActionOpts): any {
-  destroy(G, ctx, opts);
+function discard(fnCtx: FuncContext, opts: ActionOpts): any {
+  destroy(fnCtx, opts);
 }
 
-function drinkpotion(G: GameState, ctx: Ctx, opts: ActionOpts): any {
+function drinkpotion(fnCtx: FuncContext, opts: ActionOpts): any {
+  const { G } = fnCtx;
   if (!G.stack) return;
   if (!opts.source) return;
 
@@ -205,14 +211,16 @@ function drinkpotion(G: GameState, ctx: Ctx, opts: ActionOpts): any {
     key: getRandomKey(),
   };
 
-  upsertStack(G, ctx, [healDec]);
+  upsertStack(fnCtx, [healDec]);
 }
 
-function flip(G: GameState, ctx: Ctx, opts: ActionOpts): any {
+const flip = (fnCtx: FuncContext, opts: ActionOpts) => {
+  const { G, random } = fnCtx;
+
   if (!G.stack) return;
   if (!opts.choiceSelection || !opts.source || !opts.dialogDecision) return;
 
-  const flippedCoin = ctx.random!.Die(2) == 1 ? Choice.Heads : Choice.Tails;
+  const flippedCoin = random.Die(2) == 1 ? Choice.Heads : Choice.Tails;
   const didWin = flippedCoin === opts.choiceSelection;
 
   const ackDec: Decision = {
@@ -231,9 +239,12 @@ function flip(G: GameState, ctx: Ctx, opts: ActionOpts): any {
     key: getRandomKey(),
   };
 
-  upsertStack(G, ctx, [ackDec]);
-}
-function level(G: GameState, ctx: Ctx, opts: ActionOpts): any {
+  upsertStack(fnCtx, [ackDec]);
+};
+
+function level(fnCtx: FuncContext, opts: ActionOpts): any {
+  const { G, ctx } = fnCtx;
+
   if (!G.stack || !opts.selection) return;
 
   const dec: Decision[] = [];
@@ -262,9 +273,9 @@ function level(G: GameState, ctx: Ctx, opts: ActionOpts): any {
       if (oneshot) {
         selCard.skill.map((sk, idx) => {
           if (idx === 0) {
-            upsertStack(G, ctx, [parseSkill(G, ctx, sk, card)]);
+            upsertStack(fnCtx, [parseSkill(fnCtx, sk, card)]);
           } else {
-            G.stack!.queuedDecisions.push(parseSkill(G, ctx, sk, card));
+            G.stack!.queuedDecisions.push(parseSkill(fnCtx, sk, card));
           }
         });
       }
@@ -278,10 +289,11 @@ function level(G: GameState, ctx: Ctx, opts: ActionOpts): any {
     });
   }
 
-  upsertStack(G, ctx, dec);
+  upsertStack(fnCtx, dec);
 }
 
-function loot(G: GameState, ctx: Ctx, opts: ActionOpts): any {
+function loot(fnCtx: FuncContext, opts: ActionOpts): any {
+  const { G, ctx } = fnCtx;
   if (!G.stack) return;
 
   const oppState = getOpponentState(G, ctx);
@@ -300,16 +312,17 @@ function loot(G: GameState, ctx: Ctx, opts: ActionOpts): any {
     opts,
   };
 
-  upsertStack(G, ctx, [discardDecision]);
+  upsertStack(fnCtx, [discardDecision]);
 }
 
-function nomercy(G: GameState, ctx: Ctx, opts: ActionOpts): any {
+function nomercy(fnCtx: FuncContext, opts: ActionOpts): any {
+  const { G, ctx } = fnCtx;
   if (!G.stack) return;
 
   const source = opts.source as NonCharacter;
   if (!opts.selection || opts.damage == undefined || !source) return;
 
-  pushTriggerStore(G, ctx, 'NoMercyTrigger', source, undefined, {
+  pushTriggerStore(fnCtx, 'NoMercyTrigger', source, undefined, {
     usableTurn: ctx.turn,
   });
 
@@ -321,14 +334,15 @@ function nomercy(G: GameState, ctx: Ctx, opts: ActionOpts): any {
     key: getRandomKey(),
   };
 
-  upsertStack(G, ctx, [decision]);
+  upsertStack(fnCtx, [decision]);
 }
 
-function noop(_G: GameState, _ctx: Ctx, _opts: ActionOpts): any {
+function noop(_fnCtx: FuncContext, _opts: ActionOpts): any {
   return;
 }
 
-function optional(G: GameState, ctx: Ctx, opts: ActionOpts): any {
+function optional(fnCtx: FuncContext, opts: ActionOpts): any {
+  const { G, ctx } = fnCtx;
   if (!G.stack) return;
   if (!opts.choiceSelection || !opts.dialogDecision || !opts.source) return;
 
@@ -337,10 +351,11 @@ function optional(G: GameState, ctx: Ctx, opts: ActionOpts): any {
   const trigger = G.triggers.filter((trigger) => trigger.key === opts.triggerKey)[0];
   if (trigger?.lifetime?.turn !== undefined) trigger.lifetime.turn = ctx.turn + 1;
 
-  upsertStack(G, ctx, ensureDecision(opts.dialogDecision, opts.source));
+  upsertStack(fnCtx, ensureDecision(opts.dialogDecision, opts.source));
 }
 
-function play(G: GameState, ctx: Ctx, opts: ActionOpts): any {
+function play(fnCtx: FuncContext, opts: ActionOpts): any {
+  const { G, ctx } = fnCtx;
   if (!G.stack) return;
   if (!opts.selection) return;
 
@@ -355,7 +370,7 @@ function play(G: GameState, ctx: Ctx, opts: ActionOpts): any {
       if (isMonster(card) || isItem(card)) {
         card.turnETB = ctx.turn;
         player.field.push(card);
-        handleAbility(G, ctx, card);
+        handleAbility(fnCtx, card);
       } else if (isTactic(card)) {
         if (!card.ability.skills || card.ability.skills.length <= 0) {
           player.discard.push(card);
@@ -363,7 +378,7 @@ function play(G: GameState, ctx: Ctx, opts: ActionOpts): any {
           player.temporary.push(card);
         }
 
-        handleAbility(G, ctx, card);
+        handleAbility(fnCtx, card);
       }
 
       rmCard(G, ctx, card, location);
@@ -372,15 +387,16 @@ function play(G: GameState, ctx: Ctx, opts: ActionOpts): any {
 }
 
 // TODO: generalize to card from any location (incl temp zone)?
-function putIntoHand(G: GameState, ctx: Ctx, opts: ActionOpts): any {
-  quest(G, ctx, opts);
+function putIntoHand(fnCtx: FuncContext, opts: ActionOpts): any {
+  quest(fnCtx, opts);
 }
 
-function putIntoPlay(G: GameState, ctx: Ctx, opts: ActionOpts): any {
-  play(G, ctx, opts);
+function putIntoPlay(fnCtx: FuncContext, opts: ActionOpts): any {
+  play(fnCtx, opts);
 }
 
-function quest(G: GameState, ctx: Ctx, opts: ActionOpts): any {
+function quest(fnCtx: FuncContext, opts: ActionOpts): any {
+  const { G, ctx } = fnCtx;
   const owner = opts.source ? opts.source.owner : ctx.currentPlayer;
   const player = G.player[owner];
 
@@ -389,7 +405,8 @@ function quest(G: GameState, ctx: Ctx, opts: ActionOpts): any {
   player.hand.push(player.deck.shift()!);
 }
 
-function rainofarrows(G: GameState, ctx: Ctx, opts: ActionOpts): any {
+function rainofarrows(fnCtx: FuncContext, opts: ActionOpts): any {
+  const { G, ctx } = fnCtx;
   if (!G.stack || !opts.source || !opts.damage) return;
 
   const oppCards = getOpponentState(G, ctx, opts.source.owner).hand.length;
@@ -398,6 +415,7 @@ function rainofarrows(G: GameState, ctx: Ctx, opts: ActionOpts): any {
   const decision: Decision = {
     action: 'damage',
     opts: {
+      ...opts,
       damage: oppCards * damage,
     },
     selection: { ...opts.selection } || {},
@@ -405,10 +423,11 @@ function rainofarrows(G: GameState, ctx: Ctx, opts: ActionOpts): any {
     key: getRandomKey(),
   };
 
-  upsertStack(G, ctx, [decision]);
+  upsertStack(fnCtx, [decision]);
 }
 
-function refresh(G: GameState, ctx: Ctx, opts: ActionOpts): any {
+function refresh(fnCtx: FuncContext, opts: ActionOpts): any {
+  const { G, ctx } = fnCtx;
   if (!G.stack) return;
   if (opts.lifegain == undefined) return;
 
@@ -426,7 +445,8 @@ function refresh(G: GameState, ctx: Ctx, opts: ActionOpts): any {
   G.player[player].hp += opts.lifegain;
 }
 
-function replacement(G: GameState, _ctx: Ctx, opts: ActionOpts): any {
+function replacement(fnCtx: FuncContext, opts: ActionOpts): any {
+  const { G } = fnCtx;
   if (!G.stack || !opts.decision) return;
 
   const decision = G.stack.decisions.filter((dec) => dec.key === opts.decision)[0];
@@ -435,7 +455,8 @@ function replacement(G: GameState, _ctx: Ctx, opts: ActionOpts): any {
   decision.action = 'noop';
 }
 
-function revealDeck(G: GameState, _ctx: Ctx, opts: ActionOpts): any {
+function revealDeck(fnCtx: FuncContext, opts: ActionOpts): any {
+  const { G } = fnCtx;
   if (!G.stack || !opts.source) return;
 
   const id = opts.source.owner;
@@ -445,7 +466,8 @@ function revealDeck(G: GameState, _ctx: Ctx, opts: ActionOpts): any {
   });
 }
 
-function roar(G: GameState, ctx: Ctx, opts: ActionOpts): any {
+function roar(fnCtx: FuncContext, opts: ActionOpts): any {
+  const { G } = fnCtx;
   if (!G.stack || !opts.source || !opts.damage) return;
 
   const playerField = G.player[opts.source.owner].field;
@@ -464,10 +486,11 @@ function roar(G: GameState, ctx: Ctx, opts: ActionOpts): any {
     key: getRandomKey(),
   };
 
-  upsertStack(G, ctx, [decision]);
+  upsertStack(fnCtx, [decision]);
 }
 
-function scout(G: GameState, ctx: Ctx, _opts: ActionOpts): any {
+function scout(fnCtx: FuncContext, _opts: ActionOpts): any {
+  const { G, ctx } = fnCtx;
   const player = G.player[ctx.currentPlayer];
 
   if (player.deck.length <= 0) return INVALID_MOVE;
@@ -476,7 +499,8 @@ function scout(G: GameState, ctx: Ctx, _opts: ActionOpts): any {
   if (isMonster(player.deck[0])) player.hand.push(player.deck.shift()!);
 }
 
-function shuffle(G: GameState, ctx: Ctx, opts: ActionOpts): any {
+function shuffle(fnCtx: FuncContext, opts: ActionOpts): any {
+  const { G, ctx, random } = fnCtx;
   const id = opts.source ? opts.source.owner : ctx.currentPlayer;
   const deck = G.player[id].deck;
 
@@ -484,10 +508,11 @@ function shuffle(G: GameState, ctx: Ctx, opts: ActionOpts): any {
     if (card.reveal) card.reveal = undefined;
   });
 
-  G.player[id].deck = ctx.random!.Shuffle!(deck);
+  G.player[id].deck = random.Shuffle(deck);
 }
 
-function seer(G: GameState, ctx: Ctx, opts: ActionOpts): any {
+function seer(fnCtx: FuncContext, opts: ActionOpts): any {
+  const { G, ctx } = fnCtx;
   if (!G.stack || !opts.source) return;
 
   const playerID = opts.source.owner;
@@ -518,10 +543,11 @@ function seer(G: GameState, ctx: Ctx, opts: ActionOpts): any {
     key: getRandomKey(),
   };
 
-  upsertStack(G, ctx, [seerChoiceDec]);
+  upsertStack(fnCtx, [seerChoiceDec]);
 }
 
-function seerChoice(G: GameState, ctx: Ctx, opts: ActionOpts): any {
+function seerChoice(fnCtx: FuncContext, opts: ActionOpts): any {
+  const { G, ctx } = fnCtx;
   if (!G.stack || !opts.selection) return;
 
   const locations = [Location.Deck, Location.OppDeck];
@@ -541,7 +567,8 @@ function seerChoice(G: GameState, ctx: Ctx, opts: ActionOpts): any {
 }
 
 // TODO: take into account shield abilities
-function shield(G: GameState, ctx: Ctx, opts: ActionOpts): any {
+function shield(fnCtx: FuncContext, opts: ActionOpts): any {
+  const { G, ctx } = fnCtx;
   if (!G.stack || !opts.decision) return;
   const validLocations = [Location.OppCharacter, Location.Character];
 
@@ -566,7 +593,8 @@ function shield(G: GameState, ctx: Ctx, opts: ActionOpts): any {
   if (decision.opts.damage < 0) decision.opts.damage = 0;
 }
 
-function tough(G: GameState, _ctx: Ctx, opts: ActionOpts): any {
+function tough(fnCtx: FuncContext, opts: ActionOpts): any {
+  const { G } = fnCtx;
   if (!G.stack || !opts.decision) return;
 
   const decision = G.stack.decisions.filter((dec) => dec.key === opts.decision)[0];
@@ -575,20 +603,22 @@ function tough(G: GameState, _ctx: Ctx, opts: ActionOpts): any {
   decision.opts.damage = undefined;
 }
 
-function steadyhand(G: GameState, ctx: Ctx, opts: ActionOpts): any {
+function steadyhand(fnCtx: FuncContext, opts: ActionOpts): any {
+  const { G, ctx } = fnCtx;
   if (!G.stack) return;
 
   const source = opts.source as NonCharacter;
   const level = G.player[source.owner].level;
   if (!source || level < 50) return;
 
-  pushTriggerStore(G, ctx, 'SteadyHandTrigger', source, undefined, {
+  pushTriggerStore(fnCtx, 'SteadyHandTrigger', source, undefined, {
     usableTurn: ctx.turn,
   });
 }
 
 // TODO: extend interactive options for no level option
-function trainhard(G: GameState, ctx: Ctx, opts: ActionOpts): any {
+function trainhard(fnCtx: FuncContext, opts: ActionOpts): any {
+  const { G, ctx } = fnCtx;
   if (!G.stack) return;
 
   const warriorSkills = G.player[ctx.currentPlayer].learnedSkills.filter((card) =>
@@ -623,10 +653,11 @@ function trainhard(G: GameState, ctx: Ctx, opts: ActionOpts): any {
     key: getRandomKey(),
   };
 
-  upsertStack(G, ctx, [optDec]);
+  upsertStack(fnCtx, [optDec]);
 }
 
-function tuck(G: GameState, ctx: Ctx, opts: ActionOpts): any {
+function tuck(fnCtx: FuncContext, opts: ActionOpts): any {
+  const { G, ctx } = fnCtx;
   if (!G.stack) return;
   if (!opts.selection || !opts.position) return;
 
@@ -637,7 +668,7 @@ function tuck(G: GameState, ctx: Ctx, opts: ActionOpts): any {
 
       G.player[card.owner].deck.splice(opts.position!, 0, cardLoc);
 
-      handleCardLeaveField(G, ctx, cardLoc, location);
+      handleCardLeaveField(fnCtx, cardLoc, location);
     });
   }
 }

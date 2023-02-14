@@ -169,6 +169,7 @@ export class ITCGCard extends React.Component<CardProp, CardState> {
     return (
       <div style={baseStyle}>
         <img
+          className="no-border no-responsive"
           style={style}
           onClick={() =>
             this.props.move({ card: [this.props.location, this.props.card] })
@@ -177,6 +178,7 @@ export class ITCGCard extends React.Component<CardProp, CardState> {
           alt={this.props.card.name}
         />
         <img
+          className="no-border no-responsive"
           onClick={() =>
             this.props.move({ card: [this.props.location, this.props.card], position: 0 })
           }
@@ -185,6 +187,7 @@ export class ITCGCard extends React.Component<CardProp, CardState> {
           alt={this.props.card.name}
         />
         <img
+          className="no-border no-responsive"
           onClick={() =>
             this.props.move({ card: [this.props.location, this.props.card], position: 1 })
           }
@@ -193,6 +196,7 @@ export class ITCGCard extends React.Component<CardProp, CardState> {
           alt={this.props.card.name}
         />
         <img
+          className="no-border no-responsive"
           onClick={() =>
             this.props.move({ card: [this.props.location, this.props.card], position: 2 })
           }
@@ -208,6 +212,7 @@ export class ITCGCard extends React.Component<CardProp, CardState> {
     return (
       <div style={baseStyle}>
         <img
+          className="no-border no-responsive"
           style={style}
           onClick={() =>
             this.props.move({
@@ -231,6 +236,7 @@ export class ITCGCard extends React.Component<CardProp, CardState> {
     return (
       <div style={baseStyle}>
         <img
+          className="no-border no-responsive"
           style={style}
           onClick={() =>
             this.props.move({ card: [this.props.location, this.props.card] })
@@ -241,6 +247,7 @@ export class ITCGCard extends React.Component<CardProp, CardState> {
           onMouseLeave={() => this.unexpandCard()}
         />
         <img
+          className="no-border no-responsive"
           style={getStyles([...this.props.skill0, ...this.state.skill0])}
           onClick={() =>
             this.props.move({ card: [this.props.location, this.props.card], position: 0 })
@@ -276,7 +283,12 @@ export class ITCGCardback extends React.Component<CardbackProp> {
 
     return (
       <div style={baseStyle}>
-        <img style={style} alt="cardback" src={cardback} />
+        <img
+          className="no-border no-responsive"
+          style={style}
+          alt="cardback"
+          src={cardback}
+        />
       </div>
     );
   }

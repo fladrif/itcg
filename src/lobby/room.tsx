@@ -3,7 +3,7 @@ import { Button, FormControl } from 'react-bootstrap';
 import axios from 'axios';
 
 import { OverallListStyle, ListItemStyle } from './list.css';
-import { ButtonStyle, OverallButtonStyle, ParagraphStyle } from './overall.css';
+import { CardStyle, CardWrapperStyle, ParagraphStyle } from './overall.css';
 import { DeckMetaData } from './deck';
 
 import { AppState } from '../App';
@@ -42,9 +42,9 @@ const notReadyStyle: React.CSSProperties = {
 };
 
 const baseStyle: React.CSSProperties = {
+  margin: '1%',
   display: 'flex',
   flexDirection: 'column',
-  width: '70vw',
 };
 
 const formCompStyle: React.CSSProperties = {
@@ -94,8 +94,8 @@ export class ITCGRoom extends React.Component<RoomProp, State> {
 
   roomBlurb = (
     <p style={ParagraphStyle}>
-      Challenge others to a game by <b>joining</b> or <b>creating</b> a room. Use the
-      Discord to prearrange games with other players.
+      Challenge others to a game by <b>joining</b> or <b>opening</b> a table. Use the
+      Discord server to arrange games with other players.
     </p>
   );
 
@@ -129,15 +129,17 @@ export class ITCGRoom extends React.Component<RoomProp, State> {
     const cur = room.users.find((usr) => usr.name === this.props.username);
     const opp = room.users.find((usr) => usr.name !== this.props.username);
 
+    const readyBtnClass = cur?.ready ? 'btn-success' : 'btn-primary';
+
     return (
       <>
-        <h1>Duel Preparation</h1>
+        <h2>{owner.name}'s Table</h2>
         <div style={OverallListStyle}>
           <div style={ListItemStyle}>
-            Owner: <h3>{owner?.name || ''}</h3>
+            Player 1: <h3>{owner?.name || ''}</h3>
           </div>
           <div style={ListItemStyle}>
-            Guest: <h3>{guest?.name || ''}</h3>
+            Player 2: <h3>{guest?.name || ''}</h3>
           </div>
           <div style={ListItemStyle}>
             Opponent Status:{' '}
@@ -158,38 +160,59 @@ export class ITCGRoom extends React.Component<RoomProp, State> {
             </FormControl>
           </div>
           <Button
-            style={ButtonStyle}
             disabled={!cur?.deck || cur?.ready}
+            className={readyBtnClass}
             onClick={() => this.updateRoom(room.id, { ready: true })}
           >
-            Lock In
+            {cur?.ready && 'Ready!'}
+            {!cur?.ready && 'Ready...?'}
           </Button>
-          <Button style={ButtonStyle} onClick={() => this.leaveRoom(room.id)}>
-            Leave Room
+          <Button onClick={() => this.leaveRoom(room.id)} className="btn-danger">
+            Leave Table
           </Button>
         </div>
       </>
     );
   }
 
+  createRoomCard() {
+    return (
+      !this.state.activeRoom && (
+        <div className="col" style={CardWrapperStyle}>
+          <div className="card" key="new" style={CardStyle}>
+            <div className="card-body">
+              <h2 className="card-title">New Tables</h2>
+              <button onClick={() => this.makeRoom()}>Open</button>
+            </div>
+          </div>
+        </div>
+      )
+    );
+  }
+
   getRoomList(rooms: Room[]) {
     const styledRooms = rooms.map((rm) => (
-      <div style={OverallListStyle}>
-        <div style={ListItemStyle}>
-          User: <h2>{rm.users.find((usr) => usr.owner === true)?.name || ''}</h2>
+      <div className="col" style={CardWrapperStyle}>
+        <div className="card" style={CardStyle} key={rm.id}>
+          <div className="card-body">
+            <h2 className="card-title">
+              {rm.users.find((usr) => usr.owner === true)?.name || ''}'s table
+            </h2>
+            <button onClick={() => this.joinRoom(rm.id)}>Sit down</button>
+          </div>
         </div>
-        <Button style={ButtonStyle} onClick={() => this.joinRoom(rm.id)}>
-          Join Room
-        </Button>
       </div>
     ));
 
     return (
-      <div>
-        <h1>Rooms</h1>
+      <>
+        <h2>Tables</h2>
         {this.roomBlurb}
-        {styledRooms}
-      </div>
+        <div className="row flex-left" style={{ width: '100%' }}>
+          {this.createRoomCard()}
+          {styledRooms}
+        </div>
+      </>
     );
   }
 
@@ -204,8 +227,11 @@ export class ITCGRoom extends React.Component<RoomProp, State> {
     } else {
       return (
         <>
-          <h2>No Open Rooms</h2>
+          <h2>No Open Tables</h2>
           {this.roomBlurb}
+          <div className="row flex-left" style={{ width: '100%' }}>
+            {this.createRoomCard()}
+          </div>
         </>
       );
     }
@@ -282,15 +308,6 @@ export class ITCGRoom extends React.Component<RoomProp, State> {
   }
 
   render() {
-    return (
-      <div style={baseStyle}>
-        {!this.state.activeRoom && (
-          <Button style={OverallButtonStyle} onClick={() => this.makeRoom()}>
-            Create Room
-          </Button>
-        )}
-        {this.getRooms()}
-      </div>
-    );
+    return <div style={baseStyle}>{this.getRooms()}</div>;
   }
 }

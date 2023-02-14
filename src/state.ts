@@ -2,7 +2,7 @@ import { Ctx, PlayerID } from 'boardgame.io';
 
 import { Action } from './actions';
 import { Monster, Character, NonCharacter } from './card';
-import { GameState } from './game';
+import { FuncContext } from './game';
 import { checkDeadMonstersOnField } from './hook';
 import { Keyword } from './keywords';
 import { meetsTarget, ActionTargets } from './target';
@@ -36,9 +36,11 @@ export interface GlobalState {
   targetOpponent?: boolean;
 }
 
-export function getMonsterAtt(G: GameState, ctx: Ctx, card: Monster) {
+export function getMonsterAtt(fnCtx: FuncContext, card: Monster) {
+  const { G, ctx } = fnCtx;
+
   const modifiers = getRelevantState(ctx, G.state, card).filter((state) =>
-    meetsTarget(G, ctx, state.targets, card)
+    meetsTarget(fnCtx, state.targets, card)
   );
 
   const attMod = modifiers.reduce(
@@ -49,9 +51,11 @@ export function getMonsterAtt(G: GameState, ctx: Ctx, card: Monster) {
   return attMod + card.attack;
 }
 
-export function getMonsterHealth(G: GameState, ctx: Ctx, card: Monster) {
+export function getMonsterHealth(fnCtx: FuncContext, card: Monster) {
+  const { G, ctx } = fnCtx;
+
   const modifiers = getRelevantState(ctx, G.state, card).filter((state) =>
-    meetsTarget(G, ctx, state.targets, card)
+    meetsTarget(fnCtx, state.targets, card)
   );
   const healthMod = modifiers.reduce(
     (acc, mod) =>
@@ -61,9 +65,11 @@ export function getMonsterHealth(G: GameState, ctx: Ctx, card: Monster) {
   return healthMod + card.health;
 }
 
-export function getMonsterKeywords(G: GameState, ctx: Ctx, card: Monster): Keyword[] {
+export function getMonsterKeywords(fnCtx: FuncContext, card: Monster): Keyword[] {
+  const { G, ctx } = fnCtx;
+
   const modifiers = getRelevantState(ctx, G.state, card).filter((state) =>
-    meetsTarget(G, ctx, state.targets, card)
+    meetsTarget(fnCtx, state.targets, card)
   );
 
   const extraKeywords = modifiers.reduce<Keyword[]>(
@@ -77,11 +83,13 @@ export function getMonsterKeywords(G: GameState, ctx: Ctx, card: Monster): Keywo
     : extraKeywords;
 }
 
-export function removeGlobalState(G: GameState, ctx: Ctx, card: NonCharacter) {
+export function removeGlobalState(fnCtx: FuncContext, card: NonCharacter) {
+  const { G } = fnCtx;
+
   if (card.ability.state) {
     const index = G.state.findIndex((state) => state.owner === card.key);
     G.state.splice(index, 1);
-    checkDeadMonstersOnField(G, ctx);
+    checkDeadMonstersOnField(fnCtx);
   }
 }
 
@@ -93,7 +101,9 @@ export function parseStateLifetime(ctx: Ctx, lifetime: StateLifetime): StateLife
   return { turn };
 }
 
-export function pruneStateStore(G: GameState, ctx: Ctx) {
+export function pruneStateStore(fnCtx: FuncContext) {
+  const { G, ctx } = fnCtx;
+
   const unPrunedStates = G.state.filter(
     (state) => !state.lifetime.turn || state.lifetime.turn > ctx.turn
   );

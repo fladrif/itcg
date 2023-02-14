@@ -55,7 +55,7 @@ export function updateDeck(deck: Decks): boolean {
     deck.id,
     deck.name,
     { character: updatedChar, deck: updatedDeckList },
-    deck.owner ? deck.owner.username : undefined
+    deck.owner ? deck.owner.id : undefined
   );
 
   return true;

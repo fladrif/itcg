@@ -1,7 +1,7 @@
-import { Ctx } from 'boardgame.io';
+import { Move } from 'boardgame.io';
 import { INVALID_MOVE } from 'boardgame.io/core';
 
-import { GameState } from './game';
+import { FuncContext, GameState } from './game';
 import { NonCharacter, Character, CardTypes, isMonster } from './card';
 import { endLevelStage, endActivateStage, endAttackStage } from './hook';
 import {
@@ -30,7 +30,8 @@ export interface MoveOptions {
   finished?: boolean;
 }
 
-export function levelUp(G: GameState, ctx: Ctx, opts?: MoveOptions) {
+export const levelUp: Move<GameState> = (fnCtx: FuncContext, opts?: MoveOptions) => {
+  const { G, ctx } = fnCtx;
   if (!opts || !opts.card) return INVALID_MOVE;
 
   const cardLoc = opts.card[0];
@@ -47,11 +48,15 @@ export function levelUp(G: GameState, ctx: Ctx, opts?: MoveOptions) {
     key: getRandomKey(),
   };
 
-  upsertStack(G, ctx, [levelDecision], 'level');
-  resolveStack(G, ctx);
-}
+  upsertStack(fnCtx, [levelDecision], 'level');
+  resolveStack(fnCtx);
+};
 
-export function activateSkill(G: GameState, ctx: Ctx, opts?: MoveOptions) {
+export const activateSkill: Move<GameState> = (
+  fnCtx: FuncContext,
+  opts?: MoveOptions
+) => {
+  const { G, ctx } = fnCtx;
   if (!opts || !opts.card) return INVALID_MOVE;
 
   const card = opts.card;
@@ -80,16 +85,16 @@ export function activateSkill(G: GameState, ctx: Ctx, opts?: MoveOptions) {
   }
 
   upsertStack(
-    G,
-    ctx,
-    skill.map((skill) => parseSkill(G, ctx, skill, selCard, true)),
+    fnCtx,
+    skill.map((skill) => parseSkill(fnCtx, skill, selCard, true)),
     'activate',
     prevPos
   );
-  resolveStack(G, ctx);
-}
+  resolveStack(fnCtx);
+};
 
-export function attack(G: GameState, ctx: Ctx, opts?: MoveOptions) {
+export const attack: Move<GameState> = (fnCtx: FuncContext, opts?: MoveOptions) => {
+  const { G, ctx } = fnCtx;
   if (!opts || !opts.card) return INVALID_MOVE;
 
   const card = opts.card;
@@ -118,49 +123,49 @@ export function attack(G: GameState, ctx: Ctx, opts?: MoveOptions) {
     },
     opts: {
       source: selCard,
-      damage: getMonsterAtt(G, ctx, selCard),
+      damage: getMonsterAtt(fnCtx, selCard),
     },
     selection: {},
     finished: false,
     key: getRandomKey(),
   };
 
-  upsertStack(G, ctx, [attackDecision], 'attack');
-  resolveStack(G, ctx);
-}
+  upsertStack(fnCtx, [attackDecision], 'attack');
+  resolveStack(fnCtx);
+};
 
-export function selectChoice(G: GameState, ctx: Ctx, opts?: MoveOptions) {
+export const selectChoice: Move<GameState> = (fnCtx: FuncContext, opts?: MoveOptions) => {
   if (!opts || !opts.choice) return INVALID_MOVE;
 
-  makeChoice(G, ctx, opts.choice);
-  resolveStack(G, ctx);
-}
+  makeChoice(fnCtx, opts.choice);
+  resolveStack(fnCtx);
+};
 
-export function selectTarget(G: GameState, ctx: Ctx, opts?: MoveOptions) {
+export const selectTarget: Move<GameState> = (fnCtx: FuncContext, opts?: MoveOptions) => {
   if (!opts || !opts.card) return INVALID_MOVE;
 
-  selectCard(G, ctx, opts.card);
-}
+  selectCard(fnCtx, opts.card);
+};
 
-export function confirmSkill(G: GameState, ctx: Ctx, opts?: MoveOptions) {
-  resolveStack(G, ctx, { finished: opts?.finished });
-}
+export const confirmSkill: Move<GameState> = (fnCtx: FuncContext, opts?: MoveOptions) => {
+  resolveStack(fnCtx, { finished: opts?.finished });
+};
 
-export function resetStack(G: GameState, ctx: Ctx, _opts?: MoveOptions) {
-  resolveStack(G, ctx, { resetStack: true });
-}
+export const resetStack: Move<GameState> = (fnCtx: FuncContext, _opts?: MoveOptions) => {
+  resolveStack(fnCtx, { resetStack: true });
+};
 
-export function noAttacks(G: GameState, ctx: Ctx, _opts?: MoveOptions) {
-  endAttackStage(G, ctx, true);
-}
+export const noAttacks: Move<GameState> = (fnCtx: FuncContext, _opts?: MoveOptions) => {
+  endAttackStage(fnCtx, true);
+};
 
-export function noLevel(G: GameState, ctx: Ctx, _opts?: MoveOptions) {
-  endLevelStage(G, ctx);
-}
+export const noLevel: Move<GameState> = (fnCtx: FuncContext, _opts?: MoveOptions) => {
+  endLevelStage(fnCtx);
+};
 
-export function noActivate(G: GameState, ctx: Ctx, _opts?: MoveOptions) {
-  endActivateStage(G, ctx, true);
-}
+export const noActivate: Move<GameState> = (fnCtx: FuncContext, _opts?: MoveOptions) => {
+  endActivateStage(fnCtx, true);
+};
 
 export function nullMove(opts?: MoveOptions) {
   return opts;

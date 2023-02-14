@@ -1,6 +1,5 @@
 import React from 'react';
 import lodash from 'lodash';
-// import { Redirect } from 'react-router-dom';
 import { Button, FormGroup, FormLabel, FormControl } from 'react-bootstrap';
 import axios from 'axios';
 
@@ -41,7 +40,6 @@ interface State {
 const baseStyle: React.CSSProperties = {
   display: 'flex',
   flexDirection: 'column',
-  width: '70vw',
 };
 
 const buttonStyle: React.CSSProperties = {
@@ -55,14 +53,12 @@ const negButtonStyle: React.CSSProperties = {
   ...buttonStyle,
   backgroundColor: 'red',
   color: 'white',
-  borderRadius: '0.3em',
 };
 
 const formStyle: React.CSSProperties = {
   display: 'flex',
   flexDirection: 'column',
   textShadow: '1px 1px 2px grey',
-  border: 'ridge',
 };
 
 const formRowStyle: React.CSSProperties = {
@@ -279,10 +275,20 @@ export class ITCGDeckBuilder extends React.Component<DeckBuilderProp> {
     if (!list) return;
     const cardList = list.map((card) => {
       return (
-        <div style={deckListRowStyle} key={card[0].name}>
-          <Button onClick={() => this.incCard(card[0].name)}>+</Button>
-          <Button onClick={() => this.decCard(card[0].name)}>-</Button>
-          <div style={{ marginLeft: '3%' }}>{card[1]}</div>
+        <div
+          onClick={async () =>
+            this.setState({ curCard: await this.findCard(card[0].name) })
+          }
+          style={deckListRowStyle}
+          key={card[0].name}
+        >
+          <div className="paper-btn btn-small" onClick={() => this.incCard(card[0].name)}>
+            +
+          </div>
+          <div style={{ margin: '1%' }}>{card[1]}</div>
+          <div className="paper-btn btn-small" onClick={() => this.decCard(card[0].name)}>
+            -
+          </div>
           <div style={listCardStyle}>{card[0].name}</div>
           <div style={listCardStyle}> {card[0].level} </div>
           <div style={listCardStyle}>{card[0].class}</div>
@@ -346,8 +352,12 @@ export class ITCGDeckBuilder extends React.Component<DeckBuilderProp> {
   render() {
     return (
       <div style={baseStyle}>
-        <h1>Deck Builder</h1>
-        <form onSubmit={async (e) => await this.handleSubmit(e)} style={formStyle}>
+        <h2>Deck Builder</h2>
+        <form
+          className="border border-3 border-primary"
+          onSubmit={async (e) => await this.handleSubmit(e)}
+          style={formStyle}
+        >
           <div style={{ ...formRowStyle, marginBottom: '0%' }}>
             <div style={formCompStyle}>
               <FormGroup controlId={'header'} style={formRowStyle}>
@@ -481,7 +491,7 @@ export class ITCGDeckBuilder extends React.Component<DeckBuilderProp> {
             </FormGroup>
           </div>
           <div style={formRowStyle}>
-            <div style={{ ...formCompStyle, flex: '0' }}>
+            <div>
               {this.state.curCard && (
                 <ITCGCard
                   move={() => {}}
@@ -497,14 +507,37 @@ export class ITCGDeckBuilder extends React.Component<DeckBuilderProp> {
               Deck List:{' '}
               {this.state.deckList?.deck.reduce((acc, card) => card[1] + acc, 0) || 0} /
               40
-              <div style={formStyle}>{this.renderDeckList()}</div>
+              <div className="border border-5 border-primary" style={formStyle}>
+                {this.renderDeckList()}
+              </div>
             </div>
           </div>
           <FormGroup controlId={'buttons'} style={buttonRowStyle}>
             {this.state.warning && <div style={warningStyle}>{this.state.warning}</div>}
-            <Button style={negButtonStyle} onClick={() => this.deleteDeck()}>
+            <label className="paper-btn margin" htmlFor="modal-1" style={negButtonStyle}>
               Delete Deck
-            </Button>
+            </label>
+            <input className="modal-state" id="modal-1" type="checkbox" />
+            <div className="modal">
+              <label className="modal-bg" htmlFor="modal-1"></label>
+              <div className="modal-body">
+                <label className="btn-close" htmlFor="modal-1">
+                  X
+                </label>
+                <h4 className="modal-title">Delete Deck</h4>
+                <p className="modal-text">
+                  Are you sure you want to delete "{this.state.name}"?
+                </p>
+                <label
+                  onClick={() => this.deleteDeck()}
+                  className="paper-btn"
+                  htmlFor="modal-1"
+                  style={negButtonStyle}
+                >
+                  Yes
+                </label>
+              </div>
+            </div>
             <Button style={buttonStyle} type={'submit'}>
               Save Deck
             </Button>

@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { Ctx, PlayerID } from 'boardgame.io';
 
-import { GameState, PlayerState } from './game';
+import { FuncContext, GameState, PlayerState } from './game';
 import {
   Card,
   CardClasses,
@@ -137,7 +137,8 @@ export function getRandomKey(): string {
   return uuidv4().split('-')[0];
 }
 
-export function getCurrentStage(_G: GameState, ctx: Ctx): string {
+export function getCurrentStage(fnCtx: FuncContext): string {
+  const { ctx } = fnCtx;
   return ctx.activePlayers ? ctx.activePlayers[ctx.currentPlayer] : '';
 }
 
@@ -157,7 +158,6 @@ export function mergeSelections(sel1: Selection, sel2: Selection): Selection {
 
 export function scrubPile(deck: NonCharacter[], curPlayer?: PlayerID): NonCharacter[] {
   const newDeck = deck.map((card) => {
-    console.log('Card reveal status:', card.reveal, curPlayer);
     if (card.reveal && curPlayer)
       console.log(
         (card.reveal as PlayerID[]).includes(curPlayer),

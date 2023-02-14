@@ -308,7 +308,12 @@ export const teleport: Omit<Tactic, 'key' | 'owner'> = {
     {
       action: 'quest',
       activated: false,
-      requirements: { level: 0, oneshot: true },
+      requirements: { level: 70, oneshot: true },
+    },
+    {
+      action: 'quest',
+      activated: false,
+      requirements: { level: 70, oneshot: true },
     },
   ],
   ability: {

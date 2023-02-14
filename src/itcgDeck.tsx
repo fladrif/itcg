@@ -5,6 +5,7 @@ import { ITCGCard, ITCGCardback } from './itcgCard';
 import { PlayerState } from './game';
 import { Location } from './target';
 import { BLANK_CARDNAME, NonCharacter } from './card';
+import { nullMove } from './moves';
 
 interface DeckProp {
   playerState: PlayerState;
@@ -20,6 +21,7 @@ const baseStyle: React.CSSProperties = {
   overflow: 'auto',
   alignItems: 'center',
   width: '50%',
+  fontSize: '1vw',
   textShadow:
     '1px 0 0 #fff, -1px 0 0 #fff, 0 1px 0 #fff, 0 -1px 0 #fff, 1px 1px 0 #fff, -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff',
 };
@@ -29,7 +31,7 @@ export class ITCGDeck extends React.Component<DeckProp> {
     if (card.name !== BLANK_CARDNAME) {
       return (
         <ITCGCard
-          move={this.props.select}
+          move={nullMove}
           location={this.props.currentPlayer ? Location.Deck : Location.OppDeck}
           card={card}
           key={card.key}

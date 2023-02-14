@@ -26,6 +26,7 @@ const levelStyle: React.CSSProperties = {
   textAlign: 'center',
   verticalAlign: 'middle',
   whiteSpace: 'nowrap',
+  fontSize: '1vw',
 };
 
 const nameStyle: React.CSSProperties = {
@@ -42,6 +43,7 @@ const nameStyle: React.CSSProperties = {
 
 const classStyle: React.CSSProperties = {
   color: 'lightgray',
+  fontSize: '1vw',
 };
 
 const confirmationStyle: React.CSSProperties = {
@@ -59,6 +61,7 @@ const confirmationStyle: React.CSSProperties = {
 
 const stageModalStyle: React.CSSProperties = {
   color: 'white',
+  fontSize: '1vw',
 };
 
 const highlightModalStyle: React.CSSProperties = {
@@ -68,7 +71,7 @@ const highlightModalStyle: React.CSSProperties = {
   paddingLeft: '1%',
   paddingRight: '1%',
   margin: '1%',
-  fontSize: '150%',
+  fontSize: '1.5vw',
 };
 
 export class ITCGStats extends React.Component<StatProp> {
@@ -123,7 +126,7 @@ export class ITCGStats extends React.Component<StatProp> {
         <div style={levelStyle}>Lv: {this.props.playerState.level}</div>
         <div style={nameStyle}>
           <div style={classStyle}>{this.props.playerState.character.class}</div>
-          {this.props.playerState.name}
+          <div style={{ fontSize: '1vw' }}>{this.props.playerState.name}</div>
         </div>
         <ProgressBar
           hp={this.props.playerState.hp}

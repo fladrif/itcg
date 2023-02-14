@@ -35,7 +35,7 @@ const baseStyle: React.CSSProperties = {
   textShadow:
     '2px 0 0 #fff, -2px 0 0 #fff, 0 2px 0 #fff, 0 -2px 0 #fff, 1px 1px 0 #fff, -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff',
   backgroundColor: 'rgba(84, 84, 84, 0.5)',
-  fontSize: '42px',
+  fontSize: '2vw',
   overflow: 'hidden',
 };
 
@@ -53,7 +53,7 @@ const selectionStyle: React.CSSProperties = {
 const buttonStyle: React.CSSProperties = {
   alignSelf: 'center',
   width: '20%',
-  fontSize: '50%',
+  fontSize: '1vw',
   borderRadius: '0.5em',
 };
 
