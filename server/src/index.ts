@@ -16,6 +16,7 @@ import {
   setCookies,
   verify,
   validUsername,
+  adqLengthUsername,
 } from './utils';
 import {
   extractAuth,
@@ -73,7 +74,9 @@ server.router.post('/login', bodyParser(), async (ctx: any) => {
 server.router.post('/signup', bodyParser(), async (ctx: any) => {
   const { username, passhash } = await verify(ctx, userNonces);
 
+  if (username === undefined) ctx.throw(400, 'Username missing');
   if (!validUsername(username)) ctx.throw(400, 'Username must be alphanumeric');
+  if (!adqLengthUsername(username)) ctx.throw(400, 'Username wrong size');
 
   const usernameUsed = await db.userExist(username);
   if (usernameUsed) ctx.throw(400, 'Username already used');
