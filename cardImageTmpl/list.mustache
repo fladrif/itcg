@@ -1,0 +1,11 @@
+{{^false}}
+#!/bin/bash
+{{/false}}
+
+{{#nonCharacters}}
+./cropNonChar.sh {{ name }}.jpg
+{{/nonCharacters}}
+
+{{#characters}}
+./cropChar.sh {{ name }}.jpg
+{{/characters}}

@@ -1,0 +1,9 @@
+#!/bin/bash
+
+{{#nonCharacters}}
+curl -o {{ name }}.png http://34.71.53.141/card-images/MapleStory/MapleStory/sets/setimages/Set1/{{ name }}.png
+{{/nonCharacters}}
+
+{{#characters}}
+curl -o {{ name }}.png http://34.71.53.141/card-images/MapleStory/MapleStory/sets/setimages/Set1/{{ name }}.png
+{{/characters}}

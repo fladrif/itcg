@@ -45,6 +45,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "gen-card-images": "mustache cardImageTmpl/data.json cardImageTmpl/template.mustache > src/itcgCardImages.tsx",
+    "must-list-crop": "mustache cardImageTmpl/data.json cardImageTmpl/list.mustache > cardImageTmpl/cropList.sh",
     "build-server": "tsc -p altTsconfig.json && npm run copy-files",
     "copy-files": "rm -rf lib/images && cp -r src/images lib/images",
     "create-migration": "db-migrate create",
