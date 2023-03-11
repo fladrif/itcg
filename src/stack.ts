@@ -126,15 +126,6 @@ export function resolveStack(fnCtx: FuncContext, opts?: ResolveStackOptions) {
         return;
       }
 
-      // console.log('------------ stack ----------------');
-      // console.log('active', JSON.stringify(stack.activeDecisions));
-      // console.log('decision', JSON.stringify(stack.decisions));
-      // console.log('queuedDecisions', JSON.stringify(stack.queuedDecisions));
-      // console.log('current', stack.currentStage);
-      // console.log('aplay', JSON.stringify(ctx.activePlayers));
-      // console.log('nextaplay', JSON.stringify(ctx._nextActivePlayers));
-      // console.log('------------- eos -----------------');
-
       if (stack.currentStage == 'level') endLevelStage(fnCtx);
       if (stack.currentStage == 'activate') endActivateStage(fnCtx);
       if (stack.currentStage == 'attack') endAttackStage(fnCtx);
