@@ -57,6 +57,15 @@ export async function verify(
   };
 }
 
+export function validUsername(username: string): boolean {
+  const validRegexp = new RegExp('^[a-z0-9A-Z]+$');
+  return validRegexp.test(username);
+}
+
+export function adqLengthUsername(username: string): boolean {
+  return username.length >= 5 && username.length <= 15;
+}
+
 export function signJWT(userID: string): string {
   const user: JWTPayload = { id: userID };
   const secret = jwt.sign(user, JWT_SECRET);
