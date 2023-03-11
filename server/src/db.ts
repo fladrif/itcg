@@ -17,7 +17,8 @@ export class DB {
   async init() {
     this.connection = await createConnection({
       type: 'postgres',
-      host: 'localhost',
+      host: 'itcg-db',
+      // host: 'localhost',
       port: 5432,
       username: 'postgres',
       password: 'itcg',

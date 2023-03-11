@@ -4,6 +4,7 @@ import { BoardProps } from 'boardgame.io/react';
 import { GameState } from './game';
 import { getTargetLocations, Location, mayFinished } from './target';
 
+import { ITCGAudio, SoundOpts } from './itcgAudio';
 import { ITCGCharacter } from './itcgCharacter';
 import { ITCGDialog, DialogBoxOpts } from './itcgDialog';
 import { ITCGDiscard } from './itcgDiscard';
@@ -13,12 +14,16 @@ import { ITCGGameOver } from './itcgGameOver';
 import { ITCGHand } from './itcgHand';
 import { ITCGHighlight } from './itcgHighlight';
 import { ITCGInteractive } from './itcgInteractive';
+import { ITCGMenu } from './itcgMenu';
+import { ITCGMenuBox, MenuBoxOpts } from './itcgMenuBox';
 import { ITCGStats } from './itcgStats';
 
 import bgi from './images/red-scene.svg';
 
 export interface State {
   dialogBox?: DialogBoxOpts;
+  menuBox?: MenuBoxOpts;
+  soundOpts?: SoundOpts;
 }
 
 const containerStyle: React.CSSProperties = {
@@ -28,7 +33,7 @@ const containerStyle: React.CSSProperties = {
   gridTemplateRows: '20% 5% 50% 5% 20%',
   height: '100vh',
   gridTemplateAreas:
-    "'odiscard ohand ohand char' 'ochar ostat ostat char' 'ochar field field char' 'ochar stat stat char' 'ochar hand interface discard'",
+    "'odiscard ohand menu char' 'ochar ostat ostat char' 'ochar field field char' 'ochar stat stat char' 'ochar hand interface discard'",
   backgroundImage: `url(${bgi})`,
   backgroundRepeat: 'no-repeat',
   backgroundSize: 'cover',
@@ -39,7 +44,7 @@ const highlightAction: React.CSSProperties = {
 };
 
 const dialogStyle: React.CSSProperties = {
-  zIndex: 3,
+  zIndex: 4,
   position: 'absolute',
   top: '33%',
   left: '25%',
@@ -47,7 +52,7 @@ const dialogStyle: React.CSSProperties = {
 
 const turnAlertStyle: React.CSSProperties = {
   pointerEvents: 'none',
-  zIndex: 4,
+  zIndex: 3,
   top: '40%',
   left: '30%',
   position: 'absolute',
@@ -55,6 +60,19 @@ const turnAlertStyle: React.CSSProperties = {
   color: '#ee5f00',
   textShadow:
     '1px 0 0 #fff, -1px 0 0 #fff, 0 1px 0 #fff, 0 -1px 0 #fff, 1px 1px 0 #fff, -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff',
+};
+
+const menuBoxStyle: React.CSSProperties = {
+  zIndex: 5,
+  position: 'absolute',
+};
+
+const menuStyle: React.CSSProperties = {
+  display: 'flex',
+  flexDirection: 'row',
+  justifyContent: 'flex-end',
+  alignItems: 'start',
+  gridArea: 'menu',
 };
 
 const handStyle: React.CSSProperties = {
@@ -125,15 +143,14 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
   constructor(props: BoardProps<GameState>) {
     super(props);
 
-    this.state = {};
+    this.state = { soundOpts: { mute: false, volume: 50 } };
   }
 
   setBoardState(state: State) {
-    if (this.state.dialogBox === state.dialogBox) {
-      this.setState({ dialogBox: undefined });
-    } else {
-      this.setState(state);
-    }
+    const newState: State = state;
+    if (this.state.dialogBox === state.dialogBox) newState.dialogBox = undefined;
+
+    this.setState(newState);
   }
 
   render() {
@@ -184,8 +201,11 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
       [Location.Temporary, Location.OppTemporary].includes(loc)
     );
 
+    const audio = <ITCGAudio soundOpts={this.state.soundOpts} />;
+
     return (
       <div style={containerStyle}>
+        {audio}
         {gameOver}
         <div style={dialogStyle}>
           <ITCGDialog
@@ -198,6 +218,15 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
             }
             updateBoard={(state) => this.setBoardState(state)}
             dialogBox={this.state.dialogBox}
+          />
+        </div>
+        <div style={menuBoxStyle}>
+          <ITCGMenuBox
+            updateBoard={(state) => this.setBoardState(state)}
+            playerID={this.props.playerID}
+            concede={this.props.moves.concede}
+            menuBox={this.state.menuBox}
+            soundOpts={this.state.soundOpts}
           />
         </div>
         <div style={oppDiscardStyle}>
@@ -218,6 +247,9 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
         </div>
         <div style={oppHandStyle}>
           <ITCGHand playerState={opponentState} />
+        </div>
+        <div style={menuStyle}>
+          <ITCGMenu updateBoard={(state) => this.setBoardState(state)} />
         </div>
         <div style={oppCharStyle}>
           <ITCGCharacter
@@ -241,7 +273,13 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
           />
         </div>
         <div style={fieldStyle}>
-          <div style={innerFieldStyle}>
+          <div
+            style={
+              currentPlayerStage === 'attack'
+                ? { ...innerFieldStyle, ...highlightAction }
+                : innerFieldStyle
+            }
+          >
             <ITCGField
               state={opponentState}
               location={Location.OppField}

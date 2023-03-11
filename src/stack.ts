@@ -55,13 +55,13 @@ export interface Stack {
 
 interface OpponentActiveStage {
   others: string;
-  currentPlayer?: never;
+  currentPlayer: string;
   next?: SetActiveStage;
 }
 
 interface CurrentActiveStage {
   currentPlayer: string;
-  others?: never;
+  others: string;
   next?: SetActiveStage;
 }
 
@@ -78,8 +78,8 @@ function stage(
   prev?: SetActiveStage
 ): SetActiveStage {
   const stageOutput: SetActiveStage = !opponentAction
-    ? { currentPlayer: stg }
-    : { others: stg };
+    ? { currentPlayer: stg, others: 'unactive' }
+    : { others: stg, currentPlayer: 'unactive' };
 
   if (prev) stageOutput.next = prev;
 

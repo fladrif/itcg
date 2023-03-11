@@ -5,6 +5,7 @@ import { instantiateCard, Character, NonCharacter } from './card';
 import { hydrateDeck, nixieBase, shermanBase } from './decks';
 import { resetMonsterDamageOnField } from './hook';
 import {
+  concede,
   levelUp,
   noLevel,
   activateSkill,
@@ -188,36 +189,34 @@ export const ITCG = {
 
   playerView,
 
-  moves: {
-    levelUp,
-    activateSkill,
-  },
-
   turn: {
     onBegin: ({ events }: FuncContext) => {
-      events.setActivePlayers({ currentPlayer: 'level' });
+      events.setActivePlayers({ currentPlayer: 'level', others: 'unactive' });
     },
     onEnd: (fnCtx: FuncContext) => {
       resetMonsterDamageOnField(fnCtx);
     },
     stages: {
       level: {
-        moves: { levelUp, noLevel },
+        moves: { levelUp, noLevel, concede },
         next: 'activate',
       },
       activate: {
-        moves: { activateSkill, noActivate },
+        moves: { activateSkill, noActivate, concede },
         next: 'attack',
       },
-      attack: { moves: { attack, noAttacks } },
+      attack: { moves: { attack, noAttacks, concede } },
       select: {
-        moves: { selectTarget, confirmSkill, resetStack },
+        moves: { selectTarget, confirmSkill, resetStack, concede },
       },
       choice: {
-        moves: { selectChoice },
+        moves: { selectChoice, concede },
       },
       confirmation: {
-        moves: { confirmSkill, resetStack },
+        moves: { confirmSkill, resetStack, concede },
+      },
+      unactive: {
+        moves: { concede },
       },
     },
   },

@@ -32,8 +32,8 @@ const gameServerDB = new PostgresStore({
   database: 'itcg',
   username: 'postgres',
   password: 'itcg',
-  host: 'localhost',
-  // host: 'itcg-db',
+  // host: 'localhost',
+  host: 'itcg-db',
 });
 
 const userNonces: UserNonce[] = [];
