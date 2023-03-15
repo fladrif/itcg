@@ -88,7 +88,7 @@ class App extends React.Component {
           {!this.state.inGame && (
             <div style={style}>
               <ITCGHeader username={this.state.username} />
-              <div className="row flex-spaces">
+              <div style={{ marginTop: '1%', maxWidth: '1000px', width: '100%' }}>
                 <div className="alert alert-secondary">
                   BETA Release: Please report issues to the discord server
                 </div>

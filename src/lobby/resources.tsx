@@ -21,7 +21,7 @@ export class ITCGResources extends React.Component {
           </a>
         </p>
         <p>
-          For a guide to the game, please reference the fan site{' '}
+          For a guide to the game, please refer to the fan site{' '}
           <a
             target="_blank"
             rel="noopener noreferrer"
@@ -31,8 +31,8 @@ export class ITCGResources extends React.Component {
           </a>
         </p>
         <p>
-          For matchmaking, finding players, getting help for this site, or to report
-          issues, join the{' '}
+          For matchmaking, finding other players, getting help for this site, geek out on
+          MapleStory iTCG, or to report issues, join the{' '}
           <a
             target="_blank"
             rel="noopener noreferrer"
