@@ -93,7 +93,7 @@ export class ITCGHeader extends React.Component<HeaderProps> {
           </a>
           <div>
             <h3>
-              <a href="/">Maplestory iTCG</a>
+              <a href="/">MapleStory iTCG</a>
             </h3>
           </div>
         </div>
