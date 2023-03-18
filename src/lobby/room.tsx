@@ -181,7 +181,7 @@ export class ITCGRoom extends React.Component<RoomProp, State> {
         <div className="col" style={CardWrapperStyle}>
           <div className="card" key="new" style={CardStyle}>
             <div className="card-body">
-              <h2 className="card-title">New Tables</h2>
+              <h2 className="card-title">New Table</h2>
               <button onClick={() => this.makeRoom()}>Open</button>
             </div>
           </div>
