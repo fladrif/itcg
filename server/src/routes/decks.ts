@@ -45,7 +45,10 @@ router.post('/upsert', bodyParser(), async (ctx: any) => {
   if (!deckName) ctx.throw(400, 'Missing deck name');
 
   if (!validateDeck(deckList))
-    ctx.throw(400, 'Invalid deck: Min 40 cards, Max 4 copies per card');
+    ctx.throw(
+      400,
+      'Invalid deck: Minimum 40 cards, max 4 copies per card. You must select a Character.'
+    );
 
   const deck = await db.getDeck(deckID);
 
