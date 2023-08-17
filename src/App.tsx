@@ -19,7 +19,7 @@ import {
   ITCGDevLog,
   ITCGResources,
 } from './lobby';
-import { SERVER, USER_COOKIE_NAME } from './config';
+import { SERVER, MAX_WIDTH, USER_COOKIE_NAME } from './config';
 
 const style: React.CSSProperties = {
   display: 'flex',
@@ -88,16 +88,16 @@ class App extends React.Component {
           {!this.state.inGame && (
             <div style={style}>
               <ITCGHeader username={this.state.username} />
-              <div style={{ marginTop: '1%', maxWidth: '1000px', width: '100%' }}>
+              <div style={{ marginTop: '1%', maxWidth: MAX_WIDTH, width: '100%' }}>
                 <div className="alert alert-secondary">
                   BETA Release: Please report issues to the discord server
                 </div>
                 <div className="alert alert-danger">
-                  Database Wipe: All accounts and decks before March 2023 were lost.
+                  Database Wipe: All accounts and decks made before March 2023 were lost.
                   Please logout and recreate your account
                 </div>
               </div>
-              <div style={{ maxWidth: '1000px', width: '100%' }}>
+              <div style={{ maxWidth: MAX_WIDTH, width: '100%' }}>
                 <Switch>
                   <Route exact path={'/'}>
                     {!this.state.username && <ITCGFrontPage />}

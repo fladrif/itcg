@@ -4,3 +4,4 @@ export const CLIENT = 'maple.rs';
 // export const CLIENT = 'localhost';
 export const USER_COOKIE_NAME = 'user';
 export const GAME_NAME = 'ITCG';
+export const MAX_WIDTH = '1000px';

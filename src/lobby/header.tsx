@@ -1,6 +1,7 @@
 import React from 'react';
 
 import header from '../images/itcgCBsk2.jpg';
+import { MAX_WIDTH } from '../config';
 
 interface HeaderProps {
   username?: string;
@@ -9,6 +10,8 @@ interface HeaderProps {
 const baseStyle: React.CSSProperties = {
   position: 'sticky',
   background: 'linear-gradient(0.25turn, #FC4336, 20%, #F08C56)',
+  paddingLeft: `calc(calc(100vw - ${MAX_WIDTH})/2)`,
+  paddingRight: `calc(calc(100vw - ${MAX_WIDTH})/2)`,
 };
 
 const headerStyle: React.CSSProperties = {
@@ -86,16 +89,11 @@ export class ITCGHeader extends React.Component<HeaderProps> {
     const loggedIn = !!this.props.username;
 
     return (
-      <nav style={baseStyle} className="border fixed split-nav">
+      <nav style={baseStyle} className="border fixed split-nav border-3">
         <div className="nav-brand" style={headerStyle}>
           <a href="/">
             <img src={header} style={headerImageStyle} />
           </a>
-          <div>
-            <h3>
-              <a href="/">MapleStory iTCG</a>
-            </h3>
-          </div>
         </div>
         <div className="collapsible">
           <input id="collapsible1" type="checkbox" name="collapsible1" />
