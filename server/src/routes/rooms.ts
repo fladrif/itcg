@@ -13,11 +13,11 @@ router.get('/', async (ctx: any) => {
   const userID = ctx.header[AUTH_HEADER];
 
   const inRoomID = gameRooms.userInRoom(userID);
-  const room = inRoomID ? gameRooms.getCleanRoom(inRoomID) : undefined;
+  const room = inRoomID ? gameRooms.getCleanRoom(inRoomID, userID) : undefined;
 
   if (!!inRoomID && !!room) return (ctx.body = room);
 
-  const availableRooms = gameRooms.getOpenRooms();
+  const availableRooms = gameRooms.getOpenRooms(userID);
 
   ctx.body = availableRooms;
 });

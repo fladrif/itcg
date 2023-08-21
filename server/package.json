@@ -36,6 +36,7 @@
   },
   "scripts": {
     "build-server": "tsc -p tsconfig.json",
+    "start-server": "node lib/server/src/index.js",
     "test": "jest",
     "copy-files": "rm -rf lib/images && cp -r src/images lib/images",
     "create-migration": "db-migrate create",

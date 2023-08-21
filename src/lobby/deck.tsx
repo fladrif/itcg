@@ -2,7 +2,7 @@ import React from 'react';
 import axios from 'axios';
 
 import { ITCGDeckBuilder } from './deckBuilder';
-import { CardStyle, CardWrapperStyle, ParagraphStyle } from './overall.css';
+import { CardStyle, ParagraphStyle } from './overall.css';
 
 import { Deck } from '../game';
 
@@ -59,28 +59,13 @@ export class ITCGDeck extends React.Component<DeckProp> {
 
   newDeck() {
     return (
-      <div className="col" style={CardWrapperStyle}>
+      <div className="sm-4 col">
         <div className="card" key="new" style={CardStyle}>
           <div className="card-body">
             <h2 className="card-title">New Deck</h2>
             <button onClick={() => this.buildDeck()}>Create</button>
           </div>
         </div>
-      </div>
-    );
-  }
-
-  parseDeckList(deck: Deck) {
-    if (!deck.character) return;
-    return (
-      <div>
-        {deck.deck.map((card) => {
-          return (
-            <div>
-              {card[1]} {card[0].name}
-            </div>
-          );
-        })}
       </div>
     );
   }
@@ -95,17 +80,13 @@ export class ITCGDeck extends React.Component<DeckProp> {
           <div className="card-body">
             <h2 className="card-title">{deck.name}</h2>
             <h3 className="card-subtitle">{deck.deck_list.character.name}</h3>
-            <div className="card-text">{this.parseDeckList(deck.deck_list)}</div>
+            <div className="card-text">{parseDeckList(deck.deck_list)}</div>
             {deck.modify && <button onClick={() => this.buildDeck(deck.id)}>edit</button>}
           </div>
         </div>
       );
 
-      return (
-        <div className="col" style={CardWrapperStyle}>
-          {formatted}
-        </div>
-      );
+      return <div className="sm-4 col">{formatted}</div>;
     });
 
     return (
@@ -142,4 +123,19 @@ export class ITCGDeck extends React.Component<DeckProp> {
       </div>
     );
   }
+}
+
+export function parseDeckList(deck: Deck) {
+  if (!deck.character) return;
+  return (
+    <div>
+      {deck.deck.map((card) => {
+        return (
+          <div>
+            {card[1]} {card[0].name}
+          </div>
+        );
+      })}
+    </div>
+  );
 }

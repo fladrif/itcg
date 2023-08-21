@@ -1,10 +1,9 @@
 import React from 'react';
-import { Button, FormControl } from 'react-bootstrap';
+import { FormControl } from 'react-bootstrap';
 import axios from 'axios';
 
-import { OverallListStyle, ListItemStyle } from './list.css';
-import { CardStyle, CardWrapperStyle, ParagraphStyle } from './overall.css';
-import { DeckMetaData } from './deck';
+import { CardStyle, ParagraphStyle } from './overall.css';
+import { DeckMetaData, parseDeckList } from './deck';
 
 import { AppState } from '../App';
 
@@ -33,30 +32,10 @@ interface State {
   activeRoom?: Room;
 }
 
-const readyStyle: React.CSSProperties = {
-  color: 'green',
-};
-
-const notReadyStyle: React.CSSProperties = {
-  color: 'red',
-};
-
 const baseStyle: React.CSSProperties = {
   margin: '1%',
   display: 'flex',
   flexDirection: 'column',
-};
-
-const formCompStyle: React.CSSProperties = {
-  display: 'flex',
-  flexDirection: 'column',
-  flex: '1',
-  marginLeft: '1%',
-};
-
-const formHeaderCompStyle: React.CSSProperties = {
-  ...formCompStyle,
-  fontSize: '125%',
 };
 
 export class ITCGRoom extends React.Component<RoomProp, State> {
@@ -69,21 +48,20 @@ export class ITCGRoom extends React.Component<RoomProp, State> {
   }
 
   async updateSelf() {
-    const resp = await axios.get('/rooms', {
-      baseURL: this.props.server,
-      timeout: 5000,
-      withCredentials: true,
-    });
-
-    const rooms = resp.data;
-    if (!rooms) return;
-
-    const deckResp = await axios('/decks', {
-      baseURL: this.props.server,
-      timeout: 5000,
-      withCredentials: true,
-    });
-    if (!deckResp.data) return;
+    const [roomResp, deckResp] = await Promise.all([
+      axios.get('/rooms', {
+        baseURL: this.props.server,
+        timeout: 5000,
+        withCredentials: true,
+      }),
+      axios.get('/decks', {
+        baseURL: this.props.server,
+        timeout: 5000,
+        withCredentials: true,
+      }),
+    ]);
+    const rooms = roomResp.data;
+    if (!deckResp.data || !rooms) return;
 
     if (!Array.isArray(rooms)) {
       this.setState({ activeRoom: rooms, decks: deckResp.data });
@@ -122,54 +100,101 @@ export class ITCGRoom extends React.Component<RoomProp, State> {
     });
   }
 
-  getActiveRoom(room: Room) {
-    const owner = room.users.find((usr) => usr.owner === true);
-    const guest = room.users.find((usr) => usr.owner === false);
+  tableOppPlayer(opp: RoomUser) {
+    return (
+      <>
+        {!!opp && (
+          <h3 className="margin-none">
+            <span className="badge primary">{opp?.name || ''}</span>
+          </h3>
+        )}
+        <div className="row flex-center border border-4 border-dashed shadow">
+          <p className="col">
+            <h3
+              className={`margin-none ${
+                !!opp ? (opp?.ready ? 'text-success' : 'text-warning') : 'text-danger'
+              }`}
+            >
+              {!!opp?.ready
+                ? 'Ready to Battle!'
+                : !!opp
+                ? 'Selecting a Deck...'
+                : 'Waiting for Opponent'}
+            </h3>
+          </p>
+        </div>
+      </>
+    );
+  }
 
-    const cur = room.users.find((usr) => usr.name === this.props.username);
-    const opp = room.users.find((usr) => usr.name !== this.props.username);
-
+  tableCurPlayer(roomID: string, cur: RoomUser) {
     const readyBtnClass = cur?.ready ? 'btn-success' : 'btn-primary';
+    const deck = this.state.decks.find((deck) => deck.id === cur.deck)?.deck_list;
 
     return (
       <>
-        <h2>{owner.name}'s Table</h2>
-        <div style={OverallListStyle}>
-          <div style={ListItemStyle}>
-            Player 1: <h3>{owner?.name || ''}</h3>
-          </div>
-          <div style={ListItemStyle}>
-            Player 2: <h3>{guest?.name || ''}</h3>
-          </div>
-          <div style={ListItemStyle}>
-            Opponent Status:{' '}
-            <h3 style={!!opp?.ready ? readyStyle : notReadyStyle}>
-              {!!opp?.ready ? 'Ready' : 'Not Ready'}
-            </h3>
-          </div>
-          <div style={ListItemStyle}>
+        <h3 className="margin-none">
+          <span className="badge primary">{cur.name}</span>
+        </h3>
+        <div className="col row flex-spaces border border-3 border-dashed shadow">
+          <div className="col sm-7">
             <FormControl
               as={'select'}
-              style={formHeaderCompStyle}
               value={cur.deck || ''}
-              onChange={(e) => this.updateRoom(room.id, { deckID: e.target.value })}
+              onChange={(e) => this.updateRoom(roomID, { deckID: e.target.value })}
               disabled={cur?.ready}
             >
               <option value={''}>Select Deck</option>
               {this.getPlayerDecks()}
             </FormControl>
+            <div className="card">
+              <div className="card-body">
+                {(!!deck && (
+                  <>
+                    <h4 className="card-subtitle">{deck.character.name}</h4>
+                    <div className="card-text">{parseDeckList(deck)}</div>
+                  </>
+                )) || <h4 className="card-title">No Deck Selected</h4>}
+              </div>
+            </div>
           </div>
-          <Button
+          <button
             disabled={!cur?.deck || cur?.ready}
-            className={readyBtnClass}
-            onClick={() => this.updateRoom(room.id, { ready: true })}
+            className={readyBtnClass + ' col sm-2'}
+            onClick={() => this.updateRoom(roomID, { ready: true })}
           >
             {cur?.ready && 'Ready!'}
             {!cur?.ready && 'Ready...?'}
-          </Button>
-          <Button onClick={() => this.leaveRoom(room.id)} className="btn-danger">
+          </button>
+        </div>
+      </>
+    );
+  }
+
+  getActiveRoom(room: Room) {
+    const owner = room.users.find((usr) => usr.owner === true);
+
+    const cur = room.users.find((usr) => usr.name === this.props.username);
+    const opp = room.users.find((usr) => usr.name !== this.props.username);
+
+    return (
+      <>
+        <div
+          className="border row flex-center border-6 border-thick shadow"
+          style={{ padding: '3%' }}
+        >
+          <div className="col sm-10 padding-none">{this.tableOppPlayer(opp)}</div>
+          <h2 className="col sm-11 padding-none" style={{ textAlign: 'center' }}>
+            {owner.name}'s Table
+          </h2>
+          <div className="col sm-12 padding-none">
+            {this.tableCurPlayer(room.id, cur)}
+          </div>
+        </div>
+        <div className="row flex-right">
+          <button onClick={() => this.leaveRoom(room.id)} className="btn-danger col">
             Leave Table
-          </Button>
+          </button>
         </div>
       </>
     );
@@ -178,7 +203,7 @@ export class ITCGRoom extends React.Component<RoomProp, State> {
   createRoomCard() {
     return (
       !this.state.activeRoom && (
-        <div className="col" style={CardWrapperStyle}>
+        <div className="sm-4 col">
           <div className="card" key="new" style={CardStyle}>
             <div className="card-body">
               <h2 className="card-title">New Table</h2>
@@ -192,7 +217,7 @@ export class ITCGRoom extends React.Component<RoomProp, State> {
 
   getRoomList(rooms: Room[]) {
     const styledRooms = rooms.map((rm) => (
-      <div className="col" style={CardWrapperStyle}>
+      <div className="sm-4 col">
         <div className="card" style={CardStyle} key={rm.id}>
           <div className="card-body">
             <h2 className="card-title">

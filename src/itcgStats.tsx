@@ -43,7 +43,7 @@ const nameStyle: React.CSSProperties = {
 
 const classStyle: React.CSSProperties = {
   color: 'lightgray',
-  fontSize: '1vw',
+  fontSize: '0.8vw',
 };
 
 const confirmationStyle: React.CSSProperties = {
@@ -61,7 +61,7 @@ const confirmationStyle: React.CSSProperties = {
 
 const stageModalStyle: React.CSSProperties = {
   color: 'white',
-  fontSize: '1vw',
+  fontSize: '0.8vw',
 };
 
 const highlightModalStyle: React.CSSProperties = {
@@ -71,7 +71,7 @@ const highlightModalStyle: React.CSSProperties = {
   paddingLeft: '1%',
   paddingRight: '1%',
   margin: '1%',
-  fontSize: '1.5vw',
+  fontSize: '1.3vw',
 };
 
 export class ITCGStats extends React.Component<StatProp> {
@@ -123,7 +123,9 @@ export class ITCGStats extends React.Component<StatProp> {
 
     return (
       <div style={statStyle}>
-        <div style={levelStyle}>Lv: {this.props.playerState.level}</div>
+        <div style={levelStyle}>
+          Lv: <b>{this.props.playerState.level}</b>
+        </div>
         <div style={nameStyle}>
           <div style={classStyle}>{this.props.playerState.character.class}</div>
           <div style={{ fontSize: '1vw' }}>{this.props.playerState.name}</div>

@@ -21,23 +21,23 @@ class GameRooms {
     return roomIDs.find((id) => this.rooms[id].users.some((usr) => usr.id === userID));
   }
 
-  getOpenRooms(): CleanRoom[] {
+  getOpenRooms(userID: string): CleanRoom[] {
     const roomIDs = Object.keys(this.rooms);
 
     const openRooms = roomIDs
       .filter((id) => this.rooms[id].users.length < 2)
       .map((id) => {
-        return cleanRoom(this.rooms[id]);
+        return cleanRoom(this.rooms[id], userID);
       });
 
     return openRooms;
   }
 
-  getCleanRoom(roomID: string): CleanRoom | undefined {
+  getCleanRoom(roomID: string, userID: string): CleanRoom | undefined {
     const room = this.rooms[roomID];
     if (!room) return;
 
-    return cleanRoom(room);
+    return cleanRoom(room, userID);
   }
 
   getRoom(roomID: string): Room | undefined {
@@ -52,11 +52,19 @@ class GameRooms {
   }
 }
 
-function cleanRoom(room: Room): CleanRoom {
+function cleanRoom(room: Room, userID: string): CleanRoom {
   return {
     id: room.id,
     users: room.users.map((user) => {
-      return { name: user.name, deck: user.deck, owner: user.owner, ready: user.ready };
+      const clean = {
+        name: user.name,
+        deck: user.deck,
+        owner: user.owner,
+        ready: user.ready,
+      };
+      if (user.id !== userID) delete clean.deck;
+
+      return clean;
     }),
   };
 }
