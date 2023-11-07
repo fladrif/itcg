@@ -127,7 +127,7 @@ export const darkshadow: Omit<Item, 'key' | 'owner'> = {
   canonicalName: 'darkshadow',
   name: 'Dark Shadow',
   image: 'DarkShadow',
-  level: 10,
+  level: 40,
   skill: [
     {
       action: 'play',
