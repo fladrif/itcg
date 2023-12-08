@@ -957,118 +957,6 @@ export class LootTrigger extends Trigger {
   }
 }
 
-export class MeditationTrigger extends Trigger {
-  constructor(
-    cardOwner: string,
-    player: PlayerID,
-    key: string,
-    opts?: TriggerOptions,
-    lifetime?: TriggerLifetime
-  ) {
-    super(cardOwner, 'Before', ['attack', 'damage'], key, opts, player, lifetime);
-  }
-
-  shouldTriggerExtension(
-    _fnCtx: FuncContext,
-    decision: Decision,
-    _prep: TriggerPrepostion
-  ) {
-    const sourceIsMonster = decision.opts?.source
-      ? isMonster(decision.opts.source) && decision.action === 'attack'
-      : false;
-
-    const sourceIsTactic = decision.opts?.source
-      ? decision.opts.source.type === CardTypes.Tactic
-      : false;
-
-    return (sourceIsTactic || sourceIsMonster) && this.sourceIsOwner(decision);
-  }
-
-  createDecision(fnCtx: FuncContext, decision: Decision) {
-    const { G, ctx } = fnCtx;
-
-    const buffDec: Decision = {
-      action: 'buff',
-      finished: false,
-      selection: {},
-      opts: {
-        damage: this.opts?.damage ? this.opts.damage : 0,
-        decision: decision.key,
-        source: getCardAtLocation(
-          G,
-          ctx,
-          getCardLocation(G, ctx, this.cardOwner),
-          this.cardOwner
-        ),
-      },
-      key: getRandomKey(),
-    };
-
-    return [buffDec];
-  }
-}
-
-export class NoMercyTrigger extends Trigger {
-  constructor(
-    cardOwner: string,
-    player: PlayerID,
-    key: string,
-    opts?: TriggerOptions,
-    lifetime?: TriggerLifetime
-  ) {
-    super(cardOwner, 'After', 'destroy', key, opts, player, lifetime);
-  }
-
-  shouldTriggerExtension(
-    _fnCtx: FuncContext,
-    decision: Decision,
-    _prep: TriggerPrepostion
-  ) {
-    const isSource = decision.opts?.source
-      ? decision.opts.source.key === this.cardOwner
-      : false;
-
-    return isSource;
-  }
-
-  createDecision(fnCtx: FuncContext, _decision: Decision) {
-    const { G, ctx } = fnCtx;
-
-    const dec: Decision = {
-      action: 'damage',
-      selection: {},
-      finished: false,
-      noReset: true,
-      target: {
-        xor: [
-          {
-            type: CardTypes.Monster,
-            location: Location.OppField,
-            quantity: 1,
-          },
-          {
-            type: CardTypes.Character,
-            location: Location.OppCharacter,
-            quantity: 1,
-          },
-        ],
-      },
-      opts: {
-        damage: 10,
-        source: getCardAtLocation(
-          G,
-          ctx,
-          getCardLocation(G, ctx, this.cardOwner),
-          this.cardOwner
-        ),
-      },
-      key: getRandomKey(),
-    };
-
-    return [dec];
-  }
-}
-
 export class MapleStaffTrigger extends Trigger {
   constructor(
     cardOwner: string,
@@ -1136,6 +1024,160 @@ export class MapleStaffTrigger extends Trigger {
     };
 
     return [optionDec];
+  }
+}
+
+export class MeditationTrigger extends Trigger {
+  constructor(
+    cardOwner: string,
+    player: PlayerID,
+    key: string,
+    opts?: TriggerOptions,
+    lifetime?: TriggerLifetime
+  ) {
+    super(cardOwner, 'Before', ['attack', 'damage'], key, opts, player, lifetime);
+  }
+
+  shouldTriggerExtension(
+    _fnCtx: FuncContext,
+    decision: Decision,
+    _prep: TriggerPrepostion
+  ) {
+    const sourceIsMonster = decision.opts?.source
+      ? isMonster(decision.opts.source) && decision.action === 'attack'
+      : false;
+
+    const sourceIsTactic = decision.opts?.source
+      ? decision.opts.source.type === CardTypes.Tactic
+      : false;
+
+    return (sourceIsTactic || sourceIsMonster) && this.sourceIsOwner(decision);
+  }
+
+  createDecision(fnCtx: FuncContext, decision: Decision) {
+    const { G, ctx } = fnCtx;
+
+    const buffDec: Decision = {
+      action: 'buff',
+      finished: false,
+      selection: {},
+      opts: {
+        damage: this.opts?.damage ? this.opts.damage : 0,
+        decision: decision.key,
+        source: getCardAtLocation(
+          G,
+          ctx,
+          getCardLocation(G, ctx, this.cardOwner),
+          this.cardOwner
+        ),
+      },
+      key: getRandomKey(),
+    };
+
+    return [buffDec];
+  }
+}
+
+export class MysticPowerTrigger extends Trigger {
+  constructor(
+    cardOwner: string,
+    player: PlayerID,
+    key: string,
+    opts?: TriggerOptions,
+    lifetime?: TriggerLifetime
+  ) {
+    super(cardOwner, 'Before', 'attack', key, opts, player, lifetime);
+  }
+
+  shouldTriggerExtension(
+    _fnCtx: FuncContext,
+    decision: Decision,
+    _prep: TriggerPrepostion
+  ) {
+    return this.sourceIsOwner(decision);
+  }
+
+  createDecision(fnCtx: FuncContext, _decision: Decision) {
+    const { G, ctx } = fnCtx;
+
+    const healDec: Decision = {
+      action: 'refresh',
+      selection: {},
+      finished: false,
+      opts: {
+        lifegain: this.opts?.lifegain,
+        source: getCardAtLocation(
+          G,
+          ctx,
+          getCardLocation(G, ctx, this.cardOwner),
+          this.cardOwner
+        ),
+      },
+      key: getRandomKey(),
+    };
+
+    return [healDec];
+  }
+}
+
+export class NoMercyTrigger extends Trigger {
+  constructor(
+    cardOwner: string,
+    player: PlayerID,
+    key: string,
+    opts?: TriggerOptions,
+    lifetime?: TriggerLifetime
+  ) {
+    super(cardOwner, 'After', 'destroy', key, opts, player, lifetime);
+  }
+
+  shouldTriggerExtension(
+    _fnCtx: FuncContext,
+    decision: Decision,
+    _prep: TriggerPrepostion
+  ) {
+    const isSource = decision.opts?.source
+      ? decision.opts.source.key === this.cardOwner
+      : false;
+
+    return isSource;
+  }
+
+  createDecision(fnCtx: FuncContext, _decision: Decision) {
+    const { G, ctx } = fnCtx;
+
+    const dec: Decision = {
+      action: 'damage',
+      selection: {},
+      finished: false,
+      noReset: true,
+      target: {
+        xor: [
+          {
+            type: CardTypes.Monster,
+            location: Location.OppField,
+            quantity: 1,
+          },
+          {
+            type: CardTypes.Character,
+            location: Location.OppCharacter,
+            quantity: 1,
+          },
+        ],
+      },
+      opts: {
+        damage: 10,
+        source: getCardAtLocation(
+          G,
+          ctx,
+          getCardLocation(G, ctx, this.cardOwner),
+          this.cardOwner
+        ),
+      },
+      key: getRandomKey(),
+    };
+
+    return [dec];
   }
 }
 
@@ -1948,6 +1990,7 @@ export const triggers = {
   KumbiTrigger,
   LootTrigger,
   MeditationTrigger,
+  MysticPowerTrigger,
   NoMercyTrigger,
   MapleStaffTrigger,
   PrevailTrigger,

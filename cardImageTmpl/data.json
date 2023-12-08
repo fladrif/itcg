@@ -84,7 +84,8 @@
     { "name": "DarkShadow" },
     { "name": "BlackRobinHat" },
     { "name": "Teleport" },
-    { "name": "BlueNightfox" }
+    { "name": "BlueNightfox" },
+    { "name": "Panda" }
   ],
   "characters": [
     { "name": "Sherman" },

@@ -193,6 +193,36 @@ export const officerskeleton: Omit<Monster, 'key' | 'owner'> = {
   subtypes: [CardSubTypes.undead, CardSubTypes.soldier],
   ...defaultTypes,
 };
+
+export const panda: Omit<Monster, 'key' | 'owner'> = {
+  canonicalName: 'panda',
+  name: 'Panda',
+  image: 'Panda',
+  level: 60,
+  attack: 40,
+  health: 60,
+  skill: [
+    {
+      action: 'bounce',
+      activated: false,
+      requirements: { level: 0, oneshot: true },
+      noReset: true,
+      targets: {
+        level: 50,
+        type: CardTypes.Monster,
+        location: Location.Discard,
+        quantity: 1,
+        quantityUpTo: true,
+      },
+    },
+  ],
+  ability: {
+    triggers: [{ name: 'MysticPowerTrigger', opts: { lifegain: 40 } }],
+  },
+  subtypes: [CardSubTypes.bear],
+  ...defaultTypes,
+};
+
 export const pepe: Omit<Monster, 'key' | 'owner'> = {
   canonicalName: 'pepe',
   name: 'Pepe',
