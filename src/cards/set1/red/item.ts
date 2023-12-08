@@ -1,10 +1,11 @@
-import { CardTypes, CardSubTypes, CardClasses, Item } from '../../card';
-import { Location } from '../../target';
+import { CardTypes, CardSubTypes, CardClasses, Item } from '../../../card';
+import { Location } from '../../../target';
+
+import { defaultClass } from './index';
 
 const defaultTypes = {
+  ...defaultClass,
   type: CardTypes.Item,
-  class: CardClasses.Magician,
-  selected: false,
 };
 
 export const eviltale: Omit<Item, 'key' | 'owner'> = {

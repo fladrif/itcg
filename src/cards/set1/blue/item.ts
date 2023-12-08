@@ -1,10 +1,11 @@
-import { Item, CardTypes, CardSubTypes, CardClasses } from '../../card';
-import { Location } from '../../target';
+import { Item, CardTypes, CardSubTypes, CardClasses } from '../../../card';
+import { Location } from '../../../target';
+
+import { defaultClass } from './index';
 
 const defaultTypes = {
+  ...defaultClass,
   type: CardTypes.Item,
-  class: CardClasses.Warrior,
-  selected: false,
 };
 
 export const battleshield: Omit<Item, 'key' | 'owner'> = {

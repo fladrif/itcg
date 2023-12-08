@@ -1,12 +1,13 @@
-import { CardTypes, CardSubTypes, CardClasses, Tactic } from '../../card';
-import { Choice, Decision } from '../../stack';
-import { Location } from '../../target';
-import { getRandomKey } from '../../utils';
+import { CardTypes, CardSubTypes, CardClasses, Tactic } from '../../../card';
+import { Choice, Decision } from '../../../stack';
+import { Location } from '../../../target';
+import { getRandomKey } from '../../../utils';
+
+import { defaultClass } from './index';
 
 const defaultTypes = {
+  ...defaultClass,
   type: CardTypes.Tactic,
-  class: CardClasses.Bowman,
-  selected: false,
 };
 
 export const arrowblow: Omit<Tactic, 'key' | 'owner'> = {

@@ -1,21 +1,22 @@
-import { Character, CardTypes, CardClasses } from '../../card';
-import { Location } from '../../target';
+import { Character, CardTypes, CardClasses } from '../../../card';
+import { Location } from '../../../target';
+
+import { defaultClass } from './index';
 
 const defaultTypes = {
+  ...defaultClass,
   type: CardTypes.Character,
-  class: CardClasses.Warrior,
-  selected: false,
 };
 
-export const sherman: Omit<Character, 'key' | 'owner'> = {
-  canonicalName: 'sherman',
-  name: 'Sherman',
-  image: 'Sherman',
-  health: 240,
+export const ivan: Omit<Character, 'key' | 'owner'> = {
+  canonicalName: 'ivan',
+  name: 'Ivan',
+  image: 'Ivan',
+  health: 220,
   skills: [
     [
       {
-        requirements: { level: 10, class: { [CardClasses.Warrior]: 1 } },
+        requirements: { level: 10, class: { [CardClasses.Thief]: 1 } },
         action: 'damage',
         activated: false,
         opts: { damage: 10 },
@@ -23,13 +24,13 @@ export const sherman: Omit<Character, 'key' | 'owner'> = {
           xor: [
             {
               type: CardTypes.Monster,
-              quantity: 1,
               location: Location.OppField,
+              quantity: 1,
             },
             {
               type: CardTypes.Character,
-              quantity: 1,
               location: Location.OppCharacter,
+              quantity: 1,
             },
           ],
         },
@@ -37,21 +38,21 @@ export const sherman: Omit<Character, 'key' | 'owner'> = {
     ],
     [
       {
-        requirements: { level: 20 },
+        requirements: { level: 10 },
         action: 'quest',
         activated: false,
       },
     ],
     [
       {
-        requirements: { level: 30, class: { [CardClasses.Warrior]: 2 } },
+        requirements: { level: 20, class: { [CardClasses.Thief]: 1 } },
         action: 'play',
         activated: false,
         targets: {
           level: 'CurrentLevel',
-          type: CardTypes.Monster,
-          quantity: 1,
+          type: CardTypes.Item,
           location: Location.Hand,
+          quantity: 1,
         },
       },
     ],
@@ -59,15 +60,15 @@ export const sherman: Omit<Character, 'key' | 'owner'> = {
   ...defaultTypes,
 };
 
-export const starblade: Omit<Character, 'key' | 'owner'> = {
-  canonicalName: 'starblade',
-  name: 'Starblade',
-  image: 'Starblade',
-  health: 260,
+export const mistmoon: Omit<Character, 'key' | 'owner'> = {
+  canonicalName: 'mistmoon',
+  name: 'Mistmoon',
+  image: 'Mistmoon',
+  health: 200,
   skills: [
     [
       {
-        requirements: { level: 10, class: { [CardClasses.Warrior]: 1 } },
+        requirements: { level: 10, class: { [CardClasses.Thief]: 1 } },
         action: 'damage',
         activated: false,
         opts: { damage: 10 },
@@ -75,13 +76,13 @@ export const starblade: Omit<Character, 'key' | 'owner'> = {
           xor: [
             {
               type: CardTypes.Monster,
-              quantity: 1,
               location: Location.OppField,
+              quantity: 1,
             },
             {
               type: CardTypes.Character,
-              quantity: 1,
               location: Location.OppCharacter,
+              quantity: 1,
             },
           ],
         },
@@ -96,10 +97,14 @@ export const starblade: Omit<Character, 'key' | 'owner'> = {
     ],
     [
       {
-        requirements: { level: 50, class: { [CardClasses.Warrior]: 2 } },
-        action: 'buffall',
+        requirements: { level: 40, class: { [CardClasses.Thief]: 2 } },
+        action: 'play',
         activated: false,
-        opts: { damage: 20 },
+        targets: {
+          level: 40,
+          location: Location.Hand,
+          quantity: 1,
+        },
       },
     ],
   ],

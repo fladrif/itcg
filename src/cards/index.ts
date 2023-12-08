@@ -1,15 +1,9 @@
-import * as black from './black';
-import * as blue from './blue';
-import * as green from './green';
-import * as red from './red';
+import * as set1 from './set1';
 
 import { blankCard } from '../card';
 
 export const cards = {
-  ...black,
-  ...blue,
-  ...green,
-  ...red,
+  ...set1,
   blankCard,
 };
 

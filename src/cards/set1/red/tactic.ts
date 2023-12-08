@@ -1,10 +1,11 @@
-import { CardTypes, CardSubTypes, CardClasses, Skill, Tactic } from '../../card';
-import { Location } from '../../target';
+import { CardTypes, CardSubTypes, CardClasses, Skill, Tactic } from '../../../card';
+import { Location } from '../../../target';
+
+import { defaultClass } from './index';
 
 const defaultTypes = {
+  ...defaultClass,
   type: CardTypes.Tactic,
-  class: CardClasses.Magician,
-  selected: false,
 };
 
 const magicclawAbility: Skill = {
