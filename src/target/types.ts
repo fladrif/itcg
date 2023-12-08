@@ -31,6 +31,7 @@ export type LevelSelector = number | 'CurrentLevel';
 export interface TargetFilter {
   location: Location;
   quantity: number;
+  // True if num selected can be less than quantity specified
   quantityUpTo?: boolean;
   level?: LevelSelector;
   type?: CardTypes;
