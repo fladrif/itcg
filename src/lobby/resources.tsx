@@ -31,6 +31,17 @@ export class ITCGResources extends React.Component {
           </a>
         </p>
         <p>
+          The original rules to the game can be found in the{' '}
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            href="https://archive.org/details/mpss-01-pdf-rules"
+          >
+            Internet Archive
+          </a>
+          .
+        </p>
+        <p>
           For matchmaking, finding other players, getting help for this site, geek out on
           MapleStory iTCG, or to report issues, join the{' '}
           <a

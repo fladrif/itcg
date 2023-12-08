@@ -44,6 +44,7 @@ export class ProgressBar extends React.Component<ProgressBarProps> {
 
     const fillerStyle = {
       width: `${percentage}%`,
+      color: 'black',
       fontSize: '1vw',
       ...getDefaultFillerStyle(botLimit, midLimit, topLimit),
     };

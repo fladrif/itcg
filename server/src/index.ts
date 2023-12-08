@@ -10,6 +10,7 @@ import { ITCG } from '../../src/game';
 import { CLIENT, SERVER } from '../../src/config';
 
 import { db } from './db';
+import { DBConfig } from './config';
 import {
   AUTH_COOKIE_NAME,
   USER_COOKIE_NAME,
@@ -29,11 +30,11 @@ import { CardRouter, DeckRouter, LobbyRouter, RoomRouter } from './routes';
 const BCRYPT_SALT_ROUNDS = 10;
 
 const gameServerDB = new PostgresStore({
-  database: 'itcg',
-  username: 'postgres',
-  password: 'itcg',
-  // host: 'localhost',
-  host: 'itcg-db',
+  database: DBConfig.itcgDB,
+  username: DBConfig.username,
+  password: DBConfig.password,
+  host: DBConfig.host,
+  port: DBConfig.port,
 });
 
 const userNonces: UserNonce[] = [];

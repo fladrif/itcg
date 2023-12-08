@@ -20,10 +20,6 @@ export const ParagraphStyle: React.CSSProperties = {
   lineHeight: '175%',
 };
 
-export const CardWrapperStyle: React.CSSProperties = {
-  width: '16rem',
-};
-
 export const CardStyle: React.CSSProperties = {
   background: 'linear-gradient(#DEEDAB, 85%, #B3DFA4)',
 };

@@ -29,12 +29,16 @@ export class ITCGAudio extends React.Component<AudioProp> {
   componentDidMount() {
     this.audio.src = this.audioIterator.next().value;
     this.audio.play();
+
     this.audio.addEventListener('ended', () => {
-      const next = this.audioIterator.next();
+      let next = this.audioIterator.next();
+      if (next.done) {
+        this.audioIterator = lodash.shuffle(this.audioList).values();
+        next = this.audioIterator.next();
+      }
+
       this.audio.src = next.value;
       this.audio.play();
-
-      if (next.done) this.audioIterator = lodash.shuffle(this.audioList).values();
     });
   }
 

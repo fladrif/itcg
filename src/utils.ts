@@ -158,14 +158,6 @@ export function mergeSelections(sel1: Selection, sel2: Selection): Selection {
 
 export function scrubPile(deck: NonCharacter[], curPlayer?: PlayerID): NonCharacter[] {
   const newDeck = deck.map((card) => {
-    if (card.reveal && curPlayer)
-      console.log(
-        (card.reveal as PlayerID[]).includes(curPlayer),
-        typeof (card.reveal as PlayerID[]),
-        typeof (card.reveal as PlayerID[])[0],
-        typeof curPlayer
-      );
-
     if (card.reveal && curPlayer && (card.reveal as PlayerID[]).includes(curPlayer)) {
       return card;
     }

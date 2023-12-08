@@ -1,6 +1,7 @@
 import { createConnection, Connection, ILike } from 'typeorm';
 
 import { Decks, Users } from './dbTable';
+import { DBConfig } from './config';
 
 import { Deck } from '../../src/game';
 
@@ -17,12 +18,11 @@ export class DB {
   async init() {
     this.connection = await createConnection({
       type: 'postgres',
-      host: 'itcg-db',
-      // host: 'localhost',
-      port: 5432,
-      username: 'postgres',
-      password: 'itcg',
-      database: 'user',
+      host: DBConfig.host,
+      port: DBConfig.port,
+      username: DBConfig.username,
+      password: DBConfig.password,
+      database: DBConfig.userDB,
       entities: [Decks, Users],
     });
   }

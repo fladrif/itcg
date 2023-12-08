@@ -28,3 +28,7 @@ yarn-error.log*
 !/src/images/front-sample.jpg
 !/src/images/itcgCBsk2.jpg
 !/src/images/itcgCBsk2-sm.jpg
+!/src/images/phase-inactive.png
+!/src/images/phase-level.png
+!/src/images/phase-activate.png
+!/src/images/phase-attack.png
