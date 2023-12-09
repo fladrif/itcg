@@ -1094,7 +1094,11 @@ export class MysticPowerTrigger extends Trigger {
     decision: Decision,
     _prep: TriggerPrepostion
   ) {
-    return this.sourceIsOwner(decision);
+    const isSource = decision.opts?.source
+      ? decision.opts.source.key === this.cardOwner
+      : false;
+
+    return isSource && this.sourceIsOwner(decision);
   }
 
   createDecision(fnCtx: FuncContext, _decision: Decision) {
