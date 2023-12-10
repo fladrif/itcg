@@ -1842,12 +1842,15 @@ export class TacticResolutionTrigger extends Trigger {
 
     const sourceIsResolvedTactic = decision.opts?.source
       ? isTactic(decision.opts.source) &&
+        // The decision belongs to card in the temporary zone
         G.player[decision.opts.source.owner].temporary.some(
           (card) => card.key === decision.opts!.source!.key
         ) &&
+        // The decision is not in decisions array
         !G.stack.decisions.some(
           (dec) => dec.opts?.source?.key === decision.opts!.source!.key
         ) &&
+        // The decision is not in queued decisions array
         !G.stack.queuedDecisions.some(
           (dec) => dec.opts?.source?.key === decision.opts!.source!.key
         )

@@ -4,7 +4,12 @@ import { FuncContext } from './game';
 import { Decision, overrideStage, upsertStack } from './stack';
 import { getMonsterKeywords, getMonsterHealth, pruneStateStore } from './state';
 import { pruneTriggerStore } from './trigger';
-import { getCardLocation, getLocation, getRandomKey, meetsSkillReq } from './utils';
+import {
+  getCardLocation,
+  getLocation,
+  getRandomKey,
+  passSkillReqToActivate,
+} from './utils';
 
 export function endLevelStage(fnCtx: FuncContext) {
   const { G, ctx } = fnCtx;
@@ -93,7 +98,7 @@ export function endActivateStage(fnCtx: FuncContext, now?: boolean) {
   player.learnedSkills.map((card) => skills.push(card.skill));
 
   const availableSkills = skills.slice(player.activationPos).filter((skill) => {
-    return skill.every((skill) => meetsSkillReq(skill.requirements, player));
+    return skill.every((skill) => passSkillReqToActivate(skill.requirements, player));
   });
 
   const noTargets = availableSkills.length == 0;

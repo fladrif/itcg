@@ -20,6 +20,7 @@ import {
   getOpponentID,
   getRandomKey,
   rmCard,
+  meetsSkillReq,
 } from '../utils';
 import { pushTriggerStore } from '../trigger';
 import { Location } from '../target';
@@ -269,7 +270,9 @@ function level(fnCtx: FuncContext, opts: ActionOpts): any {
       const player = G.player[card.owner];
       const selCard = card as NonCharacter; // uses copy of card as canonical
 
-      const oneshot = selCard.skill.some((skill) => skill.requirements.oneshot);
+      const oneshot = selCard.skill.some(
+        (skill) => skill.requirements.oneshot && meetsSkillReq(skill.requirements, player)
+      );
       if (oneshot) {
         selCard.skill.map((sk, idx) => {
           if (idx === 0) {

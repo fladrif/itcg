@@ -20,7 +20,7 @@ import {
   getLocation,
   getOpponentID,
   getRandomKey,
-  meetsSkillReq,
+  passSkillReqToActivate,
 } from './utils';
 import { Location } from './target';
 
@@ -83,7 +83,7 @@ export const activateSkill: Move<GameState> = (
 
   const skill = 'skills' in selCard ? selCard.skills[opts.position] : selCard.skill;
 
-  if (skill.every((skill) => !meetsSkillReq(skill.requirements, player))) {
+  if (skill.every((skill) => !passSkillReqToActivate(skill.requirements, player))) {
     return INVALID_MOVE;
   }
 
@@ -93,12 +93,13 @@ export const activateSkill: Move<GameState> = (
     sk.activated = true;
   }
 
-  upsertStack(
-    fnCtx,
-    skill.map((skill) => parseSkill(fnCtx, skill, selCard, true)),
-    'activate',
-    prevPos
-  );
+  skill.map((sk, idx) => {
+    if (idx === 0) {
+      upsertStack(fnCtx, [parseSkill(fnCtx, sk, selCard, true)], 'activate', prevPos);
+    } else {
+      G.stack!.queuedDecisions.push(parseSkill(fnCtx, sk, selCard, true));
+    }
+  });
   resolveStack(fnCtx);
 };
 

@@ -2,7 +2,7 @@ import React from 'react';
 
 import { PlayerState } from './game';
 import { Location } from './target';
-import { every, meetsSkillReq } from './utils';
+import { every, passSkillReqToActivate } from './utils';
 
 import { Styles, ITCGCard } from './itcgCard';
 
@@ -39,7 +39,7 @@ export class ITCGCharacter extends React.Component<CharacterProp> {
         every(
           card.skill,
           (sk) =>
-            !meetsSkillReq(sk.requirements, this.props.playerState) ||
+            !passSkillReqToActivate(sk.requirements, this.props.playerState) ||
             this.props.playerState.activationPos > index + 3
         )
       ) {
@@ -88,7 +88,7 @@ export class ITCGCharacter extends React.Component<CharacterProp> {
         this.props.stage === 'activate' &&
         every(skill, (sk) => {
           return (
-            !meetsSkillReq(sk.requirements, this.props.playerState) ||
+            !passSkillReqToActivate(sk.requirements, this.props.playerState) ||
             this.props.playerState.activationPos > idx
           );
         })
