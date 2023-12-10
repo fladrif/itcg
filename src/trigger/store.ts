@@ -1959,18 +1959,23 @@ export class WickedTrigger extends Trigger {
   createDecision(fnCtx: FuncContext, decision: Decision) {
     const { G, ctx } = fnCtx;
 
-    const oppID = getOpponentID(G, ctx, this.owner);
-    const oppCharLoc =
-      oppID === ctx.currentPlayer ? Location.Character : Location.OppCharacter;
-    const oppChar = G.player[oppID].character;
+    const oppCharKey = getOpponentState(G, ctx, this.owner).character.key;
+    const oppCharLocation = getCardLocation(G, ctx, oppCharKey);
+    const oppCharacter = getCardAtLocation(G, ctx, oppCharLocation, oppCharKey);
 
     const retDec: Decision = {
       action: 'damage',
       opts: {
         damage: decision.opts?.lifegain,
+        source: getCardAtLocation(
+          G,
+          ctx,
+          getCardLocation(G, ctx, this.cardOwner),
+          this.cardOwner
+        ),
       },
-      selection: { [oppCharLoc]: [oppChar] },
-      finished: false,
+      selection: { [oppCharLocation]: [oppCharacter] },
+      finished: true,
       key: getRandomKey(),
     };
 
