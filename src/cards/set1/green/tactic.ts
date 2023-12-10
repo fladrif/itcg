@@ -3,7 +3,7 @@ import { Choice, Decision } from '../../../stack';
 import { Location } from '../../../target';
 import { getRandomKey } from '../../../utils';
 
-import { defaultClass } from './index';
+import { defaultClass } from './types';
 
 const defaultTypes = {
   ...defaultClass,

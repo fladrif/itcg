@@ -1,7 +1,7 @@
 import { CardTypes, CardSubTypes, CardClasses, Item } from '../../../card';
 import { Location } from '../../../target';
 
-import { defaultClass } from './index';
+import { defaultClass } from './types';
 
 const defaultTypes = {
   ...defaultClass,

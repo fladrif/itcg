@@ -1,7 +1,7 @@
 import { Monster, CardTypes, CardSubTypes, CardClasses } from '../../../card';
 import { Location } from '../../../target';
 
-import { defaultClass } from './index';
+import { defaultClass } from './types';
 
 const defaultTypes = {
   ...defaultClass,
