@@ -15,12 +15,13 @@ export class ITCGDevLog extends React.Component {
           <b>December 11, 2023</b> Happy holidays! There have been a lot of changes this
           year that haven't been written up yet so a slightly longer update. First off, a
           list of fixes: Added the missing <i>Panda</i> card, corrected the level for{' '}
-          <i>Dark Shadow</i>, fixed functionality for <i>Knowledge is Power</i> and{' '}
-          <i>Pull</i>, and solved a variety of issues that ended in a stuck game state.
-          Overhauled the homepage and How to Play guide, added images, information cards,
-          and better organization to present the game and client in a more comprehensive
-          manner. Included a concede option in a new in-game menu. Added great in-game
-          music, several tracks from <b>Kevin</b> (linked above, same artist that made the
+          <i>Dark Shadow</i>, fixed functionality for <i>Knowledge is Power</i>,{' '}
+          <i>Pull</i>, <i>Teleport</i>, and <i>Lucida</i>. Solved a bug that caused
+          variety of issues that ended in a stuck or improper game state. Overhauled the
+          homepage and How to Play guide, added images, information cards, and better
+          organization to present the game and client in a more comprehensive manner.
+          Included a concede option in a new in-game menu. Added great in-game music,
+          several tracks from <b>Kevin</b> (linked above, same artist that made the
           background image). A big warm welcome to whoever got here from Google! I've
           worked to get this site exposed through Google's Search, and from what I can
           tell exposure and traffic has slowly been building over the past several months.
