@@ -1,16 +1,16 @@
 import { Location } from './target';
 import { Skill, isMonster, Monster } from './card';
 import { FuncContext } from './game';
-import { Decision, upsertStack } from './stack';
+import { Decision, overrideStage, upsertStack } from './stack';
 import { getMonsterKeywords, getMonsterHealth, pruneStateStore } from './state';
 import { pruneTriggerStore } from './trigger';
 import { getCardLocation, getLocation, getRandomKey, meetsSkillReq } from './utils';
 
 export function endLevelStage(fnCtx: FuncContext) {
-  const { G, ctx, events } = fnCtx;
+  const { G, ctx } = fnCtx;
 
   G.player[ctx.currentPlayer].activationPos = 0;
-  events.endStage();
+  overrideStage(fnCtx, 'activate', false);
   endActivateStage(fnCtx);
 }
 
@@ -76,9 +76,7 @@ function resetAttacks(fnCtx: FuncContext) {
 }
 
 function endActivate(fnCtx: FuncContext) {
-  const { events } = fnCtx;
-
-  events.endStage();
+  overrideStage(fnCtx, 'attack', false);
   resetAttacks(fnCtx);
   endAttackStage(fnCtx);
 }
