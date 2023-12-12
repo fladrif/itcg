@@ -26,6 +26,7 @@ export class ITCGFrontPage extends React.Component {
         ['/login', <button className="btn-block border-2">Log In</button>],
         ['/signup', <button className="btn-block border-5">Create an Account</button>],
         ['/howtoplay', <button className="btn-block border-6">How to Play Guide</button>],
+        ['/cards', <button className="btn-block border-3">List of Cards</button>],
       ],
     });
 

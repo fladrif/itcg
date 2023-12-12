@@ -27,6 +27,9 @@ export class ITCGHeader extends React.Component<HeaderProps> {
   addtlMenu = (
     <>
       <li>
+        <a href="/cards">Cards</a>
+      </li>
+      <li>
         <a href="/howtoplay">How To Play</a>
       </li>
       <li>

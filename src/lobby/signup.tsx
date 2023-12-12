@@ -141,7 +141,7 @@ export class ITCGSignUp extends React.Component<SignUpProp> {
     return (
       <div className="border border-primary" style={baseStyle}>
         {this.state.completed && <Redirect to={'/'} />}
-        <h1>Create an account</h1>
+        <h1>Create an Account</h1>
         <form onSubmit={async (e) => await this.handleSubmit(e)} style={formStyle}>
           <FormGroup controlId={'username'} style={formCompStyle}>
             <FormLabel>Username: (5-15 characters)</FormLabel>

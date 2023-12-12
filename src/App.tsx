@@ -8,6 +8,7 @@ import Cookies from 'js-cookie';
 import { ITCG } from './game';
 import { ITCGBoard } from './itcgBoard';
 import {
+  ITCGCards,
   ITCGDeck,
   ITCGHeader,
   ITCGSignUp,
@@ -114,6 +115,9 @@ class App extends React.Component {
                   </Route>
                   <Route path={'/howtoplay'}>
                     <ITCGHowToPlay />
+                  </Route>
+                  <Route path={'/cards'}>
+                    <ITCGCards />
                   </Route>
                   <Route path={'/about'}>
                     <ITCGResources />
