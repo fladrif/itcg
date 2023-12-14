@@ -1,12 +1,13 @@
-import { Item, CardTypes, CardSubTypes, CardClasses } from '../../card';
-import { Location } from '../../target';
-import { Choice, Decision } from '../../stack';
-import { getRandomKey } from '../../utils';
+import { Item, CardTypes, CardSubTypes, CardClasses } from '../../../card';
+import { Location } from '../../../target';
+import { Choice, Decision } from '../../../stack';
+import { getRandomKey } from '../../../utils';
+
+import { defaultClass } from './types';
 
 const defaultTypes = {
+  ...defaultClass,
   type: CardTypes.Item,
-  class: CardClasses.Bowman,
-  selected: false,
 };
 
 const battleBowDecision: Decision = {

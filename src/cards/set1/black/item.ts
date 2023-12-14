@@ -1,10 +1,11 @@
-import { Item, CardTypes, CardSubTypes, CardClasses } from '../../card';
-import { Location } from '../../target';
+import { Item, CardTypes, CardSubTypes, CardClasses } from '../../../card';
+import { Location } from '../../../target';
+
+import { defaultClass } from './types';
 
 const defaultTypes = {
+  ...defaultClass,
   type: CardTypes.Item,
-  class: CardClasses.Thief,
-  selected: false,
 };
 
 export const bluenightfox: Omit<Item, 'key' | 'owner'> = {

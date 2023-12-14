@@ -1,10 +1,11 @@
-import { Character, CardTypes, CardClasses } from '../../card';
-import { Location } from '../../target';
+import { Character, CardTypes, CardClasses } from '../../../card';
+import { Location } from '../../../target';
+
+import { defaultClass } from './types';
 
 const defaultTypes = {
+  ...defaultClass,
   type: CardTypes.Character,
-  class: CardClasses.Thief,
-  selected: false,
 };
 
 export const ivan: Omit<Character, 'key' | 'owner'> = {

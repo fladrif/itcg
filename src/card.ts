@@ -31,6 +31,16 @@ export enum CardClasses {
   Warrior = 'Warrior',
 }
 
+export enum Set {
+  one = 'Set 1',
+  two = 'Set 2',
+  three = 'Set 3',
+  four = 'Set 4',
+  five = 'Set 5',
+  six = 'Set 6',
+  promo = 'Promo',
+}
+
 export enum CardSubTypes {
   strategy = 'strategy',
   skill = 'skill',
@@ -85,6 +95,7 @@ export interface Card {
   image: string;
   selected: boolean;
   key: string;
+  set: Set;
 }
 
 export interface Character extends Card {
@@ -202,6 +213,7 @@ export const blankCard: Omit<NonCharacter, 'key' | 'owner'> = {
   canonicalName: 'blankCard',
   type: CardTypes.Monster,
   class: CardClasses.Magician,
+  set: Set.promo,
   selected: false,
   level: 0,
   name: BLANK_CARDNAME,

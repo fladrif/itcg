@@ -1,10 +1,11 @@
-import { CardTypes, CardSubTypes, CardClasses, Skill, Tactic } from '../../card';
-import { Location } from '../../target';
+import { CardTypes, CardSubTypes, CardClasses, Skill, Tactic } from '../../../card';
+import { Location } from '../../../target';
+
+import { defaultClass } from './types';
 
 const defaultTypes = {
+  ...defaultClass,
   type: CardTypes.Tactic,
-  class: CardClasses.Thief,
-  selected: false,
 };
 
 const avengerDestroyAbility: Skill = {

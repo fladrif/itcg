@@ -1,10 +1,11 @@
-import { CardTypes, CardSubTypes, CardClasses, Tactic } from '../../card';
-import { Location } from '../../target';
+import { CardTypes, CardSubTypes, CardClasses, Tactic } from '../../../card';
+import { Location } from '../../../target';
+
+import { defaultClass } from './types';
 
 const defaultTypes = {
+  ...defaultClass,
   type: CardTypes.Tactic,
-  class: CardClasses.Warrior,
-  selected: false,
 };
 
 export const itemtrade: Omit<Tactic, 'key' | 'owner'> = {
