@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { CardImageName, cardImages } from '../itcgCardImages';
+import { cardImages } from '../itcgCardImages';
 import { cards } from '../cards';
 
 import { toCard, toGrid } from './utils';
@@ -13,7 +13,7 @@ const baseStyle: React.CSSProperties = {
 };
 
 export class ITCGCards extends React.Component {
-  charImage(name: CardImageName) {
+  charImage(name: keyof typeof cardImages) {
     return (
       <div className="align-middle shadow">
         <img src={cardImages[name].top}></img>
@@ -24,7 +24,7 @@ export class ITCGCards extends React.Component {
     );
   }
 
-  nonCharImage(name: CardImageName) {
+  nonCharImage(name: keyof typeof cardImages) {
     return (
       <div className="align-middle shadow">
         <img src={cardImages[name].top}></img>

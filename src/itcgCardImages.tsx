@@ -606,5 +606,4 @@ export const cardImages: Record<string, CardImages> = {
   },
 };
 
-export type CardImageName = keyof typeof cardImages;
 export const cardback = Cardback;
