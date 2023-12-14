@@ -1,11 +1,13 @@
 import { ReactNode } from 'react';
 
-export function toGrid(components: ReactNode[]): ReactNode {
+export function toGrid(components: ReactNode[], size?: 'small'): ReactNode {
+  const classSetting = size === 'small' ? 'sm-4 col' : 'sm-6 col';
+
   const cards = components.map((comp) => {
-    return <div className="sm-6 col">{comp}</div>;
+    return <div className={classSetting}>{comp}</div>;
   });
 
-  return <div className="row flex-edges">{cards}</div>;
+  return <div className="row flex">{cards}</div>;
 }
 
 export interface CardOpts {

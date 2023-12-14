@@ -8,6 +8,7 @@ import { GlobalState } from './state';
 import { TriggerLifetime, TriggerNames, TriggerOptions } from './trigger';
 import { getRandomKey } from './utils';
 import { CardName } from './cards';
+import { CardImageName } from './itcgCardImages';
 
 export const BLANK_CARDNAME = 'blank';
 
@@ -92,7 +93,7 @@ export interface Card {
   type: CardTypes;
   class: CardClasses;
   owner: PlayerID;
-  image: string;
+  image: CardImageName;
   selected: boolean;
   key: string;
   set: Set;
