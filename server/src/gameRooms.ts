@@ -68,6 +68,8 @@ function cleanRoom(room: Room, userID: string): CleanRoom {
   return {
     id: room.id,
     users: room.users.map((user) => {
+      if (user.id === userID) user.onlineTS = Date.now();
+
       const clean = {
         name: user.name,
         deck: user.deck,
@@ -75,8 +77,8 @@ function cleanRoom(room: Room, userID: string): CleanRoom {
         ready: user.ready,
         onlineTS: user.onlineTS,
       };
+
       if (user.id !== userID) delete clean.deck;
-      if (user.id === userID) clean.onlineTS = Date.now();
 
       return clean;
     }),
