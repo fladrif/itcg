@@ -2,6 +2,8 @@ import { getRandomKey } from '../../src/utils';
 
 import { Room, RoomUser, CleanRoom } from './types';
 
+const MINUTE = 60 * 1000;
+
 class GameRooms {
   rooms: Record<string, Room>;
 
@@ -19,6 +21,16 @@ class GameRooms {
     const roomIDs = Object.keys(this.rooms);
 
     return roomIDs.find((id) => this.rooms[id].users.some((usr) => usr.id === userID));
+  }
+
+  purgeUnusedRooms() {
+    const purge = Object.keys(this.rooms).filter(
+      (id) =>
+        this.rooms[id].users.length < 2 &&
+        this.rooms[id].users[0].onlineTS < Date.now() - 5 * MINUTE
+    );
+
+    purge.map((id) => delete this.rooms[id]);
   }
 
   getOpenRooms(userID: string): CleanRoom[] {
@@ -61,8 +73,10 @@ function cleanRoom(room: Room, userID: string): CleanRoom {
         deck: user.deck,
         owner: user.owner,
         ready: user.ready,
+        onlineTS: user.onlineTS,
       };
       if (user.id !== userID) delete clean.deck;
+      if (user.id === userID) clean.onlineTS = Date.now();
 
       return clean;
     }),

@@ -12,6 +12,7 @@ const router = new Router<any, ServerTypes.AppCtx>();
 router.get('/', async (ctx: any) => {
   const userID = ctx.header[AUTH_HEADER];
 
+  gameRooms.purgeUnusedRooms();
   const inRoomID = gameRooms.userInRoom(userID);
   const room = inRoomID ? gameRooms.getCleanRoom(inRoomID, userID) : undefined;
 
@@ -30,7 +31,13 @@ router.post('/create', async (ctx: any) => {
   if (userInGame || gameRooms.userInRoom(id))
     return ctx.throw(400, 'User already in room');
 
-  gameRooms.addRoom({ name: owner.username, id: owner.id, owner: true, ready: false });
+  gameRooms.addRoom({
+    name: owner.username,
+    id: owner.id,
+    owner: true,
+    ready: false,
+    onlineTS: Date.now(),
+  });
 
   ctx.body = 200;
 });
@@ -78,7 +85,13 @@ router.post('/join', bodyParser(), async (ctx: any) => {
 
   if (room.users.length >= 2) ctx.throw(400, 'Room Occupied');
 
-  room.users.push({ name: owner.username, id: owner.id, owner: false, ready: false });
+  room.users.push({
+    name: owner.username,
+    id: owner.id,
+    owner: false,
+    ready: false,
+    onlineTS: Date.now(),
+  });
 
   ctx.body = 200;
 });

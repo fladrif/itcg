@@ -7,6 +7,7 @@ export interface CleanRoomUser {
   name: string;
   owner: boolean;
   ready: boolean;
+  onlineTS: number;
   deck?: string;
 }
 
