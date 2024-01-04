@@ -59,6 +59,13 @@ export class BattleBowTrigger extends Trigger {
 
   createDecision(fnCtx: FuncContext, decision: Decision) {
     const { G, ctx } = fnCtx;
+    const source = getCardAtLocation(
+      G,
+      ctx,
+      getCardLocation(G, ctx, this.cardOwner),
+      this.cardOwner
+    );
+
     const buffDec: Decision = {
       action: 'buff',
       finished: false,
@@ -66,6 +73,7 @@ export class BattleBowTrigger extends Trigger {
       opts: {
         damage: this.opts?.damage ? this.opts.damage : 0,
         decision: decision.key,
+        source,
       },
       key: getRandomKey(),
     };
@@ -80,12 +88,7 @@ export class BattleBowTrigger extends Trigger {
       opts: {
         dialogDecision: [buffDec],
         triggerKey: this.key,
-        source: getCardAtLocation(
-          G,
-          ctx,
-          getCardLocation(G, ctx, this.cardOwner),
-          this.cardOwner
-        ),
+        source,
       },
       key: getRandomKey(),
     };
@@ -424,7 +427,8 @@ export class DoombringerTrigger extends Trigger {
     return sourceIsChar && this.sourceIsOwner(decision);
   }
 
-  createDecision(_fnCtx: FuncContext, decision: Decision) {
+  createDecision(fnCtx: FuncContext, decision: Decision) {
+    const { G, ctx } = fnCtx;
     const buffDmg = this.opts?.damage || 0;
 
     const buffDec: Decision = {
@@ -434,6 +438,12 @@ export class DoombringerTrigger extends Trigger {
       opts: {
         damage: buffDmg,
         decision: decision.key,
+        source: getCardAtLocation(
+          G,
+          ctx,
+          getCardLocation(G, ctx, this.cardOwner),
+          this.cardOwner
+        ),
       },
       key: getRandomKey(),
     };
@@ -802,6 +812,12 @@ export class GoldenCrowTrigger extends Trigger {
   createDecision(fnCtx: FuncContext, decision: Decision) {
     const { G, ctx } = fnCtx;
     const decisionDmg = decision.opts?.damage || 0;
+    const source = getCardAtLocation(
+      G,
+      ctx,
+      getCardLocation(G, ctx, this.cardOwner),
+      this.cardOwner
+    );
 
     const buffDec: Decision = {
       action: 'buff',
@@ -810,6 +826,7 @@ export class GoldenCrowTrigger extends Trigger {
       opts: {
         damage: decisionDmg,
         decision: decision.key,
+        source,
       },
       key: getRandomKey(),
     };
@@ -824,12 +841,7 @@ export class GoldenCrowTrigger extends Trigger {
       opts: {
         dialogDecision: [buffDec],
         triggerKey: this.key,
-        source: getCardAtLocation(
-          G,
-          ctx,
-          getCardLocation(G, ctx, this.cardOwner),
-          this.cardOwner
-        ),
+        source,
       },
       key: getRandomKey(),
     };
