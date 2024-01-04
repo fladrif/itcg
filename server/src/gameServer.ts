@@ -37,7 +37,7 @@ export function updateDeck(deck: Decks): boolean {
       ? (getCard(card[0].name) as Omit<NonCharacter, 'owner' | 'key'>)
       : (cards[card[0].canonicalName] as Omit<NonCharacter, 'owner' | 'key'>);
 
-    if (card[0] !== updatedCard) hasUpdated = true;
+    if (JSON.stringify(card[0]) !== JSON.stringify(updatedCard)) hasUpdated = true;
     return [updatedCard, card[1]] as [Omit<NonCharacter, 'owner' | 'key'>, number];
   });
 
@@ -47,7 +47,7 @@ export function updateDeck(deck: Decks): boolean {
       ? (getCard(character.name) as Omit<Character, 'owner' | 'key'>)
       : (cards[character.canonicalName] as Omit<Character, 'owner' | 'key'>);
 
-  if (character !== updatedChar) hasUpdated = true;
+  if (JSON.stringify(character) !== JSON.stringify(updatedChar)) hasUpdated = true;
 
   if (
     !updatedChar ||
