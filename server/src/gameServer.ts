@@ -28,6 +28,8 @@ function getCard(name: string): Omit<Character | NonCharacter, 'owner' | 'key'> 
 }
 
 export function updateDeck(deck: Decks): boolean {
+  let hasUpdated = false;
+
   const updatedDeckList = deck.deck_list.deck.map((card) => {
     const isV1 = card[0].canonicalName === undefined;
 
@@ -35,6 +37,7 @@ export function updateDeck(deck: Decks): boolean {
       ? (getCard(card[0].name) as Omit<NonCharacter, 'owner' | 'key'>)
       : (cards[card[0].canonicalName] as Omit<NonCharacter, 'owner' | 'key'>);
 
+    if (card[0] !== updatedCard) hasUpdated = true;
     return [updatedCard, card[1]] as [Omit<NonCharacter, 'owner' | 'key'>, number];
   });
 
@@ -44,6 +47,8 @@ export function updateDeck(deck: Decks): boolean {
       ? (getCard(character.name) as Omit<Character, 'owner' | 'key'>)
       : (cards[character.canonicalName] as Omit<Character, 'owner' | 'key'>);
 
+  if (character !== updatedChar) hasUpdated = true;
+
   if (
     !updatedChar ||
     !updatedDeckList.reduce((acc, card) => acc && card[0].name !== BLANK_CARDNAME, true)
@@ -51,12 +56,14 @@ export function updateDeck(deck: Decks): boolean {
     return false;
   }
 
-  db.saveDeck(
-    deck.id,
-    deck.name,
-    { character: updatedChar, deck: updatedDeckList },
-    deck.owner ? deck.owner.id : undefined
-  );
+  if (hasUpdated) {
+    db.saveDeck(
+      deck.id,
+      deck.name,
+      { character: updatedChar, deck: updatedDeckList },
+      deck.owner ? deck.owner.id : undefined
+    );
+  }
 
   return true;
 }
