@@ -27,7 +27,7 @@ class GameRooms {
     const purge = Object.keys(this.rooms).filter(
       (id) =>
         this.rooms[id].users.length < 2 &&
-        this.rooms[id].users[0].onlineTS < Date.now() - 5 * MINUTE
+        this.rooms[id].users[0].onlineTS < Date.now() - 15 * MINUTE
     );
 
     purge.map((id) => delete this.rooms[id]);
