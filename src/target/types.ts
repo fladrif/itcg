@@ -34,6 +34,8 @@ export interface TargetFilter {
   // True if num selected can be less than quantity specified
   quantityUpTo?: boolean;
   level?: LevelSelector;
+  // True if we need level to be higher than filter level
+  levelHigher?: boolean;
   type?: CardTypes;
   subtype?: CardSubTypes[];
   class?: CardClasses[];
