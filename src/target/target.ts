@@ -140,7 +140,12 @@ function cardInFilter(filter: TargetFilter, card: Character | NonCharacter): boo
     return false;
   if (filter.class && !filter.class.includes(card.class)) return false;
   if (filter.level !== undefined && filter.level !== 'CurrentLevel') {
-    if (filter.level < (card as NonCharacter).level) return false;
+    if (
+      !filter.levelHigher
+        ? filter.level < (card as NonCharacter).level
+        : filter.level > (card as NonCharacter).level
+    )
+      return false;
   }
 
   return true;

@@ -210,6 +210,7 @@ export const panda: Omit<Monster, 'key' | 'owner'> = {
       noReset: true,
       targets: {
         level: 50,
+        levelHigher: true,
         type: CardTypes.Monster,
         location: Location.Discard,
         quantity: 1,
