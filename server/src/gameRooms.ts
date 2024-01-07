@@ -3,6 +3,7 @@ import { getRandomKey } from '../../src/utils';
 import { Room, RoomUser, CleanRoom } from './types';
 
 const MINUTE = 60 * 1000;
+const ROOM_TIMEOUT_MS = 60 * MINUTE;
 
 class GameRooms {
   rooms: Record<string, Room>;
@@ -27,7 +28,7 @@ class GameRooms {
     const purge = Object.keys(this.rooms).filter(
       (id) =>
         this.rooms[id].users.length < 2 &&
-        this.rooms[id].users[0].onlineTS < Date.now() - 15 * MINUTE
+        this.rooms[id].users[0].onlineTS < Date.now() - ROOM_TIMEOUT_MS
     );
 
     purge.map((id) => delete this.rooms[id]);
