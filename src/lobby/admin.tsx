@@ -126,10 +126,12 @@ export class ITCGAdmin extends React.Component<AdminProp, AdminState> {
       return { created_at: b.x0, players: b.length };
     });
 
-    const startingWins = this.state.gameData.filter((g) => g.gameover.winner == 0).length;
+    const startingWins = this.state.gameData.filter(
+      (g) => g.gameover?.winner == 0
+    ).length;
     const unfinishedGames = this.state.gameData.filter((g) => !g.gameover).length;
     const totalGames = this.state.gameData.length;
-    const startingAdvantage = startingWins / totalGames;
+    const startingAdvantage = startingWins / (totalGames - unfinishedGames);
 
     const binnedGameData = d3Array
       .bin<{ createdAt: Date }, Date>()
