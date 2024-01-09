@@ -6,7 +6,7 @@ export async function getGames(): Promise<Games[]> {
 
   const gameRepo = connection.getRepository(Games);
   const games = await gameRepo.find({
-    select: ['gameover', 'createdAt', 'updatedAt'],
+    select: ['gameover', 'createdAt'],
   });
 
   return games;
