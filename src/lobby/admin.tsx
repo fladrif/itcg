@@ -231,14 +231,6 @@ export class ITCGAdmin extends React.Component<AdminProp, AdminState> {
       (startingWins / (totalGames - unfinishedGames)) * 100
     );
 
-    const avgGameTimeMS =
-      this.state.gameData
-        .filter((g) => !!g.gameover)
-        .reduce((prev, cur) => {
-          return cur.updatedAt.getTime() - cur.createdAt.getTime() + prev;
-        }, 0) / this.state.gameData.length;
-    const avgGameTimeMin = (avgGameTimeMS / 1000 / 60).toFixed(1);
-
     const orderedGameTimeMS = this.state.gameData
       .filter((g) => !!g.gameover)
       .map((g) => {
@@ -246,13 +238,21 @@ export class ITCGAdmin extends React.Component<AdminProp, AdminState> {
       })
       .sort((a, b) => (a > b ? 1 : -1));
 
-    const p98Idx =
-      Math.ceil((98 / 100) * this.state.gameData.filter((g) => !!g.gameover).length) - 1;
-    const p98GameTimeMin = (orderedGameTimeMS[p98Idx] / 1000 / 60).toFixed(1);
+    const p95Idx =
+      Math.ceil((95 / 100) * this.state.gameData.filter((g) => !!g.gameover).length) - 1;
+    const p95GameTimeMin = (orderedGameTimeMS[p95Idx] / 1000 / 60).toFixed(1);
 
     const p75Idx =
       Math.ceil((75 / 100) * this.state.gameData.filter((g) => !!g.gameover).length) - 1;
     const p75GameTimeMin = (orderedGameTimeMS[p75Idx] / 1000 / 60).toFixed(1);
+
+    const p50Idx =
+      Math.ceil((50 / 100) * this.state.gameData.filter((g) => !!g.gameover).length) - 1;
+    const p50GameTimeMin = (orderedGameTimeMS[p50Idx] / 1000 / 60).toFixed(1);
+
+    const p25Idx =
+      Math.ceil((25 / 100) * this.state.gameData.filter((g) => !!g.gameover).length) - 1;
+    const p25GameTimeMin = (orderedGameTimeMS[p25Idx] / 1000 / 60).toFixed(1);
 
     const binnedGameData = d3Array
       .bin<{ createdAt: Date }, Date>()
@@ -329,13 +329,16 @@ export class ITCGAdmin extends React.Component<AdminProp, AdminState> {
               Starting Adv: <span className="badge">{startingAdvantage}%</span>
             </h4>
             <h4>
-              p98 Game Time (min): <span className="badge">{p98GameTimeMin}</span>
+              p95 Game Time (min): <span className="badge">{p95GameTimeMin}</span>
             </h4>
             <h4>
               p75 Game Time (min): <span className="badge">{p75GameTimeMin}</span>
             </h4>
             <h4>
-              Avg Game Time (min): <span className="badge">{avgGameTimeMin}</span>
+              p50 Game Time (min): <span className="badge">{p50GameTimeMin}</span>
+            </h4>
+            <h4>
+              p25 Game Time (min): <span className="badge">{p25GameTimeMin}</span>
             </h4>
           </div>
           <div className="lg-4">
