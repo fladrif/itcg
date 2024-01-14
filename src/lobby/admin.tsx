@@ -23,6 +23,8 @@ interface AdminState {
   playerData: any[];
   gameData: any[];
   roomData: any;
+  latestPlayers: any[];
+  latestGames: any[];
 }
 
 const baseStyle: React.CSSProperties = {
@@ -40,12 +42,29 @@ export class ITCGAdmin extends React.Component<AdminProp, AdminState> {
       playerData: [],
       gameData: [],
       roomData: { allRooms: 0, openRooms: 0 },
+      latestPlayers: [],
+      latestGames: [],
     };
   }
 
   async getGameData(): Promise<any[]> {
     const resp = await axios
       .get('/stats/games', {
+        baseURL: this.props.server,
+        timeout: 5000,
+        withCredentials: true,
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+
+    if (resp) return resp.data;
+    return [];
+  }
+
+  async getLatestGames(): Promise<any[]> {
+    const resp = await axios
+      .get('/stats/games/latest', {
         baseURL: this.props.server,
         timeout: 5000,
         withCredentials: true,
@@ -88,12 +107,30 @@ export class ITCGAdmin extends React.Component<AdminProp, AdminState> {
     return [];
   }
 
+  async getLatestPlayers(): Promise<any[]> {
+    const resp = await axios
+      .get('/stats/users/latest', {
+        baseURL: this.props.server,
+        timeout: 5000,
+        withCredentials: true,
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+
+    if (resp) return resp.data;
+    return [];
+  }
+
   async componentDidMount() {
-    const [playerData, gameData, roomData] = await Promise.all([
-      this.getPlayerData(),
-      this.getGameData(),
-      this.getRoomData(),
-    ]);
+    const [playerData, gameData, roomData, latestPlayers, latestGames] =
+      await Promise.all([
+        this.getPlayerData(),
+        this.getGameData(),
+        this.getRoomData(),
+        this.getLatestPlayers(),
+        this.getLatestGames(),
+      ]);
 
     // const data = [
     //   { created_at: '2024-01-08T06:59:49.067Z' },
@@ -114,9 +151,63 @@ export class ITCGAdmin extends React.Component<AdminProp, AdminState> {
       return { created_at: new Date(d.created_at) };
     });
     this.state.gameData = gameData.map((d) => {
-      return { createdAt: new Date(d.createdAt), gameover: d.gameover };
+      return {
+        createdAt: new Date(d.createdAt),
+        updatedAt: new Date(d.updatedAt),
+        gameover: d.gameover,
+      };
     });
     this.state.roomData = roomData;
+    this.state.latestPlayers = latestPlayers;
+    this.state.latestGames = latestGames;
+  }
+
+  gameTable() {
+    const games = this.state.latestGames.reverse().map((g) => {
+      return (
+        <tr>
+          <td>{new Date(g.ended).toLocaleDateString()}</td>
+          <td>{g.winner}</td>
+          <td>{g.loser}</td>
+        </tr>
+      );
+    });
+
+    return (
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Winner</th>
+            <th>Loser</th>
+          </tr>
+        </thead>
+        <tbody>{games}</tbody>
+      </table>
+    );
+  }
+
+  userTable() {
+    const players = this.state.latestPlayers.reverse().map((u) => {
+      return (
+        <tr>
+          <td>{new Date(u.created_at).toLocaleDateString()}</td>
+          <td>{u.username}</td>
+        </tr>
+      );
+    });
+
+    return (
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Username</th>
+          </tr>
+        </thead>
+        <tbody>{players}</tbody>
+      </table>
+    );
   }
 
   render() {
@@ -139,6 +230,29 @@ export class ITCGAdmin extends React.Component<AdminProp, AdminState> {
     const startingAdvantage = Math.trunc(
       (startingWins / (totalGames - unfinishedGames)) * 100
     );
+
+    const avgGameTimeMS =
+      this.state.gameData
+        .filter((g) => !!g.gameover)
+        .reduce((prev, cur) => {
+          return cur.updatedAt.getTime() - cur.createdAt.getTime() + prev;
+        }, 0) / this.state.gameData.length;
+    const avgGameTimeMin = (avgGameTimeMS / 1000 / 60).toFixed(1);
+
+    const orderedGameTimeMS = this.state.gameData
+      .filter((g) => !!g.gameover)
+      .map((g) => {
+        return g.updatedAt.getTime() - g.createdAt.getTime();
+      })
+      .sort((a, b) => (a > b ? 1 : -1));
+
+    const p98Idx =
+      Math.ceil((98 / 100) * this.state.gameData.filter((g) => !!g.gameover).length) - 1;
+    const p98GameTimeMin = (orderedGameTimeMS[p98Idx] / 1000 / 60).toFixed(1);
+
+    const p75Idx =
+      Math.ceil((75 / 100) * this.state.gameData.filter((g) => !!g.gameover).length) - 1;
+    const p75GameTimeMin = (orderedGameTimeMS[p75Idx] / 1000 / 60).toFixed(1);
 
     const binnedGameData = d3Array
       .bin<{ createdAt: Date }, Date>()
@@ -177,30 +291,56 @@ export class ITCGAdmin extends React.Component<AdminProp, AdminState> {
 
     return (
       <div style={baseStyle}>
-        <h3>
-          Users: <span className="badge">{this.state.playerData.length}</span>
-        </h3>
-        <ResponsiveContainer width="95%" height={200}>
-          <LineChart data={newPlayerData}>
-            <XAxis dataKey="created_at" />
-            <YAxis />
-            <Line type="monotone" dataKey="players" stroke="#8884d8" />
-          </LineChart>
-        </ResponsiveContainer>
-        <h3>
-          First Adv: <span className="badge">{startingAdvantage}%</span>
-        </h3>
-        <ResponsiveContainer width="95%" height={200}>
-          <LineChart data={newGameData}>
-            <XAxis dataKey="created_at" />
-            <YAxis />
-            <Line type="monotone" dataKey="players" stroke="#8884d8" />
-          </LineChart>
-        </ResponsiveContainer>
         <div className="row" style={{ width: '100%' }}>
-          <div className="col-6">
+          <div className="lg-8">
+            <h3>
+              Users: <span className="badge">{this.state.playerData.length}</span>
+            </h3>
+            <ResponsiveContainer height={150}>
+              <LineChart data={newPlayerData}>
+                <XAxis dataKey="created_at" />
+                <YAxis />
+                <Line type="monotone" dataKey="players" stroke="#8884d8" />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+          <div className="lg-4 padding-top margin-top">
+            <h4 className="margin-none">Newest Users</h4>
+            {this.userTable()}
+          </div>
+          <div className="lg-8">
+            <h3>
+              Games: <span className="badge">{totalGames}</span>
+            </h3>
+            <ResponsiveContainer height={150}>
+              <LineChart data={newGameData}>
+                <XAxis dataKey="created_at" />
+                <YAxis />
+                <Line type="monotone" dataKey="players" stroke="#8884d8" />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+          <div className="lg-4 padding-top margin-top">
+            <h4 className="margin-none">Latest Games</h4>
+            {this.gameTable()}
+          </div>
+          <div className="lg-4">
+            <h4>
+              Starting Adv: <span className="badge">{startingAdvantage}%</span>
+            </h4>
+            <h4>
+              p98 Game Time (min): <span className="badge">{p98GameTimeMin}</span>
+            </h4>
+            <h4>
+              p75 Game Time (min): <span className="badge">{p75GameTimeMin}</span>
+            </h4>
+            <h4>
+              Avg Game Time (min): <span className="badge">{avgGameTimeMin}</span>
+            </h4>
+          </div>
+          <div className="lg-4">
             <h4>Rooms</h4>
-            <ResponsiveContainer width="95%" height={200}>
+            <ResponsiveContainer height={250}>
               <PieChart>
                 <Pie data={roomData} nameKey="name" dataKey="value" fill="#8884d8" label>
                   {roomData.map((_entry, index) => (
@@ -211,9 +351,9 @@ export class ITCGAdmin extends React.Component<AdminProp, AdminState> {
               </PieChart>
             </ResponsiveContainer>
           </div>
-          <div className="col-6">
-            <h4>Games</h4>
-            <ResponsiveContainer width="95%" height={200}>
+          <div className="lg-4">
+            <h4>Game Status</h4>
+            <ResponsiveContainer height={250}>
               <PieChart>
                 <Pie data={gameData} nameKey="name" dataKey="value" fill="#8884d8" label>
                   {gameData.map((_entry, index) => (

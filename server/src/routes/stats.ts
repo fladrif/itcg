@@ -16,6 +16,12 @@ router.get('/users', async (ctx: any) => {
   ctx.body = userCount;
 });
 
+router.get('/users/latest', async (ctx: any) => {
+  const latestUsers = await db.getLatestUsers();
+
+  ctx.body = latestUsers;
+});
+
 router.get('/decks', async (ctx: any) => {
   const deckCount = await db.getDeckCount();
 
@@ -35,6 +41,12 @@ router.get('/rooms', async (ctx: any) => {
 
 router.get('/games', async (ctx: any) => {
   const payload = await db.getGames();
+
+  ctx.body = payload;
+});
+
+router.get('/games/latest', async (ctx: any) => {
+  const payload = await db.getLatestGames();
 
   ctx.body = payload;
 });

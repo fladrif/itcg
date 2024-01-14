@@ -21,6 +21,17 @@ export async function getUserCount(): Promise<UserCount[]> {
   return user.find({ select: ['created_at'] });
 }
 
+export async function getLatestUsers(): Promise<any[]> {
+  const connection = await getConnection();
+
+  const user = connection.getRepository(Users);
+  return user.find({
+    select: ['username', 'created_at'],
+    take: 3,
+    order: { created_at: 'DESC' },
+  });
+}
+
 export async function setUser(
   username: string,
   password: string,
