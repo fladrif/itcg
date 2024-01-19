@@ -275,6 +275,7 @@ function level(fnCtx: FuncContext, opts: ActionOpts): any {
       );
       if (oneshot) {
         selCard.skill.map((sk, idx) => {
+          sk.activated = true;
           if (idx === 0) {
             upsertStack(fnCtx, [parseSkill(fnCtx, sk, card)]);
           } else {
@@ -304,6 +305,7 @@ function loot(fnCtx: FuncContext, opts: ActionOpts): any {
 
   const discardDecision: Decision = {
     action: 'discard',
+    dialogPrompt: 'Discard a card',
     key: getRandomKey(),
     finished: false,
     target: {
