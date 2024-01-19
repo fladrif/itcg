@@ -292,7 +292,7 @@ export class ITCGAdmin extends React.Component<AdminProp, AdminState> {
     return (
       <div style={baseStyle}>
         <div className="row" style={{ width: '100%' }}>
-          <div className="lg-8">
+          <div className="col sm-8">
             <h3>
               Users: <span className="badge">{this.state.playerData.length}</span>
             </h3>
@@ -304,11 +304,11 @@ export class ITCGAdmin extends React.Component<AdminProp, AdminState> {
               </LineChart>
             </ResponsiveContainer>
           </div>
-          <div className="lg-4 padding-top margin-top">
+          <div className="col sm-4 padding-top margin-top">
             <h4 className="margin-none">Newest Users</h4>
             {this.userTable()}
           </div>
-          <div className="lg-8">
+          <div className="col sm-8">
             <h3>
               Games: <span className="badge">{totalGames}</span>
             </h3>
@@ -320,28 +320,28 @@ export class ITCGAdmin extends React.Component<AdminProp, AdminState> {
               </LineChart>
             </ResponsiveContainer>
           </div>
-          <div className="lg-4 padding-top margin-top">
+          <div className="col sm-4 padding-top margin-top">
             <h4 className="margin-none">Latest Games</h4>
             {this.gameTable()}
           </div>
-          <div className="lg-4">
-            <h4>
+          <div className="col sm-4">
+            <h4 className="margin-none padding-top">
               Starting Adv: <span className="badge">{startingAdvantage}%</span>
             </h4>
-            <h4>
+            <h4 className="margin-none padding-top">
               p95 Game Time (min): <span className="badge">{p95GameTimeMin}</span>
             </h4>
-            <h4>
+            <h4 className="margin-none padding-top">
               p75 Game Time (min): <span className="badge">{p75GameTimeMin}</span>
             </h4>
-            <h4>
+            <h4 className="margin-none padding-top">
               p50 Game Time (min): <span className="badge">{p50GameTimeMin}</span>
             </h4>
-            <h4>
+            <h4 className="margin-none padding-top">
               p25 Game Time (min): <span className="badge">{p25GameTimeMin}</span>
             </h4>
           </div>
-          <div className="lg-4">
+          <div className="col sm-4">
             <h4>Rooms</h4>
             <ResponsiveContainer height={250}>
               <PieChart>
@@ -354,7 +354,7 @@ export class ITCGAdmin extends React.Component<AdminProp, AdminState> {
               </PieChart>
             </ResponsiveContainer>
           </div>
-          <div className="lg-4">
+          <div className="col sm-4">
             <h4>Game Status</h4>
             <ResponsiveContainer height={250}>
               <PieChart>
