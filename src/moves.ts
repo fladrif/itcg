@@ -13,7 +13,6 @@ import {
   resolveStack,
   Choice,
 } from './stack';
-import { getMonsterAtt } from './state';
 import {
   deepCardComp,
   getCardAtLocation,
@@ -133,7 +132,7 @@ export const attack: Move<GameState> = (fnCtx: FuncContext, opts?: MoveOptions) 
     },
     opts: {
       source: selCard,
-      damage: getMonsterAtt(fnCtx, selCard),
+      damage: 0,
     },
     selection: {},
     finished: false,

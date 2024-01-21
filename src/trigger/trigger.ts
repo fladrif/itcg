@@ -12,7 +12,9 @@ import {
 } from './types';
 
 export abstract class Trigger {
+  // player
   owner: TriggerOwner;
+  // card
   cardOwner: string;
   key: string;
   prep: TriggerPrepostion;
