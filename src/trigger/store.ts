@@ -84,7 +84,7 @@ export class BattleBowTrigger extends Trigger {
       selection: {},
       choice: [Choice.Yes, Choice.No],
       noReset: true,
-      dialogPrompt: 'Use effect?',
+      dialogPrompt: `Use ${source.name}?`,
       opts: {
         dialogDecision: [buffDec],
         triggerKey: this.key,
@@ -836,7 +836,7 @@ export class GoldenCrowTrigger extends Trigger {
       finished: false,
       selection: {},
       choice: [Choice.Yes, Choice.No],
-      dialogPrompt: 'Use effect?',
+      dialogPrompt: `Use ${source.name}?`,
       noReset: true,
       opts: {
         dialogDecision: [buffDec],
@@ -1026,7 +1026,7 @@ export class MapleStaffTrigger extends Trigger {
       selection: {},
       choice: [Choice.Yes, Choice.No],
       finished: false,
-      dialogPrompt: `Use ${source.name} Ability?`,
+      dialogPrompt: `Use ${source.name}?`,
       noReset: true,
       opts: {
         dialogDecision: [seerDec, replaceDec],
@@ -1326,6 +1326,7 @@ export class RedNightTrigger extends Trigger {
 
     const discardDec: Decision = {
       action: 'discard',
+      dialogPrompt: 'Discard a card',
       selection: {},
       finished: false,
       noReset: true,

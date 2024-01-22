@@ -24,7 +24,7 @@ export enum Choice {
   Tails = 'Tails',
   Yes = 'Yes',
   No = 'No',
-  Ack = 'Ack',
+  Ack = 'Ok',
   Rock = 'Rock',
   Paper = 'Paper',
   Scissor = 'Scissor',
