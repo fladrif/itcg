@@ -130,6 +130,7 @@ function handleXOR(
 }
 
 function cardInFilter(filter: TargetFilter, card: Character | NonCharacter): boolean {
+  if (filter.cardKey && !filter.cardKey.includes(card.key)) return false;
   if (filter.excludeCardKey?.includes(card.key)) return false;
   if (filter.type && filter.type !== card.type) return false;
   if (

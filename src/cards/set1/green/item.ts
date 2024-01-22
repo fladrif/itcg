@@ -115,6 +115,38 @@ export const blackrobinhat: Omit<Item, 'key' | 'owner'> = {
   ...defaultTypes,
 };
 
+export const bluediros: Omit<Item, 'key' | 'owner'> = {
+  canonicalName: 'bluediros',
+  name: 'Blue Diros',
+  image: 'BlueDiros',
+  level: 20,
+  skill: [
+    {
+      action: 'play',
+      activated: false,
+      requirements: {
+        level: 30,
+        class: {
+          [CardClasses.Bowman]: 2,
+        },
+      },
+      targets: {
+        level: 30,
+        type: CardTypes.Item,
+        location: Location.Hand,
+        quantity: 1,
+      },
+    },
+  ],
+  ability: {
+    triggers: [
+      { name: 'BlueDirosTrigger', lifetime: { turn: 0 }, opts: { damage: -10 } },
+    ],
+  },
+  subtypes: [CardSubTypes.armor],
+  ...defaultTypes,
+};
+
 export const goldencrow: Omit<Item, 'key' | 'owner'> = {
   canonicalName: 'goldencrow',
   name: 'Golden Crow',

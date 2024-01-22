@@ -170,6 +170,8 @@ import TopBlueNightfox from './images/top-BlueNightfox.jpg';
 import SkillBlueNightfox from './images/skill-BlueNightfox.jpg';
 import TopPanda from './images/top-Panda.jpg';
 import SkillPanda from './images/skill-Panda.jpg';
+import TopBlueDiros from './images/top-BlueDiros.jpg';
+import SkillBlueDiros from './images/skill-BlueDiros.jpg';
 import TopSherman from './images/top-Sherman.jpg';
 import SkillSherman from './images/skill1-Sherman.jpg';
 import Skill2Sherman from './images/skill2-Sherman.jpg';
@@ -555,6 +557,10 @@ export const cardImages: Record<string, CardImages> = {
   Panda: {
     top: TopPanda,
     skill: SkillPanda,
+  },
+  BlueDiros: {
+    top: TopBlueDiros,
+    skill: SkillBlueDiros,
   },
   Sherman: {
     top: TopSherman,

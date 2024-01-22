@@ -12,6 +12,7 @@ import {
   NonCharacter,
 } from '../card';
 import { Choice, Decision, parseSkill, upsertStack } from '../stack';
+import { getMonsterAtt } from '../state';
 import {
   deepCardComp,
   getLocation,
@@ -42,7 +43,7 @@ function ack(fnCtx: FuncContext, opts: ActionOpts): any {
 
 function assist(fnCtx: FuncContext, opts: ActionOpts): any {
   const { G, ctx } = fnCtx;
-  if (!G.stack || !opts.damage || !opts.source) return;
+  if (!G.stack || opts.damage === undefined || !opts.source) return;
 
   const playerState = G.player[opts.source.owner];
 
@@ -57,13 +58,19 @@ function assist(fnCtx: FuncContext, opts: ActionOpts): any {
 
 function attack(fnCtx: FuncContext, opts: ActionOpts): any {
   const { G, ctx } = fnCtx;
-  if (!G.stack) return;
+  if (!G.stack || !opts.source || opts.damage === undefined || !isMonster(opts.source))
+    return;
 
   (getCardAtLocation(G, ctx, Location.Field, opts.source!.key) as Monster).attacks--;
 
   const decision: Decision = {
     action: 'damage',
-    opts,
+    opts: {
+      ...opts,
+      damage:
+        getMonsterAtt(fnCtx, opts.source) +
+        resolveDamage(G.player[opts.source.owner], opts.damage),
+    },
     selection: { ...opts.selection } || {},
     finished: false,
     key: getRandomKey(),
@@ -95,10 +102,15 @@ function bounce(fnCtx: FuncContext, opts: ActionOpts): any {
 
 function buff(fnCtx: FuncContext, opts: ActionOpts): any {
   const { G } = fnCtx;
-  if (!G.stack || !opts.decision || !opts.damage || !opts.source) return;
+  if (!G.stack || !opts.decision || opts.damage === undefined || !opts.source) return;
 
   const decision = G.stack.decisions.filter((dec) => dec.key === opts.decision)[0];
-  if (!decision || !decision.opts || !decision.opts.source || !decision.opts.damage)
+  if (
+    !decision ||
+    !decision.opts ||
+    !decision.opts.source ||
+    decision.opts.damage === undefined
+  )
     return;
 
   const dmgInc = resolveDamage(G.player[opts.source.owner], opts.damage);
@@ -112,7 +124,7 @@ function buff(fnCtx: FuncContext, opts: ActionOpts): any {
 
 function buffall(fnCtx: FuncContext, opts: ActionOpts): any {
   const { G, ctx } = fnCtx;
-  if (!G.stack || !opts.source || !opts.damage) return;
+  if (!G.stack || !opts.source || opts.damage === undefined) return;
 
   const playerState = G.player[opts.source.owner];
 
@@ -325,7 +337,7 @@ function nomercy(fnCtx: FuncContext, opts: ActionOpts): any {
   if (!G.stack) return;
 
   const source = opts.source as NonCharacter;
-  if (!opts.selection || opts.damage == undefined || !source) return;
+  if (!opts.selection || opts.damage === undefined || !source) return;
 
   pushTriggerStore(fnCtx, 'NoMercyTrigger', source, undefined, {
     usableTurn: ctx.turn,
@@ -412,7 +424,7 @@ function quest(fnCtx: FuncContext, opts: ActionOpts): any {
 
 function rainofarrows(fnCtx: FuncContext, opts: ActionOpts): any {
   const { G, ctx } = fnCtx;
-  if (!G.stack || !opts.source || !opts.damage) return;
+  if (!G.stack || !opts.source || opts.damage === undefined) return;
 
   const oppCards = getOpponentState(G, ctx, opts.source.owner).hand.length;
   const damage = resolveDamage(G.player[opts.source.owner], opts.damage);
@@ -473,7 +485,7 @@ function revealDeck(fnCtx: FuncContext, opts: ActionOpts): any {
 
 function roar(fnCtx: FuncContext, opts: ActionOpts): any {
   const { G } = fnCtx;
-  if (!G.stack || !opts.source || !opts.damage) return;
+  if (!G.stack || !opts.source || opts.damage === undefined) return;
 
   const playerField = G.player[opts.source.owner].field;
   const numMonsters = playerField.filter((card) => isMonster(card)).length;
@@ -578,7 +590,12 @@ function shield(fnCtx: FuncContext, opts: ActionOpts): any {
   const validLocations = [Location.OppCharacter, Location.Character];
 
   const decision = G.stack.decisions.filter((dec) => dec.key === opts.decision)[0];
-  if (!decision || !decision.opts || !decision.opts.damage || !decision.opts.source)
+  if (
+    !decision ||
+    !decision.opts ||
+    decision.opts.damage === undefined ||
+    !decision.opts.source
+  )
     return;
 
   const selectionLocations = Object.keys(decision.selection) as Location[];
@@ -603,7 +620,7 @@ function tough(fnCtx: FuncContext, opts: ActionOpts): any {
   if (!G.stack || !opts.decision) return;
 
   const decision = G.stack.decisions.filter((dec) => dec.key === opts.decision)[0];
-  if (!decision || !decision.opts || !decision.opts.damage) return;
+  if (!decision || !decision.opts || decision.opts.damage === undefined) return;
 
   decision.opts.damage = undefined;
 }

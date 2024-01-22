@@ -163,6 +163,76 @@ export class BloodSlainTrigger extends Trigger {
   }
 }
 
+export class BlueDirosTrigger extends Trigger {
+  constructor(
+    cardOwner: string,
+    player: PlayerID,
+    key: string,
+    opts?: TriggerOptions,
+    lifetime?: TriggerLifetime
+  ) {
+    super(cardOwner, 'Before', 'attack', key, opts, player, lifetime);
+  }
+
+  shouldTriggerExtension(
+    _fnCtx: FuncContext,
+    decision: Decision,
+    _prep: TriggerPrepostion
+  ) {
+    const locations = [
+      Location.Character,
+      Location.OppCharacter,
+      Location.Field,
+      Location.OppField,
+    ];
+
+    const anyTarget = locations.some((location) => {
+      return (
+        !!decision.selection[location] &&
+        decision.selection[location]!.some((card) => card.owner === this.owner)
+      );
+    });
+
+    return anyTarget && !this.sourceIsOwner(decision);
+  }
+
+  createDecision(fnCtx: FuncContext, decision: Decision) {
+    if (!decision.opts?.source?.owner) return [];
+
+    const { G, ctx } = fnCtx;
+
+    const trigger = G.triggers.filter((trigger) => trigger.key === this.key)[0];
+    if (trigger.lifetime) trigger.lifetime.turn = ctx.turn + 1;
+
+    G.state.push({
+      owner: this.cardOwner,
+      player: decision.opts?.source?.owner,
+      targets: {
+        xor: [
+          {
+            location: Location.Field,
+            quantity: 1,
+            cardKey: [decision.opts.source.key],
+          },
+          {
+            location: Location.OppField,
+            quantity: 1,
+            cardKey: [decision.opts.source.key],
+          },
+        ],
+      },
+      modifier: {
+        monster: {
+          attack: -10,
+        },
+      },
+      lifetime: { turn: ctx.turn },
+    });
+
+    return [];
+  }
+}
+
 export class BoneRattleTrigger extends Trigger {
   constructor(
     cardOwner: string,
@@ -2000,6 +2070,7 @@ export class WickedTrigger extends Trigger {
 export const triggers = {
   BattleBowTrigger,
   BloodSlainTrigger,
+  BlueDirosTrigger,
   BoneRattleTrigger,
   BuffAllTrigger,
   DarkShadowTrigger,
