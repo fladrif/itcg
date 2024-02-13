@@ -105,7 +105,7 @@ export function endActivateStage(fnCtx: FuncContext, now?: boolean) {
   if (noTargets) endActivate(fnCtx);
 }
 
-export function endAttack(fnCtx: FuncContext) {
+function endAttack(fnCtx: FuncContext) {
   const { events } = fnCtx;
 
   pruneTriggerStore(fnCtx);

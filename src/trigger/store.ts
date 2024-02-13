@@ -3,8 +3,8 @@ import { PlayerID } from 'boardgame.io';
 import { Action, actions } from '../actions';
 import { FuncContext } from '../game';
 import { Location } from '../target';
-import { isMonster, CardTypes, Monster, isItem, isTactic, Tactic } from '../card';
-import { Choice, Decision } from '../stack';
+import { isMonster, CardTypes, Monster, isItem, isTactic, Tactic, Skill } from '../card';
+import { Choice, Decision, parseSkill } from '../stack';
 import { getMonsterHealth } from '../state';
 import {
   deepCardComp,
@@ -17,15 +17,18 @@ import {
   rmCard,
 } from '../utils';
 
-import { Trigger } from './trigger';
+import { ActionTrigger } from './actionTrigger';
+import { TurnTrigger } from './turnTrigger';
 import {
   TriggerStore,
   TriggerOptions,
   TriggerLifetime,
-  TriggerPrepostion,
+  TriggerPreposition,
+  TriggerContext,
+  TurnPhase,
 } from './types';
 
-export class BattleBowTrigger extends Trigger {
+export class BattleBowTrigger extends ActionTrigger {
   constructor(
     cardOwner: string,
     player: PlayerID,
@@ -33,13 +36,13 @@ export class BattleBowTrigger extends Trigger {
     opts?: TriggerOptions,
     lifetime?: TriggerLifetime
   ) {
-    super(cardOwner, 'Before', 'damage', key, opts, player, lifetime);
+    super(cardOwner, 'Before', ['damage'], key, opts, player, lifetime);
   }
 
   shouldTriggerExtension(
     fnCtx: FuncContext,
     decision: Decision,
-    _prep: TriggerPrepostion
+    _prep: TriggerPreposition
   ) {
     const { G, ctx } = fnCtx;
     const validLocations = [
@@ -97,7 +100,7 @@ export class BattleBowTrigger extends Trigger {
   }
 }
 
-export class BloodSlainTrigger extends Trigger {
+export class BloodSlainTrigger extends ActionTrigger {
   constructor(
     cardOwner: string,
     player: PlayerID,
@@ -111,7 +114,7 @@ export class BloodSlainTrigger extends Trigger {
   shouldTriggerExtension(
     fnCtx: FuncContext,
     decision: Decision,
-    _prep: TriggerPrepostion
+    _prep: TriggerPreposition
   ) {
     const { G, ctx } = fnCtx;
 
@@ -163,7 +166,7 @@ export class BloodSlainTrigger extends Trigger {
   }
 }
 
-export class BlueDirosTrigger extends Trigger {
+export class BlueDirosTrigger extends ActionTrigger {
   constructor(
     cardOwner: string,
     player: PlayerID,
@@ -171,13 +174,13 @@ export class BlueDirosTrigger extends Trigger {
     opts?: TriggerOptions,
     lifetime?: TriggerLifetime
   ) {
-    super(cardOwner, 'Before', 'attack', key, opts, player, lifetime);
+    super(cardOwner, 'Before', ['attack'], key, opts, player, lifetime);
   }
 
   shouldTriggerExtension(
     _fnCtx: FuncContext,
     decision: Decision,
-    _prep: TriggerPrepostion
+    _prep: TriggerPreposition
   ) {
     const locations = [
       Location.Character,
@@ -233,7 +236,7 @@ export class BlueDirosTrigger extends Trigger {
   }
 }
 
-export class BoneRattleTrigger extends Trigger {
+export class BoneRattleTrigger extends ActionTrigger {
   constructor(
     cardOwner: string,
     player: PlayerID,
@@ -241,13 +244,13 @@ export class BoneRattleTrigger extends Trigger {
     opts?: TriggerOptions,
     lifetime?: TriggerLifetime
   ) {
-    super(cardOwner, 'After', 'destroy', key, opts, player, lifetime);
+    super(cardOwner, 'After', ['destroy'], key, opts, player, lifetime);
   }
 
   shouldTriggerExtension(
     _fnCtx: FuncContext,
     decision: Decision,
-    _prep: TriggerPrepostion
+    _prep: TriggerPreposition
   ) {
     const damageOptsExists = !!this.opts?.damage;
 
@@ -264,7 +267,7 @@ export class BoneRattleTrigger extends Trigger {
     const validLocations = [Location.Field, Location.OppField];
     const decisions: Decision[] = [];
 
-    validLocations.map((location) => {
+    validLocations.forEach((location) => {
       if (!decision.selection[location]) return;
 
       decision.selection[location]!.forEach((card) => {
@@ -298,7 +301,7 @@ export class BoneRattleTrigger extends Trigger {
   }
 }
 
-export class BuffAllTrigger extends Trigger {
+export class BuffAllTrigger extends ActionTrigger {
   constructor(
     cardOwner: string,
     player: PlayerID,
@@ -306,13 +309,13 @@ export class BuffAllTrigger extends Trigger {
     opts?: TriggerOptions,
     lifetime?: TriggerLifetime
   ) {
-    super(cardOwner, 'Before', 'attack', key, opts, player, lifetime);
+    super(cardOwner, 'Before', ['attack'], key, opts, player, lifetime);
   }
 
   shouldTriggerExtension(
     _fnCtx: FuncContext,
     decision: Decision,
-    _prep: TriggerPrepostion
+    _prep: TriggerPreposition
   ) {
     return this.sourceIsOwner(decision);
   }
@@ -340,7 +343,7 @@ export class BuffAllTrigger extends Trigger {
   }
 }
 
-export class DarkShadowTrigger extends Trigger {
+export class DarkShadowTrigger extends ActionTrigger {
   constructor(
     cardOwner: string,
     player: PlayerID,
@@ -348,13 +351,13 @@ export class DarkShadowTrigger extends Trigger {
     opts?: TriggerOptions,
     lifetime?: TriggerLifetime
   ) {
-    super(cardOwner, 'Before', 'attack', key, opts, player, lifetime);
+    super(cardOwner, 'Before', ['attack'], key, opts, player, lifetime);
   }
 
   shouldTriggerExtension(
     _fnCtx: FuncContext,
     decision: Decision,
-    _prep: TriggerPrepostion
+    _prep: TriggerPreposition
   ) {
     if (!decision.selection) return false;
 
@@ -393,7 +396,7 @@ export class DarkShadowTrigger extends Trigger {
   }
 }
 
-export class DmgDestroyTrigger extends Trigger {
+export class DmgDestroyTrigger extends ActionTrigger {
   constructor(
     _cardOwner: string,
     _player: PlayerID,
@@ -401,13 +404,13 @@ export class DmgDestroyTrigger extends Trigger {
     _opts?: TriggerOptions,
     _lifetime?: TriggerLifetime
   ) {
-    super('dmgDestroy', 'After', 'damage', key);
+    super('dmgDestroy', 'After', ['damage'], key);
   }
 
   shouldTriggerExtension(
     fnCtx: FuncContext,
     decision: Decision,
-    _prep: TriggerPrepostion
+    _prep: TriggerPreposition
   ) {
     const { G, ctx } = fnCtx;
     const validLocations = [Location.Field, Location.OppField];
@@ -437,14 +440,14 @@ export class DmgDestroyTrigger extends Trigger {
     const validLocations = [Location.Field, Location.OppField];
     const decisions: Decision[] = [];
 
-    validLocations.map((location) => {
+    validLocations.forEach((location) => {
       if (!decision.selection[location]) return;
 
       getLocation(G, ctx, location)
         .filter(
           (card) => !!decision.selection[location]!.find((c) => deepCardComp(c, card))
         )
-        .map((card) => {
+        .forEach((card) => {
           if (isMonster(card) && card.damageTaken >= getMonsterHealth(fnCtx, card)) {
             decisions.push({
               action: 'destroy',
@@ -465,7 +468,7 @@ export class DmgDestroyTrigger extends Trigger {
   }
 }
 
-export class DoombringerTrigger extends Trigger {
+export class DoombringerTrigger extends ActionTrigger {
   constructor(
     cardOwner: string,
     player: PlayerID,
@@ -473,13 +476,13 @@ export class DoombringerTrigger extends Trigger {
     opts?: TriggerOptions,
     lifetime?: TriggerLifetime
   ) {
-    super(cardOwner, 'Before', 'damage', key, opts, player, lifetime);
+    super(cardOwner, 'Before', ['damage'], key, opts, player, lifetime);
   }
 
   shouldTriggerExtension(
     fnCtx: FuncContext,
     decision: Decision,
-    _prep: TriggerPrepostion
+    _prep: TriggerPreposition
   ) {
     const { G, ctx } = fnCtx;
     const validLocations = [
@@ -522,7 +525,7 @@ export class DoombringerTrigger extends Trigger {
   }
 }
 
-export class EarthquakeTrigger extends Trigger {
+export class EarthquakeTrigger extends ActionTrigger {
   constructor(
     cardOwner: string,
     player: PlayerID,
@@ -530,13 +533,13 @@ export class EarthquakeTrigger extends Trigger {
     opts?: TriggerOptions,
     lifetime?: TriggerLifetime
   ) {
-    super(cardOwner, 'After', 'damage', key, opts, player, lifetime);
+    super(cardOwner, 'After', ['damage'], key, opts, player, lifetime);
   }
 
   shouldTriggerExtension(
     _fnCtx: FuncContext,
     decision: Decision,
-    _prep: TriggerPrepostion
+    _prep: TriggerPreposition
   ) {
     const locations = Object.keys(decision.selection) as Location[];
     const cardIsDamaged = locations.some(
@@ -585,7 +588,7 @@ export class EarthquakeTrigger extends Trigger {
   }
 }
 
-export class EmeraldEarringsTrigger extends Trigger {
+export class EmeraldEarringsTrigger extends ActionTrigger {
   constructor(
     cardOwner: string,
     player: PlayerID,
@@ -593,13 +596,13 @@ export class EmeraldEarringsTrigger extends Trigger {
     opts?: TriggerOptions,
     lifetime?: TriggerLifetime
   ) {
-    super(cardOwner, 'After', 'play', key, opts, player, lifetime);
+    super(cardOwner, 'After', ['play'], key, opts, player, lifetime);
   }
 
   shouldTriggerExtension(
     _fnCtx: FuncContext,
     decision: Decision,
-    _prep: TriggerPrepostion
+    _prep: TriggerPreposition
   ) {
     const locations = Object.keys(decision.selection) as Location[];
     const anotherItemPlayed = locations.some(
@@ -641,7 +644,7 @@ export class EmeraldEarringsTrigger extends Trigger {
   }
 }
 
-export class EvilTaleTrigger extends Trigger {
+export class EvilTaleTrigger extends ActionTrigger {
   constructor(
     cardOwner: string,
     player: PlayerID,
@@ -649,13 +652,13 @@ export class EvilTaleTrigger extends Trigger {
     opts?: TriggerOptions,
     lifetime?: TriggerLifetime
   ) {
-    super(cardOwner, 'Before', 'play', key, opts, player, lifetime);
+    super(cardOwner, 'Before', ['play'], key, opts, player, lifetime);
   }
 
   shouldTriggerExtension(
     _fnCtx: FuncContext,
     decision: Decision,
-    _prep: TriggerPrepostion
+    _prep: TriggerPreposition
   ) {
     const selectionIsTactic = Object.values(decision.selection).reduce(
       (prev, arr) =>
@@ -708,7 +711,7 @@ export class EvilTaleTrigger extends Trigger {
   }
 }
 
-export class FairyTrigger extends Trigger {
+export class FairyTrigger extends ActionTrigger {
   constructor(
     cardOwner: string,
     player: PlayerID,
@@ -716,13 +719,13 @@ export class FairyTrigger extends Trigger {
     opts?: TriggerOptions,
     lifetime?: TriggerLifetime
   ) {
-    super(cardOwner, 'After', 'level', key, opts, player, lifetime);
+    super(cardOwner, 'After', ['level'], key, opts, player, lifetime);
   }
 
   shouldTriggerExtension(
     fnCtx: FuncContext,
     _decision: Decision,
-    _prep: TriggerPrepostion
+    _prep: TriggerPreposition
   ) {
     const { ctx } = fnCtx;
     const isOppTurn = this.owner !== ctx.currentPlayer;
@@ -752,7 +755,7 @@ export class FairyTrigger extends Trigger {
   }
 }
 
-export class FocusTrigger extends Trigger {
+export class FocusTrigger extends ActionTrigger {
   constructor(
     cardOwner: string,
     player: PlayerID,
@@ -766,7 +769,7 @@ export class FocusTrigger extends Trigger {
   shouldTriggerExtension(
     fnCtx: FuncContext,
     decision: Decision,
-    _prep: TriggerPrepostion
+    _prep: TriggerPreposition
   ) {
     const { G, ctx } = fnCtx;
     const validLocation = [
@@ -811,7 +814,7 @@ export class FocusTrigger extends Trigger {
   }
 }
 
-export class GeniusTrigger extends Trigger {
+export class GeniusTrigger extends ActionTrigger {
   constructor(
     cardOwner: string,
     player: PlayerID,
@@ -819,13 +822,13 @@ export class GeniusTrigger extends Trigger {
     opts?: TriggerOptions,
     lifetime?: TriggerLifetime
   ) {
-    super(cardOwner, 'After', 'play', key, opts, player, lifetime);
+    super(cardOwner, 'After', ['play'], key, opts, player, lifetime);
   }
 
   shouldTriggerExtension(
     _fnCtx: FuncContext,
     decision: Decision,
-    _prep: TriggerPrepostion
+    _prep: TriggerPreposition
   ) {
     const locations = Object.keys(decision.selection) as Location[];
     const cardIsPlayed = locations.some(
@@ -859,7 +862,7 @@ export class GeniusTrigger extends Trigger {
   }
 }
 
-export class GoldenCrowTrigger extends Trigger {
+export class GoldenCrowTrigger extends ActionTrigger {
   constructor(
     cardOwner: string,
     player: PlayerID,
@@ -867,13 +870,13 @@ export class GoldenCrowTrigger extends Trigger {
     opts?: TriggerOptions,
     lifetime?: TriggerLifetime
   ) {
-    super(cardOwner, 'Before', 'damage', key, opts, player, lifetime);
+    super(cardOwner, 'Before', ['damage'], key, opts, player, lifetime);
   }
 
   shouldTriggerExtension(
     fnCtx: FuncContext,
     decision: Decision,
-    _prep: TriggerPrepostion
+    _prep: TriggerPreposition
   ) {
     const { G, ctx } = fnCtx;
     const validLocations = [
@@ -932,7 +935,7 @@ export class GoldenCrowTrigger extends Trigger {
   }
 }
 
-export class KumbiTrigger extends Trigger {
+export class KumbiTrigger extends ActionTrigger {
   constructor(
     cardOwner: string,
     player: PlayerID,
@@ -940,13 +943,13 @@ export class KumbiTrigger extends Trigger {
     opts?: TriggerOptions,
     lifetime?: TriggerLifetime
   ) {
-    super(cardOwner, 'After', 'damage', key, opts, player, lifetime);
+    super(cardOwner, 'After', ['damage'], key, opts, player, lifetime);
   }
 
   shouldTriggerExtension(
     fnCtx: FuncContext,
     decision: Decision,
-    _prep: TriggerPrepostion
+    _prep: TriggerPreposition
   ) {
     const { G, ctx } = fnCtx;
     if (!decision.opts?.source) return false;
@@ -1006,7 +1009,7 @@ export class KumbiTrigger extends Trigger {
   }
 }
 
-export class LootTrigger extends Trigger {
+export class LootTrigger extends ActionTrigger {
   constructor(
     cardOwner: string,
     player: PlayerID,
@@ -1014,13 +1017,13 @@ export class LootTrigger extends Trigger {
     opts?: TriggerOptions,
     lifetime?: TriggerLifetime
   ) {
-    super(cardOwner, 'After', 'play', key, opts, player, lifetime);
+    super(cardOwner, 'After', ['play'], key, opts, player, lifetime);
   }
 
   shouldTriggerExtension(
     fnCtx: FuncContext,
     decision: Decision,
-    _prep: TriggerPrepostion
+    _prep: TriggerPreposition
   ) {
     const { G, ctx } = fnCtx;
     const locations = Object.keys(decision.selection) as Location[];
@@ -1062,7 +1065,7 @@ export class LootTrigger extends Trigger {
   }
 }
 
-export class MapleStaffTrigger extends Trigger {
+export class MapleStaffTrigger extends ActionTrigger {
   constructor(
     cardOwner: string,
     player: PlayerID,
@@ -1070,13 +1073,13 @@ export class MapleStaffTrigger extends Trigger {
     opts?: TriggerOptions,
     lifetime?: TriggerLifetime
   ) {
-    super(cardOwner, 'Before', 'quest', key, opts, player, lifetime);
+    super(cardOwner, 'Before', ['quest'], key, opts, player, lifetime);
   }
 
   shouldTriggerExtension(
     _fnCtx: FuncContext,
     decision: Decision,
-    _prep: TriggerPrepostion
+    _prep: TriggerPreposition
   ) {
     return this.sourceIsOwner(decision);
   }
@@ -1132,7 +1135,7 @@ export class MapleStaffTrigger extends Trigger {
   }
 }
 
-export class MeditationTrigger extends Trigger {
+export class MeditationTrigger extends ActionTrigger {
   constructor(
     cardOwner: string,
     player: PlayerID,
@@ -1146,7 +1149,7 @@ export class MeditationTrigger extends Trigger {
   shouldTriggerExtension(
     fnCtx: FuncContext,
     decision: Decision,
-    _prep: TriggerPrepostion
+    _prep: TriggerPreposition
   ) {
     const { G, ctx } = fnCtx;
     const sourceIsMonster = decision.opts?.source
@@ -1193,7 +1196,7 @@ export class MeditationTrigger extends Trigger {
   }
 }
 
-export class MysticPowerTrigger extends Trigger {
+export class MPEaterTrigger extends TurnTrigger {
   constructor(
     cardOwner: string,
     player: PlayerID,
@@ -1201,13 +1204,54 @@ export class MysticPowerTrigger extends Trigger {
     opts?: TriggerOptions,
     lifetime?: TriggerLifetime
   ) {
-    super(cardOwner, 'Before', 'attack', key, opts, player, lifetime);
+    super(cardOwner, 'Before', ['Level'], key, opts, player, lifetime);
+  }
+
+  shouldTriggerExtension(
+    fnCtx: FuncContext,
+    _phase: TurnPhase,
+    _prep: TriggerPreposition
+  ) {
+    return this.turnIsOwner(fnCtx);
+  }
+
+  createDecision(fnCtx: FuncContext, _trigCtx: TriggerContext) {
+    const { G, ctx } = fnCtx;
+
+    const unMPEater: Skill = {
+      action: 'unmpeater',
+      activated: false,
+      requirements: { level: 0 },
+      opts: { allOppMonster: true },
+      noReset: true,
+    };
+
+    const source = getCardAtLocation(
+      G,
+      ctx,
+      getCardLocation(G, ctx, this.cardOwner),
+      this.cardOwner
+    );
+
+    return [parseSkill(fnCtx, unMPEater, source)];
+  }
+}
+
+export class MysticPowerTrigger extends ActionTrigger {
+  constructor(
+    cardOwner: string,
+    player: PlayerID,
+    key: string,
+    opts?: TriggerOptions,
+    lifetime?: TriggerLifetime
+  ) {
+    super(cardOwner, 'Before', ['attack'], key, opts, player, lifetime);
   }
 
   shouldTriggerExtension(
     _fnCtx: FuncContext,
     decision: Decision,
-    _prep: TriggerPrepostion
+    _prep: TriggerPreposition
   ) {
     const isSource = decision.opts?.source
       ? decision.opts.source.key === this.cardOwner
@@ -1239,7 +1283,7 @@ export class MysticPowerTrigger extends Trigger {
   }
 }
 
-export class NoMercyTrigger extends Trigger {
+export class NoMercyTrigger extends ActionTrigger {
   constructor(
     cardOwner: string,
     player: PlayerID,
@@ -1247,13 +1291,13 @@ export class NoMercyTrigger extends Trigger {
     opts?: TriggerOptions,
     lifetime?: TriggerLifetime
   ) {
-    super(cardOwner, 'After', 'destroy', key, opts, player, lifetime);
+    super(cardOwner, 'After', ['destroy'], key, opts, player, lifetime);
   }
 
   shouldTriggerExtension(
     _fnCtx: FuncContext,
     decision: Decision,
-    _prep: TriggerPrepostion
+    _prep: TriggerPreposition
   ) {
     const isSource = decision.opts?.source
       ? decision.opts.source.key === this.cardOwner
@@ -1296,11 +1340,12 @@ export class NoMercyTrigger extends Trigger {
       key: getRandomKey(),
     };
 
-    return [dec];
+    G.stack?.queuedDecisions.push(dec);
+    return [];
   }
 }
 
-export class PrevailTrigger extends Trigger {
+export class PrevailTrigger extends ActionTrigger {
   constructor(
     cardOwner: string,
     player: PlayerID,
@@ -1308,13 +1353,13 @@ export class PrevailTrigger extends Trigger {
     opts?: TriggerOptions,
     lifetime?: TriggerLifetime
   ) {
-    super(cardOwner, 'After', 'destroy', key, opts, player, lifetime);
+    super(cardOwner, 'After', ['destroy'], key, opts, player, lifetime);
   }
 
   shouldTriggerExtension(
     _fnCtx: FuncContext,
     decision: Decision,
-    _prep: TriggerPrepostion
+    _prep: TriggerPreposition
   ) {
     const locations = [Location.Field, Location.OppField];
     const monsterDestroyed = locations.some(
@@ -1345,7 +1390,7 @@ export class PrevailTrigger extends Trigger {
   }
 }
 
-export class RedApprenticeHatTrigger extends Trigger {
+export class RedApprenticeHatTrigger extends ActionTrigger {
   constructor(
     cardOwner: string,
     player: PlayerID,
@@ -1353,13 +1398,13 @@ export class RedApprenticeHatTrigger extends Trigger {
     opts?: TriggerOptions,
     lifetime?: TriggerLifetime
   ) {
-    super(cardOwner, 'After', 'level', key, opts, player, lifetime);
+    super(cardOwner, 'After', ['level'], key, opts, player, lifetime);
   }
 
   shouldTriggerExtension(
     _fnCtx: FuncContext,
     decision: Decision,
-    _prep: TriggerPrepostion
+    _prep: TriggerPreposition
   ) {
     const locations = Object.keys(decision.selection) as Location[];
     const levelIsOwner = locations.some(
@@ -1394,7 +1439,7 @@ export class RedApprenticeHatTrigger extends Trigger {
   }
 }
 
-export class RedNightTrigger extends Trigger {
+export class RedNightTrigger extends ActionTrigger {
   constructor(
     cardOwner: string,
     player: PlayerID,
@@ -1402,13 +1447,13 @@ export class RedNightTrigger extends Trigger {
     opts?: TriggerOptions,
     lifetime?: TriggerLifetime
   ) {
-    super(cardOwner, 'After', 'destroy', key, opts, player, lifetime);
+    super(cardOwner, 'After', ['destroy'], key, opts, player, lifetime);
   }
 
   shouldTriggerExtension(
     _fnCtx: FuncContext,
     decision: Decision,
-    _prep: TriggerPrepostion
+    _prep: TriggerPreposition
   ) {
     const locations = [Location.Field, Location.OppField];
     const isOwnersMonster = locations.some(
@@ -1474,7 +1519,7 @@ export class RedNightTrigger extends Trigger {
   }
 }
 
-export class RelentlessTrigger extends Trigger {
+export class RelentlessTrigger extends ActionTrigger {
   constructor(
     cardOwner: string,
     player: PlayerID,
@@ -1482,13 +1527,13 @@ export class RelentlessTrigger extends Trigger {
     opts?: TriggerOptions,
     lifetime?: TriggerLifetime
   ) {
-    super(cardOwner, 'After', 'destroy', key, opts, player, lifetime);
+    super(cardOwner, 'After', ['destroy'], key, opts, player, lifetime);
   }
 
   shouldTriggerExtension(
     _fnCtx: FuncContext,
     decision: Decision,
-    _prep: TriggerPrepostion
+    _prep: TriggerPreposition
   ) {
     const damageOptsExists = !!this.opts?.damage;
 
@@ -1504,7 +1549,7 @@ export class RelentlessTrigger extends Trigger {
     const validLocations = [Location.Field, Location.OppField];
     const decisions: Decision[] = [];
 
-    validLocations.map((location) => {
+    validLocations.forEach((location) => {
       if (!decision.selection[location]) return;
 
       decision.selection[location]!.forEach((card) => {
@@ -1538,7 +1583,7 @@ export class RelentlessTrigger extends Trigger {
   }
 }
 
-export class RevengeTrigger extends Trigger {
+export class RevengeTrigger extends ActionTrigger {
   constructor(
     cardOwner: string,
     player: PlayerID,
@@ -1546,13 +1591,13 @@ export class RevengeTrigger extends Trigger {
     opts?: TriggerOptions,
     lifetime?: TriggerLifetime
   ) {
-    super(cardOwner, 'Before', 'play', key, opts, player, lifetime);
+    super(cardOwner, 'Before', ['play'], key, opts, player, lifetime);
   }
 
   shouldTriggerExtension(
     _fnCtx: FuncContext,
     decision: Decision,
-    _prep: TriggerPrepostion
+    _prep: TriggerPreposition
   ) {
     return !this.sourceIsOwner(decision);
   }
@@ -1582,7 +1627,7 @@ export class RevengeTrigger extends Trigger {
   }
 }
 
-export class SerpentsTrigger extends Trigger {
+export class SerpentsTrigger extends ActionTrigger {
   constructor(
     cardOwner: string,
     player: PlayerID,
@@ -1590,13 +1635,13 @@ export class SerpentsTrigger extends Trigger {
     opts?: TriggerOptions,
     lifetime?: TriggerLifetime
   ) {
-    super(cardOwner, 'After', 'destroy', key, opts, player, lifetime);
+    super(cardOwner, 'After', ['destroy'], key, opts, player, lifetime);
   }
 
   shouldTriggerExtension(
     _fnCtx: FuncContext,
     decision: Decision,
-    _prep: TriggerPrepostion
+    _prep: TriggerPreposition
   ) {
     const ownerMonster = decision.opts?.source
       ? decision.opts.source.owner === this.owner && isMonster(decision.opts.source)
@@ -1610,7 +1655,7 @@ export class SerpentsTrigger extends Trigger {
     const validLocations = [Location.Field, Location.OppField];
     const decisions: Decision[] = [];
 
-    validLocations.map((location) => {
+    validLocations.forEach((location) => {
       if (!decision.selection[location]) return;
 
       decision.selection[location]!.forEach((card) => {
@@ -1642,7 +1687,7 @@ export class SerpentsTrigger extends Trigger {
 
 // TODO: Currently triggers on the entire damage decision, should split damage decision into constituent parts so shield triggers only on character damage (for damage decisions that affect characters and monsters)
 // Perhaps replace decision instead of modifying, creates issue with triggering itself
-export class ShieldTrigger extends Trigger {
+export class ShieldTrigger extends ActionTrigger {
   constructor(
     _cardOwner: string,
     _player: PlayerID,
@@ -1650,13 +1695,13 @@ export class ShieldTrigger extends Trigger {
     _opts?: TriggerOptions,
     _lifetime?: TriggerLifetime
   ) {
-    super('shield', 'Before', 'damage', key);
+    super('shield', 'Before', ['damage'], key);
   }
 
   shouldTriggerExtension(
     _fnCtx: FuncContext,
     decision: Decision,
-    _prep: TriggerPrepostion
+    _prep: TriggerPreposition
   ) {
     const charSelection = decision.selection[Location.Character];
     const oppSelection = decision.selection[Location.OppCharacter];
@@ -1673,7 +1718,7 @@ export class ShieldTrigger extends Trigger {
     const validLocations = [Location.Character, Location.OppCharacter];
     const decisions: Decision[] = [];
 
-    validLocations.map((location) => {
+    validLocations.forEach((location) => {
       if (!decision.selection[location]) return;
 
       decisions.push({
@@ -1691,7 +1736,7 @@ export class ShieldTrigger extends Trigger {
   }
 }
 
-export class SlipperyTrigger extends Trigger {
+export class SlipperyTrigger extends ActionTrigger {
   constructor(
     cardOwner: string,
     player: PlayerID,
@@ -1699,13 +1744,13 @@ export class SlipperyTrigger extends Trigger {
     opts?: TriggerOptions,
     lifetime?: TriggerLifetime
   ) {
-    super(cardOwner, 'After', 'destroy', key, opts, player, lifetime);
+    super(cardOwner, 'After', ['destroy'], key, opts, player, lifetime);
   }
 
   shouldTriggerExtension(
     _fnCtx: FuncContext,
     decision: Decision,
-    _prep: TriggerPrepostion
+    _prep: TriggerPreposition
   ) {
     const locations = Object.keys(decision.selection) as Location[];
     const monsterDestroyed = locations.some(
@@ -1752,7 +1797,7 @@ export class SlipperyTrigger extends Trigger {
   }
 }
 
-export class StartleTrigger extends Trigger {
+export class StartleTrigger extends ActionTrigger {
   constructor(
     cardOwner: string,
     player: PlayerID,
@@ -1760,13 +1805,13 @@ export class StartleTrigger extends Trigger {
     opts?: TriggerOptions,
     lifetime?: TriggerLifetime
   ) {
-    super(cardOwner, 'Before', 'attack', key, opts, player, lifetime);
+    super(cardOwner, 'Before', ['attack'], key, opts, player, lifetime);
   }
 
   shouldTriggerExtension(
     _fnCtx: FuncContext,
     decision: Decision,
-    _prep: TriggerPrepostion
+    _prep: TriggerPreposition
   ) {
     const locations = [Location.Character, Location.OppCharacter];
     const oppCharAttacked = locations.some(
@@ -1801,7 +1846,7 @@ export class StartleTrigger extends Trigger {
   }
 }
 
-export class SteadyHandTrigger extends Trigger {
+export class SteadyHandTrigger extends ActionTrigger {
   constructor(
     cardOwner: string,
     player: PlayerID,
@@ -1809,13 +1854,13 @@ export class SteadyHandTrigger extends Trigger {
     opts?: TriggerOptions,
     lifetime?: TriggerLifetime
   ) {
-    super(cardOwner, 'Before', 'damage', key, opts, player, lifetime);
+    super(cardOwner, 'Before', ['damage'], key, opts, player, lifetime);
   }
 
   shouldTriggerExtension(
     fnCtx: FuncContext,
     decision: Decision,
-    _prep: TriggerPrepostion
+    _prep: TriggerPreposition
   ) {
     const { G, ctx } = fnCtx;
     const validLocations = [Location.CharAction, Location.Character];
@@ -1852,7 +1897,7 @@ export class SteadyHandTrigger extends Trigger {
   }
 }
 
-export class SuperGeniusTrigger extends Trigger {
+export class SuperGeniusTrigger extends ActionTrigger {
   constructor(
     cardOwner: string,
     player: PlayerID,
@@ -1860,13 +1905,13 @@ export class SuperGeniusTrigger extends Trigger {
     opts?: TriggerOptions,
     lifetime?: TriggerLifetime
   ) {
-    super(cardOwner, 'After', 'play', key, opts, player, lifetime);
+    super(cardOwner, 'After', ['play'], key, opts, player, lifetime);
   }
 
   shouldTriggerExtension(
     _fnCtx: FuncContext,
     decision: Decision,
-    _prep: TriggerPrepostion
+    _prep: TriggerPreposition
   ) {
     const locations = Object.keys(decision.selection) as Location[];
     const cardPlayed = locations.some(
@@ -1942,7 +1987,7 @@ export class SuperGeniusTrigger extends Trigger {
   }
 }
 
-export class TacticResolutionTrigger extends Trigger {
+export class TacticResolutionTrigger extends ActionTrigger {
   constructor(
     _cardOwner: string,
     _player: PlayerID,
@@ -1956,7 +2001,7 @@ export class TacticResolutionTrigger extends Trigger {
   shouldTriggerExtension(
     fnCtx: FuncContext,
     decision: Decision,
-    _prep: TriggerPrepostion
+    _prep: TriggerPreposition
   ) {
     const { G } = fnCtx;
     if (!G.stack) return false;
@@ -1994,7 +2039,7 @@ export class TacticResolutionTrigger extends Trigger {
   }
 }
 
-export class ToughTrigger extends Trigger {
+export class ToughTrigger extends ActionTrigger {
   constructor(
     _cardOwner: string,
     _player: PlayerID,
@@ -2002,13 +2047,13 @@ export class ToughTrigger extends Trigger {
     _opts?: TriggerOptions,
     _lifetime?: TriggerLifetime
   ) {
-    super('tough', 'Before', 'damage', key);
+    super('tough', 'Before', ['damage'], key);
   }
 
   shouldTriggerExtension(
     fnCtx: FuncContext,
     decision: Decision,
-    _prep: TriggerPrepostion
+    _prep: TriggerPreposition
   ) {
     const { G, ctx } = fnCtx;
     const validLocations = [
@@ -2050,7 +2095,7 @@ export class ToughTrigger extends Trigger {
   }
 }
 
-export class WickedTrigger extends Trigger {
+export class WickedTrigger extends ActionTrigger {
   constructor(
     cardOwner: string,
     player: PlayerID,
@@ -2058,13 +2103,13 @@ export class WickedTrigger extends Trigger {
     opts?: TriggerOptions,
     lifetime?: TriggerLifetime
   ) {
-    super(cardOwner, 'After', 'refresh', key, opts, player, lifetime);
+    super(cardOwner, 'After', ['refresh'], key, opts, player, lifetime);
   }
 
   shouldTriggerExtension(
     { ctx }: FuncContext,
     decision: Decision,
-    _prep: TriggerPrepostion
+    _prep: TriggerPreposition
   ) {
     const sourceIsOwner = decision.opts?.source?.owner
       ? decision.opts.source.owner === this.owner
@@ -2120,6 +2165,7 @@ export const triggers = {
   KumbiTrigger,
   LootTrigger,
   MeditationTrigger,
+  MPEaterTrigger,
   MysticPowerTrigger,
   NoMercyTrigger,
   MapleStaffTrigger,

@@ -172,6 +172,8 @@ import TopPanda from './images/top-Panda.jpg';
 import SkillPanda from './images/skill-Panda.jpg';
 import TopBlueDiros from './images/top-BlueDiros.jpg';
 import SkillBlueDiros from './images/skill-BlueDiros.jpg';
+import TopMPEater from './images/top-MPEater.jpg';
+import SkillMPEater from './images/skill-MPEater.jpg';
 import TopSherman from './images/top-Sherman.jpg';
 import SkillSherman from './images/skill1-Sherman.jpg';
 import Skill2Sherman from './images/skill2-Sherman.jpg';
@@ -561,6 +563,10 @@ export const cardImages: Record<string, CardImages> = {
   BlueDiros: {
     top: TopBlueDiros,
     skill: SkillBlueDiros,
+  },
+  MPEater: {
+    top: TopMPEater,
+    skill: SkillMPEater,
   },
   Sherman: {
     top: TopSherman,

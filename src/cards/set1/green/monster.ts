@@ -286,7 +286,7 @@ export const hector: Omit<Monster, 'key' | 'owner'> = {
       {
         name: 'BuffAllTrigger',
         opts: { damage: 10 },
-        lifetime: { usableTurn: 'ETBTurn' },
+        lifetime: { usableTurnTemplate: 'ETBTurn' },
       },
     ],
   },

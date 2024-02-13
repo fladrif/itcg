@@ -57,7 +57,7 @@ class App extends React.Component {
   }
 
   async componentDidMount() {
-    await this.updateState({});
+    if (this.state.username) await this.updateState({});
   }
 
   async updateState(state: AppState) {

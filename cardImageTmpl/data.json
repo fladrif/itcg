@@ -86,7 +86,8 @@
     { "name": "Teleport" },
     { "name": "BlueNightfox" },
     { "name": "Panda" },
-    { "name": "BlueDiros" }
+    { "name": "BlueDiros" },
+    { "name": "MPEater" }
   ],
   "characters": [
     { "name": "Sherman" },

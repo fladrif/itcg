@@ -215,7 +215,7 @@ export const focus: Omit<Tactic, 'key' | 'owner'> = {
           damage: 50,
         },
         lifetime: {
-          usableTurn: 'ETBTurn',
+          usableTurnTemplate: 'ETBTurn',
           once: true,
         },
       },

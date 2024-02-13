@@ -24,7 +24,7 @@ import {
   rmCard,
   meetsSkillReq,
 } from '../utils';
-import { pushTriggerStore } from '../trigger';
+import { parseTriggerLifetime, pushTriggerStore, removeTrigger } from '../trigger';
 import { Location } from '../target';
 
 import { ActionOpts } from './types';
@@ -256,6 +256,29 @@ const flip = (fnCtx: FuncContext, opts: ActionOpts) => {
   upsertStack(fnCtx, [ackDec]);
 };
 
+function jumble(fnCtx: FuncContext, opts: ActionOpts): any {
+  const { G } = fnCtx;
+  if (!G.stack || !opts.source) return;
+
+  const swapDec: Decision = {
+    action: 'swap',
+    opts,
+    noReset: true,
+    selection: {},
+    target: {
+      location: Location.CharAction,
+      quantity: 1,
+      excludeCardKey: [opts.source.key],
+    },
+    dialogPrompt: 'Select another level card',
+    finished: false,
+    key: getRandomKey(),
+  };
+
+  const hasAnotherLevel = G.player[opts.source.owner].learnedSkills.length >= 2;
+  if (hasAnotherLevel) upsertStack(fnCtx, [swapDec]);
+}
+
 function level(fnCtx: FuncContext, opts: ActionOpts): any {
   const { G, ctx } = fnCtx;
 
@@ -331,6 +354,20 @@ function loot(fnCtx: FuncContext, opts: ActionOpts): any {
   };
 
   upsertStack(fnCtx, [discardDecision]);
+}
+
+function mpeater(fnCtx: FuncContext, opts: ActionOpts): any {
+  const { G } = fnCtx;
+  if (!G.stack || !opts.selection) return;
+
+  for (const location of Object.keys(opts.selection) as Location[]) {
+    opts.selection[location]!.filter(isMonster).forEach((card) => {
+      removeTrigger(G, card.key);
+
+      card.ability.inactiveKeywords = card.ability.keywords;
+      card.ability.keywords = [];
+    });
+  }
 }
 
 function nomercy(fnCtx: FuncContext, opts: ActionOpts): any {
@@ -580,18 +617,6 @@ function scout(fnCtx: FuncContext, _opts: ActionOpts): any {
   if (isMonster(player.deck[0])) player.hand.push(player.deck.shift()!);
 }
 
-function shuffle(fnCtx: FuncContext, opts: ActionOpts): any {
-  const { G, ctx, random } = fnCtx;
-  const id = opts.source ? opts.source.owner : ctx.currentPlayer;
-  const deck = G.player[id].deck;
-
-  deck.map((card) => {
-    if (card.reveal) card.reveal = undefined;
-  });
-
-  G.player[id].deck = random.Shuffle(deck);
-}
-
 function seer(fnCtx: FuncContext, opts: ActionOpts): any {
   const { G, ctx } = fnCtx;
   if (!G.stack || !opts.source) return;
@@ -679,14 +704,16 @@ function shield(fnCtx: FuncContext, opts: ActionOpts): any {
   if (decision.opts.damage < 0) decision.opts.damage = 0;
 }
 
-function tough(fnCtx: FuncContext, opts: ActionOpts): any {
-  const { G } = fnCtx;
-  if (!G.stack || !opts.decision) return;
+function shuffle(fnCtx: FuncContext, opts: ActionOpts): any {
+  const { G, ctx, random } = fnCtx;
+  const id = opts.source ? opts.source.owner : ctx.currentPlayer;
+  const deck = G.player[id].deck;
 
-  const decision = G.stack.decisions.filter((dec) => dec.key === opts.decision)[0];
-  if (!decision || !decision.opts || decision.opts.damage === undefined) return;
+  deck.map((card) => {
+    if (card.reveal) card.reveal = undefined;
+  });
 
-  decision.opts.damage = undefined;
+  G.player[id].deck = random.Shuffle(deck);
 }
 
 function steadyhand(fnCtx: FuncContext, opts: ActionOpts): any {
@@ -700,6 +727,38 @@ function steadyhand(fnCtx: FuncContext, opts: ActionOpts): any {
   pushTriggerStore(fnCtx, 'SteadyHandTrigger', source, undefined, {
     usableTurn: ctx.turn,
   });
+}
+
+function swap(fnCtx: FuncContext, opts: ActionOpts): any {
+  const { G, ctx } = fnCtx;
+  if (
+    !G.stack ||
+    !opts.selection ||
+    !opts.selection[Location.CharAction] ||
+    opts.selection[Location.CharAction]!.length !== 1 ||
+    !opts.source
+  ) {
+    return;
+  }
+
+  const charAction = getLocation(G, ctx, Location.CharAction);
+  const jumbleCardIdx = charAction.findIndex((card) => card.key === opts.source!.key);
+  const targetCardIdx = charAction.findIndex(
+    (card) => card.key === opts.selection![Location.CharAction]![0].key
+  );
+  const targetCard = charAction.splice(targetCardIdx, 1, opts.source)[0];
+
+  charAction.splice(jumbleCardIdx, 1, targetCard);
+}
+
+function tough(fnCtx: FuncContext, opts: ActionOpts): any {
+  const { G } = fnCtx;
+  if (!G.stack || !opts.decision) return;
+
+  const decision = G.stack.decisions.filter((dec) => dec.key === opts.decision)[0];
+  if (!decision || !decision.opts || decision.opts.damage === undefined) return;
+
+  decision.opts.damage = undefined;
 }
 
 // TODO: extend interactive options for no level option
@@ -759,6 +818,26 @@ function tuck(fnCtx: FuncContext, opts: ActionOpts): any {
   }
 }
 
+function unmpeater(fnCtx: FuncContext, opts: ActionOpts): any {
+  const { G, ctx } = fnCtx;
+  if (!G.stack || !opts.selection) return;
+
+  for (const location of Object.keys(opts.selection) as Location[]) {
+    opts.selection[location]!.filter(isMonster).forEach((card) => {
+      card.ability?.triggers?.forEach((trigger) => {
+        const lifetime = trigger.lifetime
+          ? parseTriggerLifetime(ctx, trigger.lifetime, card)
+          : undefined;
+
+        pushTriggerStore(fnCtx, trigger.name, card, trigger.opts, lifetime);
+      });
+
+      card.ability.keywords = card.ability.inactiveKeywords;
+      card.ability.inactiveKeywords = [];
+    });
+  }
+}
+
 export const actions = {
   ack,
   assist,
@@ -772,8 +851,10 @@ export const actions = {
   discard,
   drinkpotion,
   flip,
+  jumble,
   level,
   loot,
+  mpeater,
   nomercy,
   noop,
   optional,
@@ -792,9 +873,11 @@ export const actions = {
   shield,
   shuffle,
   steadyhand,
+  swap,
   tough,
   trainhard,
   tuck,
+  unmpeater,
 };
 
 export type Action = keyof typeof actions;

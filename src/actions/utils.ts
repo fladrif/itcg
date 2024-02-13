@@ -1,8 +1,8 @@
-import { ActionTargets, Location } from '../target';
+import { ActionTargets, ensureFilter, Location, meetsTarget } from '../target';
 import { isMonster, Monster, Character, NonCharacter, SkillRequirements } from '../card';
 import { FuncContext, PlayerState } from '../game';
 import { upsertStack, parseSkill, Decision } from '../stack';
-import { parseStateLifetime, removeGlobalState } from '../state';
+import { getRelevantState, parseStateLifetime, removeGlobalState } from '../state';
 import { removeTrigger, parseTriggerLifetime, pushTriggerStore } from '../trigger';
 import { getCardAtLocation, getCardLocation, getOpponentID, rmCard } from '../utils';
 
@@ -10,6 +10,8 @@ import { Damage } from './types';
 
 export function handleAbility(fnCtx: FuncContext, card: NonCharacter): any {
   const { G, ctx } = fnCtx;
+
+  if (mpEaterHook(fnCtx, card)) return;
 
   if (card.ability.triggers) {
     card.ability.triggers.map((trigger) => {
@@ -108,4 +110,25 @@ export function ensureDecision(
       },
     };
   });
+}
+
+function mpEaterHook(fnCtx: FuncContext, card: NonCharacter): boolean {
+  const { G, ctx } = fnCtx;
+  // mpeater
+  // TODO: verify only hits monsters
+  const state = getRelevantState(ctx, G.state, card).filter(
+    (state) => !!state.modifier.target && state.modifier.target.action === 'mpeater'
+  );
+  const playerState = G.player[ctx.currentPlayer];
+
+  if (
+    state.some((target) =>
+      meetsTarget(fnCtx, ensureFilter(target.targets, playerState), card)
+    )
+  ) {
+    card.ability.inactiveKeywords = card.ability.keywords;
+    card.ability.keywords = [];
+    return true;
+  }
+  return false;
 }

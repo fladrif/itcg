@@ -247,7 +247,7 @@ export const meditation: Omit<Tactic, 'key' | 'owner'> = {
           damage: 40,
         },
         lifetime: {
-          usableTurn: 'ETBTurn',
+          usableTurnTemplate: 'ETBTurn',
           once: true,
         },
       },
@@ -268,6 +268,89 @@ const questSkill: Skill = {
   action: 'quest',
   activated: false,
   requirements: { level: 0 },
+};
+
+export const mpeater: Omit<Tactic, 'key' | 'owner'> = {
+  canonicalName: 'mpeater',
+  name: 'MP Eater',
+  image: 'MPEater',
+  level: 30,
+  skill: [
+    {
+      action: 'jumble',
+      requirements: { level: 0, oneshot: true },
+      activated: false,
+    },
+  ],
+  ability: {
+    // TODO: Create MPEaterTrigger to return abilities to creatures
+    // Trigger needs to operate on beginning of turn, or end of turn, not trigger off of an effect
+    // Ensure monster etb turn preserved through this effect
+    triggers: [
+      {
+        name: 'MPEaterTrigger',
+        lifetime: {
+          usableTurnTemplate: 'YourNextTurn',
+          once: true,
+        },
+      },
+    ],
+    // TODO: refactor to use target location instead of 'targetOpponent'
+    state: {
+      modifier: {
+        target: {
+          action: 'mpeater',
+        },
+      },
+      targets: {
+        type: CardTypes.Monster,
+        location: Location.Field,
+        quantity: 1,
+      },
+      targetOpponent: true,
+      lifetime: { until: true, setTurn: 'NextTurn' },
+    },
+    skills: [
+      {
+        action: 'mpeater',
+        activated: false,
+        requirements: { level: 0 },
+        opts: { allOppMonster: true },
+        noReset: true,
+      },
+      {
+        action: 'damage',
+        activated: false,
+        opts: { damage: 50 },
+        requirements: { level: 0 },
+        noReset: true,
+        targets: {
+          xor: [
+            {
+              type: CardTypes.Monster,
+              location: Location.Field,
+              quantity: 1,
+            },
+            {
+              type: CardTypes.Monster,
+              location: Location.OppField,
+              quantity: 1,
+            },
+            {
+              location: Location.Character,
+              quantity: 1,
+            },
+            {
+              location: Location.OppCharacter,
+              quantity: 1,
+            },
+          ],
+        },
+      },
+    ],
+  },
+  subtypes: [CardSubTypes.skill],
+  ...defaultTypes,
 };
 
 export const sidequest: Omit<Tactic, 'key' | 'owner'> = {

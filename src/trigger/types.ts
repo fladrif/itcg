@@ -2,6 +2,9 @@ import { PlayerID } from 'boardgame.io';
 
 import { TriggerNames } from './store';
 
+import { Decision } from '../stack';
+import { Action } from '../actions';
+
 export interface TriggerStore {
   name: TriggerNames;
   key: string;
@@ -11,8 +14,11 @@ export interface TriggerStore {
   lifetime?: TriggerLifetime;
 }
 
+export type TriggerPreposition = 'Before' | 'After';
 export type TriggerOwner = PlayerID | 'Global';
-export type TriggerPrepostion = 'Before' | 'After';
+export type TriggerSubject = (Action | TurnPhase)[];
+export type TriggerContext = Decision | TurnPhase;
+export type TurnPhase = 'Level' | 'Activate' | 'Attack';
 
 // TODO: dd & merge triggeroptions and triggerlifetime
 export interface TriggerOptions {
@@ -24,7 +30,7 @@ export interface TriggerLifetime {
   /**
    * Can only trigger on this turn
    */
-  usableTurn?: number | 'ETBTurn';
+  usableTurn?: number;
   /**
    * Only triggers once on usable turn
    */
@@ -33,4 +39,11 @@ export interface TriggerLifetime {
    * Triggers once per turn
    */
   turn?: number;
+}
+
+export interface TriggerLifetimeTemplate extends TriggerLifetime {
+  /**
+   * Can only trigger on this turn
+   */
+  usableTurnTemplate?: number | 'ETBTurn' | 'YourNextTurn';
 }

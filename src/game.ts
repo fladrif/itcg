@@ -17,9 +17,14 @@ import {
   attack,
   noAttacks,
 } from './moves';
-import { Stack } from './stack';
+import { Stack, resolveStack } from './stack';
 import { GlobalState } from './state';
-import { TriggerStore, defaultTriggers } from './trigger';
+import {
+  TriggerStore,
+  defaultTriggers,
+  getTurnTriggerFns,
+  stackTriggerFns,
+} from './trigger';
 import { getOpponentID, scrubPile } from './utils';
 
 export interface Deck {
@@ -185,7 +190,7 @@ export function playerView(context: PlayerViewCtx): GameState {
 
   const curPlayer = playerID ? playerID : undefined;
 
-  playerIDs.map((id) => {
+  playerIDs.forEach((id) => {
     const { deck, hand, ...nonDeckState } = G.player[id];
 
     const playerDeck = scrubPile(G.player[id].deck, curPlayer);
@@ -205,10 +210,20 @@ export const ITCG = {
   playerView,
 
   turn: {
-    onBegin: ({ events }: FuncContext) => {
+    onBegin: (fnCtx: FuncContext) => {
+      const { events } = fnCtx;
+
+      const turnTrig = getTurnTriggerFns(fnCtx, 'Level', 'Before');
+      stackTriggerFns(fnCtx, 'Level', turnTrig);
+      resolveStack(fnCtx, { turnTrigger: true });
+
       events.setActivePlayers({ currentPlayer: 'level', others: 'unactive' });
     },
     onEnd: (fnCtx: FuncContext) => {
+      const turnTrig = getTurnTriggerFns(fnCtx, 'Attack', 'After');
+      stackTriggerFns(fnCtx, 'Attack', turnTrig);
+      resolveStack(fnCtx, { turnTrigger: true });
+
       resetMonsterDamageOnField(fnCtx);
     },
     stages: {

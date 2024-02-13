@@ -4,7 +4,7 @@ import { ActionTargets, Location } from './target';
 import { endLevelStage, endActivateStage, endAttackStage } from './hook';
 import { isMonster, Skill, Character, NonCharacter } from './card';
 import { ensureFilter, filterSelections, meetsTarget, mayFinished } from './target';
-import { getTriggerFns, stackTriggerFns, stackTriggers } from './trigger';
+import { getActionTriggerFns, stackTriggerFns, stackActionTriggers } from './trigger';
 import {
   deepCardComp,
   getCurrentStage,
@@ -68,6 +68,7 @@ interface CurrentActiveStage {
 interface ResolveStackOptions {
   resetStack?: boolean;
   finished?: boolean;
+  turnTrigger?: boolean;
 }
 
 export type SetActiveStage = CurrentActiveStage | OpponentActiveStage;
@@ -136,16 +137,18 @@ export function resolveStack(fnCtx: FuncContext, opts?: ResolveStackOptions) {
         return;
       }
 
-      if (stack.currentStage === 'level') endLevelStage(fnCtx);
-      if (stack.currentStage === 'activate') endActivateStage(fnCtx);
-      if (stack.currentStage === 'attack') endAttackStage(fnCtx);
+      if (!opts?.turnTrigger) {
+        if (stack.currentStage === 'level') endLevelStage(fnCtx);
+        if (stack.currentStage === 'activate') endActivateStage(fnCtx);
+        if (stack.currentStage === 'attack') endAttackStage(fnCtx);
+      }
 
       G.stack = undefined;
       return;
     }
 
     const nextDecision = stack.decisions[stack.decisions.length - 1];
-    const didAddTrigger = stackTriggers(fnCtx, nextDecision, 'Before');
+    const didAddTrigger = stackActionTriggers(fnCtx, nextDecision, 'Before');
 
     if (didAddTrigger) {
       resolveStack(fnCtx);
@@ -168,7 +171,7 @@ export function resolveStack(fnCtx: FuncContext, opts?: ResolveStackOptions) {
      * Used so that cards being destroyed with death triggers can see their own death.
      * Cards that ignore their own death trigger will need to explicitly check for themselves
      */
-    const afterTrigFns = getTriggerFns(fnCtx, decision, 'After');
+    const afterTrigFns = getActionTriggerFns(fnCtx, decision, 'After');
 
     actions[decision.action](fnCtx, actionOpts);
     if (decision.mainDecision) stack.prevActivatePos = undefined;
@@ -176,7 +179,7 @@ export function resolveStack(fnCtx: FuncContext, opts?: ResolveStackOptions) {
     /**
      * Triggers will not duplicate, inherent check if triggered for particular decision
      */
-    afterTrigFns.push(...getTriggerFns(fnCtx, decision, 'After'));
+    afterTrigFns.push(...getActionTriggerFns(fnCtx, decision, 'After'));
     stackTriggerFns(fnCtx, decision, afterTrigFns);
 
     /**
@@ -201,6 +204,7 @@ export function resolveStack(fnCtx: FuncContext, opts?: ResolveStackOptions) {
 
     if (stack.prevActivatePos !== undefined) {
       G.player[ctx.currentPlayer].activationPos = stack.prevActivatePos;
+      // TODO (fix): should this reset all skill activations? What is activated used for
       resetSkillActivations(fnCtx);
     }
 
@@ -384,14 +388,15 @@ function validationGate(
     stateTarget.some((target) =>
       meetsTarget(fnCtx, ensureFilter(target.targets, playerState), card)
     )
-  )
+  ) {
     return false;
+  }
 
   return true;
 }
 
 function pruneDecisions(fnCtx: FuncContext, decisions: Decision[]) {
-  decisions.map((decision) => {
+  decisions.forEach((decision) => {
     pruneSelection(fnCtx, decision.selection, decision.selection);
   });
 }
@@ -435,7 +440,7 @@ function unselectGameCards(
         deepCardComp(locCard, card)
       );
     })
-    .map((movedCard) => {
+    .forEach((movedCard) => {
       const currentLocation = getCardLocation(G, ctx, movedCard.key);
       getCardAtLocation(G, ctx, currentLocation, movedCard.key).selected = false;
     });

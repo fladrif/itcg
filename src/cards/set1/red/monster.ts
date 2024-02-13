@@ -179,10 +179,7 @@ export const lucida: Omit<Monster, 'key' | 'owner'> = {
   skill: [
     {
       action: 'conjure',
-      requirements: {
-        level: 0,
-        oneshot: true,
-      },
+      requirements: { level: 0, oneshot: true },
       activated: false,
     },
   ],

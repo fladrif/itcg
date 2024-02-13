@@ -1,31 +1,30 @@
 import { PlayerID } from 'boardgame.io';
 
-import { Action } from '../actions';
 import { FuncContext } from '../game';
 import { Decision } from '../stack';
 
 import {
+  TriggerContext,
   TriggerOwner,
   TriggerOptions,
   TriggerLifetime,
-  TriggerPrepostion,
+  TriggerPreposition,
 } from './types';
 
-export abstract class Trigger {
+export abstract class GenericTrigger {
   // player
   owner: TriggerOwner;
   // card
   cardOwner: string;
   key: string;
-  prep: TriggerPrepostion;
-  actionTrigger: Action[];
+  // Alt for turn prep
+  prep: TriggerPreposition;
   opts?: TriggerOptions;
   lifetime?: TriggerLifetime;
 
   constructor(
     cardOwner: string,
-    preposition: TriggerPrepostion,
-    actionTrigger: Action | Action[],
+    preposition: TriggerPreposition,
     key: string,
     opts?: TriggerOptions,
     owner?: PlayerID,
@@ -35,40 +34,30 @@ export abstract class Trigger {
     this.owner = owner || 'Global';
     this.prep = preposition;
     this.key = key;
-    this.actionTrigger = Array.isArray(actionTrigger) ? actionTrigger : [actionTrigger];
     this.opts = opts;
     this.lifetime = lifetime;
   }
 
-  baseCheck(fnCtx: FuncContext, decision: Decision, prep: TriggerPrepostion): boolean {
-    const { G, ctx } = fnCtx;
-
-    const alreadyTriggered = G.stack!.decisionTriggers[decision.key].includes(this.key);
-    const rightPrep = prep === this.prep;
-    const rightAction = this.actionTrigger.includes(decision.action);
-
-    const baseChecks = !alreadyTriggered && rightPrep && rightAction;
-
-    const usableTurn = this.lifetime?.usableTurn;
-    const canActivateOnTurn = usableTurn ? usableTurn === ctx.turn : false;
-
-    const onceATurn = this.lifetime?.turn;
-    const canTriggerThisTurn = onceATurn ? onceATurn <= ctx.turn : false;
-
-    if (!!usableTurn) return canActivateOnTurn && baseChecks;
-    if (!!onceATurn) return canTriggerThisTurn && baseChecks;
-
-    return baseChecks;
-  }
+  abstract baseCheck(
+    fnCtx: FuncContext,
+    trigCtx: TriggerContext,
+    prep: TriggerPreposition
+  ): boolean;
 
   shouldTrigger(
     fnCtx: FuncContext,
-    decision: Decision,
-    prep: TriggerPrepostion
+    trigCtx: TriggerContext,
+    prep: TriggerPreposition
   ): boolean {
-    if (!this.baseCheck(fnCtx, decision, prep)) return false;
+    if (!this.baseCheck(fnCtx, trigCtx, prep)) return false;
 
-    return this.shouldTriggerExtension(fnCtx, decision, prep);
+    return this.shouldTriggerExtension(fnCtx, trigCtx, prep);
+  }
+
+  turnIsOwner(fnCtx: FuncContext): boolean {
+    const { ctx } = fnCtx;
+
+    return ctx.currentPlayer === this.owner;
   }
 
   sourceIsOwner(decision: Decision): boolean {
@@ -85,9 +74,9 @@ export abstract class Trigger {
 
   abstract shouldTriggerExtension(
     fnCtx: FuncContext,
-    decision: Decision,
-    prep: TriggerPrepostion
+    trigCtx: TriggerContext,
+    prep: TriggerPreposition
   ): boolean;
 
-  abstract createDecision(fnCtx: FuncContext, decision: Decision): Decision[];
+  abstract createDecision(fnCtx: FuncContext, trigCtx: TriggerContext): Decision[];
 }

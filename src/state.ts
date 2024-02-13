@@ -25,6 +25,7 @@ export interface StateModifier {
 export interface StateLifetime {
   turn?: number;
   setTurn?: 'ThisTurn' | 'NextTurn';
+  until?: boolean;
 }
 
 export interface GlobalState {
@@ -33,7 +34,7 @@ export interface GlobalState {
   targets: ActionTargets; // TODO: Location not respected in this filter
   modifier: StateModifier;
   lifetime: StateLifetime;
-  targetOpponent?: boolean;
+  targetOpponent?: boolean; // TODO: refactor out. Utilize location
 }
 
 export function getMonsterAtt(fnCtx: FuncContext, card: Monster) {
@@ -117,8 +118,12 @@ export function getRelevantState(
   card: Character | NonCharacter
 ): GlobalState[] {
   return states.filter((state) => {
-    const turn = state.lifetime.turn ? state.lifetime.turn === ctx.turn : true;
-    const applicableState = state.player === card.owner;
+    const turn = state.lifetime.turn
+      ? !!state.lifetime.until
+        ? state.lifetime.turn >= ctx.turn
+        : state.lifetime.turn === ctx.turn
+      : true;
+    const applicableState = state.player === card.owner; // TODO: take into consideration location for owner. Currently targetOpponent covers this case
 
     return turn && applicableState;
   });

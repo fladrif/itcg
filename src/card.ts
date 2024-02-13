@@ -5,7 +5,7 @@ import { ActionTargets } from './target';
 import { Keyword } from './keywords';
 import { Choice } from './stack';
 import { GlobalState } from './state';
-import { TriggerLifetime, TriggerNames, TriggerOptions } from './trigger';
+import { TriggerLifetimeTemplate, TriggerNames, TriggerOptions } from './trigger';
 import { getRandomKey } from './utils';
 import { CardName } from './cards';
 
@@ -151,7 +151,7 @@ export interface Skill {
 export interface TriggerRef {
   name: TriggerNames;
   opts?: TriggerOptions;
-  lifetime?: TriggerLifetime;
+  lifetime?: TriggerLifetimeTemplate;
 }
 
 export interface Ability {
@@ -159,6 +159,7 @@ export interface Ability {
   skills?: Skill[];
   state?: Omit<GlobalState, 'owner' | 'player'>;
   keywords?: Keyword[];
+  inactiveKeywords?: Keyword[];
 }
 
 export function instantiateCard<T extends Card>(
