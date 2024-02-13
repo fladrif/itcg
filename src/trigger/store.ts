@@ -939,19 +939,29 @@ export class KumbiTrigger extends Trigger {
     const { G, ctx } = fnCtx;
     if (!decision.opts?.source) return false;
 
-    const targetSourceLoc = [
+    const sourceLoc = [
       Location.Character,
       Location.OppCharacter,
       Location.CharAction,
       Location.OppCharAction,
     ];
 
+    const targetLoc = [Location.Character, Location.OppCharacter];
+
     const dmgSourceLoc = getCardLocation(G, ctx, decision.opts.source.key);
-    const sourceIsChar = targetSourceLoc.includes(dmgSourceLoc);
+    const sourceIsChar = sourceLoc.includes(dmgSourceLoc);
+    const charIsTarget = targetLoc.some((location) => {
+      return (
+        !!decision.selection[location] &&
+        decision.selection[location]!.some((card) => card.owner === this.owner)
+      );
+    });
 
     const damageExists = decision.opts?.damage && decision.opts.damage > 0;
 
-    return !this.sourceIsOwner(decision) && sourceIsChar && !!damageExists;
+    return (
+      !this.sourceIsOwner(decision) && sourceIsChar && !!damageExists && charIsTarget
+    );
   }
 
   createDecision(fnCtx: FuncContext, decision: Decision) {
