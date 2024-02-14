@@ -1027,6 +1027,7 @@ export class LootTrigger extends Trigger {
 
     const dec: Decision = {
       action: 'discard',
+      dialogPrompt: 'Discard a card',
       selection: {},
       finished: false,
       noReset: true,
@@ -1765,6 +1766,7 @@ export class StartleTrigger extends Trigger {
 
     const discardDec: Decision = {
       action: 'discard',
+      dialogPrompt: 'Discard a card',
       selection: { [getCardLocation(G, ctx, card.key)]: [card] },
       finished: false,
       key: getRandomKey(),
