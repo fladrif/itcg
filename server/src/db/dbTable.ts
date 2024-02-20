@@ -7,7 +7,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import { Deck } from '../../../src/game';
+import { Deck, SetupData } from '../../../src/game';
 
 @Entity()
 export class Users {
@@ -95,5 +95,60 @@ export class Decks {
     this.owner = owner;
     this.created_at = new Date();
     this.modified_at = new Date();
+  }
+}
+
+interface ITCGPlayer {
+  id: number;
+  name: string;
+  credentials: string;
+}
+
+interface ITCGPlayers {
+  '0': ITCGPlayer;
+  '1': ITCGPlayer;
+}
+
+interface GameOver {
+  winner: string;
+}
+
+@Entity('Games')
+export class Games {
+  @PrimaryColumn('text')
+  id: string;
+
+  @Column('text')
+  gameName: string;
+
+  @Column('json')
+  players: ITCGPlayers;
+
+  @Column('json')
+  setupData: SetupData;
+
+  @Column('json')
+  gameover?: GameOver;
+
+  @Column('timestamptz')
+  createdAt: Date;
+
+  @Column('timestamptz')
+  updatedAt: Date;
+
+  constructor(
+    id: string,
+    gameName: string,
+    players: ITCGPlayers,
+    setupData: SetupData,
+    createdAt: Date,
+    updatedAt: Date
+  ) {
+    this.id = id;
+    this.gameName = gameName;
+    this.players = players;
+    this.setupData = setupData;
+    this.createdAt = createdAt;
+    this.updatedAt = updatedAt;
   }
 }

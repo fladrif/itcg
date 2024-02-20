@@ -1,15 +1,17 @@
 import { createConnection, Connection } from 'typeorm';
 
-import { Decks, Roles, Userroles, Users } from './dbTable';
+import { Decks, Roles, Userroles, Users, Games } from './dbTable';
 
 import { DBConfig } from '../config';
 
-let connection: Connection;
+let userConnection: Connection;
+let itcgConnection: Connection;
 
 export async function getConnection(): Promise<Connection> {
-  if (connection) return connection;
+  if (userConnection) return userConnection;
 
-  connection = await createConnection({
+  userConnection = await createConnection({
+    name: 'user',
     type: 'postgres',
     host: DBConfig.host,
     port: DBConfig.port,
@@ -18,5 +20,21 @@ export async function getConnection(): Promise<Connection> {
     database: DBConfig.userDB,
     entities: [Decks, Users, Roles, Userroles],
   });
-  return connection;
+  return userConnection;
+}
+
+export async function getITCGConnection(): Promise<Connection> {
+  if (itcgConnection) return itcgConnection;
+
+  itcgConnection = await createConnection({
+    name: 'itcg',
+    type: 'postgres',
+    host: DBConfig.host,
+    port: DBConfig.port,
+    username: DBConfig.username,
+    password: DBConfig.password,
+    database: DBConfig.itcgDB,
+    entities: [Games],
+  });
+  return itcgConnection;
 }
