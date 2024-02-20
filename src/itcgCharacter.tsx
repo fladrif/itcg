@@ -49,7 +49,9 @@ export class ITCGCharacter extends React.Component<CharacterProp> {
       return (
         <ITCGCard
           styles={levelStyles}
-          location={Location.CharAction}
+          location={
+            this.props.currentPlayer ? Location.CharAction : Location.OppCharAction
+          }
           card={card}
           move={move}
           skillPos={index + 3}

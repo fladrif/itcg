@@ -133,6 +133,7 @@ export const swipe: Omit<Tactic, 'key' | 'owner'> = {
     },
     {
       action: 'discard',
+      dialogPrompt: 'Discard a card',
       activated: false,
       requirements: { level: 0, oneshot: true },
       noReset: true,
@@ -146,6 +147,7 @@ export const swipe: Omit<Tactic, 'key' | 'owner'> = {
     skills: [
       {
         action: 'discard',
+        dialogPrompt: 'Discard a card',
         activated: false,
         requirements: { level: 0 },
         noReset: true,

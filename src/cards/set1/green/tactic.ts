@@ -182,6 +182,7 @@ export const soularrow: Omit<Tactic, 'key' | 'owner'> = {
       },
       {
         action: 'discard',
+        dialogPrompt: 'Discard a card',
         activated: false,
         requirements: { level: 0 },
         targets: {

@@ -105,6 +105,7 @@ export const coconutknife: Omit<Item, 'key' | 'owner'> = {
     },
     {
       action: 'discard',
+      dialogPrompt: 'Discard a card',
       activated: false,
       requirements: {
         level: 0,
@@ -241,6 +242,7 @@ export const rednight: Omit<Item, 'key' | 'owner'> = {
     },
     {
       action: 'discard',
+      dialogPrompt: 'Discard a card',
       activated: false,
       requirements: {
         level: 0,
