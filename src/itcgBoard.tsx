@@ -1,5 +1,6 @@
 import React from 'react';
 import { BoardProps } from 'boardgame.io/react';
+import { Tooltip } from 'react-tooltip';
 
 import { GameState } from './game';
 import { getTargetLocations, Location, mayFinished } from './target';
@@ -65,6 +66,11 @@ const turnAlertStyle: React.CSSProperties = {
 const menuBoxStyle: React.CSSProperties = {
   zIndex: 5,
   position: 'absolute',
+};
+
+const tooltipStyle: React.CSSProperties = {
+  zIndex: 4,
+  padding: '1em',
 };
 
 const menuStyle: React.CSSProperties = {
@@ -202,11 +208,43 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
     );
 
     const audio = <ITCGAudio soundOpts={this.state.soundOpts} />;
+    const tooltips = (
+      <>
+        <Tooltip
+          id="level-tooltip"
+          style={tooltipStyle}
+          border="1px solid white"
+          isOpen={currentPlayerStage === 'level'}
+          place="top"
+        >
+          Click on a card in your hand to level up with it
+        </Tooltip>
+        <Tooltip
+          id="activate-tooltip"
+          style={tooltipStyle}
+          border="1px solid white"
+          isOpen={currentPlayerStage === 'activate'}
+          place="left"
+        >
+          Click on skills from top to bottom to activate
+        </Tooltip>
+        <Tooltip
+          id="field-tooltip"
+          style={tooltipStyle}
+          border="1px solid white"
+          isOpen={currentPlayerStage === 'attack'}
+          place="bottom"
+        >
+          Click on a monster to attack with it
+        </Tooltip>
+      </>
+    );
 
     return (
       <div style={containerStyle}>
         {audio}
         {gameOver}
+        {tooltips}
         <div style={dialogStyle}>
           <ITCGDialog
             playerState={playerState}
@@ -274,6 +312,7 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
         </div>
         <div style={fieldStyle}>
           <div
+            data-tooltip-id="field-tooltip"
             style={
               currentPlayerStage === 'attack'
                 ? { ...innerFieldStyle, ...highlightAction }
@@ -314,6 +353,7 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
           />
         </div>
         <div
+          data-tooltip-id="activate-tooltip"
           style={
             currentPlayerStage === 'activate'
               ? { ...charStyle, ...highlightAction }
@@ -330,6 +370,7 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
           />
         </div>
         <div
+          data-tooltip-id="level-tooltip"
           style={
             currentPlayerStage === 'level'
               ? { ...handStyle, ...highlightAction }
