@@ -109,10 +109,13 @@ export async function startGame(room: Room) {
   const randUsers = lodash.shuffle(room.users);
   const players: SetupPlayerData[] = await Bluebird.map(randUsers, async (usr, idx) => {
     const playerDeck = await db.getDeck(usr.deck!);
+    const playerSetting = await db.getSettingByPlayerId(usr.id);
+
     return {
       id: idx.toString(),
       playerName: usr.name,
       deck: playerDeck!.deck_list,
+      settings: playerSetting?.settings || {},
     };
   });
 

@@ -7,7 +7,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import { Deck, SetupData } from '../../../src/game';
+import { Deck, SetupData, PlayerSettings } from '../../../src/game';
 
 @Entity()
 export class Users {
@@ -64,6 +64,33 @@ export class Userroles {
   constructor(user: Users, role: Roles) {
     this.user = user;
     this.role = role;
+  }
+}
+
+@Entity()
+export class Settings {
+  @PrimaryColumn('uuid')
+  id: string;
+
+  @Column('json')
+  settings: PlayerSettings;
+
+  @Column('timestamptz')
+  created_at: Date;
+
+  @Column('timestamptz')
+  modified_at: Date;
+
+  @ManyToOne(() => Users)
+  @JoinColumn({ name: 'owner_id' })
+  owner: Users;
+
+  constructor(id: string, settings: PlayerSettings, owner: Users) {
+    this.id = id;
+    this.settings = settings;
+    this.owner = owner;
+    this.created_at = new Date();
+    this.modified_at = new Date();
   }
 }
 

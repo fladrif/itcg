@@ -116,6 +116,7 @@ export const attack: Move<GameState> = (fnCtx: FuncContext, opts?: MoveOptions) 
 
   const attackDecision: Decision = {
     action: 'attack',
+    dialogPrompt: 'Choose an attack target',
     target: {
       xor: [
         {

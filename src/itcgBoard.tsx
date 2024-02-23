@@ -2,10 +2,10 @@ import React from 'react';
 import { BoardProps } from 'boardgame.io/react';
 import { Tooltip } from 'react-tooltip';
 
-import { GameState } from './game';
+import { GameState, PlayerSettings } from './game';
 import { getTargetLocations, Location, mayFinished } from './target';
 
-import { ITCGAudio, SoundOpts } from './itcgAudio';
+import { ITCGAudio } from './itcgAudio';
 import { ITCGCharacter } from './itcgCharacter';
 import { ITCGDialog, DialogBoxOpts } from './itcgDialog';
 import { ITCGDiscard } from './itcgDiscard';
@@ -21,10 +21,9 @@ import { ITCGStats } from './itcgStats';
 
 import bgi from './images/red-scene.svg';
 
-export interface State {
+export interface State extends PlayerSettings {
   dialogBox?: DialogBoxOpts;
   menuBox?: MenuBoxOpts;
-  soundOpts?: SoundOpts;
 }
 
 const containerStyle: React.CSSProperties = {
@@ -71,6 +70,7 @@ const menuBoxStyle: React.CSSProperties = {
 const tooltipStyle: React.CSSProperties = {
   zIndex: 4,
   padding: '1em',
+  maxWidth: '30vw',
 };
 
 const menuStyle: React.CSSProperties = {
@@ -149,7 +149,15 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
   constructor(props: BoardProps<GameState>) {
     super(props);
 
-    this.state = { soundOpts: { mute: false, volume: 50 } };
+    const settings = props.G.player[props.playerID].settings;
+
+    const soundOpts = settings.soundOpts || {
+      mute: false,
+      volume: 50,
+    };
+    const tooltipOpts = settings.tooltipOpts !== undefined ? settings.tooltipOpts : true;
+
+    this.state = { soundOpts, tooltipOpts };
   }
 
   setBoardState(state: State) {
@@ -167,7 +175,9 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
     const currentPlayerStage = this.props.ctx.activePlayers
       ? this.props.ctx.activePlayers[playerID]
       : '';
-    const opponentID = Object.keys(this.props.G.player).filter((id) => id != playerID)[0];
+    const opponentID = Object.keys(this.props.G.player).filter(
+      (id) => id !== playerID
+    )[0];
     const opponentState = this.props.G.player[opponentID];
     const opponentStage = this.props.ctx.activePlayers
       ? this.props.ctx.activePlayers[opponentID]
@@ -214,28 +224,29 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
           id="level-tooltip"
           style={tooltipStyle}
           border="1px solid white"
-          isOpen={currentPlayerStage === 'level'}
+          isOpen={currentPlayerStage === 'level' && this.state.tooltipOpts}
           place="top"
         >
-          Click on a card in your hand to level up with it
+          Click on a card in your hand to level up with it, or choose 'Do not Level'.
         </Tooltip>
         <Tooltip
           id="activate-tooltip"
           style={tooltipStyle}
           border="1px solid white"
-          isOpen={currentPlayerStage === 'activate'}
+          isOpen={currentPlayerStage === 'activate' && this.state.tooltipOpts}
           place="left"
         >
-          Click on skills from top to bottom to activate
+          Click on an ability to activate it. Abilities you cannot use will be shaded. Use
+          them in order from top to bottom, skipped abilities cannot be used later.
         </Tooltip>
         <Tooltip
           id="field-tooltip"
           style={tooltipStyle}
           border="1px solid white"
-          isOpen={currentPlayerStage === 'attack'}
+          isOpen={currentPlayerStage === 'attack' && this.state.tooltipOpts}
           place="bottom"
         >
-          Click on a monster to attack with it
+          Click on a monster to attack with it, or choose 'Pass turn'.
         </Tooltip>
       </>
     );
@@ -265,6 +276,7 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
             concede={this.props.moves.concede}
             menuBox={this.state.menuBox}
             soundOpts={this.state.soundOpts}
+            tooltipOpts={this.state.tooltipOpts}
           />
         </div>
         <div style={oppDiscardStyle}>

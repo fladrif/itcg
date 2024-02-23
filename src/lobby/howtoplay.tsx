@@ -20,8 +20,15 @@ export class ITCGHowToPlay extends React.Component {
       title: 'How to Win',
       body: (
         <>
-          Win by reducing your opponent's hit points (hp) to 0. Running out of cards in
-          your deck does not cause you to lose.
+          <p>
+            Win by reducing your opponent's hit points (hp) to 0. Running out of cards in
+            your deck does not cause you to lose.
+          </p>
+          <p>
+            Do this by leveling up your Character with cards in your hand. Higher levels
+            give you access to abilities that spawn monsters to fight for you, equip armor
+            and weapons, and deal damage to your opponent and their monsters directly.
+          </p>
         </>
       ),
     });

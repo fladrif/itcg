@@ -27,6 +27,16 @@ export interface Deck {
   deck: [Omit<NonCharacter, 'key' | 'owner'>, number][];
 }
 
+export interface SoundOpts {
+  volume?: number;
+  mute?: boolean;
+}
+
+export interface PlayerSettings {
+  soundOpts?: SoundOpts;
+  tooltipOpts?: boolean;
+}
+
 export interface PlayerState {
   deck: NonCharacter[];
   character: Character;
@@ -40,12 +50,14 @@ export interface PlayerState {
   maxHP: number;
   level: number;
   activationPos: number;
+  settings: PlayerSettings;
 }
 
 export interface SetupPlayerData {
   id: PlayerID;
   playerName: string;
   deck: Deck;
+  settings: PlayerSettings;
 }
 
 export interface SetupData {
@@ -77,6 +89,7 @@ export function preConfigSetup(): GameState {
     level: 0,
     activationPos: 0,
     name: 'Detheroth',
+    settings: {},
   };
 
   state.player['1'] = {
@@ -92,6 +105,7 @@ export function preConfigSetup(): GameState {
     level: 0,
     activationPos: 0,
     name: 'shinZ',
+    settings: {},
   };
 
   state.player['0'].hand.push(state.player['0'].deck.pop()!);
@@ -135,6 +149,7 @@ export function setup(_context: SetupCtx, setupData: SetupData): GameState {
       level: 0,
       activationPos: 0,
       name: player.playerName,
+      settings: player.settings,
     };
   }
 

@@ -6,20 +6,13 @@ import quietWharf from './music/the_quiet_wharf.mp4';
 import cathedralSea from './music/cathedral_of_the_sea.mp4';
 import shoresideVillage from './music/curious_shoreside_village.mp3';
 
-export interface SoundOpts {
-  volume?: number;
-  mute?: boolean;
-}
+import { SoundOpts } from './game';
 
 interface AudioProp {
   soundOpts: SoundOpts;
 }
 
 export class ITCGAudio extends React.Component<AudioProp> {
-  constructor(props: AudioProp) {
-    super(props);
-  }
-
   audio = new Audio();
 
   audioList = [sunsetCove, quietWharf, cathedralSea, shoresideVillage];
