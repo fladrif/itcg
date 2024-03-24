@@ -147,19 +147,21 @@ export class ITCGAdmin extends React.Component<AdminProp, AdminState> {
     //   { created_at: '2024-12-08T06:59:49.067Z' },
     // ];
 
-    this.state.playerData = playerData.map((d) => {
-      return { created_at: new Date(d.created_at) };
+    this.setState({
+      playerData: playerData.map((d) => {
+        return { created_at: new Date(d.created_at) };
+      }),
+      gameData: gameData.map((d) => {
+        return {
+          createdAt: new Date(d.createdAt),
+          updatedAt: new Date(d.updatedAt),
+          gameover: d.gameover,
+        };
+      }),
+      roomData,
+      latestPlayers,
+      latestGames,
     });
-    this.state.gameData = gameData.map((d) => {
-      return {
-        createdAt: new Date(d.createdAt),
-        updatedAt: new Date(d.updatedAt),
-        gameover: d.gameover,
-      };
-    });
-    this.state.roomData = roomData;
-    this.state.latestPlayers = latestPlayers;
-    this.state.latestGames = latestGames;
   }
 
   gameTable() {

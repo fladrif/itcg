@@ -236,8 +236,9 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
           isOpen={currentPlayerStage === 'activate' && this.state.tooltipOpts}
           place="left"
         >
-          Click on an ability to activate it. Abilities you cannot use will be shaded. Use
-          them in order from top to bottom, skipped abilities cannot be used later.
+          Click the abilities on the cards to activate them. Abilities you cannot use will
+          be shaded. Use them in order from top to bottom, skipped abilities cannot be
+          used later.
         </Tooltip>
         <Tooltip
           id="field-tooltip"
