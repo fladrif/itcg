@@ -40,7 +40,8 @@ export class ITCGAudio extends React.Component<AudioProp> {
   }
 
   render() {
-    const volume = this.props.soundOpts?.volume || 100;
+    const volume =
+      this.props.soundOpts?.volume !== undefined ? this.props.soundOpts.volume : 100;
 
     this.audio.volume = volume / 100;
     this.audio.muted = this.props.soundOpts?.mute || false;
