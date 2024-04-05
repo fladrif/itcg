@@ -105,11 +105,13 @@ export const doublestrike: Omit<Tactic, 'key' | 'owner'> = {
               type: CardTypes.Monster,
               location: Location.Field,
               quantity: 1,
+              quantityUpTo: true,
             },
             {
               type: CardTypes.Monster,
               location: Location.OppField,
               quantity: 1,
+              quantityUpTo: true,
             },
           ],
         },
