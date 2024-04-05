@@ -165,7 +165,7 @@ export class ITCGAdmin extends React.Component<AdminProp, AdminState> {
   }
 
   gameTable() {
-    const games = this.state.latestGames.reverse().map((g) => {
+    const games = this.state.latestGames.map((g) => {
       return (
         <tr>
           <td>{new Date(g.ended).toLocaleDateString()}</td>
@@ -184,13 +184,13 @@ export class ITCGAdmin extends React.Component<AdminProp, AdminState> {
             <th>Loser</th>
           </tr>
         </thead>
-        <tbody>{games}</tbody>
+        <tbody>{games.reverse()}</tbody>
       </table>
     );
   }
 
   userTable() {
-    const players = this.state.latestPlayers.reverse().map((u) => {
+    const players = this.state.latestPlayers.map((u) => {
       return (
         <tr>
           <td>{new Date(u.created_at).toLocaleDateString()}</td>
@@ -207,7 +207,7 @@ export class ITCGAdmin extends React.Component<AdminProp, AdminState> {
             <th>Username</th>
           </tr>
         </thead>
-        <tbody>{players}</tbody>
+        <tbody>{players.reverse()}</tbody>
       </table>
     );
   }
