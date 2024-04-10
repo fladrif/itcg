@@ -233,7 +233,7 @@ const flip = (fnCtx: FuncContext, opts: ActionOpts) => {
   if (!G.stack) return;
   if (!opts.choiceSelection || !opts.source || !opts.dialogDecision) return;
 
-  const flippedCoin = random.Die(2) == 1 ? Choice.Heads : Choice.Tails;
+  const flippedCoin = random.Die(2) === 1 ? Choice.Heads : Choice.Tails;
   const didWin = flippedCoin === opts.choiceSelection;
 
   const ackDec: Decision = {
@@ -446,7 +446,7 @@ function rainofarrows(fnCtx: FuncContext, opts: ActionOpts): any {
 function refresh(fnCtx: FuncContext, opts: ActionOpts): any {
   const { G, ctx } = fnCtx;
   if (!G.stack) return;
-  if (opts.lifegain == undefined) return;
+  if (opts.lifegain === undefined) return;
 
   const player = opts.source?.owner ? opts.source.owner : ctx.currentPlayer;
   const doNotOverheal = opts.overheal !== undefined && opts.overheal === false;
@@ -535,7 +535,7 @@ function seer(fnCtx: FuncContext, opts: ActionOpts): any {
   const playerID = opts.source.owner;
   const state = G.player[playerID];
 
-  if (state.deck.length == 0) return;
+  if (state.deck.length === 0) return;
 
   if (state.deck.length <= 2) {
     state.deck[0].reveal = [playerID];

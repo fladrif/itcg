@@ -225,7 +225,7 @@ export class ITCGAdmin extends React.Component<AdminProp, AdminState> {
     });
 
     const startingWins = this.state.gameData.filter(
-      (g) => g.gameover?.winner == 0
+      (g) => g.gameover?.winner === 0
     ).length;
     const unfinishedGames = this.state.gameData.filter((g) => !g.gameover).length;
     const totalGames = this.state.gameData.length;

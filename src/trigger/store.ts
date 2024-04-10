@@ -1753,7 +1753,7 @@ export class StartleTrigger extends Trigger {
         decision.selection[location]!.some((card) => card.owner !== this.owner)
     );
 
-    return oppCharAttacked && this.sourceIsOwner(decision);
+    return oppCharAttacked && this.sourceIsCard(decision);
   }
 
   createDecision(fnCtx: FuncContext, _decision: Decision) {
