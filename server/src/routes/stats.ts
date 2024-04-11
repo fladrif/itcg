@@ -29,14 +29,11 @@ router.get('/decks', async (ctx: any) => {
 });
 
 router.get('/rooms', async (ctx: any) => {
-  const rooms = Object.values(gameRooms.rooms);
+  const rooms = Object.values(gameRooms.rooms).map((rm) => {
+    return { p1: rm.users[0].name, p2: rm.users[1]?.name };
+  });
 
-  const payload = {
-    allRooms: rooms.length,
-    openRooms: rooms.filter((r) => r.users.length < 2).length,
-  };
-
-  ctx.body = payload;
+  ctx.body = rooms;
 });
 
 router.get('/games', async (ctx: any) => {

@@ -1,16 +1,6 @@
 import React from 'react';
 import axios from 'axios';
-import {
-  Cell,
-  LineChart,
-  XAxis,
-  YAxis,
-  Line,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Legend,
-} from 'recharts';
+import { LineChart, XAxis, YAxis, Line, ResponsiveContainer } from 'recharts';
 import * as d3Array from 'd3-array';
 import * as d3Scale from 'd3-scale';
 import * as d3Time from 'd3-time';
@@ -19,12 +9,17 @@ interface AdminProp {
   server: string;
 }
 
+export interface LatestGames {
+  complete: any[];
+  ongoing: any[];
+}
+
 interface AdminState {
   playerData: any[];
   gameData: any[];
-  roomData: any;
+  roomData: any[];
   latestPlayers: any[];
-  latestGames: any[];
+  latestGames: LatestGames;
 }
 
 const baseStyle: React.CSSProperties = {
@@ -32,6 +27,12 @@ const baseStyle: React.CSSProperties = {
   display: 'flex',
   flexDirection: 'column',
 };
+
+const HOUR = 60 * 60 * 1000;
+
+const DAY = 24 * HOUR;
+const WEEK = 7 * DAY;
+const MONTH = 4 * WEEK;
 
 export class ITCGAdmin extends React.Component<AdminProp, AdminState> {
   state: AdminState;
@@ -41,9 +42,9 @@ export class ITCGAdmin extends React.Component<AdminProp, AdminState> {
     this.state = {
       playerData: [],
       gameData: [],
-      roomData: { allRooms: 0, openRooms: 0 },
+      roomData: [],
       latestPlayers: [],
-      latestGames: [],
+      latestGames: { ongoing: [], complete: [] },
     };
   }
 
@@ -62,7 +63,7 @@ export class ITCGAdmin extends React.Component<AdminProp, AdminState> {
     return [];
   }
 
-  async getLatestGames(): Promise<any[]> {
+  async getLatestGames(): Promise<LatestGames> {
     const resp = await axios
       .get('/stats/games/latest', {
         baseURL: this.props.server,
@@ -74,7 +75,7 @@ export class ITCGAdmin extends React.Component<AdminProp, AdminState> {
       });
 
     if (resp) return resp.data;
-    return [];
+    return { ongoing: [], complete: [] };
   }
 
   async getRoomData(): Promise<any[]> {
@@ -164,8 +165,31 @@ export class ITCGAdmin extends React.Component<AdminProp, AdminState> {
     });
   }
 
-  gameTable() {
-    const games = this.state.latestGames.map((g) => {
+  roomTable() {
+    const rooms = this.state.roomData.map((r) => {
+      return (
+        <tr>
+          <td>{r.p1}</td>
+          <td>{r.p2}</td>
+        </tr>
+      );
+    });
+
+    return (
+      <table>
+        <thead>
+          <tr>
+            <th>Owner</th>
+            <th>Guest</th>
+          </tr>
+        </thead>
+        <tbody>{rooms.reverse()}</tbody>
+      </table>
+    );
+  }
+
+  completeGameTable() {
+    const games = this.state.latestGames.complete.map((g) => {
       return (
         <tr>
           <td>{new Date(g.ended).toLocaleDateString()}</td>
@@ -182,6 +206,29 @@ export class ITCGAdmin extends React.Component<AdminProp, AdminState> {
             <th>Date</th>
             <th>Winner</th>
             <th>Loser</th>
+          </tr>
+        </thead>
+        <tbody>{games.reverse()}</tbody>
+      </table>
+    );
+  }
+
+  ongoingGameTable() {
+    const games = this.state.latestGames.ongoing.map((g) => {
+      return (
+        <tr>
+          <td>{g.p1}</td>
+          <td>{g.p2}</td>
+        </tr>
+      );
+    });
+
+    return (
+      <table>
+        <thead>
+          <tr>
+            <th>Player 1</th>
+            <th>Player 2</th>
           </tr>
         </thead>
         <tbody>{games.reverse()}</tbody>
@@ -267,37 +314,42 @@ export class ITCGAdmin extends React.Component<AdminProp, AdminState> {
       return { created_at: b.x0, players: b.length };
     });
 
-    const roomData = [
-      {
-        name: 'Open',
-        value: this.state.roomData.openRooms,
-      },
-      {
-        name: 'Occupied',
-        value: this.state.roomData.allRooms - this.state.roomData.openRooms,
-      },
-    ];
-
-    const gameData = [
-      {
-        name: 'Completed',
-        value: totalGames - unfinishedGames,
-      },
-      {
-        name: 'Ongoing',
-        value: unfinishedGames,
-      },
-    ];
-
-    const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
+    const now = Date.now();
+    const userChangeDay = this.state.playerData.filter(
+      (pl) => now - pl.created_at.valueOf() < DAY
+    ).length;
+    const userDayBadge = `badge ${userChangeDay > 0 ? 'success' : ''}`;
+    const userChangeWeek = this.state.playerData.filter(
+      (pl) => now - pl.created_at.valueOf() < WEEK
+    ).length;
+    const userWeekBadge = `badge ${userChangeWeek > 0 ? 'success' : ''}`;
+    const userChangeMonth = this.state.playerData.filter(
+      (pl) => now - pl.created_at.valueOf() < MONTH
+    ).length;
+    const userMonthBadge = `badge ${userChangeMonth > 0 ? 'success' : ''}`;
+    const gameChangeDay = this.state.gameData.filter(
+      (pl) => now - pl.updatedAt.valueOf() < DAY
+    ).length;
+    const gameDayBadge = `badge ${gameChangeDay > 0 ? 'success' : ''}`;
+    const gameChangeWeek = this.state.gameData.filter(
+      (pl) => now - pl.updatedAt.valueOf() < WEEK
+    ).length;
+    const gameWeekBadge = `badge ${gameChangeWeek > 0 ? 'success' : ''}`;
+    const gameChangeMonth = this.state.gameData.filter(
+      (pl) => now - pl.updatedAt.valueOf() < MONTH
+    ).length;
+    const gameMonthBadge = `badge ${gameChangeMonth > 0 ? 'success' : ''}`;
 
     return (
       <div style={baseStyle}>
         <div className="row" style={{ width: '100%' }}>
           <div className="col sm-8">
-            <h3>
-              Users: <span className="badge">{this.state.playerData.length}</span>
-            </h3>
+            <h4>
+              Users: <span className="badge primary">{this.state.playerData.length}</span>{' '}
+              - - - - - - Day: <span className={userDayBadge}>{userChangeDay}</span> Week:{' '}
+              <span className={userWeekBadge}>{userChangeWeek}</span> Month:{' '}
+              <span className={userMonthBadge}>{userChangeMonth}</span>
+            </h4>
             <ResponsiveContainer height={150}>
               <LineChart data={newPlayerData}>
                 <XAxis dataKey="created_at" />
@@ -311,9 +363,12 @@ export class ITCGAdmin extends React.Component<AdminProp, AdminState> {
             {this.userTable()}
           </div>
           <div className="col sm-8">
-            <h3>
-              Games: <span className="badge">{totalGames}</span>
-            </h3>
+            <h4>
+              Games: <span className="badge primary">{totalGames}</span> - - - - - - Day:{' '}
+              <span className={gameDayBadge}>{gameChangeDay}</span> Week:{' '}
+              <span className={gameWeekBadge}>{gameChangeWeek}</span> Month:{' '}
+              <span className={gameMonthBadge}>{gameChangeMonth}</span>
+            </h4>
             <ResponsiveContainer height={150}>
               <LineChart data={newGameData}>
                 <XAxis dataKey="created_at" />
@@ -324,7 +379,7 @@ export class ITCGAdmin extends React.Component<AdminProp, AdminState> {
           </div>
           <div className="col sm-4 padding-top margin-top">
             <h4 className="margin-none">Latest Games</h4>
-            {this.gameTable()}
+            {this.completeGameTable()}
           </div>
           <div className="col sm-4">
             <h4 className="margin-none padding-top">
@@ -344,30 +399,12 @@ export class ITCGAdmin extends React.Component<AdminProp, AdminState> {
             </h4>
           </div>
           <div className="col sm-4">
-            <h4>Rooms</h4>
-            <ResponsiveContainer height={250}>
-              <PieChart>
-                <Pie data={roomData} nameKey="name" dataKey="value" fill="#8884d8" label>
-                  {roomData.map((_entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                </Pie>
-                <Legend />
-              </PieChart>
-            </ResponsiveContainer>
+            <h4 className="margin-none padding-top">Rooms</h4>
+            {this.roomTable()}
           </div>
           <div className="col sm-4">
-            <h4>Game Status</h4>
-            <ResponsiveContainer height={250}>
-              <PieChart>
-                <Pie data={gameData} nameKey="name" dataKey="value" fill="#8884d8" label>
-                  {gameData.map((_entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                </Pie>
-                <Legend />
-              </PieChart>
-            </ResponsiveContainer>
+            <h4 className="margin-none padding-top">Ongoing Games</h4>
+            {this.ongoingGameTable()}
           </div>
         </div>
       </div>
