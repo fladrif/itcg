@@ -835,10 +835,20 @@ export class GeniusTrigger extends Trigger {
     return cardIsPlayed;
   }
 
-  createDecision(_fnCtx: FuncContext, _decision: Decision) {
+  createDecision(fnCtx: FuncContext, _decision: Decision) {
+    const { G, ctx } = fnCtx;
+
     const dec: Decision = {
       action: 'quest',
       selection: {},
+      opts: {
+        source: getCardAtLocation(
+          G,
+          ctx,
+          getCardLocation(G, ctx, this.cardOwner),
+          this.cardOwner
+        ),
+      },
       finished: false,
       key: getRandomKey(),
     };
