@@ -412,7 +412,7 @@ export class ITCGAdmin extends React.Component<AdminProp, AdminState> {
           className="badge primary"
           onClick={() => this.gameGraphUpdate(GraphResolution.ALL)}
         >
-          {this.state.playerData.length}
+          {this.state.gameData.length}
         </span>{' '}
         - - - - - - Day:{' '}
         <span
