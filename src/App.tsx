@@ -94,10 +94,6 @@ class App extends React.Component {
                 <div className="alert alert-secondary">
                   BETA Release: Please report issues to the discord server
                 </div>
-                <div className="alert alert-danger">
-                  Database Wipe: All accounts and decks made before March 2023 were lost.
-                  Please logout and recreate your account
-                </div>
               </div>
               <div style={{ maxWidth: MAX_WIDTH, width: '100%' }}>
                 <Switch>
