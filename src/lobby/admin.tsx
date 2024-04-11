@@ -9,6 +9,13 @@ interface AdminProp {
   server: string;
 }
 
+enum GraphResolution {
+  ALL,
+  DAY,
+  WEEK,
+  MONTH,
+}
+
 export interface LatestGames {
   complete: any[];
   ongoing: any[];
@@ -20,6 +27,8 @@ interface AdminState {
   roomData: any[];
   latestPlayers: any[];
   latestGames: LatestGames;
+  userGraph: GraphResolution;
+  gameGraph: GraphResolution;
 }
 
 const baseStyle: React.CSSProperties = {
@@ -45,6 +54,8 @@ export class ITCGAdmin extends React.Component<AdminProp, AdminState> {
       roomData: [],
       latestPlayers: [],
       latestGames: { ongoing: [], complete: [] },
+      userGraph: GraphResolution.ALL,
+      gameGraph: GraphResolution.ALL,
     };
   }
 
@@ -133,24 +144,9 @@ export class ITCGAdmin extends React.Component<AdminProp, AdminState> {
         this.getLatestGames(),
       ]);
 
-    // const data = [
-    //   { created_at: '2024-01-08T06:59:49.067Z' },
-    //   { created_at: '2024-02-08T06:59:49.067Z' },
-    //   { created_at: '2024-03-08T06:59:49.067Z' },
-    //   { created_at: '2024-04-08T06:59:49.067Z' },
-    //   { created_at: '2024-05-08T06:59:49.067Z' },
-    //   { created_at: '2024-06-08T06:59:49.067Z' },
-    //   { created_at: '2024-07-08T06:59:49.067Z' },
-    //   { created_at: '2024-08-08T06:59:49.067Z' },
-    //   { created_at: '2024-09-08T06:59:49.067Z' },
-    //   { created_at: '2024-10-08T06:59:49.067Z' },
-    //   { created_at: '2024-11-08T06:59:49.067Z' },
-    //   { created_at: '2024-12-08T06:59:49.067Z' },
-    // ];
-
     this.setState({
       playerData: playerData.map((d) => {
-        return { created_at: new Date(d.created_at) };
+        return { createdAt: new Date(d.created_at) };
       }),
       gameData: gameData.map((d) => {
         return {
@@ -259,26 +255,195 @@ export class ITCGAdmin extends React.Component<AdminProp, AdminState> {
     );
   }
 
-  render() {
+  graphTick(res: GraphResolution): d3Time.CountableTimeInterval {
+    return res === GraphResolution.ALL
+      ? d3Time.utcMonth
+      : res === GraphResolution.MONTH
+      ? d3Time.utcDay
+      : res === GraphResolution.WEEK
+      ? d3Time.utcHour
+      : d3Time.utcMinute;
+  }
+
+  userGraph() {
+    const now = Date.now();
+    const res = this.state.userGraph;
+    const rangedPlayerData =
+      res === GraphResolution.ALL
+        ? this.state.playerData
+        : this.state.playerData.filter((p) => {
+            if (res === GraphResolution.MONTH) return now - p.createdAt < MONTH;
+            if (res === GraphResolution.WEEK) return now - p.createdAt < WEEK;
+            if (res === GraphResolution.DAY) return now - p.createdAt < DAY;
+          });
+
     const binnedPlayerData = d3Array
-      .bin<{ created_at: Date }, Date>()
-      .value((d) => d.created_at)
+      .bin<{ createdAt: Date }, Date>()
+      .value((d) => d.createdAt)
       .thresholds((_value, min, max) => {
-        return d3Scale.scaleTime().domain([min, max]).ticks(d3Time.utcMonth);
-      })(this.state.playerData);
+        return d3Scale.scaleTime().domain([min, max]).ticks(this.graphTick(res));
+      })(rangedPlayerData);
 
     const newPlayerData = binnedPlayerData.map((b) => {
-      return { created_at: b.x0, players: b.length };
+      return { createdAt: b.x0, players: b.length };
     });
 
+    return (
+      <ResponsiveContainer height={150}>
+        <LineChart data={newPlayerData}>
+          <XAxis dataKey="createdAt" />
+          <YAxis />
+          <Line type="monotone" dataKey="players" stroke="#8884d8" />
+        </LineChart>
+      </ResponsiveContainer>
+    );
+  }
+
+  gameGraph() {
+    const now = Date.now();
+    const res = this.state.gameGraph;
+    const rangedGameData =
+      res === GraphResolution.ALL
+        ? this.state.gameData
+        : this.state.gameData.filter((g) => {
+            if (res === GraphResolution.MONTH) return now - g.createdAt < MONTH;
+            if (res === GraphResolution.WEEK) return now - g.createdAt < WEEK;
+            if (res === GraphResolution.DAY) return now - g.createdAt < DAY;
+          });
+
+    const binnedGameData = d3Array
+      .bin<{ createdAt: Date }, Date>()
+      .value((d) => d.createdAt)
+      .thresholds((_value, min, max) => {
+        return d3Scale.scaleTime().domain([min, max]).ticks(this.graphTick(res));
+      })(rangedGameData);
+
+    const newGameData = binnedGameData.map((b) => {
+      return { createdAt: b.x0, players: b.length };
+    });
+
+    return (
+      <ResponsiveContainer height={150}>
+        <LineChart data={newGameData}>
+          <XAxis dataKey="createdAt" />
+          <YAxis />
+          <Line type="monotone" dataKey="players" stroke="#8884d8" />
+        </LineChart>
+      </ResponsiveContainer>
+    );
+  }
+
+  userGraphUpdate(res: GraphResolution) {
+    this.setState({ userGraph: res });
+  }
+
+  userHeader() {
+    const now = Date.now();
+    const userChangeDay = this.state.playerData.filter(
+      (pl) => now - pl.createdAt.valueOf() < DAY
+    ).length;
+    const userDayBadge = `badge ${userChangeDay > 0 ? 'success' : ''}`;
+    const userChangeWeek = this.state.playerData.filter(
+      (pl) => now - pl.createdAt.valueOf() < WEEK
+    ).length;
+    const userWeekBadge = `badge ${userChangeWeek > 0 ? 'success' : ''}`;
+    const userChangeMonth = this.state.playerData.filter(
+      (pl) => now - pl.createdAt.valueOf() < MONTH
+    ).length;
+    const userMonthBadge = `badge ${userChangeMonth > 0 ? 'success' : ''}`;
+
+    return (
+      <h4>
+        Users:{' '}
+        <span
+          className="badge primary"
+          onClick={() => this.userGraphUpdate(GraphResolution.ALL)}
+        >
+          {this.state.playerData.length}
+        </span>{' '}
+        - - - - - - Day:{' '}
+        <span
+          className={userDayBadge}
+          onClick={() => this.userGraphUpdate(GraphResolution.DAY)}
+        >
+          {userChangeDay}
+        </span>{' '}
+        Week:{' '}
+        <span
+          className={userWeekBadge}
+          onClick={() => this.userGraphUpdate(GraphResolution.WEEK)}
+        >
+          {userChangeWeek}
+        </span>{' '}
+        Month:{' '}
+        <span
+          className={userMonthBadge}
+          onClick={() => this.userGraphUpdate(GraphResolution.MONTH)}
+        >
+          {userChangeMonth}
+        </span>
+      </h4>
+    );
+  }
+
+  gameGraphUpdate(res: GraphResolution) {
+    this.setState({ gameGraph: res });
+  }
+
+  gameHeader() {
+    const now = Date.now();
+    const gameChangeDay = this.state.gameData.filter(
+      (pl) => now - pl.updatedAt.valueOf() < DAY
+    ).length;
+    const gameDayBadge = `badge ${gameChangeDay > 0 ? 'success' : ''}`;
+    const gameChangeWeek = this.state.gameData.filter(
+      (pl) => now - pl.updatedAt.valueOf() < WEEK
+    ).length;
+    const gameWeekBadge = `badge ${gameChangeWeek > 0 ? 'success' : ''}`;
+    const gameChangeMonth = this.state.gameData.filter(
+      (pl) => now - pl.updatedAt.valueOf() < MONTH
+    ).length;
+    const gameMonthBadge = `badge ${gameChangeMonth > 0 ? 'success' : ''}`;
+
+    return (
+      <h4>
+        Games:{' '}
+        <span
+          className="badge primary"
+          onClick={() => this.gameGraphUpdate(GraphResolution.ALL)}
+        >
+          {this.state.playerData.length}
+        </span>{' '}
+        - - - - - - Day:{' '}
+        <span
+          className={gameDayBadge}
+          onClick={() => this.gameGraphUpdate(GraphResolution.DAY)}
+        >
+          {gameChangeDay}
+        </span>{' '}
+        Week:{' '}
+        <span
+          className={gameWeekBadge}
+          onClick={() => this.gameGraphUpdate(GraphResolution.WEEK)}
+        >
+          {gameChangeWeek}
+        </span>{' '}
+        Month:{' '}
+        <span
+          className={gameMonthBadge}
+          onClick={() => this.gameGraphUpdate(GraphResolution.MONTH)}
+        >
+          {gameChangeMonth}
+        </span>
+      </h4>
+    );
+  }
+
+  gameTime() {
     const startingWins = this.state.gameData.filter(
       (g) => g.gameover?.winner === '0'
     ).length;
     const unfinishedGames = this.state.gameData.filter((g) => !g.gameover).length;
-    const totalGames = this.state.gameData.length;
-    const startingAdvantage = Math.trunc(
-      (startingWins / (totalGames - unfinishedGames)) * 100
-    );
 
     const orderedGameTimeMS = this.state.gameData
       .filter((g) => !!g.gameover)
@@ -286,6 +451,11 @@ export class ITCGAdmin extends React.Component<AdminProp, AdminState> {
         return g.updatedAt.getTime() - g.createdAt.getTime();
       })
       .sort((a, b) => (a > b ? 1 : -1));
+
+    const totalGames = this.state.gameData.length;
+    const startingAdvantage = Math.trunc(
+      (startingWins / (totalGames - unfinishedGames)) * 100
+    );
 
     const p95Idx =
       Math.ceil((95 / 100) * this.state.gameData.filter((g) => !!g.gameover).length) - 1;
@@ -303,101 +473,48 @@ export class ITCGAdmin extends React.Component<AdminProp, AdminState> {
       Math.ceil((25 / 100) * this.state.gameData.filter((g) => !!g.gameover).length) - 1;
     const p25GameTimeMin = (orderedGameTimeMS[p25Idx] / 1000 / 60).toFixed(1);
 
-    const binnedGameData = d3Array
-      .bin<{ createdAt: Date }, Date>()
-      .value((d) => d.createdAt)
-      .thresholds((_value, min, max) => {
-        return d3Scale.scaleTime().domain([min, max]).ticks(d3Time.utcMonth);
-      })(this.state.gameData);
+    return (
+      <>
+        <h4 className="margin-none padding-top">
+          Starting Adv: <span className="badge">{startingAdvantage}%</span>
+        </h4>
+        <h4 className="margin-none padding-top">
+          p95 Game Time (min): <span className="badge">{p95GameTimeMin}</span>
+        </h4>
+        <h4 className="margin-none padding-top">
+          p75 Game Time (min): <span className="badge">{p75GameTimeMin}</span>
+        </h4>
+        <h4 className="margin-none padding-top">
+          p50 Game Time (min): <span className="badge">{p50GameTimeMin}</span>
+        </h4>
+        <h4 className="margin-none padding-top">
+          p25 Game Time (min): <span className="badge">{p25GameTimeMin}</span>
+        </h4>
+      </>
+    );
+  }
 
-    const newGameData = binnedGameData.map((b) => {
-      return { created_at: b.x0, players: b.length };
-    });
-
-    const now = Date.now();
-    const userChangeDay = this.state.playerData.filter(
-      (pl) => now - pl.created_at.valueOf() < DAY
-    ).length;
-    const userDayBadge = `badge ${userChangeDay > 0 ? 'success' : ''}`;
-    const userChangeWeek = this.state.playerData.filter(
-      (pl) => now - pl.created_at.valueOf() < WEEK
-    ).length;
-    const userWeekBadge = `badge ${userChangeWeek > 0 ? 'success' : ''}`;
-    const userChangeMonth = this.state.playerData.filter(
-      (pl) => now - pl.created_at.valueOf() < MONTH
-    ).length;
-    const userMonthBadge = `badge ${userChangeMonth > 0 ? 'success' : ''}`;
-    const gameChangeDay = this.state.gameData.filter(
-      (pl) => now - pl.updatedAt.valueOf() < DAY
-    ).length;
-    const gameDayBadge = `badge ${gameChangeDay > 0 ? 'success' : ''}`;
-    const gameChangeWeek = this.state.gameData.filter(
-      (pl) => now - pl.updatedAt.valueOf() < WEEK
-    ).length;
-    const gameWeekBadge = `badge ${gameChangeWeek > 0 ? 'success' : ''}`;
-    const gameChangeMonth = this.state.gameData.filter(
-      (pl) => now - pl.updatedAt.valueOf() < MONTH
-    ).length;
-    const gameMonthBadge = `badge ${gameChangeMonth > 0 ? 'success' : ''}`;
-
+  render() {
     return (
       <div style={baseStyle}>
         <div className="row" style={{ width: '100%' }}>
           <div className="col sm-8">
-            <h4>
-              Users: <span className="badge primary">{this.state.playerData.length}</span>{' '}
-              - - - - - - Day: <span className={userDayBadge}>{userChangeDay}</span> Week:{' '}
-              <span className={userWeekBadge}>{userChangeWeek}</span> Month:{' '}
-              <span className={userMonthBadge}>{userChangeMonth}</span>
-            </h4>
-            <ResponsiveContainer height={150}>
-              <LineChart data={newPlayerData}>
-                <XAxis dataKey="created_at" />
-                <YAxis />
-                <Line type="monotone" dataKey="players" stroke="#8884d8" />
-              </LineChart>
-            </ResponsiveContainer>
+            {this.userHeader()}
+            {this.userGraph()}
           </div>
           <div className="col sm-4 padding-top margin-top">
             <h4 className="margin-none">Newest Users</h4>
             {this.userTable()}
           </div>
           <div className="col sm-8">
-            <h4>
-              Games: <span className="badge primary">{totalGames}</span> - - - - - - Day:{' '}
-              <span className={gameDayBadge}>{gameChangeDay}</span> Week:{' '}
-              <span className={gameWeekBadge}>{gameChangeWeek}</span> Month:{' '}
-              <span className={gameMonthBadge}>{gameChangeMonth}</span>
-            </h4>
-            <ResponsiveContainer height={150}>
-              <LineChart data={newGameData}>
-                <XAxis dataKey="created_at" />
-                <YAxis />
-                <Line type="monotone" dataKey="players" stroke="#8884d8" />
-              </LineChart>
-            </ResponsiveContainer>
+            {this.gameHeader()}
+            {this.gameGraph()}
           </div>
           <div className="col sm-4 padding-top margin-top">
             <h4 className="margin-none">Latest Games</h4>
             {this.completeGameTable()}
           </div>
-          <div className="col sm-4">
-            <h4 className="margin-none padding-top">
-              Starting Adv: <span className="badge">{startingAdvantage}%</span>
-            </h4>
-            <h4 className="margin-none padding-top">
-              p95 Game Time (min): <span className="badge">{p95GameTimeMin}</span>
-            </h4>
-            <h4 className="margin-none padding-top">
-              p75 Game Time (min): <span className="badge">{p75GameTimeMin}</span>
-            </h4>
-            <h4 className="margin-none padding-top">
-              p50 Game Time (min): <span className="badge">{p50GameTimeMin}</span>
-            </h4>
-            <h4 className="margin-none padding-top">
-              p25 Game Time (min): <span className="badge">{p25GameTimeMin}</span>
-            </h4>
-          </div>
+          <div className="col sm-4">{this.gameTime()}</div>
           <div className="col sm-4">
             <h4 className="margin-none padding-top">Rooms</h4>
             {this.roomTable()}
