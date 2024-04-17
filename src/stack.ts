@@ -367,7 +367,7 @@ function validationGate(
 
   // Cannot play cards of a class that is not in your party
   if (decision.action === 'play') {
-    const charClasses = new Set([playerState.character.class]);
+    const charClasses = new Set();
     playerState.learnedSkills.map((card) => charClasses.add(card.class));
 
     return charClasses.has(card.class);
