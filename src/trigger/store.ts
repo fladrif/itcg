@@ -1142,10 +1142,11 @@ export class MeditationTrigger extends Trigger {
   }
 
   shouldTriggerExtension(
-    _fnCtx: FuncContext,
+    fnCtx: FuncContext,
     decision: Decision,
     _prep: TriggerPrepostion
   ) {
+    const { G, ctx } = fnCtx;
     const sourceIsMonster = decision.opts?.source
       ? isMonster(decision.opts.source) && decision.action === 'attack'
       : false;
@@ -1154,7 +1155,16 @@ export class MeditationTrigger extends Trigger {
       ? decision.opts.source.type === CardTypes.Tactic
       : false;
 
-    return (sourceIsTactic || sourceIsMonster) && this.sourceIsOwner(decision);
+    const CharAction = [Location.CharAction, Location.OppCharAction];
+    const sourceIsNotCharAction = decision.opts?.source
+      ? !CharAction.includes(getCardLocation(G, ctx, decision.opts.source.key))
+      : false;
+
+    return (
+      (sourceIsTactic || sourceIsMonster) &&
+      sourceIsNotCharAction &&
+      this.sourceIsOwner(decision)
+    );
   }
 
   createDecision(fnCtx: FuncContext, decision: Decision) {
