@@ -657,11 +657,13 @@ export class EvilTaleTrigger extends Trigger {
     decision: Decision,
     _prep: TriggerPrepostion
   ) {
-    const sourceIsTactic = decision.opts?.source
-      ? decision.opts.source.type === CardTypes.Tactic
-      : false;
+    const selectionIsTactic = Object.values(decision.selection).reduce(
+      (prev, arr) =>
+        arr.reduce((prev, targ) => targ.type === CardTypes.Tactic || prev, false) || prev,
+      false
+    );
 
-    return sourceIsTactic && this.sourceIsOwner(decision);
+    return selectionIsTactic && this.sourceIsOwner(decision);
   }
 
   createDecision(fnCtx: FuncContext, _decision: Decision) {
