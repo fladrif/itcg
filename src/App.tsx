@@ -92,7 +92,25 @@ class App extends React.Component {
               <ITCGHeader username={this.state.username} />
               <div style={{ marginTop: '1%', maxWidth: MAX_WIDTH, width: '100%' }}>
                 <div className="alert alert-secondary">
-                  BETA Release: Please report issues to the discord server
+                  <strong>Beta Release:</strong> Please report issues to the{' '}
+                  <a
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href="https://discord.gg/bSDu2UaJwK"
+                  >
+                    discord server
+                  </a>
+                </div>
+                <div className="alert alert-success">
+                  <strong>Community Forum Preference Poll: </strong> Rank your choices in
+                  the{' '}
+                  <a
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href="https://strawpoll.com/PKgl3LKopnp"
+                  >
+                    Strawpoll link
+                  </a>
                 </div>
               </div>
               <div style={{ maxWidth: MAX_WIDTH, width: '100%' }}>
