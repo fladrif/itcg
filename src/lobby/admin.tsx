@@ -1,9 +1,11 @@
 import React from 'react';
 import axios from 'axios';
-import { LineChart, XAxis, YAxis, Line, ResponsiveContainer } from 'recharts';
+import { LineChart, XAxis, YAxis, Line, ResponsiveContainer, Tooltip } from 'recharts';
 import * as d3Array from 'd3-array';
 import * as d3Scale from 'd3-scale';
 import * as d3Time from 'd3-time';
+
+import { DAY, WEEK, MONTH, timeHour } from './utils';
 
 interface AdminProp {
   server: string;
@@ -36,12 +38,6 @@ const baseStyle: React.CSSProperties = {
   display: 'flex',
   flexDirection: 'column',
 };
-
-const HOUR = 60 * 60 * 1000;
-
-const DAY = 24 * HOUR;
-const WEEK = 7 * DAY;
-const MONTH = 4 * WEEK;
 
 export class ITCGAdmin extends React.Component<AdminProp, AdminState> {
   state: AdminState;
@@ -257,32 +253,34 @@ export class ITCGAdmin extends React.Component<AdminProp, AdminState> {
 
   graphTick(res: GraphResolution): d3Time.CountableTimeInterval {
     return res === GraphResolution.ALL
-      ? d3Time.utcMonth
+      ? d3Time.timeMonth
       : res === GraphResolution.MONTH
-      ? d3Time.utcDay
+      ? d3Time.timeDay
       : res === GraphResolution.WEEK
-      ? d3Time.utcHour
-      : d3Time.utcMinute;
+      ? timeHour(6)
+      : d3Time.timeHour;
+  }
+
+  graphDomain(res: GraphResolution): Date {
+    return res === GraphResolution.ALL
+      ? new Date('2023-03-01T00:00:00Z')
+      : res === GraphResolution.MONTH
+      ? new Date(Date.now() - MONTH)
+      : res === GraphResolution.WEEK
+      ? new Date(Date.now() - WEEK)
+      : new Date(Date.now() - DAY);
   }
 
   userGraph() {
-    const now = Date.now();
     const res = this.state.userGraph;
-    const rangedPlayerData =
-      res === GraphResolution.ALL
-        ? this.state.playerData
-        : this.state.playerData.filter((p) => {
-            if (res === GraphResolution.MONTH) return now - p.createdAt < MONTH;
-            if (res === GraphResolution.WEEK) return now - p.createdAt < WEEK;
-            if (res === GraphResolution.DAY) return now - p.createdAt < DAY;
-          });
 
     const binnedPlayerData = d3Array
       .bin<{ createdAt: Date }, Date>()
       .value((d) => d.createdAt)
+      .domain([this.graphDomain(res), new Date()])
       .thresholds((_value, min, max) => {
         return d3Scale.scaleTime().domain([min, max]).ticks(this.graphTick(res));
-      })(rangedPlayerData);
+      })(this.state.playerData);
 
     const newPlayerData = binnedPlayerData.map((b) => {
       return { createdAt: b.x0, players: b.length };
@@ -291,43 +289,37 @@ export class ITCGAdmin extends React.Component<AdminProp, AdminState> {
     return (
       <ResponsiveContainer height={150}>
         <LineChart data={newPlayerData}>
-          <XAxis dataKey="createdAt" />
+          <XAxis dataKey="createdAt" tick={false} />
           <YAxis />
           <Line type="monotone" dataKey="players" stroke="#8884d8" />
+          <Tooltip labelFormatter={(label) => new Date(label).toLocaleString()} />
         </LineChart>
       </ResponsiveContainer>
     );
   }
 
   gameGraph() {
-    const now = Date.now();
     const res = this.state.gameGraph;
-    const rangedGameData =
-      res === GraphResolution.ALL
-        ? this.state.gameData
-        : this.state.gameData.filter((g) => {
-            if (res === GraphResolution.MONTH) return now - g.createdAt < MONTH;
-            if (res === GraphResolution.WEEK) return now - g.createdAt < WEEK;
-            if (res === GraphResolution.DAY) return now - g.createdAt < DAY;
-          });
 
     const binnedGameData = d3Array
       .bin<{ createdAt: Date }, Date>()
       .value((d) => d.createdAt)
+      .domain([this.graphDomain(res), new Date()])
       .thresholds((_value, min, max) => {
         return d3Scale.scaleTime().domain([min, max]).ticks(this.graphTick(res));
-      })(rangedGameData);
+      })(this.state.gameData);
 
     const newGameData = binnedGameData.map((b) => {
-      return { createdAt: b.x0, players: b.length };
+      return { createdAt: b.x0, games: b.length };
     });
 
     return (
       <ResponsiveContainer height={150}>
         <LineChart data={newGameData}>
-          <XAxis dataKey="createdAt" />
+          <XAxis dataKey="createdAt" tick={false} />
           <YAxis />
-          <Line type="monotone" dataKey="players" stroke="#8884d8" />
+          <Line type="monotone" dataKey="games" stroke="#8884d8" />
+          <Tooltip labelFormatter={(label) => new Date(label).toLocaleString()} />
         </LineChart>
       </ResponsiveContainer>
     );
@@ -361,7 +353,7 @@ export class ITCGAdmin extends React.Component<AdminProp, AdminState> {
         >
           {this.state.playerData.length}
         </span>{' '}
-        - - - - - - Day:{' '}
+        - - - - Day:{' '}
         <span
           className={userDayBadge}
           onClick={() => this.userGraphUpdate(GraphResolution.DAY)}
@@ -414,7 +406,7 @@ export class ITCGAdmin extends React.Component<AdminProp, AdminState> {
         >
           {this.state.gameData.length}
         </span>{' '}
-        - - - - - - Day:{' '}
+        - - - - Day:{' '}
         <span
           className={gameDayBadge}
           onClick={() => this.gameGraphUpdate(GraphResolution.DAY)}
