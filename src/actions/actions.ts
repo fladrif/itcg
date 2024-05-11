@@ -10,6 +10,7 @@ import {
   isCharacter,
   isWarrior,
   NonCharacter,
+  CardTypes,
 } from '../card';
 import { Choice, Decision, parseSkill, upsertStack } from '../stack';
 import { getMonsterAtt } from '../state';
@@ -427,20 +428,41 @@ function rainofarrows(fnCtx: FuncContext, opts: ActionOpts): any {
   if (!G.stack || !opts.source || opts.damage === undefined) return;
 
   const oppCards = getOpponentState(G, ctx, opts.source.owner).hand.length;
+  if (oppCards === 0) return;
+
   const damage = resolveDamage(G.player[opts.source.owner], opts.damage);
 
-  const decision: Decision = {
-    action: 'damage',
-    opts: {
-      ...opts,
-      damage: oppCards * damage,
-    },
-    selection: { ...opts.selection } || {},
-    finished: false,
-    key: getRandomKey(),
+  const decision: () => Decision = () => {
+    return {
+      action: 'damage',
+      opts: {
+        ...opts,
+        damage,
+      },
+      selection: {},
+      target: {
+        xor: [
+          {
+            type: CardTypes.Monster,
+            location: Location.OppField,
+            quantity: 1,
+          },
+          {
+            location: Location.OppCharacter,
+            quantity: 1,
+          },
+        ],
+      },
+      finished: false,
+      noReset: true,
+      key: getRandomKey(),
+    };
   };
 
-  upsertStack(fnCtx, [decision]);
+  if (oppCards > 1) {
+    G.stack!.queuedDecisions.push(...[...Array(oppCards - 1)].map(() => decision()));
+  }
+  upsertStack(fnCtx, [decision()]);
 }
 
 function refresh(fnCtx: FuncContext, opts: ActionOpts): any {
@@ -489,21 +511,63 @@ function roar(fnCtx: FuncContext, opts: ActionOpts): any {
 
   const playerField = G.player[opts.source.owner].field;
   const numMonsters = playerField.filter((card) => isMonster(card)).length;
+  if (numMonsters === 0) return;
 
   const damage = resolveDamage(G.player[opts.source.owner], opts.damage);
 
-  const decision: Decision = {
+  const firstDec: Decision = {
     action: 'damage',
     opts: {
       ...opts,
-      damage: numMonsters * damage,
+      damage,
     },
     selection: { ...opts.selection },
     finished: false,
     key: getRandomKey(),
   };
 
-  upsertStack(fnCtx, [decision]);
+  const decision: () => Decision = () => {
+    return {
+      action: 'damage',
+      opts: {
+        ...opts,
+        damage,
+      },
+      selection: {},
+      target: {
+        xor: [
+          {
+            type: CardTypes.Character,
+            location: Location.Character,
+            quantity: 1,
+          },
+          {
+            type: CardTypes.Character,
+            location: Location.OppCharacter,
+            quantity: 1,
+          },
+          {
+            type: CardTypes.Monster,
+            location: Location.Field,
+            quantity: 1,
+          },
+          {
+            type: CardTypes.Monster,
+            location: Location.OppField,
+            quantity: 1,
+          },
+        ],
+      },
+      finished: false,
+      noReset: true,
+      key: getRandomKey(),
+    };
+  };
+
+  if (numMonsters > 1) {
+    G.stack!.queuedDecisions.push(...[...Array(numMonsters - 1)].map(() => decision()));
+  }
+  upsertStack(fnCtx, [firstDec]);
 }
 
 function scout(fnCtx: FuncContext, _opts: ActionOpts): any {

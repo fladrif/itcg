@@ -96,19 +96,6 @@ export const rainofarrows: Omit<Tactic, 'key' | 'owner'> = {
         },
         requirements: { level: 0 },
         noReset: true,
-        targets: {
-          xor: [
-            {
-              type: CardTypes.Monster,
-              location: Location.OppField,
-              quantity: 1,
-            },
-            {
-              location: Location.OppCharacter,
-              quantity: 1,
-            },
-          ],
-        },
       },
     ],
   },
