@@ -12,6 +12,14 @@ export class ITCGDevLog extends React.Component {
     return (
       <>
         <p style={ParagraphStyle}>
+          <b>June 11, 2024</b> Unfortunately there has been some personality conflicts and
+          we've been forced to change discord servers. Links have been updated. On a
+          slightly more positive note, card rules have been updated to reflect a better
+          understanding of how cards should work. Doombringer and Rain of Arrows have been
+          updated to target a Monster or Character for each iteration instead of combining
+          them all into one.
+        </p>
+        <p style={ParagraphStyle}>
           <b>December 11, 2023</b> Happy holidays! There have been a lot of changes this
           year that haven't been written up yet so a slightly longer update. First off, a
           list of fixes: Added the missing <i>Panda</i> card, corrected the level for{' '}

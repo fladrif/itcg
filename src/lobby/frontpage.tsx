@@ -112,7 +112,7 @@ export class ITCGFrontPage extends React.Component {
           <a
             target="_blank"
             rel="noopener noreferrer"
-            href="https://discord.gg/bSDu2UaJwK"
+            href="https://discord.gg/Sh9MAEPPXH"
           >
             Discord server
           </a>{' '}

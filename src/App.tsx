@@ -96,20 +96,9 @@ class App extends React.Component {
                   <a
                     target="_blank"
                     rel="noopener noreferrer"
-                    href="https://discord.gg/bSDu2UaJwK"
+                    href="https://discord.gg/Sh9MAEPPXH"
                   >
                     discord server
-                  </a>
-                </div>
-                <div className="alert alert-success">
-                  <strong>Community Forum Preference Poll: </strong> Rank your choices in
-                  the{' '}
-                  <a
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    href="https://strawpoll.com/PKgl3LKopnp"
-                  >
-                    Strawpoll link
                   </a>
                 </div>
               </div>
