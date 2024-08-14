@@ -67,7 +67,7 @@ export function toggleCardSelect(G: GameState, ctx: Ctx, card: Card, location: L
 
 export function getOpponentID(G: GameState, ctx: Ctx, player?: PlayerID): PlayerID {
   const playerID = player ?? ctx.currentPlayer;
-  return Object.keys(G.player).filter((id) => id != playerID)[0];
+  return Object.keys(G.player).filter((id) => id !== playerID)[0];
 }
 
 export function getOpponentState(G: GameState, ctx: Ctx, player?: PlayerID): PlayerState {
@@ -134,7 +134,7 @@ export function getLocation(
 }
 
 export function deepCardComp(first: Card, second: Card): boolean {
-  return first.key == second.key;
+  return first.key === second.key;
 }
 
 export function getRandomKey(): string {

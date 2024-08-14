@@ -160,7 +160,7 @@ function betterFit(current: FilterResponse, best: FilterResponse): boolean {
   if (current.usedRecent !== best.usedRecent) return current.usedRecent;
 
   if (selectionLength(current.selection) < selectionLength(best.selection)) return true;
-  if (selectionLength(current.selection) == selectionLength(best.selection)) {
+  if (selectionLength(current.selection) === selectionLength(best.selection)) {
     return current.finished;
   }
 

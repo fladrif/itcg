@@ -14,7 +14,7 @@ export function handleAbility(fnCtx: FuncContext, card: NonCharacter): any {
   if (mpEaterHook(fnCtx, card)) return;
 
   if (card.ability.triggers) {
-    card.ability.triggers.map((trigger) => {
+    card.ability.triggers.forEach((trigger) => {
       const lifetime = trigger.lifetime
         ? parseTriggerLifetime(ctx, trigger.lifetime)
         : undefined;
@@ -24,7 +24,7 @@ export function handleAbility(fnCtx: FuncContext, card: NonCharacter): any {
   }
 
   if (card.ability.skills) {
-    card.ability.skills.map((skill, idx) => {
+    card.ability.skills.forEach((skill, idx) => {
       if (idx === 0) {
         upsertStack(fnCtx, [parseSkill(fnCtx, skill, card)]);
       } else {

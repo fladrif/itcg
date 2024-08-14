@@ -92,7 +92,7 @@ export const activateSkill: Move<GameState> = (
     sk.activated = true;
   }
 
-  skill.map((sk, idx) => {
+  skill.forEach((sk, idx) => {
     if (idx === 0) {
       upsertStack(fnCtx, [parseSkill(fnCtx, sk, selCard, true)], 'activate', prevPos);
     } else {

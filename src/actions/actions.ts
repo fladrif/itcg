@@ -90,7 +90,7 @@ function bounce(fnCtx: FuncContext, opts: ActionOpts): any {
 
     getLocation(G, ctx, location)
       .filter((c) => !!cardsSel.find((cs) => deepCardComp(c, cs)))
-      .map((card) => {
+      .forEach((card) => {
         const cardLoc = card as NonCharacter;
         cardLoc.reveal = Object.keys(G.player);
 
@@ -175,7 +175,7 @@ function damage(fnCtx: FuncContext, opts: ActionOpts): any {
   const damage = resolveDamage(sourceState, opts.damage);
 
   for (const location of Object.keys(opts.selection) as Location[]) {
-    opts.selection[location]!.map((card) => {
+    opts.selection[location]!.forEach((card) => {
       if (isCharacter(card)) {
         G.player[card.owner].hp -= damage;
       }
@@ -197,7 +197,7 @@ function destroy(fnCtx: FuncContext, opts: ActionOpts): any {
 
     getLocation(G, ctx, location)
       .filter((c) => !!cardsSel.find((cs) => deepCardComp(c, cs)))
-      .map((card) => {
+      .forEach((card) => {
         G.player[card.owner].discard.push(card as NonCharacter);
 
         handleCardLeaveField(fnCtx, card as NonCharacter, location);
@@ -300,7 +300,7 @@ function level(fnCtx: FuncContext, opts: ActionOpts): any {
   };
 
   for (const location of Object.keys(opts.selection) as Location[]) {
-    opts.selection[location]!.map((card) => {
+    opts.selection[location]!.forEach((card) => {
       // Iterate over all cards in selection
 
       const player = G.player[card.owner];
@@ -310,7 +310,7 @@ function level(fnCtx: FuncContext, opts: ActionOpts): any {
         (skill) => skill.requirements.oneshot && meetsSkillReq(skill.requirements, player)
       );
       if (oneshot) {
-        selCard.skill.map((sk, idx) => {
+        selCard.skill.forEach((sk, idx) => {
           sk.activated = true;
           if (idx === 0) {
             upsertStack(fnCtx, [parseSkill(fnCtx, sk, card)]);
@@ -421,7 +421,7 @@ function play(fnCtx: FuncContext, opts: ActionOpts): any {
   locations.forEach((location) => {
     if (!opts.selection![location]) return;
 
-    opts.selection![location]!.map((card) => {
+    opts.selection![location]!.forEach((card) => {
       if (isMonster(card) || isItem(card)) {
         card.turnETB = ctx.turn;
         player.field.push(card);
@@ -807,7 +807,7 @@ function tuck(fnCtx: FuncContext, opts: ActionOpts): any {
   if (!opts.selection || !opts.position) return;
 
   for (const location of Object.keys(opts.selection) as Location[]) {
-    opts.selection[location]!.map((card) => {
+    opts.selection[location]!.forEach((card) => {
       const cardLoc = getCardAtLocation(G, ctx, location, card.key) as NonCharacter;
       cardLoc.reveal = Object.keys(G.player);
 
