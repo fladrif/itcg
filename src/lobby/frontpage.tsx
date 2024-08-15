@@ -6,7 +6,8 @@ import frontSample from '../images/front-sample.jpg';
 import { toCard, toGrid } from './utils';
 
 const baseStyle: React.CSSProperties = {
-  margin: '1%',
+  marginLeft: '1%',
+  marginRight: '1%',
   display: 'flex',
   flexDirection: 'column',
 };
@@ -131,7 +132,7 @@ export class ITCGFrontPage extends React.Component {
         <div style={{ textAlign: 'center', marginBottom: '5%' }}>
           <h1 style={{ marginBottom: '0' }}>MapleStory iTCG</h1>
           <p>Web browser application to play the MapleStory trading card game</p>
-          <div className="row">
+          <div style={{ maxWidth: '1150px' }} className="row">
             <img className="border-4" src={frontSample}></img>
           </div>
         </div>

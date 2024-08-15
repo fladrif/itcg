@@ -72,8 +72,11 @@ export class ITCGRoom extends React.Component<RoomProp, State> {
 
   roomBlurb = (
     <p style={ParagraphStyle}>
-      Challenge others to a game by <b>joining</b> or <b>opening</b> a table. Use the
-      Discord server to arrange games with other players.
+      Challenge others to a game by <b>joining</b> or <b>opening</b> a table. Use the{' '}
+      <a target="_blank" rel="noopener noreferrer" href="https://discord.gg/Sh9MAEPPXH">
+        Discord server
+      </a>{' '}
+      to arrange games with other players.
     </p>
   );
 
@@ -203,7 +206,7 @@ export class ITCGRoom extends React.Component<RoomProp, State> {
   createRoomCard() {
     return (
       !this.state.activeRoom && (
-        <div className="sm-4 col">
+        <div className="sm-3 col">
           <div className="card" key="new" style={CardStyle}>
             <div className="card-body">
               <h2 className="card-title">New Table</h2>
@@ -217,7 +220,7 @@ export class ITCGRoom extends React.Component<RoomProp, State> {
 
   getRoomList(rooms: Room[]) {
     const styledRooms = rooms.map((rm) => (
-      <div className="sm-4 col">
+      <div className="sm-3 col">
         <div className="card" style={CardStyle} key={rm.id}>
           <div className="card-body">
             <h2 className="card-title">

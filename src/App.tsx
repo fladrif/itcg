@@ -90,18 +90,6 @@ class App extends React.Component {
           {!this.state.inGame && (
             <div style={style}>
               <ITCGHeader username={this.state.username} />
-              <div style={{ marginTop: '1%', maxWidth: MAX_WIDTH, width: '100%' }}>
-                <div className="alert alert-secondary">
-                  <strong>Beta Release:</strong> Please report issues to the{' '}
-                  <a
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    href="https://discord.gg/Sh9MAEPPXH"
-                  >
-                    discord server
-                  </a>
-                </div>
-              </div>
               <div style={{ maxWidth: MAX_WIDTH, width: '100%' }}>
                 <Switch>
                   <Route exact path={'/'}>

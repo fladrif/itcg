@@ -59,7 +59,7 @@ export class ITCGDeck extends React.Component<DeckProp> {
 
   newDeck() {
     return (
-      <div className="sm-4 col">
+      <div className="sm-3 col">
         <div className="card" key="new" style={CardStyle}>
           <div className="card-body">
             <h2 className="card-title">New Deck</h2>
@@ -86,7 +86,7 @@ export class ITCGDeck extends React.Component<DeckProp> {
         </div>
       );
 
-      return <div className="sm-4 col">{formatted}</div>;
+      return <div className="sm-3 col">{formatted}</div>;
     });
 
     return (

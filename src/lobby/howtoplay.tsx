@@ -658,22 +658,22 @@ export class ITCGHowToPlay extends React.Component {
             <a href="#dmg">Dealing Damage</a>
           </li>
         </ul>
-        <div className="container" id="basic">
+        <div className="container-md" id="basic">
           {this.basics()}
         </div>
-        <div className="container" id="type">
+        <div className="container-md" id="type">
           {this.types()}
         </div>
-        <div className="container" id="part">
+        <div className="container-md" id="part">
           {this.partsOfCard()}
         </div>
-        <div className="container" id="play">
+        <div className="container-md" id="play">
           {this.cards()}
         </div>
-        <div className="container" id="turn">
+        <div className="container-md" id="turn">
           {this.partsOfTurn()}
         </div>
-        <div className="container" id="dmg">
+        <div className="container-md" id="dmg">
           {this.damage()}
         </div>
       </div>

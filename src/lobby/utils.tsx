@@ -1,5 +1,5 @@
 import { CountableTimeInterval, timeInterval } from 'd3-time';
-import { ReactNode } from 'react';
+import React, { ReactNode } from 'react';
 
 export const SECOND = 1000;
 export const MINUTE = 60 * SECOND;
@@ -10,7 +10,7 @@ export const WEEK = 7 * DAY;
 export const MONTH = 4 * WEEK;
 
 export function toGrid(components: ReactNode[], size?: 'small'): ReactNode {
-  const classSetting = size === 'small' ? 'sm-4 col' : 'sm-6 col';
+  const classSetting = size === 'small' ? 'sm-3 col' : 'sm-6 col';
 
   const cards = components.map((comp) => {
     return <div className={classSetting}>{comp}</div>;
