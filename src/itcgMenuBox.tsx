@@ -1,14 +1,17 @@
 import React from 'react';
 import { PlayerID } from 'boardgame.io';
+import axios from 'axios';
 
-import { SoundOpts } from './itcgAudio';
+import { SoundOpts } from './game';
 import { State as BoardState } from './itcgBoard';
 import { MoveOptions } from './moves';
+import { SERVER } from './config';
 
 interface MenuBoxProp {
   updateBoard: (state: BoardState) => any;
   concede: (opts: MoveOptions) => any;
   playerID: PlayerID;
+  tooltipOpts?: boolean;
   menuBox?: MenuBoxOpts;
   soundOpts?: SoundOpts;
 }
@@ -36,13 +39,26 @@ const innerBoxStyle: React.CSSProperties = {
   backgroundColor: 'rgba(84, 84, 84, 0.5)',
 };
 
-const buttonStyle: React.CSSProperties = {
+const subMenuStyle: React.CSSProperties = {
   alignSelf: 'center',
   borderRadius: '0.5em',
   marginTop: '5%',
   fontSize: '2vw',
   paddingLeft: '5%',
   paddingRight: '5%',
+};
+
+const subSubMenuStyle: React.CSSProperties = {
+  backgroundColor: 'white',
+  opacity: '90%',
+  alignSelf: 'center',
+  borderRadius: '0.5em',
+  fontSize: '1.2vw',
+  marginTop: '2%',
+  paddingTop: '2%',
+  paddingBottom: '1%',
+  paddingLeft: '1%',
+  paddingRight: '1%',
 };
 
 export class ITCGMenuBox extends React.Component<MenuBoxProp> {
@@ -67,58 +83,108 @@ export class ITCGMenuBox extends React.Component<MenuBoxProp> {
     this.props.updateBoard({ menuBox: 'music' });
   }
 
-  toggleMute() {
-    this.props.updateBoard({
-      soundOpts: {
-        mute: !this.props.soundOpts?.mute,
-        volume: this.props.soundOpts?.volume || 100,
+  async updateSettings(soundOpts: SoundOpts, tooltipOpts: boolean) {
+    await axios.post(
+      '/settings/upsert',
+      {
+        settings: {
+          soundOpts,
+          tooltipOpts,
+        },
       },
-    });
+      {
+        baseURL: SERVER,
+        timeout: 5000,
+        withCredentials: true,
+      }
+    );
   }
 
-  changeVolume(vol: number) {
-    this.props.updateBoard({
-      soundOpts: { mute: this.props.soundOpts?.mute, volume: vol },
-    });
+  async toggleMute() {
+    const soundOpts = {
+      mute: !this.props.soundOpts?.mute,
+      volume: this.props.soundOpts?.volume || 50,
+    };
+    this.props.updateBoard({ soundOpts });
+
+    await this.updateSettings(soundOpts, this.props.tooltipOpts);
   }
 
-  mainMenu = (
-    <>
-      Menu
-      <button style={buttonStyle} onClick={() => this.music()}>
-        Music
-      </button>
-      <div style={buttonStyle} />
-      <button
-        className="btn-danger-outline"
-        style={buttonStyle}
-        onClick={() => this.concede()}
-      >
-        Concede
-      </button>
-      <button
-        className="btn-secondary-outline"
-        style={buttonStyle}
-        onClick={() => this.back()}
-      >
-        Back
-      </button>
-    </>
-  );
+  async toggleTooltips() {
+    const tooltipOpts = !this.props.tooltipOpts;
+    this.props.updateBoard({ tooltipOpts });
+
+    await this.updateSettings(this.props.soundOpts, tooltipOpts);
+  }
+
+  async changeVolume(vol: number) {
+    const soundOpts = { mute: this.props.soundOpts?.mute, volume: vol };
+
+    this.props.updateBoard({ soundOpts });
+
+    await this.updateSettings(soundOpts, this.props.tooltipOpts);
+  }
+
+  mainMenu() {
+    return (
+      <>
+        Menu
+        <button style={subMenuStyle} onClick={() => this.music()}>
+          Music
+        </button>
+        <label htmlFor="paperSwitch6" className="paper-switch-label" style={subMenuStyle}>
+          Tooltips
+        </label>
+        <fieldset className="form-group" style={subSubMenuStyle}>
+          <label htmlFor="paperSwitch6" className="paper-switch-label">
+            Off
+          </label>
+          <label className="paper-switch">
+            <input
+              id="paperSwitch6"
+              name="paperSwitch6"
+              type="checkbox"
+              checked={this.props.tooltipOpts}
+              onChange={async () => await this.toggleTooltips()}
+            />
+            <span className="paper-switch-slider round"></span>
+          </label>
+          <label htmlFor="paperSwitch6" className="paper-switch-label">
+            On
+          </label>
+        </fieldset>
+        <div style={subMenuStyle} />
+        <button
+          className="btn-danger-outline"
+          style={subMenuStyle}
+          onClick={() => this.concede()}
+        >
+          Concede
+        </button>
+        <button
+          className="btn-secondary-outline"
+          style={subMenuStyle}
+          onClick={() => this.back()}
+        >
+          Back
+        </button>
+      </>
+    );
+  }
 
   concedeMenu = (
     <>
       Concede the game?
       <button
         className="btn-danger-outline"
-        style={buttonStyle}
+        style={subMenuStyle}
         onClick={() => this.yes()}
       >
         Yes
       </button>
       <button
         className="btn-secondary-outline"
-        style={buttonStyle}
+        style={subMenuStyle}
         onClick={() => this.menu()}
       >
         No
@@ -130,7 +196,7 @@ export class ITCGMenuBox extends React.Component<MenuBoxProp> {
     return (
       <>
         Music Control
-        <div style={buttonStyle}>
+        <div style={subMenuStyle}>
           Volume
           <input
             className="input-block"
@@ -140,19 +206,19 @@ export class ITCGMenuBox extends React.Component<MenuBoxProp> {
             defaultValue={
               this.props.soundOpts?.volume ? this.props.soundOpts?.volume : 100
             }
-            onInput={(e) => this.changeVolume(e.target.value)}
+            onChange={async (e) => await this.changeVolume(parseInt(e.target.value))}
           />
           <button
             className={this.props.soundOpts?.mute ? 'btn-primary' : 'btn-primary-outline'}
-            style={buttonStyle}
-            onClick={() => this.toggleMute()}
+            style={subMenuStyle}
+            onClick={async () => await this.toggleMute()}
           >
             {this.props.soundOpts?.mute ? 'Unmute' : 'Mute'}
           </button>
         </div>
         <button
           className="btn-secondary-outline"
-          style={buttonStyle}
+          style={subMenuStyle}
           onClick={() => this.menu()}
         >
           Back
@@ -167,7 +233,7 @@ export class ITCGMenuBox extends React.Component<MenuBoxProp> {
     return (
       <div style={baseStyle}>
         <div style={innerBoxStyle}>
-          {this.props.menuBox === 'menu' && this.mainMenu}
+          {this.props.menuBox === 'menu' && this.mainMenu()}
           {this.props.menuBox === 'concede' && this.concedeMenu}
           {this.props.menuBox === 'music' && this.musicMenu()}
         </div>

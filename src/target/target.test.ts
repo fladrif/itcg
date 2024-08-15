@@ -5,7 +5,7 @@ import { instantiateCard } from '../card';
 
 import { ensureFilter, filterSelections } from './target';
 import { Location } from './types';
-import { Selection } from './stack';
+import { Selection } from '../stack';
 import * as fix from './target.fixtures';
 
 describe('filterSelections', () => {

@@ -38,7 +38,7 @@ export class ITCGField extends React.Component<FieldProps> {
       const styles: Styles[] = [];
       const skill: Styles[] = [];
 
-      const isAttack = isMonster(card) && this.props.stage == 'attack';
+      const isAttack = isMonster(card) && this.props.stage === 'attack';
       const move = isAttack ? this.props.attack : this.props.select;
 
       if (card.selected) {

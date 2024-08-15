@@ -199,7 +199,7 @@ export class ITCGInteractive extends React.Component<InteractiveProp> {
   keydownFn(e: KeyboardEvent) {
     if (e.key === ' ') {
       this.posMove();
-    } else if (e.key === 'Escape') {
+    } else if (e.key === 'Escape' && this.props.showReset) {
       this.negMove();
     }
   }

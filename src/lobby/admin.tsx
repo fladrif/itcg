@@ -1,30 +1,36 @@
 import React from 'react';
 import axios from 'axios';
-import {
-  Cell,
-  LineChart,
-  XAxis,
-  YAxis,
-  Line,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Legend,
-} from 'recharts';
+import { LineChart, XAxis, YAxis, Line, ResponsiveContainer, Tooltip } from 'recharts';
 import * as d3Array from 'd3-array';
 import * as d3Scale from 'd3-scale';
 import * as d3Time from 'd3-time';
+
+import { DAY, WEEK, MONTH, timeHour } from './utils';
 
 interface AdminProp {
   server: string;
 }
 
+enum GraphResolution {
+  ALL,
+  DAY,
+  WEEK,
+  MONTH,
+}
+
+export interface LatestGames {
+  complete: any[];
+  ongoing: any[];
+}
+
 interface AdminState {
   playerData: any[];
   gameData: any[];
-  roomData: any;
+  roomData: any[];
   latestPlayers: any[];
-  latestGames: any[];
+  latestGames: LatestGames;
+  userGraph: GraphResolution;
+  gameGraph: GraphResolution;
 }
 
 const baseStyle: React.CSSProperties = {
@@ -41,9 +47,11 @@ export class ITCGAdmin extends React.Component<AdminProp, AdminState> {
     this.state = {
       playerData: [],
       gameData: [],
-      roomData: { allRooms: 0, openRooms: 0 },
+      roomData: [],
       latestPlayers: [],
-      latestGames: [],
+      latestGames: { ongoing: [], complete: [] },
+      userGraph: GraphResolution.ALL,
+      gameGraph: GraphResolution.ALL,
     };
   }
 
@@ -62,7 +70,7 @@ export class ITCGAdmin extends React.Component<AdminProp, AdminState> {
     return [];
   }
 
-  async getLatestGames(): Promise<any[]> {
+  async getLatestGames(): Promise<LatestGames> {
     const resp = await axios
       .get('/stats/games/latest', {
         baseURL: this.props.server,
@@ -74,7 +82,7 @@ export class ITCGAdmin extends React.Component<AdminProp, AdminState> {
       });
 
     if (resp) return resp.data;
-    return [];
+    return { ongoing: [], complete: [] };
   }
 
   async getRoomData(): Promise<any[]> {
@@ -132,38 +140,48 @@ export class ITCGAdmin extends React.Component<AdminProp, AdminState> {
         this.getLatestGames(),
       ]);
 
-    // const data = [
-    //   { created_at: '2024-01-08T06:59:49.067Z' },
-    //   { created_at: '2024-02-08T06:59:49.067Z' },
-    //   { created_at: '2024-03-08T06:59:49.067Z' },
-    //   { created_at: '2024-04-08T06:59:49.067Z' },
-    //   { created_at: '2024-05-08T06:59:49.067Z' },
-    //   { created_at: '2024-06-08T06:59:49.067Z' },
-    //   { created_at: '2024-07-08T06:59:49.067Z' },
-    //   { created_at: '2024-08-08T06:59:49.067Z' },
-    //   { created_at: '2024-09-08T06:59:49.067Z' },
-    //   { created_at: '2024-10-08T06:59:49.067Z' },
-    //   { created_at: '2024-11-08T06:59:49.067Z' },
-    //   { created_at: '2024-12-08T06:59:49.067Z' },
-    // ];
-
-    this.state.playerData = playerData.map((d) => {
-      return { created_at: new Date(d.created_at) };
+    this.setState({
+      playerData: playerData.map((d) => {
+        return { createdAt: new Date(d.created_at) };
+      }),
+      gameData: gameData.map((d) => {
+        return {
+          createdAt: new Date(d.createdAt),
+          updatedAt: new Date(d.updatedAt),
+          gameover: d.gameover,
+        };
+      }),
+      roomData,
+      latestPlayers,
+      latestGames,
     });
-    this.state.gameData = gameData.map((d) => {
-      return {
-        createdAt: new Date(d.createdAt),
-        updatedAt: new Date(d.updatedAt),
-        gameover: d.gameover,
-      };
-    });
-    this.state.roomData = roomData;
-    this.state.latestPlayers = latestPlayers;
-    this.state.latestGames = latestGames;
   }
 
-  gameTable() {
-    const games = this.state.latestGames.reverse().map((g) => {
+  roomTable() {
+    const rooms = this.state.roomData.map((r) => {
+      return (
+        <tr>
+          <td>{r.p1}</td>
+          <td>{r.p2}</td>
+        </tr>
+      );
+    });
+
+    return (
+      <table>
+        <thead>
+          <tr>
+            <th>Owner</th>
+            <th>Guest</th>
+          </tr>
+        </thead>
+        <tbody>{rooms.reverse()}</tbody>
+      </table>
+    );
+  }
+
+  completeGameTable() {
+    const games = this.state.latestGames.complete.map((g) => {
       return (
         <tr>
           <td>{new Date(g.ended).toLocaleDateString()}</td>
@@ -182,13 +200,36 @@ export class ITCGAdmin extends React.Component<AdminProp, AdminState> {
             <th>Loser</th>
           </tr>
         </thead>
-        <tbody>{games}</tbody>
+        <tbody>{games.reverse()}</tbody>
+      </table>
+    );
+  }
+
+  ongoingGameTable() {
+    const games = this.state.latestGames.ongoing.map((g) => {
+      return (
+        <tr>
+          <td>{g.p1}</td>
+          <td>{g.p2}</td>
+        </tr>
+      );
+    });
+
+    return (
+      <table>
+        <thead>
+          <tr>
+            <th>Player 1</th>
+            <th>Player 2</th>
+          </tr>
+        </thead>
+        <tbody>{games.reverse()}</tbody>
       </table>
     );
   }
 
   userTable() {
-    const players = this.state.latestPlayers.reverse().map((u) => {
+    const players = this.state.latestPlayers.map((u) => {
       return (
         <tr>
           <td>{new Date(u.created_at).toLocaleDateString()}</td>
@@ -205,31 +246,196 @@ export class ITCGAdmin extends React.Component<AdminProp, AdminState> {
             <th>Username</th>
           </tr>
         </thead>
-        <tbody>{players}</tbody>
+        <tbody>{players.reverse()}</tbody>
       </table>
     );
   }
 
-  render() {
+  graphTick(res: GraphResolution): d3Time.CountableTimeInterval {
+    return res === GraphResolution.ALL
+      ? d3Time.timeMonth
+      : res === GraphResolution.MONTH
+      ? d3Time.timeDay
+      : res === GraphResolution.WEEK
+      ? timeHour(6)
+      : d3Time.timeHour;
+  }
+
+  graphDomain(res: GraphResolution): Date {
+    return res === GraphResolution.ALL
+      ? new Date('2023-03-01T00:00:00Z')
+      : res === GraphResolution.MONTH
+      ? new Date(Date.now() - MONTH)
+      : res === GraphResolution.WEEK
+      ? new Date(Date.now() - WEEK)
+      : new Date(Date.now() - DAY);
+  }
+
+  userGraph() {
+    const res = this.state.userGraph;
+
     const binnedPlayerData = d3Array
-      .bin<{ created_at: Date }, Date>()
-      .value((d) => d.created_at)
+      .bin<{ createdAt: Date }, Date>()
+      .value((d) => d.createdAt)
+      .domain([this.graphDomain(res), new Date()])
       .thresholds((_value, min, max) => {
-        return d3Scale.scaleTime().domain([min, max]).ticks(d3Time.utcMonth);
+        return d3Scale.scaleTime().domain([min, max]).ticks(this.graphTick(res));
       })(this.state.playerData);
 
     const newPlayerData = binnedPlayerData.map((b) => {
-      return { created_at: b.x0, players: b.length };
+      return { createdAt: b.x0, players: b.length };
     });
 
+    return (
+      <ResponsiveContainer height={150}>
+        <LineChart data={newPlayerData}>
+          <XAxis dataKey="createdAt" tick={false} />
+          <YAxis />
+          <Line type="monotone" dataKey="players" stroke="#8884d8" />
+          <Tooltip labelFormatter={(label) => new Date(label).toLocaleString()} />
+        </LineChart>
+      </ResponsiveContainer>
+    );
+  }
+
+  gameGraph() {
+    const res = this.state.gameGraph;
+
+    const binnedGameData = d3Array
+      .bin<{ createdAt: Date }, Date>()
+      .value((d) => d.createdAt)
+      .domain([this.graphDomain(res), new Date()])
+      .thresholds((_value, min, max) => {
+        return d3Scale.scaleTime().domain([min, max]).ticks(this.graphTick(res));
+      })(this.state.gameData);
+
+    const newGameData = binnedGameData.map((b) => {
+      return { createdAt: b.x0, games: b.length };
+    });
+
+    return (
+      <ResponsiveContainer height={150}>
+        <LineChart data={newGameData}>
+          <XAxis dataKey="createdAt" tick={false} />
+          <YAxis />
+          <Line type="monotone" dataKey="games" stroke="#8884d8" />
+          <Tooltip labelFormatter={(label) => new Date(label).toLocaleString()} />
+        </LineChart>
+      </ResponsiveContainer>
+    );
+  }
+
+  userGraphUpdate(res: GraphResolution) {
+    this.setState({ userGraph: res });
+  }
+
+  userHeader() {
+    const now = Date.now();
+    const userChangeDay = this.state.playerData.filter(
+      (pl) => now - pl.createdAt.valueOf() < DAY
+    ).length;
+    const userDayBadge = `badge ${userChangeDay > 0 ? 'success' : ''}`;
+    const userChangeWeek = this.state.playerData.filter(
+      (pl) => now - pl.createdAt.valueOf() < WEEK
+    ).length;
+    const userWeekBadge = `badge ${userChangeWeek > 0 ? 'success' : ''}`;
+    const userChangeMonth = this.state.playerData.filter(
+      (pl) => now - pl.createdAt.valueOf() < MONTH
+    ).length;
+    const userMonthBadge = `badge ${userChangeMonth > 0 ? 'success' : ''}`;
+
+    return (
+      <h4>
+        Users:{' '}
+        <span
+          className="badge primary"
+          onClick={() => this.userGraphUpdate(GraphResolution.ALL)}
+        >
+          {this.state.playerData.length}
+        </span>{' '}
+        - - - - Day:{' '}
+        <span
+          className={userDayBadge}
+          onClick={() => this.userGraphUpdate(GraphResolution.DAY)}
+        >
+          {userChangeDay}
+        </span>{' '}
+        Week:{' '}
+        <span
+          className={userWeekBadge}
+          onClick={() => this.userGraphUpdate(GraphResolution.WEEK)}
+        >
+          {userChangeWeek}
+        </span>{' '}
+        Month:{' '}
+        <span
+          className={userMonthBadge}
+          onClick={() => this.userGraphUpdate(GraphResolution.MONTH)}
+        >
+          {userChangeMonth}
+        </span>
+      </h4>
+    );
+  }
+
+  gameGraphUpdate(res: GraphResolution) {
+    this.setState({ gameGraph: res });
+  }
+
+  gameHeader() {
+    const now = Date.now();
+    const gameChangeDay = this.state.gameData.filter(
+      (pl) => now - pl.updatedAt.valueOf() < DAY
+    ).length;
+    const gameDayBadge = `badge ${gameChangeDay > 0 ? 'success' : ''}`;
+    const gameChangeWeek = this.state.gameData.filter(
+      (pl) => now - pl.updatedAt.valueOf() < WEEK
+    ).length;
+    const gameWeekBadge = `badge ${gameChangeWeek > 0 ? 'success' : ''}`;
+    const gameChangeMonth = this.state.gameData.filter(
+      (pl) => now - pl.updatedAt.valueOf() < MONTH
+    ).length;
+    const gameMonthBadge = `badge ${gameChangeMonth > 0 ? 'success' : ''}`;
+
+    return (
+      <h4>
+        Games:{' '}
+        <span
+          className="badge primary"
+          onClick={() => this.gameGraphUpdate(GraphResolution.ALL)}
+        >
+          {this.state.gameData.length}
+        </span>{' '}
+        - - - - Day:{' '}
+        <span
+          className={gameDayBadge}
+          onClick={() => this.gameGraphUpdate(GraphResolution.DAY)}
+        >
+          {gameChangeDay}
+        </span>{' '}
+        Week:{' '}
+        <span
+          className={gameWeekBadge}
+          onClick={() => this.gameGraphUpdate(GraphResolution.WEEK)}
+        >
+          {gameChangeWeek}
+        </span>{' '}
+        Month:{' '}
+        <span
+          className={gameMonthBadge}
+          onClick={() => this.gameGraphUpdate(GraphResolution.MONTH)}
+        >
+          {gameChangeMonth}
+        </span>
+      </h4>
+    );
+  }
+
+  gameTime() {
     const startingWins = this.state.gameData.filter(
-      (g) => g.gameover?.winner == 0
+      (g) => g.gameover?.winner === '0'
     ).length;
     const unfinishedGames = this.state.gameData.filter((g) => !g.gameover).length;
-    const totalGames = this.state.gameData.length;
-    const startingAdvantage = Math.trunc(
-      (startingWins / (totalGames - unfinishedGames)) * 100
-    );
 
     const orderedGameTimeMS = this.state.gameData
       .filter((g) => !!g.gameover)
@@ -237,6 +443,11 @@ export class ITCGAdmin extends React.Component<AdminProp, AdminState> {
         return g.updatedAt.getTime() - g.createdAt.getTime();
       })
       .sort((a, b) => (a > b ? 1 : -1));
+
+    const totalGames = this.state.gameData.length;
+    const startingAdvantage = Math.trunc(
+      (startingWins / (totalGames - unfinishedGames)) * 100
+    );
 
     const p95Idx =
       Math.ceil((95 / 100) * this.state.gameData.filter((g) => !!g.gameover).length) - 1;
@@ -254,118 +465,55 @@ export class ITCGAdmin extends React.Component<AdminProp, AdminState> {
       Math.ceil((25 / 100) * this.state.gameData.filter((g) => !!g.gameover).length) - 1;
     const p25GameTimeMin = (orderedGameTimeMS[p25Idx] / 1000 / 60).toFixed(1);
 
-    const binnedGameData = d3Array
-      .bin<{ createdAt: Date }, Date>()
-      .value((d) => d.createdAt)
-      .thresholds((_value, min, max) => {
-        return d3Scale.scaleTime().domain([min, max]).ticks(d3Time.utcMonth);
-      })(this.state.gameData);
+    return (
+      <>
+        <h4 className="margin-none padding-top">
+          Starting Adv: <span className="badge">{startingAdvantage}%</span>
+        </h4>
+        <h4 className="margin-none padding-top">
+          p95 Game Time (min): <span className="badge">{p95GameTimeMin}</span>
+        </h4>
+        <h4 className="margin-none padding-top">
+          p75 Game Time (min): <span className="badge">{p75GameTimeMin}</span>
+        </h4>
+        <h4 className="margin-none padding-top">
+          p50 Game Time (min): <span className="badge">{p50GameTimeMin}</span>
+        </h4>
+        <h4 className="margin-none padding-top">
+          p25 Game Time (min): <span className="badge">{p25GameTimeMin}</span>
+        </h4>
+      </>
+    );
+  }
 
-    const newGameData = binnedGameData.map((b) => {
-      return { created_at: b.x0, players: b.length };
-    });
-
-    const roomData = [
-      {
-        name: 'Open',
-        value: this.state.roomData.openRooms,
-      },
-      {
-        name: 'Occupied',
-        value: this.state.roomData.allRooms - this.state.roomData.openRooms,
-      },
-    ];
-
-    const gameData = [
-      {
-        name: 'Completed',
-        value: totalGames - unfinishedGames,
-      },
-      {
-        name: 'Ongoing',
-        value: unfinishedGames,
-      },
-    ];
-
-    const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
-
+  render() {
     return (
       <div style={baseStyle}>
         <div className="row" style={{ width: '100%' }}>
           <div className="col sm-8">
-            <h3>
-              Users: <span className="badge">{this.state.playerData.length}</span>
-            </h3>
-            <ResponsiveContainer height={150}>
-              <LineChart data={newPlayerData}>
-                <XAxis dataKey="created_at" />
-                <YAxis />
-                <Line type="monotone" dataKey="players" stroke="#8884d8" />
-              </LineChart>
-            </ResponsiveContainer>
+            {this.userHeader()}
+            {this.userGraph()}
           </div>
           <div className="col sm-4 padding-top margin-top">
             <h4 className="margin-none">Newest Users</h4>
             {this.userTable()}
           </div>
           <div className="col sm-8">
-            <h3>
-              Games: <span className="badge">{totalGames}</span>
-            </h3>
-            <ResponsiveContainer height={150}>
-              <LineChart data={newGameData}>
-                <XAxis dataKey="created_at" />
-                <YAxis />
-                <Line type="monotone" dataKey="players" stroke="#8884d8" />
-              </LineChart>
-            </ResponsiveContainer>
+            {this.gameHeader()}
+            {this.gameGraph()}
           </div>
           <div className="col sm-4 padding-top margin-top">
             <h4 className="margin-none">Latest Games</h4>
-            {this.gameTable()}
+            {this.completeGameTable()}
+          </div>
+          <div className="col sm-4">{this.gameTime()}</div>
+          <div className="col sm-4">
+            <h4 className="margin-none padding-top">Rooms</h4>
+            {this.roomTable()}
           </div>
           <div className="col sm-4">
-            <h4 className="margin-none padding-top">
-              Starting Adv: <span className="badge">{startingAdvantage}%</span>
-            </h4>
-            <h4 className="margin-none padding-top">
-              p95 Game Time (min): <span className="badge">{p95GameTimeMin}</span>
-            </h4>
-            <h4 className="margin-none padding-top">
-              p75 Game Time (min): <span className="badge">{p75GameTimeMin}</span>
-            </h4>
-            <h4 className="margin-none padding-top">
-              p50 Game Time (min): <span className="badge">{p50GameTimeMin}</span>
-            </h4>
-            <h4 className="margin-none padding-top">
-              p25 Game Time (min): <span className="badge">{p25GameTimeMin}</span>
-            </h4>
-          </div>
-          <div className="col sm-4">
-            <h4>Rooms</h4>
-            <ResponsiveContainer height={250}>
-              <PieChart>
-                <Pie data={roomData} nameKey="name" dataKey="value" fill="#8884d8" label>
-                  {roomData.map((_entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                </Pie>
-                <Legend />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-          <div className="col sm-4">
-            <h4>Game Status</h4>
-            <ResponsiveContainer height={250}>
-              <PieChart>
-                <Pie data={gameData} nameKey="name" dataKey="value" fill="#8884d8" label>
-                  {gameData.map((_entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                </Pie>
-                <Legend />
-              </PieChart>
-            </ResponsiveContainer>
+            <h4 className="margin-none padding-top">Ongoing Games</h4>
+            {this.ongoingGameTable()}
           </div>
         </div>
       </div>

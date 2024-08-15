@@ -657,11 +657,13 @@ export class EvilTaleTrigger extends Trigger {
     decision: Decision,
     _prep: TriggerPrepostion
   ) {
-    const sourceIsTactic = decision.opts?.source
-      ? decision.opts.source.type === CardTypes.Tactic
-      : false;
+    const selectionIsTactic = Object.values(decision.selection).reduce(
+      (prev, arr) =>
+        arr.reduce((prev, targ) => targ.type === CardTypes.Tactic || prev, false) || prev,
+      false
+    );
 
-    return sourceIsTactic && this.sourceIsOwner(decision);
+    return selectionIsTactic && this.sourceIsOwner(decision);
   }
 
   createDecision(fnCtx: FuncContext, _decision: Decision) {
@@ -835,10 +837,20 @@ export class GeniusTrigger extends Trigger {
     return cardIsPlayed;
   }
 
-  createDecision(_fnCtx: FuncContext, _decision: Decision) {
+  createDecision(fnCtx: FuncContext, _decision: Decision) {
+    const { G, ctx } = fnCtx;
+
     const dec: Decision = {
       action: 'quest',
       selection: {},
+      opts: {
+        source: getCardAtLocation(
+          G,
+          ctx,
+          getCardLocation(G, ctx, this.cardOwner),
+          this.cardOwner
+        ),
+      },
       finished: false,
       key: getRandomKey(),
     };
@@ -1132,10 +1144,11 @@ export class MeditationTrigger extends Trigger {
   }
 
   shouldTriggerExtension(
-    _fnCtx: FuncContext,
+    fnCtx: FuncContext,
     decision: Decision,
     _prep: TriggerPrepostion
   ) {
+    const { G, ctx } = fnCtx;
     const sourceIsMonster = decision.opts?.source
       ? isMonster(decision.opts.source) && decision.action === 'attack'
       : false;
@@ -1144,7 +1157,16 @@ export class MeditationTrigger extends Trigger {
       ? decision.opts.source.type === CardTypes.Tactic
       : false;
 
-    return (sourceIsTactic || sourceIsMonster) && this.sourceIsOwner(decision);
+    const CharAction = [Location.CharAction, Location.OppCharAction];
+    const sourceIsNotCharAction = decision.opts?.source
+      ? !CharAction.includes(getCardLocation(G, ctx, decision.opts.source.key))
+      : false;
+
+    return (
+      (sourceIsTactic || sourceIsMonster) &&
+      sourceIsNotCharAction &&
+      this.sourceIsOwner(decision)
+    );
   }
 
   createDecision(fnCtx: FuncContext, decision: Decision) {
@@ -1753,7 +1775,7 @@ export class StartleTrigger extends Trigger {
         decision.selection[location]!.some((card) => card.owner !== this.owner)
     );
 
-    return oppCharAttacked && this.sourceIsOwner(decision);
+    return oppCharAttacked && this.sourceIsCard(decision);
   }
 
   createDecision(fnCtx: FuncContext, _decision: Decision) {

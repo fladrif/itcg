@@ -13,7 +13,7 @@ export async function getGames(): Promise<Games[]> {
   return games;
 }
 
-export async function getLatestGames(): Promise<any[]> {
+export async function getLatestGames(): Promise<{ complete: any[]; ongoing: any[] }> {
   const connection = await getITCGConnection();
 
   const gameRepo = connection.getRepository(Games);
@@ -24,7 +24,7 @@ export async function getLatestGames(): Promise<any[]> {
     take: 3,
   });
 
-  return games.map((g) => {
+  const complete = games.map((g) => {
     const winner = g.gameover!.winner === '0' ? '0' : '1';
     const loser = winner === '0' ? '1' : '0';
     return {
@@ -33,4 +33,16 @@ export async function getLatestGames(): Promise<any[]> {
       loser: g.players[loser].name,
     };
   });
+
+  const ongoingGames = await gameRepo.find({
+    select: ['gameover', 'updatedAt', 'players'],
+    order: { createdAt: 'DESC' },
+    where: { gameover: IsNull() },
+  });
+
+  const ongoing = ongoingGames.map((g) => {
+    return { p1: g.players[0].name, p2: g.players[1].name };
+  });
+
+  return { complete, ongoing };
 }

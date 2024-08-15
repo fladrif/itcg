@@ -50,7 +50,7 @@ export abstract class Trigger {
     const baseChecks = !alreadyTriggered && rightPrep && rightAction;
 
     const usableTurn = this.lifetime?.usableTurn;
-    const canActivateOnTurn = usableTurn ? usableTurn == ctx.turn : false;
+    const canActivateOnTurn = usableTurn ? usableTurn === ctx.turn : false;
 
     const onceATurn = this.lifetime?.turn;
     const canTriggerThisTurn = onceATurn ? onceATurn <= ctx.turn : false;
@@ -74,6 +74,12 @@ export abstract class Trigger {
   sourceIsOwner(decision: Decision): boolean {
     return decision.opts?.source?.owner
       ? decision.opts.source.owner === this.owner
+      : false;
+  }
+
+  sourceIsCard(decision: Decision): boolean {
+    return decision.opts?.source?.key
+      ? decision.opts.source.key === this.cardOwner
       : false;
   }
 

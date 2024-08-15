@@ -12,6 +12,7 @@ const barStyle: React.CSSProperties = {
   borderRadius: '0.5em',
   width: '100%',
   overflow: 'hidden',
+  color: 'black',
 };
 
 function getDefaultFillerStyle(
@@ -44,8 +45,8 @@ export class ProgressBar extends React.Component<ProgressBarProps> {
 
     const fillerStyle = {
       width: `${percentage}%`,
-      color: 'black',
       fontSize: '1vw',
+      paddingLeft: '0.3em',
       ...getDefaultFillerStyle(botLimit, midLimit, topLimit),
     };
 

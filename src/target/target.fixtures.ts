@@ -128,4 +128,5 @@ export const playerState: PlayerState = {
   level: 40,
   activationPos: 0,
   name: 'Fladrif',
+  settings: {},
 };

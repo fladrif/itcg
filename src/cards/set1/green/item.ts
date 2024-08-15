@@ -179,7 +179,7 @@ export const goldencrow: Omit<Item, 'key' | 'owner'> = {
       },
     },
   ],
-  ability: { triggers: [{ name: 'GoldenCrowTrigger' }] },
+  ability: { triggers: [{ name: 'GoldenCrowTrigger', lifetime: { turn: 0 } }] },
   subtypes: [CardSubTypes.weapon],
   ...defaultTypes,
 };

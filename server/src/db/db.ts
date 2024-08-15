@@ -1,6 +1,6 @@
 import { createConnection, Connection } from 'typeorm';
 
-import { Decks, Roles, Userroles, Users, Games } from './dbTable';
+import { Decks, Roles, Userroles, Users, Settings, Games } from './dbTable';
 
 import { DBConfig } from '../config';
 
@@ -18,7 +18,7 @@ export async function getConnection(): Promise<Connection> {
     username: DBConfig.username,
     password: DBConfig.password,
     database: DBConfig.userDB,
-    entities: [Decks, Users, Roles, Userroles],
+    entities: [Decks, Users, Roles, Userroles, Settings],
   });
   return userConnection;
 }

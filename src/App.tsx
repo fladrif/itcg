@@ -92,11 +92,14 @@ class App extends React.Component {
               <ITCGHeader username={this.state.username} />
               <div style={{ marginTop: '1%', maxWidth: MAX_WIDTH, width: '100%' }}>
                 <div className="alert alert-secondary">
-                  BETA Release: Please report issues to the discord server
-                </div>
-                <div className="alert alert-danger">
-                  Database Wipe: All accounts and decks made before March 2023 were lost.
-                  Please logout and recreate your account
+                  <strong>Beta Release:</strong> Please report issues to the{' '}
+                  <a
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href="https://discord.gg/Sh9MAEPPXH"
+                  >
+                    discord server
+                  </a>
                 </div>
               </div>
               <div style={{ maxWidth: MAX_WIDTH, width: '100%' }}>

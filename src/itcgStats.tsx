@@ -1,4 +1,5 @@
 import React from 'react';
+import { CardClasses } from './card';
 import { PlayerState } from './game';
 import { ProgressBar } from './progressBar';
 
@@ -27,6 +28,7 @@ const levelStyle: React.CSSProperties = {
   verticalAlign: 'middle',
   whiteSpace: 'nowrap',
   fontSize: '1vw',
+  color: 'black',
 };
 
 const nameStyle: React.CSSProperties = {
@@ -42,6 +44,22 @@ const nameStyle: React.CSSProperties = {
 };
 
 const classStyle: React.CSSProperties = {
+  display: 'block',
+  alignItems: 'center',
+  justifyContent: 'center',
+  paddingLeft: '0.25em',
+  paddingRight: '0.25em',
+  border: 'solid',
+  borderRadius: '0.5em',
+  borderColor: 'black',
+  color: 'white',
+};
+
+const classNumStyle: React.CSSProperties = {
+  display: 'flex',
+};
+
+const classNameStyle: React.CSSProperties = {
   color: 'lightgray',
   fontSize: '0.8vw',
 };
@@ -56,7 +74,7 @@ const confirmationStyle: React.CSSProperties = {
   overflow: 'hidden',
   flexWrap: 'nowrap',
   color: 'white',
-  width: '40%',
+  width: '80%',
 };
 
 const stageModalStyle: React.CSSProperties = {
@@ -127,8 +145,41 @@ export class ITCGStats extends React.Component<StatProp> {
           Lv: <b>{this.props.playerState.level}</b>
         </div>
         <div style={nameStyle}>
-          <div style={classStyle}>{this.props.playerState.character.class}</div>
+          <div style={classNameStyle}>{this.props.playerState.character.class}</div>
           <div style={{ fontSize: '1vw' }}>{this.props.playerState.name}</div>
+        </div>
+        <div style={classStyle}>
+          <div style={classNameStyle}>Classes</div>
+          <div style={classNumStyle}>
+            <span className="badge success">
+              {
+                this.props.playerState.learnedSkills.filter(
+                  (c) => c.class === CardClasses.Bowman
+                ).length
+              }
+            </span>
+            <span className="badge danger">
+              {
+                this.props.playerState.learnedSkills.filter(
+                  (c) => c.class === CardClasses.Magician
+                ).length
+              }
+            </span>
+            <span className="badge primary">
+              {
+                this.props.playerState.learnedSkills.filter(
+                  (c) => c.class === CardClasses.Thief
+                ).length
+              }
+            </span>
+            <span className="badge secondary">
+              {
+                this.props.playerState.learnedSkills.filter(
+                  (c) => c.class === CardClasses.Warrior
+                ).length
+              }
+            </span>
+          </div>
         </div>
         <ProgressBar
           hp={this.props.playerState.hp}
