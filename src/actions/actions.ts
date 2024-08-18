@@ -305,6 +305,12 @@ function level(fnCtx: FuncContext, opts: ActionOpts): any {
 
       const player = G.player[card.owner];
       const selCard = card as NonCharacter; // uses copy of card as canonical
+      player.learnedSkills.push({ ...selCard });
+
+      rmCard(G, ctx, selCard, location);
+
+      player.level += 10;
+      dec.push(refreshDec(selCard));
 
       const oneshot = selCard.skill.some(
         (skill) => skill.requirements.oneshot && meetsSkillReq(skill.requirements, player)
@@ -319,13 +325,6 @@ function level(fnCtx: FuncContext, opts: ActionOpts): any {
           }
         });
       }
-
-      player.learnedSkills.push({ ...selCard });
-
-      rmCard(G, ctx, selCard, location);
-
-      player.level += 10;
-      dec.push(refreshDec(selCard));
     });
   }
 
