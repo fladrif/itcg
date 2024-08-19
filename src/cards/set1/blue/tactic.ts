@@ -32,11 +32,13 @@ export const itemtrade: Omit<Tactic, 'key' | 'owner'> = {
             {
               type: CardTypes.Item,
               location: Location.Field,
+              quantityUpTo: true,
               quantity: 1,
             },
             {
               type: CardTypes.Item,
               location: Location.OppField,
+              quantityUpTo: true,
               quantity: 1,
             },
           ],
