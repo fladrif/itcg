@@ -622,6 +622,8 @@ export class EmeraldEarringsTrigger extends ActionTrigger {
     if (!triggerOwner) return [];
 
     const player = G.player[triggerOwner];
+    if (player.deck.length <= 0) return [];
+
     player.deck[0].reveal = Object.keys(G.player);
 
     const dec: Decision = {
