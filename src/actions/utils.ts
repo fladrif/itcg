@@ -123,7 +123,7 @@ function mpEaterHook(fnCtx: FuncContext, card: NonCharacter): boolean {
 
   if (
     state.some((target) =>
-      meetsTarget(fnCtx, ensureFilter(target.targets, playerState), card)
+      meetsTarget(G, ctx, ensureFilter(target.targets, playerState), card)
     )
   ) {
     card.ability.inactiveKeywords = card.ability.keywords;

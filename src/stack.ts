@@ -348,7 +348,8 @@ function isSelectable(
   decision: Decision,
   card: Character | NonCharacter
 ): boolean {
-  if (!meetsTarget(fnCtx, ensureFilter(decision.target!, playerState), card))
+  const { G, ctx } = fnCtx;
+  if (!meetsTarget(G, ctx, ensureFilter(decision.target!, playerState), card))
     return false;
   if (!validationGate(fnCtx, globalState, playerState, decision, card)) return false;
 
@@ -362,7 +363,7 @@ function validationGate(
   decision: Decision,
   card: Character | NonCharacter
 ): boolean {
-  const { ctx } = fnCtx;
+  const { G, ctx } = fnCtx;
 
   // Cannot attack monsters with stealthy
   if (decision.action === 'attack' && isMonster(card)) {
@@ -386,7 +387,7 @@ function validationGate(
 
   if (
     stateTarget.some((target) =>
-      meetsTarget(fnCtx, ensureFilter(target.targets, playerState), card)
+      meetsTarget(G, ctx, ensureFilter(target.targets, playerState), card)
     )
   ) {
     return false;

@@ -69,7 +69,7 @@ function attack(fnCtx: FuncContext, opts: ActionOpts): any {
     opts: {
       ...opts,
       damage:
-        getMonsterAtt(fnCtx, opts.source) +
+        getMonsterAtt(G, ctx, opts.source) +
         resolveDamage(G.player[opts.source.owner], opts.damage),
     },
     selection: { ...opts.selection } || {},

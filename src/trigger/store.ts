@@ -426,7 +426,7 @@ export class DmgDestroyTrigger extends ActionTrigger {
               .some(
                 (card) =>
                   (card as Monster).damageTaken >=
-                  getMonsterHealth(fnCtx, card as Monster)
+                  getMonsterHealth(G, ctx, card as Monster)
               )
         )
     );
@@ -448,7 +448,7 @@ export class DmgDestroyTrigger extends ActionTrigger {
           (card) => !!decision.selection[location]!.find((c) => deepCardComp(c, card))
         )
         .forEach((card) => {
-          if (isMonster(card) && card.damageTaken >= getMonsterHealth(fnCtx, card)) {
+          if (isMonster(card) && card.damageTaken >= getMonsterHealth(G, ctx, card)) {
             decisions.push({
               action: 'destroy',
               opts: {

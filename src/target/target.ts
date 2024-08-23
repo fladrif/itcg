@@ -1,4 +1,6 @@
-import { FuncContext, PlayerState } from '../game';
+import { Ctx } from 'boardgame.io';
+
+import { GameState, PlayerState } from '../game';
 import { Character, NonCharacter } from '../card';
 import { Selection } from '../stack';
 import { deepCardComp, getCardLocation } from '../utils';
@@ -26,12 +28,11 @@ export function ensureFilter(filter: ActionTargets, state: PlayerState): ActionT
 }
 
 export function meetsTarget(
-  fnCtx: FuncContext,
+  G: GameState,
+  ctx: Ctx,
   targets: ActionTargets,
   card: Character | NonCharacter
 ): boolean {
-  const { G, ctx } = fnCtx;
-
   const cardLoc = getCardLocation(G, ctx, card.key);
   const selection = { [cardLoc]: [card] };
   const recent: [Location, Character | NonCharacter] = [cardLoc, card];

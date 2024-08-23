@@ -1,12 +1,16 @@
 import React from 'react';
 
 import { Styles, ITCGCard } from './itcgCard';
-import { PlayerState } from './game';
-import { Location } from './target';
 import { isMonster, Monster, Character, NonCharacter } from './card';
+import { GameState, PlayerState } from './game';
+import { getMonsterAtt, getMonsterHealth } from './state';
+import { Location } from './target';
 import { deepCardComp } from './utils';
+import { Ctx } from 'boardgame.io';
 
 interface FieldProps {
+  G: GameState;
+  ctx: Ctx;
   state: PlayerState;
   location: Location;
   stage: string;
@@ -33,6 +37,16 @@ const inactiveStyle: React.CSSProperties = {
 };
 
 export class ITCGField extends React.Component<FieldProps> {
+  updateMonsterState(card: NonCharacter): NonCharacter | Monster {
+    if (!isMonster(card)) return card;
+
+    return {
+      ...card,
+      attack: getMonsterAtt(this.props.G, this.props.ctx, card),
+      health: getMonsterHealth(this.props.G, this.props.ctx, card),
+    };
+  }
+
   render() {
     const field = this.props.state.field.map((card) => {
       const styles: Styles[] = [];
@@ -58,7 +72,7 @@ export class ITCGField extends React.Component<FieldProps> {
           skill0={skill}
           move={move}
           location={this.props.location}
-          card={card}
+          card={this.updateMonsterState(card)}
           key={card.key}
         />
       );

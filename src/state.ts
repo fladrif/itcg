@@ -2,7 +2,7 @@ import { Ctx, PlayerID } from 'boardgame.io';
 
 import { Action } from './actions';
 import { Monster, Character, NonCharacter } from './card';
-import { FuncContext } from './game';
+import { FuncContext, GameState } from './game';
 import { checkDeadMonstersOnField } from './hook';
 import { Keyword } from './keywords';
 import { meetsTarget, ActionTargets } from './target';
@@ -37,11 +37,9 @@ export interface GlobalState {
   targetOpponent?: boolean; // TODO: refactor out. Utilize location
 }
 
-export function getMonsterAtt(fnCtx: FuncContext, card: Monster) {
-  const { G, ctx } = fnCtx;
-
+export function getMonsterAtt(G: GameState, ctx: Ctx, card: Monster) {
   const modifiers = getRelevantState(ctx, G.state, card).filter((state) =>
-    meetsTarget(fnCtx, state.targets, card)
+    meetsTarget(G, ctx, state.targets, card)
   );
 
   const attMod = modifiers.reduce(
@@ -52,11 +50,9 @@ export function getMonsterAtt(fnCtx: FuncContext, card: Monster) {
   return attMod + card.attack;
 }
 
-export function getMonsterHealth(fnCtx: FuncContext, card: Monster) {
-  const { G, ctx } = fnCtx;
-
+export function getMonsterHealth(G: GameState, ctx: Ctx, card: Monster) {
   const modifiers = getRelevantState(ctx, G.state, card).filter((state) =>
-    meetsTarget(fnCtx, state.targets, card)
+    meetsTarget(G, ctx, state.targets, card)
   );
   const healthMod = modifiers.reduce(
     (acc, mod) =>
@@ -66,11 +62,9 @@ export function getMonsterHealth(fnCtx: FuncContext, card: Monster) {
   return healthMod + card.health;
 }
 
-export function getMonsterKeywords(fnCtx: FuncContext, card: Monster): Keyword[] {
-  const { G, ctx } = fnCtx;
-
+export function getMonsterKeywords(G: GameState, ctx: Ctx, card: Monster): Keyword[] {
   const modifiers = getRelevantState(ctx, G.state, card).filter((state) =>
-    meetsTarget(fnCtx, state.targets, card)
+    meetsTarget(G, ctx, state.targets, card)
   );
 
   const extraKeywords = modifiers.reduce<Keyword[]>(

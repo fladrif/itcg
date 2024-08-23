@@ -27,8 +27,8 @@ interface DialogProp {
 const baseStyle: React.CSSProperties = {
   display: 'flex',
   flexDirection: 'column',
-  width: '50vw',
-  height: '33vh',
+  width: '70vw',
+  height: '60vh',
   borderRadius: '1em',
   border: 'dashed',
   textAlign: 'center',
@@ -105,6 +105,9 @@ export class ITCGDialog extends React.Component<DialogProp> {
       if (card.selected) {
         styles.push('selectedBorderTop');
         skill.push('selectedBorderBot');
+      } else {
+        styles.push('expandStyle');
+        skill.push('expandStyle');
       }
 
       if (card.name !== BLANK_CARDNAME) {
@@ -119,7 +122,7 @@ export class ITCGDialog extends React.Component<DialogProp> {
           />
         );
       } else {
-        return <ITCGCardback key={card.key} />;
+        return <ITCGCardback key={card.key} styles={['expandStyle']} />;
       }
     });
 

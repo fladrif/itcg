@@ -10,8 +10,8 @@ const baseStyle: React.CSSProperties = {
   gridTemplateRows: '5% 15% 60% 15% 5%',
   gridTemplateAreas:
     "'. . . . .' '. . . . .' '. . mesg . .' '. . . button .' '. . . . .'",
-  width: '50vw',
-  height: '33vh',
+  width: '70vw',
+  height: '60vh',
   lineHeight: '33vh',
   borderRadius: '4em',
   textAlign: 'center',

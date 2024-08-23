@@ -39,7 +39,7 @@ export function checkDeadMonstersOnField(fnCtx: FuncContext) {
       .filter((card) => {
         return (
           isMonster(card) &&
-          (card as Monster).damageTaken >= getMonsterHealth(fnCtx, card as Monster)
+          (card as Monster).damageTaken >= getMonsterHealth(G, ctx, card as Monster)
         );
       })
       .map((card) => {
@@ -67,7 +67,7 @@ function resetAttacks(fnCtx: FuncContext) {
     .map((card) => {
       const mon = card as Monster;
 
-      const keywords = getMonsterKeywords(fnCtx, mon);
+      const keywords = getMonsterKeywords(G, ctx, mon);
 
       if (!keywords) {
         mon.attacks = 1;

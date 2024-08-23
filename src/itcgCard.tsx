@@ -35,25 +35,37 @@ const baseStyle: React.CSSProperties = {
   position: 'relative',
 };
 
-const damageStyle: React.CSSProperties = {
+const markStyle: React.CSSProperties = {
+  borderRadius: '0.53em',
   color: 'white',
-  backgroundColor: 'red',
   position: 'absolute',
-  padding: '0.5em',
-  top: '70%',
-  left: '50%',
+  padding: '0.2em',
+  top: '80%',
+  fontSize: '1vw',
+};
+
+const damageStyle: React.CSSProperties = {
+  ...markStyle,
+  right: '5%',
+  backgroundColor: 'red',
+};
+
+const attackStyle: React.CSSProperties = {
+  ...markStyle,
+  left: '5%',
+  backgroundColor: 'blue',
 };
 
 const activatedBorderTop: React.CSSProperties = {
-  borderTop: 'solid yellow',
-  borderLeft: 'solid yellow',
-  borderRight: 'solid yellow',
+  borderTop: 'solid gold',
+  borderLeft: 'solid gold',
+  borderRight: 'solid gold',
 };
 
 const activatedBorderBot: React.CSSProperties = {
-  borderLeft: 'solid yellow',
-  borderRight: 'solid yellow',
-  borderBottom: 'solid yellow',
+  borderLeft: 'solid gold',
+  borderRight: 'solid gold',
+  borderBottom: 'solid gold',
 };
 
 const selectedBorderTop: React.CSSProperties = {
@@ -228,9 +240,20 @@ export class ITCGCard extends React.Component<CardProp, CardState> {
   }
 
   getCard(style: React.CSSProperties) {
-    const damageMarked =
-      isMonster(this.props.card) && this.props.card.damageTaken > 0 ? (
-        <div style={damageStyle}>{this.props.card.damageTaken}</div>
+    const damageMarker =
+      isMonster(this.props.card) &&
+      (this.props.location === Location.Field ||
+        this.props.location === Location.OppField) ? (
+        <div style={damageStyle}>
+          {this.props.card.health - this.props.card.damageTaken}
+        </div>
+      ) : undefined;
+
+    const attMarker =
+      isMonster(this.props.card) &&
+      (this.props.location === Location.Field ||
+        this.props.location === Location.OppField) ? (
+        <div style={attackStyle}>{this.props.card.attack}</div>
       ) : undefined;
 
     return (
@@ -257,7 +280,8 @@ export class ITCGCard extends React.Component<CardProp, CardState> {
           onMouseEnter={() => this.expandCard()}
           onMouseLeave={() => this.unexpandCard()}
         />
-        {damageMarked}
+        {attMarker}
+        {damageMarker}
       </div>
     );
   }

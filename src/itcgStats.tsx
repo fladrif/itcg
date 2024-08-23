@@ -57,6 +57,7 @@ const classStyle: React.CSSProperties = {
 
 const classNumStyle: React.CSSProperties = {
   display: 'flex',
+  fontSize: '0.8vw',
 };
 
 const classNameStyle: React.CSSProperties = {

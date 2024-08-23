@@ -46,8 +46,8 @@ const highlightAction: React.CSSProperties = {
 const dialogStyle: React.CSSProperties = {
   zIndex: 4,
   position: 'absolute',
-  top: '33%',
-  left: '25%',
+  top: '20%',
+  left: '15%',
 };
 
 const turnAlertStyle: React.CSSProperties = {
@@ -333,6 +333,8 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
             }
           >
             <ITCGField
+              G={this.props.G}
+              ctx={this.props.ctx}
               state={opponentState}
               location={Location.OppField}
               stage={opponentStage}
@@ -341,6 +343,8 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
               source={stack?.activeDecisions[0].opts?.source}
             />
             <ITCGField
+              G={this.props.G}
+              ctx={this.props.ctx}
               state={playerState}
               location={Location.Field}
               select={this.props.moves.selectTarget}
