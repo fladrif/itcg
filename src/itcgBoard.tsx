@@ -1,5 +1,4 @@
 import React from 'react';
-import { renderToStaticMarkup } from 'react-dom/server';
 import { BoardProps } from 'boardgame.io/react';
 import { Tooltip } from 'react-tooltip';
 
@@ -284,11 +283,7 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
             tooltipOpts={this.state.tooltipOpts}
           />
         </div>
-        <div
-          data-tooltip-id="expanded-card"
-          data-tooltip-html={renderToStaticMarkup(<div>hi</div>)}
-          style={oppDiscardStyle}
-        >
+        <div style={oppDiscardStyle}>
           <ITCGDeck
             playerState={opponentState}
             currentPlayer={this.props.ctx.currentPlayer === this.props.playerID}
