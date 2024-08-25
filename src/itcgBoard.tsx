@@ -1,4 +1,5 @@
 import React from 'react';
+import { renderToStaticMarkup } from 'react-dom/server';
 import { BoardProps } from 'boardgame.io/react';
 import { Tooltip } from 'react-tooltip';
 
@@ -86,6 +87,7 @@ const handStyle: React.CSSProperties = {
   gridArea: 'hand',
   padding: '1%',
   alignItems: 'flex-end',
+  overflow: 'auto',
 };
 
 const fieldStyle: React.CSSProperties = {
@@ -97,6 +99,7 @@ const innerFieldStyle: React.CSSProperties = {
   display: 'flex',
   flex: '1',
   flexDirection: 'column',
+  overflow: 'auto',
 };
 
 const interactiveStyle: React.CSSProperties = {
@@ -220,6 +223,7 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
     const audio = <ITCGAudio soundOpts={this.state.soundOpts} />;
     const tooltips = (
       <>
+        <Tooltip id="expanded-card" style={tooltipStyle} />
         <Tooltip
           id="level-tooltip"
           style={tooltipStyle}
@@ -280,7 +284,11 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
             tooltipOpts={this.state.tooltipOpts}
           />
         </div>
-        <div style={oppDiscardStyle}>
+        <div
+          data-tooltip-id="expanded-card"
+          data-tooltip-html={renderToStaticMarkup(<div>hi</div>)}
+          style={oppDiscardStyle}
+        >
           <ITCGDeck
             playerState={opponentState}
             currentPlayer={this.props.ctx.currentPlayer === this.props.playerID}

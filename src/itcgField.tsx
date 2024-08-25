@@ -1,4 +1,5 @@
 import React from 'react';
+import { renderToStaticMarkup } from 'react-dom/server';
 
 import { Styles, ITCGCard } from './itcgCard';
 import { isMonster, Monster, Character, NonCharacter } from './card';
@@ -24,6 +25,7 @@ const fieldStyle: React.CSSProperties = {
   flex: '1',
   alignItems: 'center',
   maxHeight: '50%',
+  overflow: 'auto',
 };
 
 const activeStyle: React.CSSProperties = {
@@ -67,14 +69,28 @@ export class ITCGField extends React.Component<FieldProps> {
       }
 
       return (
-        <ITCGCard
-          styles={styles}
-          skill0={skill}
-          move={move}
-          location={this.props.location}
-          card={this.updateMonsterState(card)}
-          key={card.key}
-        />
+        <div
+          data-tooltip-id="expanded-card"
+          data-tooltip-html={renderToStaticMarkup(
+            <ITCGCard
+              move={() => {}}
+              location={this.props.location}
+              styles={['expandStyle']}
+              skill0={['expandStyle']}
+              card={card}
+              key={card.key}
+            />
+          )}
+        >
+          <ITCGCard
+            styles={styles}
+            skill0={skill}
+            move={move}
+            location={this.props.location}
+            card={this.updateMonsterState(card)}
+            key={card.key}
+          />
+        </div>
       );
     });
     const stage = this.props.stage;

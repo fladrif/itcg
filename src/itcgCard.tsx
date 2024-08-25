@@ -144,35 +144,6 @@ export class ITCGCard extends React.Component<CardProp, CardState> {
     return this.props.expandable === undefined || this.props.expandable === true;
   }
 
-  expandCard() {
-    if (!this.expandable()) return;
-
-    this.setState((state) => {
-      const newState = state;
-
-      if (!newState.styles.includes('expandStyle')) newState.styles.push('expandStyle');
-      if (!newState.skill0.includes('expandStyle')) newState.skill0.push('expandStyle');
-
-      return newState;
-    });
-  }
-
-  unexpandCard() {
-    if (!this.expandable()) return;
-
-    this.setState((state) => {
-      const newState = state;
-
-      const styleInd = newState.styles.findIndex((style) => style === 'expandStyle');
-      if (styleInd !== -1) newState.styles.splice(styleInd, 1);
-
-      const skillInd = newState.skill0.findIndex((style) => style === 'expandStyle');
-      if (skillInd !== -1) newState.skill0.splice(skillInd, 1);
-
-      return newState;
-    });
-  }
-
   getCharacter(style: React.CSSProperties) {
     const skill0Style = getStyles([...this.props.skill0, ...this.state.skill0]);
     const skill1Style = getStyles([...this.props.skill1, ...this.state.skill1]);
@@ -266,8 +237,6 @@ export class ITCGCard extends React.Component<CardProp, CardState> {
           }
           src={cardImages[this.props.card.image].top}
           alt={this.props.card.name}
-          onMouseEnter={() => this.expandCard()}
-          onMouseLeave={() => this.unexpandCard()}
         />
         <img
           className="no-border no-responsive"
@@ -277,8 +246,6 @@ export class ITCGCard extends React.Component<CardProp, CardState> {
           }
           src={cardImages[this.props.card.image].skill}
           alt={this.props.card.name}
-          onMouseEnter={() => this.expandCard()}
-          onMouseLeave={() => this.unexpandCard()}
         />
         {attMarker}
         {damageMarker}

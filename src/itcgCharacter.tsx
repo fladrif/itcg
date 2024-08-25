@@ -1,4 +1,5 @@
 import React from 'react';
+import { renderToStaticMarkup } from 'react-dom/server';
 
 import { PlayerState } from './game';
 import { Location } from './target';
@@ -47,16 +48,32 @@ export class ITCGCharacter extends React.Component<CharacterProp> {
       }
 
       return (
-        <ITCGCard
-          styles={levelStyles}
-          location={
-            this.props.currentPlayer ? Location.CharAction : Location.OppCharAction
-          }
-          card={card}
-          move={move}
-          skillPos={index + 3}
-          key={card.key}
-        />
+        <div
+          data-tooltip-id="expanded-card"
+          data-tooltip-html={renderToStaticMarkup(
+            <ITCGCard
+              move={() => {}}
+              location={
+                this.props.currentPlayer ? Location.CharAction : Location.OppCharAction
+              }
+              styles={['expandStyle']}
+              skill0={['expandStyle']}
+              card={card}
+              key={card.key}
+            />
+          )}
+        >
+          <ITCGCard
+            styles={levelStyles}
+            location={
+              this.props.currentPlayer ? Location.CharAction : Location.OppCharAction
+            }
+            card={card}
+            move={move}
+            skillPos={index + 3}
+            key={card.key}
+          />
+        </div>
       );
     });
   }

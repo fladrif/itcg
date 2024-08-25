@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { ReactElement } from 'react';
+import { renderToStaticMarkup } from 'react-dom/server';
 import * as lodash from 'lodash';
 
 import { Styles, ITCGCard, ITCGCardback } from './itcgCard';
@@ -18,7 +19,7 @@ interface HandProp {
 export class ITCGHand extends React.Component<HandProp> {
   render() {
     if (!this.props.select || !this.props.level) {
-      const opponentLine = [];
+      const opponentLine: ReactElement[] = [];
       const playerHand = lodash.sortBy(
         this.props.playerState.hand,
         (card) => card.name !== BLANK_CARDNAME
@@ -29,12 +30,26 @@ export class ITCGHand extends React.Component<HandProp> {
 
         if (card.name !== BLANK_CARDNAME) {
           opponentLine.push(
-            <ITCGCard
-              move={nullMove}
-              location={Location.OppHand}
-              card={card}
-              key={card.key}
-            />
+            <div
+              data-tooltip-id="expanded-card"
+              data-tooltip-html={renderToStaticMarkup(
+                <ITCGCard
+                  move={nullMove}
+                  location={Location.OppHand}
+                  styles={['expandStyle']}
+                  skill0={['expandStyle']}
+                  card={card}
+                  key={card.key}
+                />
+              )}
+            >
+              <ITCGCard
+                move={nullMove}
+                location={Location.OppHand}
+                card={card}
+                key={card.key}
+              />
+            </div>
           );
         } else {
           opponentLine.push(<ITCGCardback key={card.key} />);
@@ -43,7 +58,7 @@ export class ITCGHand extends React.Component<HandProp> {
       return opponentLine;
     }
 
-    const playerLine = [];
+    const playerLine: ReactElement[] = [];
 
     for (const card of this.props.playerState.hand) {
       const styles: Styles[] = [];
@@ -55,14 +70,28 @@ export class ITCGHand extends React.Component<HandProp> {
       }
 
       playerLine.push(
-        <ITCGCard
-          move={this.props.stage === 'select' ? this.props.select! : this.props.level!}
-          styles={styles}
-          skill0={skill}
-          location={this.props.currentPlayer ? Location.Hand : Location.OppHand}
-          card={card}
-          key={card.key}
-        />
+        <div
+          data-tooltip-id="expanded-card"
+          data-tooltip-html={renderToStaticMarkup(
+            <ITCGCard
+              move={() => {}}
+              location={this.props.currentPlayer ? Location.Hand : Location.OppHand}
+              styles={['expandStyle']}
+              skill0={['expandStyle']}
+              card={card}
+              key={card.key}
+            />
+          )}
+        >
+          <ITCGCard
+            move={this.props.stage === 'select' ? this.props.select! : this.props.level!}
+            styles={styles}
+            skill0={skill}
+            location={this.props.currentPlayer ? Location.Hand : Location.OppHand}
+            card={card}
+            key={card.key}
+          />
+        </div>
       );
     }
 

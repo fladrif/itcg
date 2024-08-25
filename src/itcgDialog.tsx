@@ -99,15 +99,12 @@ export class ITCGDialog extends React.Component<DialogProp> {
     const pile = this.getDisplayPile();
 
     const deck = pile.map((card) => {
-      const styles: Styles[] = [];
-      const skill: Styles[] = [];
+      const styles: Styles[] = ['expandStyle'];
+      const skill: Styles[] = ['expandStyle'];
 
       if (card.selected) {
         styles.push('selectedBorderTop');
         skill.push('selectedBorderBot');
-      } else {
-        styles.push('expandStyle');
-        skill.push('expandStyle');
       }
 
       if (card.name !== BLANK_CARDNAME) {
