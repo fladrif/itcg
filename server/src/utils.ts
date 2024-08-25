@@ -80,14 +80,14 @@ export function verifyJWT(token: string): string {
 export function setCookies(ctx: RouterContext, username: string, id: string) {
   ctx.cookies.set(AUTH_COOKIE_NAME, signJWT(id), {
     sameSite: 'lax',
-    maxAge: 31536000,
+    maxAge: 31536000000,
   });
   ctx.cookies.set(USER_COOKIE_NAME, username, {
     sameSite: 'lax',
     domain: CLIENT,
     secure: false,
     httpOnly: false,
-    maxAge: 31536000,
+    maxAge: 31536000000,
   });
   ctx.body = 200;
 }

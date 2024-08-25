@@ -9,7 +9,7 @@ import shoresideVillage from './music/curious_shoreside_village.mp3';
 import { SoundOpts } from './game';
 
 interface AudioProp {
-  soundOpts: SoundOpts;
+  soundOpts?: SoundOpts;
 }
 
 export class ITCGAudio extends React.Component<AudioProp> {
