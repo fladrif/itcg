@@ -25,6 +25,12 @@ export interface VerificationPayload {
   passhash: string;
 }
 
+export interface BodyPayload extends VerificationPayload {
+  cnonce: string;
+  username: string;
+  password: string;
+}
+
 export async function verify(
   ctx: RouterContext,
   userNonces: UserNonce[]
@@ -32,27 +38,26 @@ export async function verify(
   const token = ctx.cookies.get(AUTH_COOKIE_NAME);
   if (token) ctx.throw(400, 'You are already signed in');
 
-  const cnonce = ctx.request.body['cnonce'];
-  if (!cnonce) ctx.throw(400, '13: Please retry submission');
+  const body = ctx.request.body;
+  const validBody = validateBody(body);
 
-  const username = ctx.request.body['username'];
-  if (!username) ctx.throw(400, 'No username provided');
+  if (!validBody) ctx.throw(400, '12: Please retry submission');
+  if (!body.cnonce) ctx.throw(400, '13: Please retry submission');
+  if (!body.username) ctx.throw(400, 'No username provided');
+  if (!body.password) ctx.throw(400, 'No password provided');
 
-  const password = ctx.request.body['password'];
-  if (!password) ctx.throw(400, 'No password provided');
-
-  const unIndex = userNonces.findIndex((un) => un.username === username);
+  const unIndex = userNonces.findIndex((un) => un.username === body.username);
   if (unIndex < 0) ctx.throw(400, '14: Please retry submission');
 
   const nonce = userNonces[unIndex].nonce;
   userNonces.splice(unIndex, 1);
 
-  const passhash = CryptoJS.AES.decrypt(password, `${nonce}${cnonce}`).toString(
+  const passhash = CryptoJS.AES.decrypt(body.password, `${nonce}${body.cnonce}`).toString(
     CryptoJS.enc.Utf8
   );
 
   return {
-    username,
+    username: body.username,
     passhash,
   };
 }
@@ -90,4 +95,12 @@ export function setCookies(ctx: RouterContext, username: string, id: string) {
     maxAge: 31536000000,
   });
   ctx.body = 200;
+}
+
+function validateBody(body: unknown): body is BodyPayload {
+  return (
+    !!(body as BodyPayload).cnonce &&
+    !!(body as BodyPayload).username &&
+    !!(body as BodyPayload).password
+  );
 }
