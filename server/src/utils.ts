@@ -4,6 +4,8 @@ import CryptoJS from 'crypto-js';
 import { v4 as uuidv4 } from 'uuid';
 
 import { UserNonce } from './types';
+import { JWT_SECRET } from './config';
+
 import { CLIENT } from '../../src/config';
 
 export const AUTH_HEADER = 'UserAuth';
@@ -13,8 +15,6 @@ export const AUTH_COOKIE_NAME = 'token';
 export const USER_COOKIE_NAME = 'user';
 
 export const SERVER_ID = uuidv4();
-
-const JWT_SECRET = 'somethingtobechanged';
 
 interface JWTPayload {
   id: string;

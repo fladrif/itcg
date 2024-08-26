@@ -15,7 +15,6 @@
     "noImplicitAny": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noStrictGenericChecks": true,
     "downlevelIteration": true,
     "noEmitOnError": true,
     "strict": true,

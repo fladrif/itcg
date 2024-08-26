@@ -551,7 +551,10 @@ export class EarthquakeTrigger extends ActionTrigger {
     const dmgSource = decision.opts?.source;
     const sourceIsMonster = dmgSource ? dmgSource.type === CardTypes.Monster : false;
 
-    const damageExists = decision.opts?.damage && decision.opts.damage > 0;
+    const damageExists =
+      decision.opts?.damage && typeof decision.opts.damage === 'number'
+        ? decision.opts.damage > 0
+        : true;
 
     return cardIsDamaged && sourceIsMonster && !!damageExists;
   }
@@ -563,7 +566,11 @@ export class EarthquakeTrigger extends ActionTrigger {
     const cardLoc = getCardLocation(G, ctx, source.key);
     const card = getCardAtLocation(G, ctx, cardLoc, source.key);
 
-    const isDamaged = decision.opts?.damage ? decision.opts.damage > 0 : false;
+    const isDamaged = decision.opts?.damage
+      ? typeof decision.opts.damage === 'number'
+        ? decision.opts.damage > 0
+        : true
+      : false;
     if (!isDamaged) return [];
 
     const dec: Decision = {
@@ -974,7 +981,10 @@ export class KumbiTrigger extends ActionTrigger {
       );
     });
 
-    const damageExists = decision.opts?.damage && decision.opts.damage > 0;
+    const damageExists =
+      decision.opts?.damage && typeof decision.opts.damage === 'number'
+        ? decision.opts.damage > 0
+        : true;
 
     return (
       !this.sourceIsOwner(decision) && sourceIsChar && !!damageExists && charIsTarget
@@ -986,7 +996,11 @@ export class KumbiTrigger extends ActionTrigger {
     const charTarget = G.player[decision.opts!.source!.owner].character;
     const cardLoc = getCardLocation(G, ctx, charTarget.key);
 
-    const isDamaged = decision.opts?.damage ? decision.opts.damage > 0 : false;
+    const isDamaged = decision.opts?.damage
+      ? typeof decision.opts.damage === 'number'
+        ? decision.opts.damage > 0
+        : true
+      : false;
     if (!isDamaged) return [];
 
     const dec: Decision = {

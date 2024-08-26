@@ -13,6 +13,7 @@
 /**/lib
 /src/images/*.jpg
 /src/images/*.png
+config.json
 
 # misc
 .DS_Store

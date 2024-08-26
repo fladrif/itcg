@@ -9,8 +9,9 @@ import { getRandomKey } from '../../src/utils';
 import { ITCG } from '../../src/game';
 import { CLIENT, SERVER } from '../../src/config';
 
+import { DBConfig, DiscordConfig } from './config';
 import * as db from './db';
-import { DBConfig } from './config';
+import { getDiscordBot } from './discord';
 import {
   AUTH_COOKIE_NAME,
   USER_COOKIE_NAME,
@@ -138,4 +139,7 @@ server.router.use('/rooms', RoomRouter.routes());
 server.router.use('/settings', SettingsRouter.routes());
 server.router.use('/stats', StatsRouter.routes());
 
-server.run(18000);
+Promise.all([
+  server.run(18000),
+  DiscordConfig.enabled ? getDiscordBot().init() : undefined,
+]);

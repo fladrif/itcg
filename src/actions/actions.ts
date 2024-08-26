@@ -72,7 +72,7 @@ function attack(fnCtx: FuncContext, opts: ActionOpts): any {
         getMonsterAtt(G, ctx, opts.source) +
         resolveDamage(G.player[opts.source.owner], opts.damage),
     },
-    selection: { ...opts.selection } || {},
+    selection: { ...opts.selection },
     finished: false,
     key: getRandomKey(),
   };
@@ -383,7 +383,7 @@ function nomercy(fnCtx: FuncContext, opts: ActionOpts): any {
   const decision: Decision = {
     action: 'damage',
     opts,
-    selection: { ...opts.selection } || {},
+    selection: { ...opts.selection },
     finished: false,
     key: getRandomKey(),
   };

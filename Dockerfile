@@ -1,4 +1,4 @@
-FROM node:16
+FROM node:22
 WORKDIR /opt/app
 
 COPY package.json package.json
@@ -18,6 +18,7 @@ COPY src src
 COPY public public
 COPY tsconfig.json tsconfig.json
 COPY database.json database.json
+COPY config.json config.json
 
 RUN npm run build
 RUN cd server && npm run build-server

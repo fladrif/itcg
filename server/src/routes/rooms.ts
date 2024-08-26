@@ -63,7 +63,7 @@ router.post('/update', bodyParser(), async (ctx: any) => {
 
   if (await shouldStartGame(room)) {
     await startGame(room);
-    gameRooms.delete(roomID);
+    gameRooms.delete(roomID, true);
   }
 
   ctx.body = 200;
@@ -85,11 +85,9 @@ router.post('/join', bodyParser(), async (ctx: any) => {
 
   if (room.users.length >= 2) ctx.throw(400, 'Room Occupied');
 
-  room.users.push({
+  gameRooms.joinRoom(roomID, {
     name: owner.username,
     id: owner.id,
-    owner: false,
-    ready: false,
     onlineTS: Date.now(),
   });
 
@@ -105,12 +103,7 @@ router.post('/leave', bodyParser(), async (ctx: any) => {
   const room = gameRooms.getRoom(roomID);
   if (!room) return ctx.throw(400, 'Room dne');
 
-  if (room.users.some((user) => user.id === id && user.owner === true)) {
-    gameRooms.delete(roomID);
-  } else if (room.users.some((user) => user.id === id)) {
-    const userIdx = room.users.findIndex((user) => user.owner === false);
-    room.users.splice(userIdx, 1);
-  }
+  gameRooms.leaveRoom(roomID, id);
 
   ctx.body = 200;
 });

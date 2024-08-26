@@ -13,11 +13,12 @@
     "bgio-postgres": "^1.0.13",
     "bluebird": "^3.7.2",
     "crypto-js": "^4.1.1",
+    "discord.js": "^14.16.2",
     "koa-bodyparser": "^4.3.0",
     "lodash": "^4.17.21",
     "node-persist": "^3.1.0",
     "typeorm": "^0.2.36",
-    "typescript": "^4.2.4",
+    "typescript": "^5.6.2",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
