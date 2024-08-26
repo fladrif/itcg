@@ -1,3 +1,4 @@
+import { Ctx } from 'boardgame.io';
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 
@@ -7,11 +8,12 @@ import { GameState, PlayerState } from './game';
 import { getMonsterAtt, getMonsterHealth } from './state';
 import { Location } from './target';
 import { deepCardComp } from './utils';
-import { Ctx } from 'boardgame.io';
+import { Decision, isSelectable } from './stack';
 
 interface FieldProps {
   G: GameState;
   ctx: Ctx;
+  curDecision?: Decision;
   state: PlayerState;
   location: Location;
   stage: string;
@@ -66,6 +68,18 @@ export class ITCGField extends React.Component<FieldProps> {
       } else if (this.props.source && deepCardComp(card, this.props.source)) {
         styles.push('activatedBorderTop');
         skill.push('activatedBorderBot');
+      } else if (
+        this.props.curDecision &&
+        isSelectable(
+          this.props.G,
+          this.props.ctx,
+          this.props.state,
+          this.props.curDecision,
+          card
+        )
+      ) {
+        styles.push('selectableBorderTop');
+        skill.push('selectableBorderBot');
       }
 
       return (

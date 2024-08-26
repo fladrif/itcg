@@ -1,4 +1,6 @@
-import { FuncContext, PlayerState } from './game';
+import { Ctx } from 'boardgame.io';
+
+import { FuncContext, GameState, PlayerState } from './game';
 import { actions, isOpponentAction, Action, ActionOpts } from './actions';
 import { ActionTargets, Location } from './target';
 import { endLevelStage, endActivateStage, endAttackStage } from './hook';
@@ -15,7 +17,7 @@ import {
   mergeSelections,
   getOpponentState,
 } from './utils';
-import { getRelevantState, GlobalState } from './state';
+import { getRelevantState } from './state';
 
 export type Selection = Partial<Record<Location, (Character | NonCharacter)[]>>;
 
@@ -319,7 +321,7 @@ export function selectCard(
 
   if (!curDecision.selection[cardLoc]) curDecision.selection[cardLoc] = [];
 
-  if (!isSelectable(fnCtx, G.state, playerState, curDecision, selCard)) return;
+  if (!isSelectable(G, ctx, playerState, curDecision, selCard)) return;
 
   if (!selCard.selected) {
     curDecision.selection[cardLoc]!.push(selCard);
@@ -341,30 +343,28 @@ export function selectCard(
   pruneSelection(fnCtx, curDecision.selection, selection);
 }
 
-function isSelectable(
-  fnCtx: FuncContext,
-  globalState: GlobalState[],
+export function isSelectable(
+  G: GameState,
+  ctx: Ctx,
   playerState: PlayerState,
   decision: Decision,
   card: Character | NonCharacter
 ): boolean {
-  const { G, ctx } = fnCtx;
-  if (!meetsTarget(G, ctx, ensureFilter(decision.target!, playerState), card))
+  if (!decision.target) return false;
+  if (!meetsTarget(G, ctx, ensureFilter(decision.target, playerState), card))
     return false;
-  if (!validationGate(fnCtx, globalState, playerState, decision, card)) return false;
+  if (!validationGate(G, ctx, playerState, decision, card)) return false;
 
   return true;
 }
 
 function validationGate(
-  fnCtx: FuncContext,
-  globalState: GlobalState[],
+  G: GameState,
+  ctx: Ctx,
   playerState: PlayerState,
   decision: Decision,
   card: Character | NonCharacter
 ): boolean {
-  const { G, ctx } = fnCtx;
-
   // Cannot attack monsters with stealthy
   if (decision.action === 'attack' && isMonster(card)) {
     if (card.ability.keywords && card.ability.keywords.includes('stealthy')) return false;
@@ -381,7 +381,7 @@ function validationGate(
   // Cannot use action against targets belonging to player
   // Seems a bit too specific, should be refactored in the future probably
   // TODO: currently doesn't account for location, needs to for fully functioning filter
-  const stateTarget = getRelevantState(ctx, globalState, card).filter(
+  const stateTarget = getRelevantState(ctx, G.state, card).filter(
     (state) => !!state.modifier.target && state.modifier.target.action === decision.action
   );
 

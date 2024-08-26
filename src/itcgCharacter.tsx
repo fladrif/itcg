@@ -1,13 +1,17 @@
+import { Ctx } from 'boardgame.io';
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 
-import { PlayerState } from './game';
+import { GameState, PlayerState } from './game';
 import { Location } from './target';
 import { every, passSkillReqToActivate } from './utils';
-
 import { Styles, ITCGCard } from './itcgCard';
+import { Decision, isSelectable } from './stack';
 
 export interface CharacterProp {
+  G: GameState;
+  ctx: Ctx;
+  curDecision?: Decision;
   playerState: PlayerState;
   currentPlayer: boolean;
   stage: string;
@@ -34,6 +38,17 @@ export class ITCGCharacter extends React.Component<CharacterProp> {
         levelStyles.push('activatedBorderTop', 'activatedBorderBot');
       } else if (card.selected) {
         levelStyles.push('selectedBorderTop', 'selectedBorderBot');
+      } else if (
+        this.props.curDecision &&
+        isSelectable(
+          this.props.G,
+          this.props.ctx,
+          this.props.playerState,
+          this.props.curDecision,
+          card
+        )
+      ) {
+        levelStyles.push('selectableBorderTop', 'selectableBorderBot');
       } else if (
         this.props.playerState &&
         this.props.stage === 'activate' &&
@@ -96,6 +111,20 @@ export class ITCGCharacter extends React.Component<CharacterProp> {
       skillStyle[0].push('selectedBorderMid');
       skillStyle[1].push('selectedBorderMid');
       skillStyle[2].push('selectedBorderBot');
+    } else if (
+      this.props.curDecision &&
+      isSelectable(
+        this.props.G,
+        this.props.ctx,
+        this.props.playerState,
+        this.props.curDecision,
+        character
+      )
+    ) {
+      topStyle.push('selectableBorderTop');
+      skillStyle[0].push('selectableBorderMid');
+      skillStyle[1].push('selectableBorderMid');
+      skillStyle[2].push('selectableBorderBot');
     }
 
     character.skills.map((skill, idx) => {

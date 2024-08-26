@@ -57,15 +57,32 @@ const attackStyle: React.CSSProperties = {
 };
 
 const activatedBorderTop: React.CSSProperties = {
-  borderTop: 'solid gold',
-  borderLeft: 'solid gold',
-  borderRight: 'solid gold',
+  borderTop: 'solid yellow',
+  borderLeft: 'solid yellow',
+  borderRight: 'solid yellow',
 };
 
 const activatedBorderBot: React.CSSProperties = {
-  borderLeft: 'solid gold',
-  borderRight: 'solid gold',
-  borderBottom: 'solid gold',
+  borderLeft: 'solid yellow',
+  borderRight: 'solid yellow',
+  borderBottom: 'solid yellow',
+};
+
+const selectableBorderTop: React.CSSProperties = {
+  borderTop: 'solid blue',
+  borderLeft: 'solid blue',
+  borderRight: 'solid blue',
+};
+
+const selectableBorderMid: React.CSSProperties = {
+  borderLeft: 'solid blue',
+  borderRight: 'solid blue',
+};
+
+const selectableBorderBot: React.CSSProperties = {
+  borderLeft: 'solid blue',
+  borderRight: 'solid blue',
+  borderBottom: 'solid blue',
 };
 
 const selectedBorderTop: React.CSSProperties = {
@@ -109,6 +126,9 @@ const expandStyle: React.CSSProperties = {
 };
 
 const styles = {
+  selectableBorderTop,
+  selectableBorderMid,
+  selectableBorderBot,
   selectedBorderTop,
   selectedBorderMid,
   selectedBorderBot,

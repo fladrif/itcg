@@ -1,15 +1,20 @@
+import { Ctx } from 'boardgame.io';
 import React, { ReactElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import * as lodash from 'lodash';
 
 import { Styles, ITCGCard, ITCGCardback } from './itcgCard';
-import { PlayerState } from './game';
+import { GameState, PlayerState } from './game';
 import { Location } from './target';
 import { nullMove } from './moves';
 import { BLANK_CARDNAME } from './card';
+import { Decision, isSelectable } from './stack';
 
 interface HandProp {
+  G: GameState;
+  ctx: Ctx;
   playerState: PlayerState;
+  curDecision?: Decision;
   currentPlayer?: boolean;
   stage?: string;
   select?: () => any;
@@ -67,6 +72,18 @@ export class ITCGHand extends React.Component<HandProp> {
       if (card.selected) {
         styles.push('selectedBorderTop');
         skill.push('selectedBorderBot');
+      } else if (
+        this.props.curDecision &&
+        isSelectable(
+          this.props.G,
+          this.props.ctx,
+          this.props.playerState,
+          this.props.curDecision,
+          card
+        )
+      ) {
+        styles.push('selectableBorderTop');
+        skill.push('selectableBorderBot');
       }
 
       playerLine.push(

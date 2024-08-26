@@ -185,19 +185,17 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
       ? this.props.ctx.activePlayers[opponentID]
       : '';
 
-    // TODO: should display opponent's prompt as well
-    const dialogPrompt = stack ? stack.activeDecisions[0].dialogPrompt : undefined;
+    const curDecision = stack?.activeDecisions[0];
 
-    const curDecisionFinished = stack ? stack.activeDecisions[0].finished : false;
+    // TODO: should display opponent's prompt as well
+    const dialogPrompt = curDecision ? curDecision.dialogPrompt : undefined;
+
+    const curDecisionFinished = curDecision ? curDecision.finished : false;
     const decMaybeFinished =
-      stack && stack.activeDecisions[0].target
-        ? mayFinished(stack.activeDecisions[0].target)
-        : false;
+      curDecision && curDecision.target ? mayFinished(curDecision.target) : false;
 
     const noResetDecision =
-      stack && stack.activeDecisions[0].noReset
-        ? stack.activeDecisions[0].noReset
-        : false;
+      curDecision && curDecision.noReset ? curDecision.noReset : false;
 
     const gameOver = this.props.ctx.gameover ? (
       <div style={dialogStyle}>
@@ -206,13 +204,11 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
     ) : null;
 
     const choices =
-      currentPlayerStage === 'choice' && stack
-        ? stack.activeDecisions[0].choice || []
-        : [];
+      currentPlayerStage === 'choice' && curDecision ? curDecision.choice || [] : [];
 
     const selectLocations =
-      currentPlayerStage === 'select' && stack
-        ? getTargetLocations(stack.activeDecisions[0].target)
+      currentPlayerStage === 'select' && curDecision
+        ? getTargetLocations(curDecision.target)
         : [];
 
     const tempInSelectLoc = selectLocations.some((loc) =>
@@ -300,13 +296,21 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
           />
         </div>
         <div style={oppHandStyle}>
-          <ITCGHand playerState={opponentState} />
+          <ITCGHand
+            G={this.props.G}
+            ctx={this.props.ctx}
+            curDecision={curDecision}
+            playerState={opponentState}
+          />
         </div>
         <div style={menuStyle}>
           <ITCGMenu updateBoard={(state) => this.setBoardState(state)} />
         </div>
         <div style={oppCharStyle}>
           <ITCGCharacter
+            G={this.props.G}
+            ctx={this.props.ctx}
+            curDecision={curDecision}
             playerState={opponentState}
             currentPlayer={false}
             stage={
@@ -338,6 +342,7 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
             <ITCGField
               G={this.props.G}
               ctx={this.props.ctx}
+              curDecision={curDecision}
               state={opponentState}
               location={Location.OppField}
               stage={opponentStage}
@@ -348,6 +353,7 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
             <ITCGField
               G={this.props.G}
               ctx={this.props.ctx}
+              curDecision={curDecision}
               state={playerState}
               location={Location.Field}
               select={this.props.moves.selectTarget}
@@ -381,6 +387,9 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
           }
         >
           <ITCGCharacter
+            G={this.props.G}
+            ctx={this.props.ctx}
+            curDecision={curDecision}
             playerState={playerState}
             currentPlayer={true}
             stage={currentPlayerStage}
@@ -398,7 +407,10 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
           }
         >
           <ITCGHand
+            G={this.props.G}
+            ctx={this.props.ctx}
             playerState={playerState}
+            curDecision={curDecision}
             currentPlayer={this.props.ctx.currentPlayer === this.props.playerID}
             stage={currentPlayerStage}
             select={this.props.moves.selectTarget}
