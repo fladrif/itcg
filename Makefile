@@ -13,9 +13,11 @@ deploy: build save
 
 stop-client:
 	docker stop itcg-client || true
+	sleep 1
 
 stop-server:
 	docker stop itcg-server || true
+	sleep 1
 
 network:
 	docker network create itcg-backend || true
@@ -36,8 +38,10 @@ load:
 	tar -cv itcg.tar -C ../itcgImage .
 	docker load -i itcg.tar
 
-start-client: load stop-client
+start-client: stop-client
 	docker run -d --rm --name itcg-client -p 13000:13000 itcg ./node_modules/.bin/serve -s build -l 13000
 
-start-server: load network stop-server run-migration
+start-server: network stop-server run-migration
 	docker run -d --rm --name itcg-server --network itcg-backend -p 18000:18000 itcg node server/lib/server/src/index.js
+
+load-start: load start-client start-server

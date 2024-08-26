@@ -25,6 +25,9 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+itcg.tar
+itcgImage
+
 !/src/images/front-sample.jpg
 !/src/images/itcgCBsk2.jpg
 !/src/images/itcgCBsk2-sm.jpg
