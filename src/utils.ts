@@ -162,7 +162,10 @@ export function mergeSelections(sel1: Selection, sel2: Selection): Selection {
 
 export function scrubPile(deck: NonCharacter[], curPlayer?: PlayerID): NonCharacter[] {
   const newDeck = deck.map((card) => {
-    if (card.reveal && curPlayer && (card.reveal as PlayerID[]).includes(curPlayer)) {
+    if (
+      card.reveal &&
+      ((curPlayer && card.reveal.includes(curPlayer)) || card.reveal?.length >= 2)
+    ) {
       return card;
     }
     return getBlankCard(card.owner, getRandomKey());

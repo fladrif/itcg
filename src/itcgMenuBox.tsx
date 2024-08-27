@@ -10,7 +10,7 @@ import { SERVER } from './config';
 interface MenuBoxProp {
   updateBoard: (state: BoardState) => any;
   concede: (opts: MoveOptions) => any;
-  playerID: PlayerID;
+  playerID?: PlayerID;
   tooltipOpts?: boolean;
   menuBox?: MenuBoxOpts;
   soundOpts?: SoundOpts;
@@ -62,6 +62,10 @@ const subSubMenuStyle: React.CSSProperties = {
 };
 
 export class ITCGMenuBox extends React.Component<MenuBoxProp> {
+  reload() {
+    window.location.reload();
+  }
+
   concede() {
     this.props.updateBoard({ menuBox: 'concede' });
   }
@@ -83,6 +87,9 @@ export class ITCGMenuBox extends React.Component<MenuBoxProp> {
     this.props.updateBoard({ menuBox: 'music' });
   }
 
+  // TODO add variable wait to prevent simultaneous requests
+  // Request can be async, update is decoupled from effect
+  // TODO should set latest state instead of args
   async updateSettings(soundOpts: SoundOpts, tooltipOpts: boolean) {
     await axios.post(
       '/settings/upsert',
@@ -107,14 +114,17 @@ export class ITCGMenuBox extends React.Component<MenuBoxProp> {
     };
     this.props.updateBoard({ soundOpts });
 
-    await this.updateSettings(soundOpts, this.props.tooltipOpts);
+    await this.updateSettings(soundOpts, !!this.props.tooltipOpts);
   }
 
   async toggleTooltips() {
     const tooltipOpts = !this.props.tooltipOpts;
     this.props.updateBoard({ tooltipOpts });
 
-    await this.updateSettings(this.props.soundOpts, tooltipOpts);
+    await this.updateSettings(
+      this.props.soundOpts || { volume: 50, mute: false },
+      tooltipOpts
+    );
   }
 
   async changeVolume(vol: number) {
@@ -122,7 +132,7 @@ export class ITCGMenuBox extends React.Component<MenuBoxProp> {
 
     this.props.updateBoard({ soundOpts });
 
-    await this.updateSettings(soundOpts, this.props.tooltipOpts);
+    await this.updateSettings(soundOpts, !!this.props.tooltipOpts);
   }
 
   mainMenu() {
@@ -157,9 +167,9 @@ export class ITCGMenuBox extends React.Component<MenuBoxProp> {
         <button
           className="btn-danger-outline"
           style={subMenuStyle}
-          onClick={() => this.concede()}
+          onClick={!this.props.playerID ? this.reload.bind(this) : () => this.concede()}
         >
-          Concede
+          {!this.props.playerID ? 'Leave' : 'Concede'}
         </button>
         <button
           className="btn-secondary-outline"

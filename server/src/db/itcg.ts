@@ -64,3 +64,17 @@ export async function deleteOngoingGame(id: string): Promise<void> {
 
   await gameRepo.delete({ id });
 }
+
+export async function getOngoingGames(): Promise<any[]> {
+  const connection = await getITCGConnection();
+
+  const gameRepo = connection.getRepository(Games);
+
+  const ongoingGames = await gameRepo.find({
+    select: ['id', 'updatedAt', 'players'],
+    order: { updatedAt: 'DESC' },
+    where: { gameover: IsNull() },
+  });
+
+  return ongoingGames;
+}

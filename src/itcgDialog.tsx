@@ -18,7 +18,6 @@ interface DialogProp {
   playerState: PlayerState;
   opponentState: PlayerState;
   currentPlayer: boolean;
-  stage: string;
   select: () => any;
   updateBoard: (state: BoardState) => any;
   dialogBox?: DialogBoxOpts;

@@ -10,7 +10,6 @@ import { nullMove } from './moves';
 interface DeckProp {
   playerState: PlayerState;
   currentPlayer: boolean;
-  select: () => any;
   updateBoard: (state: BoardState) => any;
   mainPlayer: boolean;
 }

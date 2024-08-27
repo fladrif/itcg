@@ -2,7 +2,7 @@ import React from 'react';
 import { FormControl } from 'react-bootstrap';
 import axios from 'axios';
 
-import { CardStyle, ParagraphStyle } from './overall.css';
+import { CardStyle, ParagraphStyle, SecCardStyle, TriCardStyle } from './overall.css';
 import { DeckMetaData, parseDeckList } from './deck';
 
 import { AppState } from '../App';
@@ -26,8 +26,15 @@ interface Room {
   users: RoomUser[];
 }
 
+interface Game {
+  title: string;
+  id: string;
+  updated_at: string;
+}
+
 interface State {
   rooms: Room[];
+  ongoingGames: Game[];
   decks: DeckMetaData[];
   activeRoom?: Room;
 }
@@ -44,17 +51,22 @@ export class ITCGRoom extends React.Component<RoomProp, State> {
 
   constructor(prop: RoomProp) {
     super(prop);
-    this.state = { rooms: [], decks: [] };
+    this.state = { rooms: [], decks: [], ongoingGames: [] };
   }
 
   async updateSelf() {
-    const [roomResp, deckResp] = await Promise.all([
+    const [roomResp, deckResp, ongoingResp] = await Promise.all([
       axios.get('/rooms', {
         baseURL: this.props.server,
         timeout: 5000,
         withCredentials: true,
       }),
       axios.get('/decks', {
+        baseURL: this.props.server,
+        timeout: 5000,
+        withCredentials: true,
+      }),
+      axios.get('/lobby/ongoing', {
         baseURL: this.props.server,
         timeout: 5000,
         withCredentials: true,
@@ -66,7 +78,11 @@ export class ITCGRoom extends React.Component<RoomProp, State> {
     if (!Array.isArray(rooms)) {
       this.setState({ activeRoom: rooms, decks: deckResp.data });
     } else {
-      this.setState({ rooms: rooms, activeRoom: undefined });
+      this.setState({
+        rooms: rooms,
+        ongoingGames: ongoingResp.data,
+        activeRoom: undefined,
+      });
     }
   }
 
@@ -103,7 +119,7 @@ export class ITCGRoom extends React.Component<RoomProp, State> {
     });
   }
 
-  tableOppPlayer(opp: RoomUser) {
+  tableOppPlayer(opp?: RoomUser) {
     return (
       <>
         {!!opp && (
@@ -209,7 +225,7 @@ export class ITCGRoom extends React.Component<RoomProp, State> {
         <div className="sm-3 col">
           <div className="card" key="new" style={CardStyle}>
             <div className="card-body">
-              <h2 className="card-title">New Table</h2>
+              <h3 className="card-title">New Table</h3>
               <button onClick={() => this.makeRoom()}>Open</button>
             </div>
           </div>
@@ -218,24 +234,62 @@ export class ITCGRoom extends React.Component<RoomProp, State> {
     );
   }
 
-  getRoomList(rooms: Room[]) {
+  getRoomList(rooms: Room[], games: Game[]) {
     const styledRooms = rooms.map((rm) => (
       <div className="sm-3 col">
         <div className="card" style={CardStyle} key={rm.id}>
           <div className="card-body">
-            <h2 className="card-title">
+            <h3 className="card-title">
               {rm.users.find((usr) => usr.owner === true)?.name || ''}'s table
-            </h2>
+            </h3>
             <button onClick={() => this.joinRoom(rm.id)}>Sit down</button>
           </div>
         </div>
       </div>
     ));
 
+    const styledGames = games.map((g) => {
+      const lastMove = Math.floor(
+        (Date.now() - new Date(g.updated_at).getTime()) / 1000 / 60
+      );
+
+      return (
+        <div className="sm-6 col">
+          <div
+            className="card"
+            style={lastMove >= 10 ? TriCardStyle : SecCardStyle}
+            key={g.id}
+          >
+            <div
+              className="card-body row flex-edges flex-bottom"
+              style={{ width: '100%' }}
+            >
+              <h3 className="card-title col-12">{g.title}</h3>
+              <p>
+                {lastMove < 2 ? (
+                  <strong>Currently Clashing!</strong>
+                ) : (
+                  <>
+                    Last Move: <strong>{lastMove}</strong> minutes ago
+                  </>
+                )}
+              </p>
+              <button onClick={() => this.props.update({ inGame: { matchID: g.id } })}>
+                Spectate
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    });
+
     return (
       <>
         <h2>Tables</h2>
         {this.roomBlurb}
+        <div className="row flex-left" style={{ width: '100%' }}>
+          {styledGames}
+        </div>
         <div className="row flex-left" style={{ width: '100%' }}>
           {this.createRoomCard()}
           {styledRooms}
@@ -250,8 +304,10 @@ export class ITCGRoom extends React.Component<RoomProp, State> {
     }
 
     const rooms = this.state.rooms;
-    if (rooms.length > 0) {
-      return this.getRoomList(rooms);
+    const games = this.state.ongoingGames;
+
+    if (rooms.length > 0 || games.length > 0) {
+      return this.getRoomList(rooms, games);
     } else {
       return (
         <>

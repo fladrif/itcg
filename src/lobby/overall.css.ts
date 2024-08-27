@@ -23,3 +23,11 @@ export const ParagraphStyle: React.CSSProperties = {
 export const CardStyle: React.CSSProperties = {
   background: 'linear-gradient(#DEEDAB, 85%, #B3DFA4)',
 };
+
+export const SecCardStyle: React.CSSProperties = {
+  background: 'linear-gradient(#ABDEED, 85%, #A4B3DF)',
+};
+
+export const TriCardStyle: React.CSSProperties = {
+  background: 'linear-gradient(#EDABDE, 85%, #DFA4B3)',
+};

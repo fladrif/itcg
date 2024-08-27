@@ -39,8 +39,8 @@ const clientStyle: React.CSSProperties = {
 
 export interface GamePlayerData {
   matchID: string;
-  playerID: string;
-  credentials: string;
+  playerID?: string;
+  credentials?: string;
 }
 
 export interface AppState {
@@ -71,7 +71,11 @@ class App extends React.Component {
         console.error(err);
       });
 
-    if (!resp || !resp.data) return this.setState({ ...state, inGame: undefined });
+    if (!resp || !resp.data) {
+      if (!!state.inGame) return this.setState(state);
+
+      return this.setState({ ...state, inGame: undefined });
+    }
 
     this.setState({ ...state, inGame: resp.data });
   }
@@ -131,13 +135,18 @@ class App extends React.Component {
               </div>
             </div>
           )}
-          {!!this.state.inGame && (
+          {!!this.state.inGame && !!this.state.inGame.playerID && (
             <div style={clientStyle}>
               <GameClient
                 matchID={this.state.inGame.matchID}
                 playerID={this.state.inGame.playerID}
                 credentials={this.state.inGame.credentials}
               />
+            </div>
+          )}
+          {!!this.state.inGame && !this.state.inGame.playerID && (
+            <div style={clientStyle}>
+              <GameClient matchID={this.state.inGame.matchID} />
             </div>
           )}
         </BrowserRouter>

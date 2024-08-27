@@ -147,11 +147,16 @@ const oppCharStyle: React.CSSProperties = {
 
 export class ITCGBoard extends React.Component<BoardProps<GameState>> {
   state: State;
+  playerID?: string;
 
   constructor(props: BoardProps<GameState>) {
     super(props);
 
-    const settings = props.G.player[props.playerID].settings;
+    this.playerID = props.playerID || undefined;
+
+    const settings = !this.playerID
+      ? { tooltipOpts: false }
+      : props.G.player[this.playerID].settings;
 
     const soundOpts = settings.soundOpts || {
       mute: false,
@@ -172,13 +177,13 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
   render() {
     const stack = this.props.G.stack;
 
-    const playerID = this.props.playerID!;
-    const playerState = this.props.G.player[playerID];
+    const mainPlayer = this.playerID || '0';
+    const playerState = this.props.G.player[mainPlayer];
     const currentPlayerStage = this.props.ctx.activePlayers
-      ? this.props.ctx.activePlayers[playerID]
+      ? this.props.ctx.activePlayers[mainPlayer]
       : '';
     const opponentID = Object.keys(this.props.G.player).filter(
-      (id) => id !== playerID
+      (id) => id !== mainPlayer
     )[0];
     const opponentState = this.props.G.player[opponentID];
     const opponentStage = this.props.ctx.activePlayers
@@ -187,7 +192,6 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
 
     const curDecision = stack?.activeDecisions[0];
 
-    // TODO: should display opponent's prompt as well
     const dialogPrompt = curDecision ? curDecision.dialogPrompt : undefined;
 
     const curDecisionFinished = curDecision ? curDecision.finished : false;
@@ -199,7 +203,7 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
 
     const gameOver = this.props.ctx.gameover ? (
       <div style={dialogStyle}>
-        <ITCGGameOver won={this.props.ctx.gameover.winner === playerID} />
+        <ITCGGameOver won={this.props.ctx.gameover.winner === mainPlayer} />
       </div>
     ) : null;
 
@@ -260,11 +264,8 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
           <ITCGDialog
             playerState={playerState}
             opponentState={opponentState}
-            currentPlayer={this.props.ctx.currentPlayer === this.props.playerID}
+            currentPlayer={this.props.ctx.currentPlayer === mainPlayer}
             select={this.props.moves.selectTarget}
-            stage={
-              this.props.ctx.activePlayers ? this.props.ctx.activePlayers[playerID] : ''
-            }
             updateBoard={(state) => this.setBoardState(state)}
             dialogBox={this.state.dialogBox}
           />
@@ -272,7 +273,7 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
         <div style={menuBoxStyle}>
           <ITCGMenuBox
             updateBoard={(state) => this.setBoardState(state)}
-            playerID={this.props.playerID}
+            playerID={this.playerID}
             concede={this.props.moves.concede}
             menuBox={this.state.menuBox}
             soundOpts={this.state.soundOpts}
@@ -282,15 +283,13 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
         <div style={oppDiscardStyle}>
           <ITCGDeck
             playerState={opponentState}
-            currentPlayer={this.props.ctx.currentPlayer === this.props.playerID}
-            select={this.props.moves.selectTarget}
+            currentPlayer={this.props.ctx.currentPlayer === this.playerID}
             updateBoard={(state) => this.setBoardState(state)}
             mainPlayer={false}
           />
           <ITCGDiscard
             playerState={opponentState}
-            currentPlayer={this.props.ctx.currentPlayer === this.props.playerID}
-            select={this.props.moves.selectTarget}
+            currentPlayer={this.props.ctx.currentPlayer === this.playerID}
             updateBoard={(state) => this.setBoardState(state)}
             mainPlayer={false}
           />
@@ -361,7 +360,7 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
               attack={this.props.moves.attack}
               source={stack?.activeDecisions[0].opts?.source}
             />
-            {currentPlayerStage === 'level' && !this.props.G.stack && (
+            {!!this.playerID && currentPlayerStage === 'level' && !this.props.G.stack && (
               <div style={turnAlertStyle}>Your Turn</div>
             )}
           </div>
@@ -374,7 +373,7 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
             confMove={this.props.moves.confirmSkill}
             declMove={this.props.moves.resetStack}
             stage={
-              this.props.ctx.activePlayers ? this.props.ctx.activePlayers[playerID] : ''
+              this.props.ctx.activePlayers ? this.props.ctx.activePlayers[mainPlayer] : ''
             }
           />
         </div>
@@ -413,39 +412,39 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
             curDecision={curDecision}
             currentPlayer={this.props.ctx.currentPlayer === this.props.playerID}
             stage={currentPlayerStage}
-            select={this.props.moves.selectTarget}
-            level={this.props.moves.levelUp}
+            select={!this.playerID ? undefined : this.props.moves.selectTarget}
+            level={!this.playerID ? undefined : this.props.moves.levelUp}
           />
         </div>
         <div style={interactiveStyle}>
-          <ITCGInteractive
-            stage={currentPlayerStage}
-            choices={choices}
-            decisionFinished={curDecisionFinished}
-            decMaybeFinished={decMaybeFinished}
-            showReset={!noResetDecision}
-            noLevel={this.props.moves.noLevel}
-            noActivate={this.props.moves.noActivate}
-            noAttacks={this.props.moves.noAttacks}
-            selectChoice={this.props.moves.selectChoice}
-            confirm={this.props.moves.confirmSkill}
-            resetStack={this.props.moves.resetStack}
-            updateBoard={(state) => this.setBoardState(state)}
-            tempInSelectLoc={tempInSelectLoc}
-          />
+          {!!this.playerID && (
+            <ITCGInteractive
+              stage={currentPlayerStage}
+              choices={choices}
+              decisionFinished={curDecisionFinished}
+              decMaybeFinished={decMaybeFinished}
+              showReset={!noResetDecision}
+              noLevel={this.props.moves.noLevel}
+              noActivate={this.props.moves.noActivate}
+              noAttacks={this.props.moves.noAttacks}
+              selectChoice={this.props.moves.selectChoice}
+              confirm={this.props.moves.confirmSkill}
+              resetStack={this.props.moves.resetStack}
+              updateBoard={(state) => this.setBoardState(state)}
+              tempInSelectLoc={tempInSelectLoc}
+            />
+          )}
         </div>
         <div style={discardStyle}>
           <ITCGDiscard
             playerState={playerState}
-            currentPlayer={this.props.ctx.currentPlayer === this.props.playerID}
-            select={this.props.moves.selectTarget}
+            currentPlayer={this.props.ctx.currentPlayer === mainPlayer}
             updateBoard={(state) => this.setBoardState(state)}
             mainPlayer={true}
           />
           <ITCGDeck
             playerState={playerState}
-            currentPlayer={this.props.ctx.currentPlayer === this.props.playerID}
-            select={this.props.moves.selectTarget}
+            currentPlayer={this.props.ctx.currentPlayer === mainPlayer}
             updateBoard={(state) => this.setBoardState(state)}
             mainPlayer={true}
           />
