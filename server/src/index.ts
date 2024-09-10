@@ -28,6 +28,7 @@ import {
 } from './auth';
 import { UserNonce } from './types';
 import {
+  AdminRouter,
   CardRouter,
   DeckRouter,
   LobbyRouter,
@@ -58,10 +59,10 @@ const server = Server({
 server.app.use(cors({ credentials: true }));
 
 server.router.use(
-  ['/cards', '/decks', '/lobby', '/rooms', '/settings', '/stats'],
+  ['/admin', '/cards', '/decks', '/lobby', '/rooms', '/settings', '/stats'],
   extractAuth
 );
-server.router.use(['/stats'], adminAuth);
+server.router.use(['/admin', '/stats'], adminAuth);
 server.router.use(['/games'], serverAuth);
 
 server.router.get('/', (ctx: any) => {
@@ -129,6 +130,7 @@ server.router.get('/getNonce', (ctx: any) => {
   ctx.body = nonce;
 });
 
+server.router.use('/admin', AdminRouter.routes());
 server.router.use('/cards', CardRouter.routes());
 server.router.use('/decks', DeckRouter.routes());
 server.router.use('/lobby', LobbyRouter.routes());

@@ -130,6 +130,20 @@ export class ITCGAdmin extends React.Component<AdminProp, AdminState> {
     return [];
   }
 
+  async deleteOngoingGame(id: string): Promise<void> {
+    await axios
+      .delete(`/admin/game/${id}`, {
+        baseURL: this.props.server,
+        timeout: 5000,
+        withCredentials: true,
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+
+    window.location.reload();
+  }
+
   async componentDidMount() {
     const [playerData, gameData, roomData, latestPlayers, latestGames] =
       await Promise.all([
@@ -207,10 +221,42 @@ export class ITCGAdmin extends React.Component<AdminProp, AdminState> {
 
   ongoingGameTable() {
     const games = this.state.latestGames.ongoing.map((g) => {
+      const gameRemoveButton = (
+        <td>
+          <label htmlFor={`modal-${g.p1}`}>{Math.floor(g.age)} day(s)</label>
+          <input className="modal-state" id={`modal-${g.p1}`} type="checkbox" />
+          <div className="modal">
+            <label className="modal-bg" htmlFor={`modal-${g.p1}`}></label>
+            <div className="modal-body">
+              <label className="btn-close" htmlFor={`modal-${g.p1}`}>
+                X
+              </label>
+              <h3 className="modal-title">Purge Game?</h3>
+              <h4 className="modal-text">
+                <span className="badge">{g.p1}</span> vs{' '}
+                <span className="badge">{g.p2}</span>
+              </h4>
+              <p className="modal-text">
+                Last move: <span className="badge">{Math.floor(g.age)}</span> day(s) ago
+              </p>
+              <label
+                onClick={() => this.deleteOngoingGame(g.id)}
+                className="paper-btn"
+                htmlFor={`modal-${g.p1}`}
+                style={{ backgroundColor: 'red', color: 'white' }}
+              >
+                Purge
+              </label>
+            </div>
+          </div>
+        </td>
+      );
+
       return (
         <tr>
           <td>{g.p1}</td>
           <td>{g.p2}</td>
+          {(g.age > 1 && gameRemoveButton) || <td>{'< 1 day'}</td>}
         </tr>
       );
     });
@@ -221,6 +267,7 @@ export class ITCGAdmin extends React.Component<AdminProp, AdminState> {
           <tr>
             <th>Player 1</th>
             <th>Player 2</th>
+            <th>Age</th>
           </tr>
         </thead>
         <tbody>{games.reverse()}</tbody>
