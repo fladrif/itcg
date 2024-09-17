@@ -35,13 +35,13 @@ start-db: network
 	docker run -d --name itcg-db -e POSTGRES_DB=itcg -e POSTGRES_PASSWORD=itcg --volume /data/postgres-data:/var/lib/postgresql/data --network itcg-backend postgres:13
 
 load:
-	tar -cv itcg.tar -C ../itcgImage .
+	tar -cvf itcg.tar -C ../itcgImage .
 	docker load -i itcg.tar
 
 start-client: stop-client
 	docker run -d --rm --name itcg-client -p 13000:13000 itcg ./node_modules/.bin/serve -s build -l 13000
 
 start-server: network stop-server run-migration
-	docker run -d --rm --name itcg-server --network itcg-backend -p 18000:18000 itcg node server/lib/server/src/index.js
+	docker run -d --rm --log-driver=journald --name itcg-server --network itcg-backend -p 18000:18000 itcg node server/lib/server/src/index.js
 
 load-start: load start-client start-server
