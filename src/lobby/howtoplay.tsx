@@ -203,6 +203,11 @@ export class ITCGHowToPlay extends React.Component {
             already. For example, playing a <b>Thief</b> card will require you to have
             leveled up with another <b>Thief</b> card.
           </p>
+          <p>
+            <strong>Note:</strong> Your <b>Character</b> does not count towards classes
+            you can play. If your <b>Character</b> is a <b>Thief</b>, you will still need
+            to have leveled up with another <b>Thief</b> card to play one.
+          </p>
         </>
       ),
       image: (
