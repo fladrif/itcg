@@ -126,6 +126,8 @@ const oppHandStyle: React.CSSProperties = {
   display: 'flex',
   padding: '1%',
   gridArea: 'ohand',
+  alignItems: 'flex-end',
+  overflow: 'auto',
 };
 
 const oppStatStyle: React.CSSProperties = {
