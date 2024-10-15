@@ -39,9 +39,9 @@ load:
 	docker load -i itcg.tar
 
 start-client: stop-client
-	docker run -d --rm --name itcg-client -p 13000:13000 itcg ./node_modules/.bin/serve -s build -l 13000
+	docker run -d --rm --restart unless-stopped --name itcg-client -p 13000:13000 itcg ./node_modules/.bin/serve -s build -l 13000
 
 start-server: network stop-server run-migration
-	docker run -d --rm --log-driver=journald --name itcg-server --network itcg-backend -p 18000:18000 itcg node server/lib/server/src/index.js
+	docker run -d --rm --restart unless-stopped --log-driver=journald --name itcg-server --network itcg-backend -p 18000:18000 itcg node server/lib/server/src/index.js
 
 load-start: load start-client start-server
