@@ -24,6 +24,7 @@ export type TurnPhase = 'Level' | 'Activate' | 'Attack';
 export interface TriggerOptions {
   damage?: number;
   lifegain?: number;
+  followUpAction?: TriggerNames;
 }
 
 export interface TriggerLifetime {

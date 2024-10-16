@@ -56,6 +56,14 @@ export const l20beasy: Skill[] = [
   },
 ];
 
+export const l20bbooster: Skill[] = [
+  {
+    requirements: { level: 20, class: { [CardClasses.Bowman]: 1 } },
+    action: 'booster',
+    opts: { damage: 20 },
+  },
+];
+
 export const l50bbtricky: Skill[] = [
   {
     requirements: { level: 50, class: { [CardClasses.Bowman]: 2 } },

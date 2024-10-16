@@ -24,6 +24,13 @@ export const l20quest: Skill[] = [
   },
 ];
 
+export const l30quest: Skill[] = [
+  {
+    requirements: { level: 30 },
+    action: 'quest',
+  },
+];
+
 export const quest: Skill[] = [
   {
     action: 'quest',

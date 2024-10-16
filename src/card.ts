@@ -77,6 +77,7 @@ export enum CardSubTypes {
   bat = 'bat',
   bull = 'bull',
   human = 'human',
+  boss = 'boss',
 }
 
 export interface Card {

@@ -34,6 +34,53 @@ export const l20mfirearrow: Skill[] = [
   },
 ];
 
+export const l20mmpoisonmist: Skill[] = [
+  {
+    requirements: { level: 20, class: { [CardClasses.Magician]: 2 } },
+    action: 'damage',
+    opts: { damage: 20 },
+    targets: {
+      xor: [
+        {
+          location: Location.Character,
+          quantity: 1,
+        },
+        {
+          location: Location.OppCharacter,
+          quantity: 1,
+        },
+      ],
+    },
+  },
+];
+
+export const l40mmmspellshape: Skill[] = [
+  {
+    requirements: { level: 40, class: { [CardClasses.Magician]: 3 } },
+    action: 'play',
+    targets: {
+      level: 'CurrentLevel',
+      type: CardTypes.Tactic,
+      location: Location.Hand,
+      quantity: 1,
+    },
+  },
+  {
+    requirements: { level: 0 },
+    action: 'quest',
+  },
+  {
+    action: 'discard',
+    dialogPrompt: 'Discard a card',
+    requirements: { level: 0 },
+    targets: {
+      location: Location.Hand,
+      quantity: 1,
+    },
+    noReset: true,
+  },
+];
+
 export const l30mmthinkx: Skill[] = [
   {
     requirements: { level: 30, class: { [CardClasses.Magician]: 2 } },

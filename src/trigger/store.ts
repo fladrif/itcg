@@ -302,6 +302,114 @@ export class BoneRattleTrigger extends ActionTrigger {
   }
 }
 
+export class BowBoosterTrigger extends ActionTrigger {
+  constructor(
+    cardOwner: string,
+    player: PlayerID,
+    key: string,
+    opts?: TriggerOptions,
+    lifetime?: TriggerLifetime
+  ) {
+    super(cardOwner, 'Before', ['damage'], key, opts, player, lifetime);
+  }
+
+  shouldTriggerExtension(
+    _fnCtx: FuncContext,
+    decision: Decision,
+    _prep: TriggerPreposition
+  ) {
+    return this.sourceIsOwner(decision);
+  }
+
+  createDecision(fnCtx: FuncContext, decision: Decision) {
+    const { G, ctx } = fnCtx;
+
+    const buffDec: Decision = {
+      action: 'buff',
+      finished: false,
+      selection: {},
+      opts: {
+        damage: this.opts?.damage ? this.opts.damage : 0,
+        decision: decision.key,
+        source: getCardAtLocation(
+          G,
+          ctx,
+          getCardLocation(G, ctx, this.cardOwner),
+          this.cardOwner
+        ),
+      },
+      key: getRandomKey(),
+    };
+
+    return [buffDec];
+  }
+}
+
+export class BossAttackTrigger extends ActionTrigger {
+  constructor(
+    cardOwner: string,
+    player: PlayerID,
+    key: string,
+    opts?: TriggerOptions,
+    lifetime?: TriggerLifetime
+  ) {
+    super(cardOwner, 'Before', ['attack'], key, opts, player, lifetime);
+  }
+
+  shouldTriggerExtension(
+    _fnCtx: FuncContext,
+    decision: Decision,
+    _prep: TriggerPreposition
+  ) {
+    return (
+      this.sourceIsOwner(decision) &&
+      this.sourceIsCard(decision) &&
+      !!this.opts?.followUpAction &&
+      !!decision.opts?.source
+    );
+  }
+
+  createDecision(fnCtx: FuncContext, decision: Decision) {
+    const { G, ctx } = fnCtx;
+
+    const source = decision.opts!.source!;
+
+    const buffDec: Decision = {
+      action: 'buff',
+      finished: false,
+      selection: {},
+      opts: {
+        damage: this.opts?.damage ? this.opts.damage : 0,
+        decision: decision.key,
+        source: getCardAtLocation(
+          G,
+          ctx,
+          getCardLocation(G, ctx, this.cardOwner),
+          this.cardOwner
+        ),
+      },
+      key: getRandomKey(),
+    };
+
+    const optionalDec: Decision = {
+      action: 'optional',
+      finished: false,
+      selection: {},
+      choice: [Choice.Yes, Choice.No],
+      noReset: true,
+      dialogPrompt: `Use ${source.name}?`,
+      opts: {
+        dialogDecision: [buffDec],
+        triggerKey: this.key,
+        source,
+      },
+      key: getRandomKey(),
+    };
+
+    return [optionalDec];
+  }
+}
+
 export class BuffAllTrigger extends ActionTrigger {
   constructor(
     cardOwner: string,
@@ -2119,6 +2227,7 @@ export const triggers = {
   BloodSlainTrigger,
   BlueDirosTrigger,
   BoneRattleTrigger,
+  BowBoosterTrigger,
   BuffAllTrigger,
   DarkShadowTrigger,
   DmgDestroyTrigger,

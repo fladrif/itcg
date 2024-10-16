@@ -206,6 +206,22 @@ import TopStarblade from './images/top-Starblade.jpg';
 import SkillStarblade from './images/skill1-Starblade.jpg';
 import Skill2Starblade from './images/skill2-Starblade.jpg';
 import Skill3Starblade from './images/skill3-Starblade.jpg';
+import TopBruno from './images/top-Bruno.jpg';
+import SkillBruno from './images/skill1-Bruno.jpg';
+import Skill2Bruno from './images/skill2-Bruno.jpg';
+import Skill3Bruno from './images/skill3-Bruno.jpg';
+import TopFelix from './images/top-Felix.jpg';
+import SkillFelix from './images/skill1-Felix.jpg';
+import Skill2Felix from './images/skill2-Felix.jpg';
+import Skill3Felix from './images/skill3-Felix.jpg';
+import TopIndigo from './images/top-Indigo.jpg';
+import SkillIndigo from './images/skill1-Indigo.jpg';
+import Skill2Indigo from './images/skill2-Indigo.jpg';
+import Skill3Indigo from './images/skill3-Indigo.jpg';
+import TopNova from './images/top-Nova.jpg';
+import SkillNova from './images/skill1-Nova.jpg';
+import Skill2Nova from './images/skill2-Nova.jpg';
+import Skill3Nova from './images/skill3-Nova.jpg';
 import Cardback from './images/cardback.jpg';
 
 interface CardImages {
@@ -615,6 +631,30 @@ export const cardImages: Record<string, CardImages> = {
     skill: SkillStarblade,
     skill2: Skill2Starblade,
     skill3: Skill3Starblade,
+  },
+  Bruno: {
+    top: TopBruno,
+    skill: SkillBruno,
+    skill2: Skill2Bruno,
+    skill3: Skill3Bruno,
+  },
+  Felix: {
+    top: TopFelix,
+    skill: SkillFelix,
+    skill2: Skill2Felix,
+    skill3: Skill3Felix,
+  },
+  Indigo: {
+    top: TopIndigo,
+    skill: SkillIndigo,
+    skill2: Skill2Indigo,
+    skill3: Skill3Indigo,
+  },
+  Nova: {
+    top: TopNova,
+    skill: SkillNova,
+    skill2: Skill2Nova,
+    skill3: Skill3Nova,
   },
 };
 

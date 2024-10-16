@@ -81,6 +81,37 @@ function attack(fnCtx: FuncContext, opts: ActionOpts): any {
   upsertStack(fnCtx, [decision]);
 }
 
+// Destroy card; Fierce trigger
+function bloodthirsty(fnCtx: FuncContext, opts: ActionOpts): any {
+  const { G, ctx } = fnCtx;
+  if (!G.stack || !opts.source || opts.damage === undefined) return;
+
+  const playerState = G.player[opts.source.owner];
+
+  pushTriggerStore(
+    fnCtx,
+    'BuffAllTrigger',
+    opts.source,
+    { damage: resolveDamage(playerState, opts.damage) },
+    { usableTurn: ctx.turn }
+  );
+}
+
+function booster(fnCtx: FuncContext, opts: ActionOpts): any {
+  const { G, ctx } = fnCtx;
+  if (!G.stack || !opts.source || opts.damage === undefined) return;
+
+  const playerState = G.player[opts.source.owner];
+
+  pushTriggerStore(
+    fnCtx,
+    'BowBoosterTrigger',
+    opts.source,
+    { damage: resolveDamage(playerState, opts.damage) },
+    { usableTurn: ctx.turn, once: true }
+  );
+}
+
 function bounce(fnCtx: FuncContext, opts: ActionOpts): any {
   const { G, ctx } = fnCtx;
   if (!G.stack) return;
@@ -843,6 +874,8 @@ export const actions = {
   ack,
   assist,
   attack,
+  bloodthirsty,
+  booster,
   bounce,
   buff,
   buffall,
