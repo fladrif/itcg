@@ -1,6 +1,8 @@
 import { ActionTargets, ensureFilter, Location, meetsTarget } from '../target';
-import { isMonster, Monster, Character, NonCharacter, SkillRequirements } from '../card';
+import { isMonster, Monster, Character, NonCharacter } from '../card';
 import { FuncContext, PlayerState } from '../game';
+import { skillDict } from '../skill';
+import { SkillRequirements } from '../skill/types';
 import { upsertStack, parseSkill, Decision } from '../stack';
 import { getRelevantState, parseStateLifetime, removeGlobalState } from '../state';
 import { removeTrigger, parseTriggerLifetime, pushTriggerStore } from '../trigger';
@@ -24,7 +26,7 @@ export function handleAbility(fnCtx: FuncContext, card: NonCharacter): any {
   }
 
   if (card.ability.skills) {
-    card.ability.skills.forEach((skill, idx) => {
+    skillDict[card.ability.skills.name].forEach((skill, idx) => {
       if (idx === 0) {
         upsertStack(fnCtx, [parseSkill(fnCtx, skill, card)]);
       } else {

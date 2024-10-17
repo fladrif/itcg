@@ -1,4 +1,5 @@
-import { CardTypes, CardSubTypes, CardClasses, Skill, Tactic } from '../../../card';
+import { CardTypes, CardSubTypes, Tactic } from '../../../card';
+import { skillRef } from '../../../skill';
 import { Location } from '../../../target';
 
 import { defaultClass } from './types';
@@ -8,94 +9,14 @@ const defaultTypes = {
   type: CardTypes.Tactic,
 };
 
-const magicclawAbility: Skill = {
-  requirements: { level: 0 },
-  action: 'damage',
-  activated: false,
-  noReset: true,
-  opts: {
-    damage: 20,
-  },
-  targets: {
-    xor: [
-      {
-        quantity: 1,
-        type: CardTypes.Monster,
-        location: Location.OppField,
-      },
-      {
-        quantity: 1,
-        location: Location.OppCharacter,
-      },
-    ],
-  },
-};
-
 export const energybolt: Omit<Tactic, 'key' | 'owner'> = {
   canonicalName: 'energybolt',
   name: 'Energy Bolt',
   image: 'EnergyBolt',
   level: 40,
-  skill: [
-    {
-      action: 'play',
-      activated: false,
-      requirements: {
-        level: 60,
-        class: {
-          [CardClasses.Magician]: 2,
-        },
-      },
-      targets: {
-        xor: [
-          {
-            level: 70,
-            type: CardTypes.Monster,
-            location: Location.Hand,
-            quantity: 1,
-          },
-          {
-            level: 70,
-            type: CardTypes.Tactic,
-            location: Location.Hand,
-            quantity: 1,
-          },
-        ],
-      },
-    },
-  ],
+  skill: skillRef('l60mmspawnthink70'),
   ability: {
-    skills: [
-      {
-        action: 'damage',
-        activated: false,
-        opts: { damage: 80 },
-        requirements: { level: 0 },
-        noReset: true,
-        targets: {
-          xor: [
-            {
-              type: CardTypes.Monster,
-              location: Location.Field,
-              quantity: 1,
-            },
-            {
-              type: CardTypes.Monster,
-              location: Location.OppField,
-              quantity: 1,
-            },
-            {
-              location: Location.Character,
-              quantity: 1,
-            },
-            {
-              location: Location.OppCharacter,
-              quantity: 1,
-            },
-          ],
-        },
-      },
-    ],
+    skills: skillRef('dmg80'),
   },
   subtypes: [CardSubTypes.skill],
   ...defaultTypes,
@@ -106,33 +27,9 @@ export const heal: Omit<Tactic, 'key' | 'owner'> = {
   name: 'Heal',
   image: 'Heal',
   level: 40,
-  skill: [
-    {
-      action: 'play',
-      activated: false,
-      requirements: {
-        level: 30,
-        class: {
-          [CardClasses.Magician]: 1,
-        },
-      },
-      targets: {
-        level: 30,
-        type: CardTypes.Item,
-        location: Location.Hand,
-        quantity: 1,
-      },
-    },
-  ],
+  skill: skillRef('l30mequip30'),
   ability: {
-    skills: [
-      {
-        action: 'refresh',
-        activated: false,
-        opts: { lifegain: 80, overheal: false },
-        requirements: { level: 0 },
-      },
-    ],
+    skills: skillRef('heal'),
   },
   subtypes: [CardSubTypes.skill],
   ...defaultTypes,
@@ -143,49 +40,9 @@ export const knowledgeispower: Omit<Tactic, 'key' | 'owner'> = {
   name: 'Knowledge Is Power',
   image: 'KnowledgeIsPower',
   level: 20,
-  skill: [
-    {
-      action: 'play',
-      activated: false,
-      requirements: {
-        level: 40,
-        class: {
-          [CardClasses.Magician]: 3,
-        },
-      },
-      targets: {
-        level: 'CurrentLevel',
-        type: CardTypes.Tactic,
-        location: Location.Hand,
-        quantity: 1,
-      },
-    },
-  ],
+  skill: skillRef('l40mmmthinkx'),
   ability: {
-    skills: [
-      {
-        action: 'revealDeck',
-        activated: false,
-        requirements: { level: 0 },
-      },
-      {
-        action: 'bounce',
-        activated: false,
-        requirements: { level: 0 },
-        noReset: true,
-        targets: {
-          type: CardTypes.Tactic,
-          location: Location.Deck,
-          quantity: 1,
-          quantityUpTo: true,
-        },
-      },
-      {
-        action: 'shuffle',
-        activated: false,
-        requirements: { level: 0 },
-      },
-    ],
+    skills: skillRef('knowledge'),
   },
   subtypes: [CardSubTypes.strategy],
   ...defaultTypes,
@@ -196,26 +53,9 @@ export const magicclaw: Omit<Tactic, 'key' | 'owner'> = {
   name: 'Magic Claw',
   image: 'MagicClaw',
   level: 20,
-  skill: [
-    {
-      action: 'play',
-      activated: false,
-      requirements: {
-        level: 20,
-        class: {
-          [CardClasses.Magician]: 1,
-        },
-      },
-      targets: {
-        level: 30,
-        type: CardTypes.Tactic,
-        location: Location.Hand,
-        quantity: 1,
-      },
-    },
-  ],
+  skill: skillRef('l20mthink30'),
   ability: {
-    skills: [magicclawAbility, magicclawAbility],
+    skills: skillRef('magicclaw'),
   },
   subtypes: [CardSubTypes.skill],
   ...defaultTypes,
@@ -226,19 +66,7 @@ export const meditation: Omit<Tactic, 'key' | 'owner'> = {
   name: 'Meditation',
   image: 'Meditation',
   level: 30,
-  skill: [
-    {
-      action: 'assist',
-      activated: false,
-      requirements: {
-        level: 10,
-        class: {
-          [CardClasses.Magician]: 1,
-        },
-      },
-      opts: { damage: 10 },
-    },
-  ],
+  skill: skillRef('l10massist'),
   ability: {
     triggers: [
       {
@@ -252,22 +80,10 @@ export const meditation: Omit<Tactic, 'key' | 'owner'> = {
         },
       },
     ],
-    skills: [
-      {
-        action: 'quest',
-        activated: false,
-        requirements: { level: 0 },
-      },
-    ],
+    skills: skillRef('quest'),
   },
   subtypes: [CardSubTypes.skill],
   ...defaultTypes,
-};
-
-const questSkill: Skill = {
-  action: 'quest',
-  activated: false,
-  requirements: { level: 0 },
 };
 
 export const mpeater: Omit<Tactic, 'key' | 'owner'> = {
@@ -275,17 +91,8 @@ export const mpeater: Omit<Tactic, 'key' | 'owner'> = {
   name: 'MP Eater',
   image: 'MPEater',
   level: 30,
-  skill: [
-    {
-      action: 'jumble',
-      requirements: { level: 0, oneshot: true },
-      activated: false,
-    },
-  ],
+  skill: skillRef('jumble'),
   ability: {
-    // TODO: Create MPEaterTrigger to return abilities to creatures
-    // Trigger needs to operate on beginning of turn, or end of turn, not trigger off of an effect
-    // Ensure monster etb turn preserved through this effect
     triggers: [
       {
         name: 'MPEaterTrigger',
@@ -310,44 +117,7 @@ export const mpeater: Omit<Tactic, 'key' | 'owner'> = {
       targetOpponent: true,
       lifetime: { until: true, setTurn: 'NextTurn' },
     },
-    skills: [
-      {
-        action: 'mpeater',
-        activated: false,
-        requirements: { level: 0 },
-        opts: { allOppMonster: true },
-        noReset: true,
-      },
-      {
-        action: 'damage',
-        activated: false,
-        opts: { damage: 50 },
-        requirements: { level: 0 },
-        noReset: true,
-        targets: {
-          xor: [
-            {
-              type: CardTypes.Monster,
-              location: Location.Field,
-              quantity: 1,
-            },
-            {
-              type: CardTypes.Monster,
-              location: Location.OppField,
-              quantity: 1,
-            },
-            {
-              location: Location.Character,
-              quantity: 1,
-            },
-            {
-              location: Location.OppCharacter,
-              quantity: 1,
-            },
-          ],
-        },
-      },
-    ],
+    skills: skillRef('mpeater'),
   },
   subtypes: [CardSubTypes.skill],
   ...defaultTypes,
@@ -358,26 +128,9 @@ export const sidequest: Omit<Tactic, 'key' | 'owner'> = {
   name: 'Side Quest',
   image: 'SideQuest',
   level: 40,
-  skill: [
-    {
-      action: 'play',
-      activated: false,
-      requirements: {
-        level: 30,
-        class: {
-          [CardClasses.Magician]: 1,
-        },
-      },
-      targets: {
-        level: 40,
-        type: CardTypes.Tactic,
-        location: Location.Hand,
-        quantity: 1,
-      },
-    },
-  ],
+  skill: skillRef('l30mthink40'),
   ability: {
-    skills: [questSkill, questSkill],
+    skills: skillRef('sidequest'),
   },
   subtypes: [CardSubTypes.strategy],
   ...defaultTypes,
@@ -388,18 +141,7 @@ export const teleport: Omit<Tactic, 'key' | 'owner'> = {
   name: 'Teleport',
   image: 'Teleport',
   level: 50,
-  skill: [
-    {
-      action: 'quest',
-      activated: false,
-      requirements: { level: 70, oneshot: true },
-    },
-    {
-      action: 'quest',
-      activated: false,
-      requirements: { level: 70, oneshot: true },
-    },
-  ],
+  skill: skillRef('jumpquest'),
   ability: {
     state: {
       targets: {
@@ -433,38 +175,9 @@ export const thunderbolt: Omit<Tactic, 'key' | 'owner'> = {
   name: 'Thunder Bolt',
   image: 'ThunderBolt',
   level: 60,
-  skill: [
-    {
-      action: 'damage',
-      activated: false,
-      opts: { damage: 30 },
-      requirements: {
-        level: 60,
-        class: {
-          [CardClasses.Magician]: 3,
-        },
-      },
-      targets: {
-        location: Location.OppCharacter,
-        quantity: 1,
-      },
-    },
-  ],
+  skill: skillRef('l60mmmblast'),
   ability: {
-    skills: [
-      {
-        action: 'damage',
-        activated: false,
-        opts: { damage: 50, allOppMonster: true },
-        requirements: { level: 0 },
-      },
-      {
-        action: 'damage',
-        activated: false,
-        opts: { damage: 50, oppCharacter: true },
-        requirements: { level: 0 },
-      },
-    ],
+    skills: skillRef('thunderbolt'),
   },
   subtypes: [CardSubTypes.skill],
   ...defaultTypes,

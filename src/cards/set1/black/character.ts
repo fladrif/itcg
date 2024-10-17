@@ -1,5 +1,5 @@
-import { Character, CardTypes, CardClasses } from '../../../card';
-import { Location } from '../../../target';
+import { Character, CardTypes } from '../../../card';
+import { skillRef } from '../../../skill';
 
 import { defaultClass } from './types';
 
@@ -13,50 +13,7 @@ export const ivan: Omit<Character, 'key' | 'owner'> = {
   name: 'Ivan',
   image: 'Ivan',
   health: 220,
-  skills: [
-    [
-      {
-        requirements: { level: 10, class: { [CardClasses.Thief]: 1 } },
-        action: 'damage',
-        activated: false,
-        opts: { damage: 10 },
-        targets: {
-          xor: [
-            {
-              type: CardTypes.Monster,
-              location: Location.OppField,
-              quantity: 1,
-            },
-            {
-              type: CardTypes.Character,
-              location: Location.OppCharacter,
-              quantity: 1,
-            },
-          ],
-        },
-      },
-    ],
-    [
-      {
-        requirements: { level: 10 },
-        action: 'quest',
-        activated: false,
-      },
-    ],
-    [
-      {
-        requirements: { level: 20, class: { [CardClasses.Thief]: 1 } },
-        action: 'play',
-        activated: false,
-        targets: {
-          level: 'CurrentLevel',
-          type: CardTypes.Item,
-          location: Location.Hand,
-          quantity: 1,
-        },
-      },
-    ],
-  ],
+  skills: [skillRef('l10tstab'), skillRef('l10quest'), skillRef('l20tequipx')],
   ...defaultTypes,
 };
 
@@ -65,48 +22,6 @@ export const mistmoon: Omit<Character, 'key' | 'owner'> = {
   name: 'Mistmoon',
   image: 'Mistmoon',
   health: 200,
-  skills: [
-    [
-      {
-        requirements: { level: 10, class: { [CardClasses.Thief]: 1 } },
-        action: 'damage',
-        activated: false,
-        opts: { damage: 10 },
-        targets: {
-          xor: [
-            {
-              type: CardTypes.Monster,
-              location: Location.OppField,
-              quantity: 1,
-            },
-            {
-              type: CardTypes.Character,
-              location: Location.OppCharacter,
-              quantity: 1,
-            },
-          ],
-        },
-      },
-    ],
-    [
-      {
-        requirements: { level: 20 },
-        action: 'quest',
-        activated: false,
-      },
-    ],
-    [
-      {
-        requirements: { level: 40, class: { [CardClasses.Thief]: 2 } },
-        action: 'play',
-        activated: false,
-        targets: {
-          level: 40,
-          location: Location.Hand,
-          quantity: 1,
-        },
-      },
-    ],
-  ],
+  skills: [skillRef('l10tstab'), skillRef('l20quest'), skillRef('l40ttsneak40')],
   ...defaultTypes,
 };

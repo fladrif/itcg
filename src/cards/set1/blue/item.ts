@@ -1,4 +1,5 @@
-import { Item, CardTypes, CardSubTypes, CardClasses } from '../../../card';
+import { Item, CardTypes, CardSubTypes } from '../../../card';
+import { skillRef } from '../../../skill';
 import { Location } from '../../../target';
 
 import { defaultClass } from './types';
@@ -13,34 +14,7 @@ export const battleshield: Omit<Item, 'key' | 'owner'> = {
   name: 'Battle Shield',
   image: 'BattleShield',
   level: 35,
-  skill: [
-    {
-      action: 'play',
-      activated: false,
-      requirements: {
-        level: 50,
-        class: {
-          [CardClasses.Warrior]: 2,
-        },
-      },
-      targets: {
-        xor: [
-          {
-            level: 40,
-            type: CardTypes.Item,
-            location: Location.Hand,
-            quantity: 1,
-          },
-          {
-            level: 40,
-            type: CardTypes.Tactic,
-            location: Location.Hand,
-            quantity: 1,
-          },
-        ],
-      },
-    },
-  ],
+  skill: skillRef('l50wwthinkequip40'),
   ability: {
     state: {
       targets: {
@@ -70,45 +44,7 @@ export const doombringer: Omit<Item, 'key' | 'owner'> = {
   name: 'Doombringer',
   image: 'Doombringer',
   level: 70,
-  skill: [
-    {
-      action: 'roar',
-      activated: false,
-      requirements: {
-        level: 60,
-        class: {
-          [CardClasses.Warrior]: 3,
-        },
-      },
-      opts: {
-        damage: 20,
-      },
-      targets: {
-        xor: [
-          {
-            type: CardTypes.Character,
-            location: Location.Character,
-            quantity: 1,
-          },
-          {
-            type: CardTypes.Character,
-            location: Location.OppCharacter,
-            quantity: 1,
-          },
-          {
-            type: CardTypes.Monster,
-            location: Location.Field,
-            quantity: 1,
-          },
-          {
-            type: CardTypes.Monster,
-            location: Location.OppField,
-            quantity: 1,
-          },
-        ],
-      },
-    },
-  ],
+  skill: skillRef('l60wwwroar'),
   ability: {
     triggers: [{ name: 'DoombringerTrigger', opts: { damage: 30 } }],
   },
@@ -121,35 +57,7 @@ export const serpentstongue: Omit<Item, 'key' | 'owner'> = {
   name: "Serpent's Tongue",
   image: 'SerpentsTongue',
   level: 50,
-  skill: [
-    {
-      action: 'damage',
-      activated: false,
-      requirements: {
-        level: 50,
-        class: {
-          [CardClasses.Warrior]: 2,
-        },
-      },
-      opts: {
-        damage: 20,
-      },
-      targets: {
-        xor: [
-          {
-            type: CardTypes.Monster,
-            location: Location.Field,
-            quantity: 1,
-          },
-          {
-            type: CardTypes.Monster,
-            location: Location.OppField,
-            quantity: 1,
-          },
-        ],
-      },
-    },
-  ],
+  skill: skillRef('l50wwcrush'),
   ability: {
     triggers: [{ name: 'SerpentsTrigger', opts: { lifegain: 30 } }],
   },
@@ -162,24 +70,7 @@ export const theninedragons: Omit<Item, 'key' | 'owner'> = {
   name: 'The Nine Dragons',
   image: 'TheNineDragons',
   level: 50,
-  skill: [
-    {
-      action: 'play',
-      activated: false,
-      requirements: {
-        level: 30,
-        class: {
-          [CardClasses.Warrior]: 1,
-        },
-      },
-      targets: {
-        level: 30,
-        type: CardTypes.Item,
-        location: Location.Hand,
-        quantity: 1,
-      },
-    },
-  ],
+  skill: skillRef('l30wequip30'),
   ability: {
     state: {
       targets: {

@@ -1,5 +1,5 @@
-import { Monster, CardTypes, CardSubTypes, CardClasses } from '../../../card';
-import { Location } from '../../../target';
+import { Monster, CardTypes, CardSubTypes } from '../../../card';
+import { skillRef } from '../../../skill';
 
 import { defaultClass } from './types';
 
@@ -17,34 +17,7 @@ export const cerebes: Omit<Monster, 'key' | 'owner'> = {
   level: 72,
   attack: 70,
   health: 70,
-  skill: [
-    {
-      action: 'play',
-      activated: false,
-      requirements: {
-        level: 80,
-        class: {
-          [CardClasses.Bowman]: 2,
-        },
-      },
-      targets: {
-        xor: [
-          {
-            level: 120,
-            type: CardTypes.Item,
-            location: Location.Hand,
-            quantity: 1,
-          },
-          {
-            level: 120,
-            type: CardTypes.Monster,
-            location: Location.Hand,
-            quantity: 1,
-          },
-        ],
-      },
-    },
-  ],
+  skill: skillRef('l80bbspawnequip120'),
   ability: { triggers: [{ name: 'EarthquakeTrigger', opts: { damage: 40 } }] },
   subtypes: [CardSubTypes.dog],
   ...defaultTypes,
@@ -57,34 +30,7 @@ export const curseeye: Omit<Monster, 'key' | 'owner'> = {
   level: 35,
   attack: 30,
   health: 40,
-  skill: [
-    {
-      action: 'play',
-      activated: false,
-      requirements: {
-        level: 50,
-        class: {
-          [CardClasses.Bowman]: 2,
-        },
-      },
-      targets: {
-        xor: [
-          {
-            level: 40,
-            type: CardTypes.Tactic,
-            location: Location.Hand,
-            quantity: 1,
-          },
-          {
-            level: 40,
-            type: CardTypes.Monster,
-            location: Location.Hand,
-            quantity: 1,
-          },
-        ],
-      },
-    },
-  ],
+  skill: skillRef('l50bbspawnthink40'),
   ability: {},
   subtypes: [CardSubTypes.worm],
   ...defaultTypes,
@@ -97,61 +43,9 @@ export const drake: Omit<Monster, 'key' | 'owner'> = {
   level: 50,
   attack: 30,
   health: 40,
-  skill: [
-    {
-      action: 'damage',
-      activated: false,
-      opts: {
-        damage: 30,
-      },
-      requirements: {
-        level: 80,
-        class: {
-          [CardClasses.Bowman]: 3,
-        },
-      },
-      targets: {
-        xor: [
-          {
-            type: CardTypes.Monster,
-            location: Location.OppField,
-            quantity: 1,
-          },
-          {
-            type: CardTypes.Character,
-            location: Location.OppCharacter,
-            quantity: 1,
-          },
-        ],
-      },
-    },
-  ],
+  skill: skillRef('l80bbbdeadly'),
   ability: {
-    skills: [
-      {
-        action: 'damage',
-        activated: false,
-        opts: {
-          damage: 30,
-        },
-        requirements: { level: 0 },
-        noReset: true,
-        targets: {
-          xor: [
-            {
-              type: CardTypes.Monster,
-              location: Location.OppField,
-              quantity: 1,
-            },
-            {
-              type: CardTypes.Character,
-              location: Location.OppCharacter,
-              quantity: 1,
-            },
-          ],
-        },
-      },
-    ],
+    skills: skillRef('dmg30'),
   },
   subtypes: [CardSubTypes.worm, CardSubTypes.dragon],
   ...defaultTypes,
@@ -164,24 +58,7 @@ export const fairy: Omit<Monster, 'key' | 'owner'> = {
   level: 30,
   attack: 30,
   health: 20,
-  skill: [
-    {
-      action: 'play',
-      activated: false,
-      requirements: {
-        level: 30,
-        class: {
-          [CardClasses.Bowman]: 2,
-        },
-      },
-      targets: {
-        level: 30,
-        type: CardTypes.Monster,
-        location: Location.Hand,
-        quantity: 1,
-      },
-    },
-  ],
+  skill: skillRef('l30bbspawn30'),
   ability: {
     triggers: [{ name: 'FairyTrigger' }],
   },
@@ -196,61 +73,9 @@ export const greentrixter: Omit<Monster, 'key' | 'owner'> = {
   level: 28,
   attack: 20,
   health: 20,
-  skill: [
-    {
-      action: 'damage',
-      activated: false,
-      opts: {
-        damage: 10,
-      },
-      requirements: {
-        level: 20,
-        class: {
-          [CardClasses.Bowman]: 1,
-        },
-      },
-      targets: {
-        xor: [
-          {
-            type: CardTypes.Monster,
-            location: Location.OppField,
-            quantity: 1,
-          },
-          {
-            type: CardTypes.Character,
-            location: Location.OppCharacter,
-            quantity: 1,
-          },
-        ],
-      },
-    },
-  ],
+  skill: skillRef('l20beasy'),
   ability: {
-    skills: [
-      {
-        action: 'damage',
-        activated: false,
-        opts: {
-          damage: 10,
-        },
-        requirements: { level: 0 },
-        noReset: true,
-        targets: {
-          xor: [
-            {
-              type: CardTypes.Monster,
-              location: Location.OppField,
-              quantity: 1,
-            },
-            {
-              type: CardTypes.Character,
-              location: Location.OppCharacter,
-              quantity: 1,
-            },
-          ],
-        },
-      },
-    ],
+    skills: skillRef('dmg10'),
   },
   subtypes: [CardSubTypes.pest],
   ...defaultTypes,
@@ -263,24 +88,7 @@ export const hector: Omit<Monster, 'key' | 'owner'> = {
   level: 50,
   attack: 50,
   health: 50,
-  skill: [
-    {
-      action: 'play',
-      activated: false,
-      requirements: {
-        level: 60,
-        class: {
-          [CardClasses.Bowman]: 2,
-        },
-      },
-      targets: {
-        level: 70,
-        type: CardTypes.Monster,
-        location: Location.Hand,
-        quantity: 1,
-      },
-    },
-  ],
+  skill: skillRef('l60bbspawn70'),
   ability: {
     triggers: [
       {
@@ -301,34 +109,7 @@ export const hornedmushroom: Omit<Monster, 'key' | 'owner'> = {
   level: 22,
   attack: 20,
   health: 40,
-  skill: [
-    {
-      action: 'play',
-      activated: false,
-      requirements: {
-        level: 40,
-        class: {
-          [CardClasses.Bowman]: 2,
-        },
-      },
-      targets: {
-        xor: [
-          {
-            level: 30,
-            type: CardTypes.Item,
-            location: Location.Hand,
-            quantity: 1,
-          },
-          {
-            level: 30,
-            type: CardTypes.Monster,
-            location: Location.Hand,
-            quantity: 1,
-          },
-        ],
-      },
-    },
-  ],
+  skill: skillRef('l40bbspawnequip30'),
   ability: {},
   subtypes: [CardSubTypes.mushroom],
   ...defaultTypes,
@@ -341,21 +122,7 @@ export const jrboogie: Omit<Monster, 'key' | 'owner'> = {
   level: 35,
   attack: 30,
   health: 30,
-  skill: [
-    {
-      action: 'bounce',
-      activated: false,
-      requirements: { level: 0, oneshot: true },
-      noReset: true,
-      targets: {
-        level: 30,
-        type: CardTypes.Monster,
-        location: Location.Discard,
-        quantity: 1,
-        quantityUpTo: true,
-      },
-    },
-  ],
+  skill: skillRef('revive30'),
   ability: { keywords: ['stealthy'] },
   subtypes: [CardSubTypes.flying, CardSubTypes.spook],
   ...defaultTypes,
@@ -368,48 +135,10 @@ export const lunarpixie: Omit<Monster, 'key' | 'owner'> = {
   level: 45,
   attack: 40,
   health: 20,
-  skill: [
-    {
-      action: 'bounce',
-      activated: false,
-      requirements: { level: 0, oneshot: true },
-      noReset: true,
-      targets: {
-        level: 30,
-        type: CardTypes.Monster,
-        location: Location.Discard,
-        quantity: 1,
-        quantityUpTo: true,
-      },
-    },
-  ],
+  skill: skillRef('revive30'),
   ability: {
     keywords: ['stealthy'],
-    skills: [
-      {
-        action: 'damage',
-        activated: false,
-        noReset: true,
-        opts: {
-          damage: 20,
-        },
-        requirements: { level: 0 },
-        targets: {
-          xor: [
-            {
-              type: CardTypes.Monster,
-              location: Location.OppField,
-              quantity: 1,
-            },
-            {
-              type: CardTypes.Character,
-              location: Location.OppCharacter,
-              quantity: 1,
-            },
-          ],
-        },
-      },
-    ],
+    skills: skillRef('dmg20'),
   },
   subtypes: [CardSubTypes.flying, CardSubTypes.spook],
   ...defaultTypes,
@@ -422,21 +151,7 @@ export const platoonchronos: Omit<Monster, 'key' | 'owner'> = {
   level: 41,
   attack: 30,
   health: 40,
-  skill: [
-    {
-      action: 'bounce',
-      activated: false,
-      requirements: { level: 0, oneshot: true },
-      noReset: true,
-      targets: {
-        level: 30,
-        type: CardTypes.Monster,
-        location: Location.Discard,
-        quantity: 1,
-        quantityUpTo: true,
-      },
-    },
-  ],
+  skill: skillRef('revive30'),
   ability: { keywords: ['stealthy'] },
   subtypes: [CardSubTypes.undead, CardSubTypes.spook],
   ...defaultTypes,
@@ -449,34 +164,7 @@ export const stirge: Omit<Monster, 'key' | 'owner'> = {
   level: 20,
   attack: 30,
   health: 20,
-  skill: [
-    {
-      action: 'play',
-      activated: false,
-      requirements: {
-        level: 60,
-        class: {
-          [CardClasses.Bowman]: 1,
-        },
-      },
-      targets: {
-        xor: [
-          {
-            level: 50,
-            type: CardTypes.Monster,
-            location: Location.Hand,
-            quantity: 1,
-          },
-          {
-            level: 50,
-            type: CardTypes.Item,
-            location: Location.Hand,
-            quantity: 1,
-          },
-        ],
-      },
-    },
-  ],
+  skill: skillRef('l60bspawnequip50'),
   ability: {},
   subtypes: [CardSubTypes.flying, CardSubTypes.bat],
   ...defaultTypes,
@@ -489,35 +177,7 @@ export const tweeter: Omit<Monster, 'key' | 'owner'> = {
   level: 39,
   attack: 20,
   health: 40,
-  skill: [
-    {
-      action: 'damage',
-      activated: false,
-      opts: {
-        damage: 20,
-      },
-      requirements: {
-        level: 60,
-        class: {
-          [CardClasses.Bowman]: 2,
-        },
-      },
-      targets: {
-        xor: [
-          {
-            type: CardTypes.Monster,
-            location: Location.OppField,
-            quantity: 1,
-          },
-          {
-            type: CardTypes.Character,
-            location: Location.OppCharacter,
-            quantity: 1,
-          },
-        ],
-      },
-    },
-  ],
+  skill: skillRef('l60bbtricky'),
   ability: {
     triggers: [{ name: 'RevengeTrigger', opts: { damage: 20 } }],
   },

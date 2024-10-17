@@ -22,6 +22,7 @@ import {
   passSkillReqToActivate,
 } from './utils';
 import { Location } from './target';
+import { skillDict } from './skill';
 
 export interface MoveOptions {
   card?: [Location, Character | NonCharacter];
@@ -80,7 +81,8 @@ export const activateSkill: Move<GameState> = (
     return INVALID_MOVE;
   }
 
-  const skill = 'skills' in selCard ? selCard.skills[opts.position] : selCard.skill;
+  const skillRef = 'skills' in selCard ? selCard.skills[opts.position] : selCard.skill;
+  const skill = skillDict[skillRef.name];
 
   if (skill.every((skill) => !passSkillReqToActivate(skill.requirements, player))) {
     return INVALID_MOVE;
@@ -88,9 +90,7 @@ export const activateSkill: Move<GameState> = (
 
   const prevPos = player.activationPos;
   player.activationPos = opts.position + 1;
-  for (const sk of skill) {
-    sk.activated = true;
-  }
+  skillRef.activated = true;
 
   skill.forEach((sk, idx) => {
     if (idx === 0) {

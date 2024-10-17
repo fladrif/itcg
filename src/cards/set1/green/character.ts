@@ -1,5 +1,5 @@
-import { Character, CardTypes, CardClasses } from '../../../card';
-import { Location } from '../../../target';
+import { Character, CardTypes } from '../../../card';
+import { skillRef } from '../../../skill/utils';
 
 import { defaultClass } from './types';
 
@@ -13,59 +13,7 @@ export const nixie: Omit<Character, 'key' | 'owner'> = {
   name: 'Nixie',
   image: 'Nixie',
   health: 200,
-  skills: [
-    [
-      {
-        requirements: { level: 10, class: { [CardClasses.Bowman]: 1 } },
-        action: 'damage',
-        activated: false,
-        opts: { damage: 10 },
-        targets: {
-          xor: [
-            {
-              type: CardTypes.Monster,
-              quantity: 1,
-              location: Location.OppField,
-            },
-            {
-              type: CardTypes.Character,
-              quantity: 1,
-              location: Location.OppCharacter,
-            },
-          ],
-        },
-      },
-    ],
-    [
-      {
-        requirements: { level: 20 },
-        action: 'quest',
-        activated: false,
-      },
-    ],
-    [
-      {
-        requirements: { level: 50, class: { [CardClasses.Bowman]: 2 } },
-        action: 'damage',
-        activated: false,
-        opts: { damage: 20 },
-        targets: {
-          xor: [
-            {
-              type: CardTypes.Monster,
-              quantity: 1,
-              location: Location.OppField,
-            },
-            {
-              type: CardTypes.Character,
-              quantity: 1,
-              location: Location.OppCharacter,
-            },
-          ],
-        },
-      },
-    ],
-  ],
+  skills: [skillRef('l10beasy'), skillRef('l20quest'), skillRef('l50bbtricky')],
   ...defaultTypes,
 };
 
@@ -74,72 +22,6 @@ export const skyhawk: Omit<Character, 'key' | 'owner'> = {
   name: 'Skyhawk',
   image: 'Skyhawk',
   health: 210,
-  skills: [
-    [
-      {
-        requirements: { level: 10, class: { [CardClasses.Bowman]: 1 } },
-        action: 'damage',
-        activated: false,
-        opts: { damage: 10 },
-        targets: {
-          xor: [
-            {
-              type: CardTypes.Monster,
-              quantity: 1,
-              location: Location.OppField,
-            },
-            {
-              type: CardTypes.Character,
-              quantity: 1,
-              location: Location.OppCharacter,
-            },
-          ],
-        },
-      },
-    ],
-    [
-      {
-        requirements: { level: 10 },
-        action: 'quest',
-        activated: false,
-      },
-    ],
-    [
-      {
-        requirements: { level: 60, class: { [CardClasses.Bowman]: 2 } },
-        action: 'damage',
-        activated: false,
-        opts: { damage: 20 },
-        dialogPrompt: 'Select a monster',
-        targets: {
-          xor: [
-            {
-              type: CardTypes.Monster,
-              location: Location.OppField,
-              quantity: 1,
-              quantityUpTo: true,
-            },
-          ],
-        },
-      },
-      {
-        requirements: { level: 60, class: { [CardClasses.Bowman]: 2 } },
-        action: 'damage',
-        activated: false,
-        opts: { damage: 20 },
-        dialogPrompt: 'Select a character',
-        noReset: true,
-        targets: {
-          xor: [
-            {
-              type: CardTypes.Character,
-              location: Location.OppCharacter,
-              quantity: 1,
-            },
-          ],
-        },
-      },
-    ],
-  ],
+  skills: [skillRef('l10beasy'), skillRef('l10quest'), skillRef('l60bbrapid')],
   ...defaultTypes,
 };

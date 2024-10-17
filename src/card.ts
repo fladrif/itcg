@@ -1,21 +1,14 @@
 import { PlayerID } from 'boardgame.io';
 
-import { Action, ActionOpts } from './actions';
-import { ActionTargets } from './target';
 import { Keyword } from './keywords';
-import { Choice } from './stack';
 import { GlobalState } from './state';
 import { TriggerLifetimeTemplate, TriggerNames, TriggerOptions } from './trigger';
 import { getRandomKey } from './utils';
 import { CardName } from './cards';
+import { SkillRef } from './skill';
+import { skillRef } from './skill/utils';
 
 export const BLANK_CARDNAME = 'blank';
-
-export const SAMPLE_SKILL: Skill = {
-  requirements: { level: 100 },
-  action: 'quest',
-  activated: false,
-};
 
 export enum CardTypes {
   Tactic = 'Tactic',
@@ -100,13 +93,13 @@ export interface Card {
 
 export interface Character extends Card {
   health: number;
-  skills: Skill[][];
+  skills: SkillRef[];
 }
 
 export interface NonCharacter extends Exclude<Card, Character> {
   subtypes: CardSubTypes[];
   level: number;
-  skill: Skill[];
+  skill: SkillRef;
   ability: Ability;
   reveal?: PlayerID[];
 }
@@ -124,30 +117,6 @@ export interface Tactic extends NonCharacter {}
 export interface Item extends NonCharacter {
   turnETB?: number;
 }
-
-export interface SkillRequirements {
-  level: number;
-  class?: Partial<Record<CardClasses, number>>;
-  oneshot?: boolean;
-}
-
-export interface Skill {
-  requirements: SkillRequirements;
-  action: Action;
-  /**
-   * Used for UI drawing, always set to false manually
-   */
-  activated: boolean;
-  /**
-   * Can skill be skipped or undone. Set true for forced actions like targeted discard effects
-   */
-  noReset?: boolean;
-  opts?: ActionOpts;
-  targets?: ActionTargets;
-  dialogPrompt?: string;
-  choice?: Choice[];
-}
-
 export interface TriggerRef {
   name: TriggerNames;
   opts?: TriggerOptions;
@@ -156,7 +125,7 @@ export interface TriggerRef {
 
 export interface Ability {
   triggers?: TriggerRef[];
-  skills?: Skill[];
+  skills?: SkillRef;
   state?: Omit<GlobalState, 'owner' | 'player'>;
   keywords?: Keyword[];
   inactiveKeywords?: Keyword[];
@@ -220,7 +189,7 @@ export const blankCard: Omit<NonCharacter, 'key' | 'owner'> = {
   name: BLANK_CARDNAME,
   image: '',
   ability: {},
-  skill: [],
+  skill: skillRef('blank'),
   subtypes: [],
 };
 

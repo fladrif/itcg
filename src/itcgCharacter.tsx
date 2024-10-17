@@ -6,6 +6,7 @@ import { GameState, PlayerState } from './game';
 import { Location } from './target';
 import { every, passSkillReqToActivate } from './utils';
 import { Styles, ITCGCard } from './itcgCard';
+import { skillDict } from './skill';
 import { Decision, isSelectable } from './stack';
 
 export interface CharacterProp {
@@ -34,7 +35,7 @@ export class ITCGCharacter extends React.Component<CharacterProp> {
     return this.props.playerState.learnedSkills.map((card, index) => {
       const levelStyles: Styles[] = ['leveledCardStyle'];
 
-      if (every(card.skill, (sk) => sk.activated)) {
+      if (card.skill.activated) {
         levelStyles.push('activatedBorderTop', 'activatedBorderBot');
       } else if (card.selected) {
         levelStyles.push('selectedBorderTop', 'selectedBorderBot');
@@ -53,7 +54,7 @@ export class ITCGCharacter extends React.Component<CharacterProp> {
         this.props.playerState &&
         this.props.stage === 'activate' &&
         every(
-          card.skill,
+          skillDict[card.skill.name],
           (sk) =>
             !passSkillReqToActivate(sk.requirements, this.props.playerState) ||
             this.props.playerState.activationPos > index + 3
@@ -128,13 +129,13 @@ export class ITCGCharacter extends React.Component<CharacterProp> {
     }
 
     character.skills.map((skill, idx) => {
-      if (every(skill, (sk) => sk.activated)) {
+      if (skill.activated) {
         skillStyle[idx].push('activatedBorderTop', 'activatedBorderBot');
       }
 
       if (
         this.props.stage === 'activate' &&
-        every(skill, (sk) => {
+        every(skillDict[skill.name], (sk) => {
           return (
             !passSkillReqToActivate(sk.requirements, this.props.playerState) ||
             this.props.playerState.activationPos > idx

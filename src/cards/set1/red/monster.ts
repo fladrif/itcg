@@ -1,5 +1,5 @@
-import { Monster, CardTypes, CardSubTypes, CardClasses } from '../../../card';
-import { Location } from '../../../target';
+import { Monster, CardTypes, CardSubTypes } from '../../../card';
+import { skillRef } from '../../../skill';
 
 import { defaultClass } from './types';
 
@@ -17,34 +17,7 @@ export const bellflowerroot: Omit<Monster, 'key' | 'owner'> = {
   level: 53,
   attack: 40,
   health: 60,
-  skill: [
-    {
-      action: 'play',
-      activated: false,
-      requirements: {
-        level: 50,
-        class: {
-          [CardClasses.Magician]: 2,
-        },
-      },
-      targets: {
-        xor: [
-          {
-            level: 50,
-            type: CardTypes.Tactic,
-            location: Location.Hand,
-            quantity: 1,
-          },
-          {
-            level: 50,
-            type: CardTypes.Item,
-            location: Location.Hand,
-            quantity: 1,
-          },
-        ],
-      },
-    },
-  ],
+  skill: skillRef('l50mmthinkequip50'),
   ability: {},
   subtypes: [CardSubTypes.flora],
   ...defaultTypes,
@@ -57,13 +30,7 @@ export const chiefgray: Omit<Monster, 'key' | 'owner'> = {
   level: 49,
   attack: 10,
   health: 30,
-  skill: [
-    {
-      action: 'quest',
-      activated: false,
-      requirements: { level: 0, oneshot: true },
-    },
-  ],
+  skill: skillRef('quest'),
   ability: { triggers: [{ name: 'SuperGeniusTrigger' }] },
   subtypes: [CardSubTypes.alien],
   ...defaultTypes,
@@ -76,24 +43,7 @@ export const darkaxestump: Omit<Monster, 'key' | 'owner'> = {
   level: 22,
   attack: 10,
   health: 40,
-  skill: [
-    {
-      action: 'play',
-      activated: false,
-      requirements: {
-        level: 40,
-        class: {
-          [CardClasses.Magician]: 2,
-        },
-      },
-      targets: {
-        level: 40,
-        type: CardTypes.Monster,
-        location: Location.Hand,
-        quantity: 1,
-      },
-    },
-  ],
+  skill: skillRef('l40mmspawn40'),
   ability: {},
   subtypes: [CardSubTypes.dark, CardSubTypes.flora],
   ...defaultTypes,
@@ -106,24 +56,7 @@ export const jrnecki: Omit<Monster, 'key' | 'owner'> = {
   level: 21,
   attack: 30,
   health: 30,
-  skill: [
-    {
-      action: 'play',
-      activated: false,
-      requirements: {
-        level: 30,
-        class: {
-          [CardClasses.Magician]: 1,
-        },
-      },
-      targets: {
-        level: 30,
-        type: CardTypes.Monster,
-        location: Location.Hand,
-        quantity: 1,
-      },
-    },
-  ],
+  skill: skillRef('l30mspawn30'),
   ability: {},
   subtypes: [CardSubTypes.worm],
   ...defaultTypes,
@@ -136,34 +69,7 @@ export const lioner: Omit<Monster, 'key' | 'owner'> = {
   level: 53,
   attack: 50,
   health: 50,
-  skill: [
-    {
-      action: 'play',
-      activated: false,
-      requirements: {
-        level: 70,
-        class: {
-          [CardClasses.Magician]: 2,
-        },
-      },
-      targets: {
-        xor: [
-          {
-            level: 90,
-            type: CardTypes.Tactic,
-            location: Location.Hand,
-            quantity: 1,
-          },
-          {
-            level: 90,
-            type: CardTypes.Monster,
-            location: Location.Hand,
-            quantity: 1,
-          },
-        ],
-      },
-    },
-  ],
+  skill: skillRef('l70mmspawnthink90'),
   ability: {},
   subtypes: [CardSubTypes.kitty],
   ...defaultTypes,
@@ -176,13 +82,7 @@ export const lucida: Omit<Monster, 'key' | 'owner'> = {
   level: 73,
   attack: 60,
   health: 90,
-  skill: [
-    {
-      action: 'conjure',
-      requirements: { level: 0, oneshot: true },
-      activated: false,
-    },
-  ],
+  skill: skillRef('conjure'),
   ability: {
     triggers: [{ name: 'WickedTrigger' }],
   },
@@ -197,18 +97,9 @@ export const octopus: Omit<Monster, 'key' | 'owner'> = {
   level: 12,
   attack: 10,
   health: 10,
-  skill: [
-    {
-      action: 'quest',
-      requirements: {
-        level: 0,
-        oneshot: true,
-      },
-      activated: false,
-    },
-  ],
+  skill: skillRef('quest'),
   ability: {
-    triggers: [{ name: 'GeniusTrigger' }],
+    skills: skillRef('quest'),
   },
   subtypes: [CardSubTypes.alien],
   ...defaultTypes,
@@ -221,47 +112,9 @@ export const peachmonkey: Omit<Monster, 'key' | 'owner'> = {
   level: 62,
   attack: 60,
   health: 60,
-  skill: [
-    {
-      action: 'play',
-      activated: false,
-      requirements: {
-        level: 80,
-        class: { [CardClasses.Magician]: 2 },
-      },
-      targets: {
-        level: 120,
-        type: CardTypes.Monster,
-        location: Location.Hand,
-        quantity: 1,
-      },
-    },
-  ],
+  skill: skillRef('l80mmspawn120'),
   ability: {
-    skills: [
-      {
-        action: 'destroy',
-        activated: false,
-        requirements: { level: 0 },
-        noReset: true,
-        targets: {
-          xor: [
-            {
-              type: CardTypes.Item,
-              location: Location.Field,
-              quantity: 1,
-              quantityUpTo: true,
-            },
-            {
-              type: CardTypes.Item,
-              location: Location.OppField,
-              quantity: 1,
-              quantityUpTo: true,
-            },
-          ],
-        },
-      },
-    ],
+    skills: skillRef('destroyitem'),
   },
   subtypes: [CardSubTypes.monkey],
   ...defaultTypes,
@@ -274,15 +127,9 @@ export const zetagray: Omit<Monster, 'key' | 'owner'> = {
   level: 42,
   attack: 20,
   health: 20,
-  skill: [
-    {
-      action: 'quest',
-      requirements: { level: 0, oneshot: true },
-      activated: false,
-    },
-  ],
+  skill: skillRef('quest'),
   ability: {
-    triggers: [{ name: 'GeniusTrigger' }],
+    skills: skillRef('quest'),
   },
   subtypes: [CardSubTypes.alien],
   ...defaultTypes,
@@ -295,28 +142,9 @@ export const zombielupin: Omit<Monster, 'key' | 'owner'> = {
   level: 40,
   attack: 20,
   health: 20,
-  skill: [
-    {
-      action: 'drinkpotion',
-      requirements: { level: 0, oneshot: true },
-      activated: false,
-    },
-  ],
+  skill: skillRef('drinkpotion'),
   ability: {
-    skills: [
-      {
-        action: 'bounce',
-        activated: false,
-        requirements: { level: 0 },
-        noReset: true,
-        targets: {
-          type: CardTypes.Tactic,
-          location: Location.Discard,
-          quantity: 1,
-          quantityUpTo: true,
-        },
-      },
-    ],
+    skills: skillRef('devious'),
   },
   subtypes: [CardSubTypes.undead, CardSubTypes.monkey],
   ...defaultTypes,

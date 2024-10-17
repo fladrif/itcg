@@ -1,5 +1,5 @@
-import { CardTypes, CardSubTypes, CardClasses, Item } from '../../../card';
-import { Location } from '../../../target';
+import { CardTypes, CardSubTypes, Item } from '../../../card';
+import { skillRef } from '../../../skill';
 
 import { defaultClass } from './types';
 
@@ -13,34 +13,7 @@ export const eviltale: Omit<Item, 'key' | 'owner'> = {
   name: 'Evil Tale',
   image: 'EvilTale',
   level: 58,
-  skill: [
-    {
-      action: 'play',
-      activated: false,
-      requirements: {
-        level: 60,
-        class: {
-          [CardClasses.Magician]: 2,
-        },
-      },
-      targets: {
-        xor: [
-          {
-            level: 70,
-            type: CardTypes.Tactic,
-            location: Location.Hand,
-            quantity: 1,
-          },
-          {
-            level: 70,
-            type: CardTypes.Item,
-            location: Location.Hand,
-            quantity: 1,
-          },
-        ],
-      },
-    },
-  ],
+  skill: skillRef('l60mmthinkequip70'),
   ability: { triggers: [{ name: 'EvilTaleTrigger', opts: { damage: 30 } }] },
   subtypes: [CardSubTypes.wand],
   ...defaultTypes,
@@ -51,24 +24,7 @@ export const maplestaff: Omit<Item, 'key' | 'owner'> = {
   name: 'Maple Staff',
   image: 'MapleStaff',
   level: 35,
-  skill: [
-    {
-      action: 'play',
-      activated: false,
-      requirements: {
-        level: 30,
-        class: {
-          [CardClasses.Magician]: 2,
-        },
-      },
-      targets: {
-        level: 40,
-        type: CardTypes.Tactic,
-        location: Location.Hand,
-        quantity: 1,
-      },
-    },
-  ],
+  skill: skillRef('l30mmthink40'),
   ability: { triggers: [{ name: 'MapleStaffTrigger' }] },
   subtypes: [CardSubTypes.weapon],
   ...defaultTypes,
@@ -79,32 +35,9 @@ export const redapprenticehat: Omit<Item, 'key' | 'owner'> = {
   name: 'Red Apprentice Hat',
   image: 'RedApprenticeHat',
   level: 10,
-  skill: [
-    {
-      action: 'play',
-      activated: false,
-      requirements: {
-        level: 40,
-        class: {
-          [CardClasses.Magician]: 2,
-        },
-      },
-      targets: {
-        level: 40,
-        type: CardTypes.Item,
-        location: Location.Hand,
-        quantity: 1,
-      },
-    },
-  ],
+  skill: skillRef('l40mmequip40'),
   ability: {
-    skills: [
-      {
-        action: 'quest',
-        requirements: { level: 0 },
-        activated: false,
-      },
-    ],
+    skills: skillRef('quest'),
     triggers: [{ name: 'RedApprenticeHatTrigger' }],
   },
   subtypes: [CardSubTypes.armor],

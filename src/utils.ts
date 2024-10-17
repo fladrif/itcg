@@ -10,10 +10,10 @@ import {
   Tactic,
   Character,
   NonCharacter,
-  SkillRequirements,
 } from './card';
-import { Location } from './target';
+import { SkillRequirements } from './skill/types';
 import { Selection } from './stack';
+import { Location } from './target';
 import { getBlankCard } from './card';
 
 export type MonsterType = Omit<Monster, 'key' | 'owner'>;

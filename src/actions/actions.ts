@@ -12,6 +12,7 @@ import {
   NonCharacter,
   CardTypes,
 } from '../card';
+import { skillDict } from '../skill';
 import { Choice, Decision, parseSkill, upsertStack } from '../stack';
 import { getMonsterAtt } from '../state';
 import {
@@ -312,12 +313,13 @@ function level(fnCtx: FuncContext, opts: ActionOpts): any {
       player.level += 10;
       dec.push(refreshDec(selCard));
 
-      const oneshot = selCard.skill.some(
+      const skill = skillDict[selCard.skill.name];
+      const oneshot = skill.some(
         (skill) => skill.requirements.oneshot && meetsSkillReq(skill.requirements, player)
       );
       if (oneshot) {
-        selCard.skill.forEach((sk, idx) => {
-          sk.activated = true;
+        selCard.skill.activated = true;
+        skill.forEach((sk, idx) => {
           if (idx === 0) {
             upsertStack(fnCtx, [parseSkill(fnCtx, sk, card)]);
           } else {
@@ -426,7 +428,7 @@ function play(fnCtx: FuncContext, opts: ActionOpts): any {
         player.field.push(card);
         handleAbility(fnCtx, card);
       } else if (isTactic(card)) {
-        if (!card.ability.skills || card.ability.skills.length <= 0) {
+        if (!card.ability.skills) {
           player.discard.push(card);
         } else {
           player.temporary.push(card);
@@ -708,7 +710,7 @@ function shuffle(fnCtx: FuncContext, opts: ActionOpts): any {
   const id = opts.source ? opts.source.owner : ctx.currentPlayer;
   const deck = G.player[id].deck;
 
-  deck.map((card) => {
+  deck.forEach((card) => {
     if (card.reveal) card.reveal = undefined;
   });
 

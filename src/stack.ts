@@ -4,7 +4,7 @@ import { FuncContext, GameState, PlayerState } from './game';
 import { actions, isOpponentAction, Action, ActionOpts } from './actions';
 import { ActionTargets, Location } from './target';
 import { endLevelStage, endActivateStage, endAttackStage } from './hook';
-import { isMonster, Skill, Character, NonCharacter } from './card';
+import { isMonster, Character, NonCharacter } from './card';
 import { ensureFilter, filterSelections, meetsTarget, mayFinished } from './target';
 import { getActionTriggerFns, stackTriggerFns, stackActionTriggers } from './trigger';
 import {
@@ -17,6 +17,7 @@ import {
   mergeSelections,
   getOpponentState,
 } from './utils';
+import { Skill } from './skill/types';
 import { getRelevantState } from './state';
 
 export type Selection = Partial<Record<Location, (Character | NonCharacter)[]>>;
@@ -456,8 +457,8 @@ function isDecisionNeeded(dec: Decision): boolean {
 
 function resetSkillActivations(fnCtx: FuncContext) {
   const { G, ctx } = fnCtx;
-  (getLocation(G, ctx, Location.Character)[0] as Character).skills.map((skill) =>
-    skill.map((sk) => (sk.activated = false))
+  (getLocation(G, ctx, Location.Character)[0] as Character).skills.map(
+    (skill) => (skill.activated = false)
   );
 
   G.player[ctx.currentPlayer].learnedSkills = (
@@ -465,9 +466,7 @@ function resetSkillActivations(fnCtx: FuncContext) {
   ).map((card) => {
     return {
       ...card,
-      skill: card.skill.map((sk) => {
-        return { ...sk, activated: false };
-      }),
+      skill: { ...card.skill, activated: false },
     };
   });
 }

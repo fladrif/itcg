@@ -1,5 +1,5 @@
-import { CardTypes, CardSubTypes, CardClasses, Tactic } from '../../../card';
-import { Location } from '../../../target';
+import { CardTypes, CardSubTypes, Tactic } from '../../../card';
+import { skillRef } from '../../../skill';
 
 import { defaultClass } from './types';
 
@@ -13,38 +13,9 @@ export const itemtrade: Omit<Tactic, 'key' | 'owner'> = {
   name: 'Item Trade',
   image: 'ItemTrade',
   level: 30,
-  skill: [
-    {
-      action: 'drinkpotion',
-      activated: false,
-      requirements: { level: 0, oneshot: true },
-    },
-  ],
+  skill: skillRef('drinkpotion'),
   ability: {
-    skills: [
-      {
-        requirements: { level: 0 },
-        action: 'destroy',
-        activated: false,
-        noReset: true,
-        targets: {
-          xor: [
-            {
-              type: CardTypes.Item,
-              location: Location.Field,
-              quantityUpTo: true,
-              quantity: 1,
-            },
-            {
-              type: CardTypes.Item,
-              location: Location.OppField,
-              quantityUpTo: true,
-              quantity: 1,
-            },
-          ],
-        },
-      },
-    ],
+    skills: skillRef('destroyitem'),
   },
   subtypes: [CardSubTypes.strategy],
   ...defaultTypes,
@@ -55,38 +26,9 @@ export const pull: Omit<Tactic, 'key' | 'owner'> = {
   name: 'Pull',
   image: 'Pull',
   level: 40,
-  skill: [
-    {
-      action: 'scout',
-      activated: false,
-      requirements: { level: 0, oneshot: true },
-    },
-  ],
+  skill: skillRef('scout'),
   ability: {
-    skills: [
-      {
-        action: 'revealDeck',
-        activated: false,
-        requirements: { level: 0 },
-      },
-      {
-        action: 'bounce',
-        activated: false,
-        requirements: { level: 0 },
-        noReset: true,
-        targets: {
-          type: CardTypes.Monster,
-          location: Location.Deck,
-          quantity: 1,
-          quantityUpTo: true,
-        },
-      },
-      {
-        action: 'shuffle',
-        activated: false,
-        requirements: { level: 0 },
-      },
-    ],
+    skills: skillRef('pull'),
   },
   subtypes: [CardSubTypes.strategy],
   ...defaultTypes,
@@ -97,50 +39,9 @@ export const resting: Omit<Tactic, 'key' | 'owner'> = {
   name: 'Resting',
   image: 'Resting',
   level: 10,
-  skill: [
-    {
-      action: 'play',
-      activated: false,
-      requirements: {
-        level: 70,
-        class: {
-          [CardClasses.Warrior]: 1,
-        },
-      },
-      targets: {
-        xor: [
-          {
-            level: 90,
-            type: CardTypes.Monster,
-            location: Location.Hand,
-            quantity: 1,
-          },
-          {
-            level: 90,
-            type: CardTypes.Tactic,
-            location: Location.Hand,
-            quantity: 1,
-          },
-        ],
-      },
-    },
-  ],
+  skill: skillRef('l70wspawnthink90'),
   ability: {
-    skills: [
-      {
-        requirements: { level: 0 },
-        action: 'refresh',
-        activated: false,
-        opts: {
-          lifegain: 20,
-        },
-      },
-      {
-        requirements: { level: 0 },
-        action: 'quest',
-        activated: false,
-      },
-    ],
+    skills: skillRef('resting'),
   },
   subtypes: [CardSubTypes.strategy],
   ...defaultTypes,

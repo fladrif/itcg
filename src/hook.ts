@@ -1,6 +1,7 @@
 import { Location } from './target';
-import { Skill, isMonster, Monster } from './card';
+import { isMonster, Monster } from './card';
 import { FuncContext } from './game';
+import { skillDict, SkillRef } from './skill';
 import { Decision, overrideStage, upsertStack } from './stack';
 import { getMonsterKeywords, getMonsterHealth, pruneStateStore } from './state';
 import { pruneTriggerStore } from './trigger';
@@ -92,13 +93,15 @@ export function endActivateStage(fnCtx: FuncContext, now?: boolean) {
   if (now) return endActivate(fnCtx);
 
   const player = G.player[ctx.currentPlayer];
-  const skills: Skill[][] = [];
+  const skills: SkillRef[] = [];
 
   skills.push(...player.character.skills);
   player.learnedSkills.map((card) => skills.push(card.skill));
 
   const availableSkills = skills.slice(player.activationPos).filter((skill) => {
-    return skill.every((skill) => passSkillReqToActivate(skill.requirements, player));
+    return skillDict[skill.name].every((skill) =>
+      passSkillReqToActivate(skill.requirements, player)
+    );
   });
 
   const noTargets = availableSkills.length == 0;

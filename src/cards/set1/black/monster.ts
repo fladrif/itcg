@@ -1,5 +1,5 @@
-import { Monster, CardTypes, CardSubTypes, CardClasses } from '../../../card';
-import { Location } from '../../../target';
+import { Monster, CardTypes, CardSubTypes } from '../../../card';
+import { skillRef } from '../../../skill';
 
 import { defaultClass } from './types';
 
@@ -17,44 +17,9 @@ export const buffy: Omit<Monster, 'key' | 'owner'> = {
   level: 61,
   attack: 40,
   health: 40,
-  skill: [
-    {
-      action: 'play',
-      activated: false,
-      requirements: {
-        level: 20,
-        class: {
-          [CardClasses.Thief]: 1,
-        },
-      },
-      targets: {
-        level: 20,
-        location: Location.Hand,
-        quantity: 1,
-      },
-    },
-  ],
+  skill: skillRef('l20sneak20'),
   ability: {
-    skills: [
-      {
-        action: 'destroy',
-        activated: false,
-        requirements: { level: 0 },
-        noReset: true,
-        targets: {
-          xor: [
-            {
-              location: Location.OppCharAction,
-              quantity: 1,
-            },
-            {
-              location: Location.CharAction,
-              quantity: 1,
-            },
-          ],
-        },
-      },
-    ],
+    skills: skillRef('destroyskill'),
   },
   subtypes: [CardSubTypes.undead, CardSubTypes.clown],
   ...defaultTypes,
@@ -67,34 +32,7 @@ export const cico: Omit<Monster, 'key' | 'owner'> = {
   level: 25,
   attack: 30,
   health: 20,
-  skill: [
-    {
-      action: 'play',
-      activated: false,
-      requirements: {
-        level: 40,
-        class: {
-          [CardClasses.Thief]: 2,
-        },
-      },
-      targets: {
-        xor: [
-          {
-            level: 30,
-            type: CardTypes.Item,
-            location: Location.Hand,
-            quantity: 1,
-          },
-          {
-            level: 30,
-            type: CardTypes.Monster,
-            location: Location.Hand,
-            quantity: 1,
-          },
-        ],
-      },
-    },
-  ],
+  skill: skillRef('l40ttspawnequip30'),
   ability: {
     triggers: [{ name: 'LootTrigger' }],
   },
@@ -109,24 +47,7 @@ export const croco: Omit<Monster, 'key' | 'owner'> = {
   level: 52,
   attack: 70,
   health: 40,
-  skill: [
-    {
-      action: 'play',
-      activated: false,
-      requirements: {
-        level: 30,
-        class: {
-          [CardClasses.Thief]: 3,
-        },
-      },
-      targets: {
-        level: 'CurrentLevel',
-        type: CardTypes.Item,
-        location: Location.Hand,
-        quantity: 1,
-      },
-    },
-  ],
+  skill: skillRef('l30tttequipx'),
   ability: {},
   subtypes: [CardSubTypes.reptile],
   ...defaultTypes,
@@ -139,41 +60,7 @@ export const krappy: Omit<Monster, 'key' | 'owner'> = {
   level: 24,
   attack: 60,
   health: 30,
-  skill: [
-    {
-      action: 'damage',
-      activated: false,
-      opts: { damage: 10 },
-      requirements: {
-        level: 30,
-        class: {
-          [CardClasses.Thief]: 1,
-        },
-      },
-      targets: {
-        xor: [
-          {
-            type: CardTypes.Monster,
-            location: Location.Field,
-            quantity: 1,
-          },
-          {
-            type: CardTypes.Monster,
-            location: Location.OppField,
-            quantity: 1,
-          },
-          {
-            location: Location.Character,
-            quantity: 1,
-          },
-          {
-            location: Location.OppCharacter,
-            quantity: 1,
-          },
-        ],
-      },
-    },
-  ],
+  skill: skillRef('l30tstab'),
   ability: { keywords: ['confused'] },
   subtypes: [CardSubTypes.water, CardSubTypes.fish],
   ...defaultTypes,
@@ -186,41 +73,7 @@ export const krip: Omit<Monster, 'key' | 'owner'> = {
   level: 30,
   attack: 30,
   health: 20,
-  skill: [
-    {
-      action: 'damage',
-      activated: false,
-      opts: { damage: 20 },
-      requirements: {
-        level: 70,
-        class: {
-          [CardClasses.Thief]: 2,
-        },
-      },
-      targets: {
-        xor: [
-          {
-            type: CardTypes.Monster,
-            location: Location.Field,
-            quantity: 1,
-          },
-          {
-            type: CardTypes.Monster,
-            location: Location.OppField,
-            quantity: 1,
-          },
-          {
-            location: Location.Character,
-            quantity: 1,
-          },
-          {
-            location: Location.OppCharacter,
-            quantity: 1,
-          },
-        ],
-      },
-    },
-  ],
+  skill: skillRef('l70ttslash'),
   ability: {},
   subtypes: [CardSubTypes.water, CardSubTypes.shrimp],
   ...defaultTypes,
@@ -233,24 +86,7 @@ export const lorang: Omit<Monster, 'key' | 'owner'> = {
   level: 37,
   attack: 40,
   health: 10,
-  skill: [
-    {
-      action: 'play',
-      activated: false,
-      requirements: {
-        level: 50,
-        class: {
-          [CardClasses.Thief]: 1,
-        },
-      },
-      targets: {
-        level: 50,
-        type: CardTypes.Monster,
-        location: Location.Hand,
-        quantity: 1,
-      },
-    },
-  ],
+  skill: skillRef('l50tspawn50'),
   ability: { keywords: ['tough'] },
   subtypes: [CardSubTypes.water, CardSubTypes.crab],
   ...defaultTypes,
@@ -263,24 +99,7 @@ export const orangemushroom: Omit<Monster, 'key' | 'owner'> = {
   level: 8,
   attack: 30,
   health: 10,
-  skill: [
-    {
-      action: 'play',
-      activated: false,
-      requirements: {
-        level: 30,
-        class: {
-          [CardClasses.Thief]: 1,
-        },
-      },
-      targets: {
-        level: 40,
-        type: CardTypes.Item,
-        location: Location.Hand,
-        quantity: 1,
-      },
-    },
-  ],
+  skill: skillRef('l30tequip40'),
   ability: {
     triggers: [{ name: 'LootTrigger' }],
   },
@@ -295,13 +114,7 @@ export const pinkteddy: Omit<Monster, 'key' | 'owner'> = {
   level: 32,
   attack: 30,
   health: 30,
-  skill: [
-    {
-      action: 'loot',
-      activated: false,
-      requirements: { level: 0, oneshot: true },
-    },
-  ],
+  skill: skillRef('loot'),
   ability: {},
   subtypes: [CardSubTypes.toy, CardSubTypes.bear],
   ...defaultTypes,
@@ -314,13 +127,7 @@ export const propelly: Omit<Monster, 'key' | 'owner'> = {
   level: 37,
   attack: 50,
   health: 20,
-  skill: [
-    {
-      action: 'loot',
-      activated: false,
-      requirements: { level: 0, oneshot: true },
-    },
-  ],
+  skill: skillRef('loot'),
   ability: {},
   subtypes: [CardSubTypes.flying, CardSubTypes.toy],
   ...defaultTypes,
@@ -333,24 +140,7 @@ export const redsnail: Omit<Monster, 'key' | 'owner'> = {
   level: 4,
   attack: 10,
   health: 20,
-  skill: [
-    {
-      action: 'play',
-      activated: false,
-      requirements: {
-        level: 70,
-        class: {
-          [CardClasses.Thief]: 2,
-        },
-      },
-      targets: {
-        level: 90,
-        type: CardTypes.Monster,
-        location: Location.Hand,
-        quantity: 1,
-      },
-    },
-  ],
+  skill: skillRef('l70ttspawn90'),
   ability: { keywords: ['tough'] },
   subtypes: [CardSubTypes.pest],
   ...defaultTypes,
@@ -363,34 +153,7 @@ export const seacle: Omit<Monster, 'key' | 'owner'> = {
   level: 23,
   attack: 20,
   health: 20,
-  skill: [
-    {
-      action: 'play',
-      activated: false,
-      requirements: {
-        level: 30,
-        class: {
-          [CardClasses.Thief]: 1,
-        },
-      },
-      targets: {
-        xor: [
-          {
-            level: 30,
-            type: CardTypes.Monster,
-            location: Location.Hand,
-            quantity: 1,
-          },
-          {
-            level: 30,
-            type: CardTypes.Tactic,
-            location: Location.Hand,
-            quantity: 1,
-          },
-        ],
-      },
-    },
-  ],
+  skill: skillRef('l30tspawnthink30'),
   ability: { triggers: [{ name: 'SlipperyTrigger' }] },
   subtypes: [CardSubTypes.water, CardSubTypes.beast],
   ...defaultTypes,
@@ -403,13 +166,7 @@ export const soulteddy: Omit<Monster, 'key' | 'owner'> = {
   level: 63,
   attack: 50,
   health: 40,
-  skill: [
-    {
-      action: 'loot',
-      activated: false,
-      requirements: { level: 0, oneshot: true },
-    },
-  ],
+  skill: skillRef('loot'),
   ability: {
     keywords: ['tough'],
     triggers: [{ name: 'StartleTrigger' }],

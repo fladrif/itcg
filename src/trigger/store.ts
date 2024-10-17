@@ -3,7 +3,8 @@ import { PlayerID } from 'boardgame.io';
 import { Action, actions } from '../actions';
 import { FuncContext } from '../game';
 import { Location } from '../target';
-import { isMonster, CardTypes, Monster, isItem, isTactic, Tactic, Skill } from '../card';
+import { isMonster, CardTypes, Monster, isItem, isTactic, Tactic } from '../card';
+import { Skill } from '../skill/types';
 import { Choice, Decision, parseSkill } from '../stack';
 import { getMonsterHealth } from '../state';
 import {
@@ -823,54 +824,6 @@ export class FocusTrigger extends ActionTrigger {
   }
 }
 
-export class GeniusTrigger extends ActionTrigger {
-  constructor(
-    cardOwner: string,
-    player: PlayerID,
-    key: string,
-    opts?: TriggerOptions,
-    lifetime?: TriggerLifetime
-  ) {
-    super(cardOwner, 'After', ['play'], key, opts, player, lifetime);
-  }
-
-  shouldTriggerExtension(
-    _fnCtx: FuncContext,
-    decision: Decision,
-    _prep: TriggerPreposition
-  ) {
-    const locations = Object.keys(decision.selection) as Location[];
-    const cardIsPlayed = locations.some(
-      (loc) =>
-        decision.selection[loc] &&
-        decision.selection[loc]!.some((card) => card.key === this.cardOwner)
-    );
-
-    return cardIsPlayed;
-  }
-
-  createDecision(fnCtx: FuncContext, _decision: Decision) {
-    const { G, ctx } = fnCtx;
-
-    const dec: Decision = {
-      action: 'quest',
-      selection: {},
-      opts: {
-        source: getCardAtLocation(
-          G,
-          ctx,
-          getCardLocation(G, ctx, this.cardOwner),
-          this.cardOwner
-        ),
-      },
-      finished: false,
-      key: getRandomKey(),
-    };
-
-    return [dec];
-  }
-}
-
 export class GoldenCrowTrigger extends ActionTrigger {
   constructor(
     cardOwner: string,
@@ -1236,7 +1189,6 @@ export class MPEaterTrigger extends TurnTrigger {
 
     const unMPEater: Skill = {
       action: 'unmpeater',
-      activated: false,
       requirements: { level: 0 },
       opts: { allOppMonster: true },
       noReset: true,
@@ -2176,7 +2128,6 @@ export const triggers = {
   EvilTaleTrigger,
   FairyTrigger,
   FocusTrigger,
-  GeniusTrigger,
   GoldenCrowTrigger,
   KumbiTrigger,
   LootTrigger,

@@ -1,10 +1,10 @@
 import React from 'react';
 
 import { cardImages } from '../itcgCardImages';
+import { BLANK_CARDNAME, CardClasses, CardTypes } from '../card';
 import { cards } from '../cards';
 
 import { toCard, toGrid } from './utils';
-import { BLANK_CARDNAME, CardClasses, CardTypes } from '../card';
 
 const baseStyle: React.CSSProperties = {
   margin: '1%',
