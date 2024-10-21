@@ -9,7 +9,7 @@ save:
 deploy: build save
 	rm -rf itcgImage/*
 	tar -xf itcg.tar -C itcgImage
-	rsync --delete --progress -acv itcgImage ubuntu@$(shell dig maple.rs | grep ^maple.rs. | cut -f 6):~/
+	rsync --delete --info=progress2 -acv itcgImage ubuntu@$(shell dig maple.rs | grep ^maple.rs. | cut -f 6):~/
 
 stop-client:
 	docker stop itcg-client || true
