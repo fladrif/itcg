@@ -2,7 +2,7 @@ import React from 'react';
 import axios from 'axios';
 
 import { ITCGDeckBuilder } from './deckBuilder';
-import { CardStyle, ParagraphStyle } from './overall.css';
+import { CardStyle, LoadStyle, ParagraphStyle } from './overall.css';
 
 import { Deck } from '../game';
 
@@ -18,6 +18,7 @@ export interface DeckMetaData {
 }
 
 export interface State {
+  initialLoad: boolean;
   decks: DeckMetaData[];
   build: boolean;
   buildDeck?: string;
@@ -34,7 +35,7 @@ export class ITCGDeck extends React.Component<DeckProp> {
 
   constructor(prop: DeckProp) {
     super(prop);
-    this.state = { decks: [], build: false };
+    this.state = { decks: [], build: false, initialLoad: false };
   }
 
   async componentDidMount() {
@@ -50,7 +51,7 @@ export class ITCGDeck extends React.Component<DeckProp> {
 
     if (!resp.data) return;
 
-    this.setState({ ...obj, decks: resp.data });
+    this.setState({ ...obj, decks: resp.data, initialLoad: true });
   }
 
   buildDeck(id?: string) {
@@ -112,8 +113,16 @@ export class ITCGDeck extends React.Component<DeckProp> {
   render() {
     return (
       <div style={baseStyle}>
-        {!this.state.build && this.getDeckList()}
-        {this.state.build && (
+        {!this.state.initialLoad && (
+          <>
+            <h2>Decks</h2>
+            <h2 className={'loading'} style={LoadStyle}>
+              Loading
+            </h2>
+          </>
+        )}
+        {!!this.state.initialLoad && !this.state.build && this.getDeckList()}
+        {!!this.state.initialLoad && this.state.build && (
           <ITCGDeckBuilder
             server={this.props.server}
             deckID={this.state.buildDeck}

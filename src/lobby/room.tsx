@@ -2,7 +2,13 @@ import React from 'react';
 import { FormControl } from 'react-bootstrap';
 import axios from 'axios';
 
-import { CardStyle, ParagraphStyle, SecCardStyle, TriCardStyle } from './overall.css';
+import {
+  CardStyle,
+  LoadStyle,
+  ParagraphStyle,
+  SecCardStyle,
+  TriCardStyle,
+} from './overall.css';
 import { DeckMetaData, parseDeckList } from './deck';
 
 import { AppState } from '../App';
@@ -33,6 +39,7 @@ interface Game {
 }
 
 interface State {
+  initialLoad: boolean;
   rooms: Room[];
   ongoingGames: Game[];
   decks: DeckMetaData[];
@@ -51,7 +58,7 @@ export class ITCGRoom extends React.Component<RoomProp, State> {
 
   constructor(prop: RoomProp) {
     super(prop);
-    this.state = { rooms: [], decks: [], ongoingGames: [] };
+    this.state = { rooms: [], decks: [], ongoingGames: [], initialLoad: false };
   }
 
   async updateSelf() {
@@ -76,12 +83,13 @@ export class ITCGRoom extends React.Component<RoomProp, State> {
     if (!deckResp.data || !rooms) return;
 
     if (!Array.isArray(rooms)) {
-      this.setState({ activeRoom: rooms, decks: deckResp.data });
+      this.setState({ activeRoom: rooms, decks: deckResp.data, initialLoad: true });
     } else {
       this.setState({
         rooms: rooms,
         ongoingGames: ongoingResp.data,
         activeRoom: undefined,
+        initialLoad: true,
       });
     }
   }
@@ -392,6 +400,18 @@ export class ITCGRoom extends React.Component<RoomProp, State> {
   }
 
   render() {
-    return <div style={baseStyle}>{this.getRooms()}</div>;
+    return (
+      <div style={baseStyle}>
+        {!this.state.initialLoad && (
+          <>
+            <h2>Tables</h2>
+            <h2 className={'loading'} style={LoadStyle}>
+              Loading
+            </h2>
+          </>
+        )}
+        {!!this.state.initialLoad && this.getRooms()}
+      </div>
+    );
   }
 }

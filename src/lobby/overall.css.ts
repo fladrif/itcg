@@ -31,3 +31,10 @@ export const SecCardStyle: React.CSSProperties = {
 export const TriCardStyle: React.CSSProperties = {
   background: 'linear-gradient(#EDABDE, 85%, #DFA4B3)',
 };
+
+export const LoadStyle: React.CSSProperties = {
+  textAlign: 'center',
+  textShadow:
+    '2px 0px 3px black, 0px 2px 3px black, 2px 2px 3px black, 2px 0px 3px black, 1px 1px 3px black, -1px 1px 3px black, 1px -1px 3px black, -1px -1px 3px black',
+  color: 'white',
+};
