@@ -1,6 +1,6 @@
 import React from 'react';
 import axios from 'axios';
-import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 import { SocketIO } from 'boardgame.io/multiplayer';
 import { Client } from 'boardgame.io/react';
 import Cookies from 'js-cookie';
@@ -64,11 +64,16 @@ class App extends React.Component {
     const resp = await axios
       .get('/lobby/inGame', {
         baseURL: SERVER,
-        timeout: 5000,
+        timeout: 8000,
         withCredentials: true,
       })
       .catch((err) => {
-        console.error(err);
+        if (err.response.status === 422) {
+          // Auth Cookie expired; logout user to refresh
+          return this.setState({ username: '', inGame: undefined });
+        } else {
+          console.error(err);
+        }
       });
 
     if (!resp || !resp.data) {
@@ -91,6 +96,7 @@ class App extends React.Component {
     return (
       <>
         <BrowserRouter>
+          {this.state.username === '' && <Redirect to={'/logout'} />}
           {!this.state.inGame && (
             <div style={style}>
               <ITCGHeader username={this.state.username} />
