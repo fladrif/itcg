@@ -19,6 +19,7 @@ import {
   verify,
   validUsername,
   adqLengthUsername,
+  ADMIN_COOKIE_NAME,
 } from './utils';
 import {
   extractAuth,
@@ -82,7 +83,10 @@ server.router.post('/login', bodyParser(), async (ctx: any) => {
   if (!result) ctx.throw(400, 'Username and password did not match');
   const user = await db.getUserByName(username);
 
-  setCookies(ctx, user.username, user.id);
+  const roles = await db.getRolesById(user.id);
+  const admin = roles.some((a) => a.name === 'admin');
+
+  setCookies(ctx, user.username, user.id, admin);
   console.log(`${user.username} logged in`);
 });
 
@@ -108,6 +112,7 @@ server.router.get('/logout', (ctx: any) => {
 
   ctx.cookies.set(AUTH_COOKIE_NAME, undefined, { overwrite: true });
   ctx.cookies.set(USER_COOKIE_NAME, undefined, { domain: CLIENT, overwrite: true });
+  ctx.cookies.set(ADMIN_COOKIE_NAME, undefined, { domain: CLIENT, overwrite: true });
   ctx.body = 200;
 
   console.log(`${username} logged out`);

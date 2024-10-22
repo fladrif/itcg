@@ -5,6 +5,7 @@ import { MAX_WIDTH } from '../config';
 
 interface HeaderProps {
   username?: string;
+  isAdmin?: boolean;
 }
 
 const baseStyle: React.CSSProperties = {
@@ -72,9 +73,20 @@ export class ITCGHeader extends React.Component<HeaderProps> {
     );
   }
 
+  adminMenu() {
+    return (
+      <>
+        <li>
+          <a href="/admin">Stats</a>
+        </li>
+      </>
+    );
+  }
+
   loggedInMenu() {
     return (
       <ul className="inline">
+        {!!this.props.isAdmin && this.adminMenu()}
         <li>
           <a href="/">Tables</a>
         </li>

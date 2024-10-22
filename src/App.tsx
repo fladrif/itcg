@@ -21,7 +21,7 @@ import {
   ITCGDevLog,
   ITCGResources,
 } from './lobby';
-import { SERVER, MAX_WIDTH, USER_COOKIE_NAME } from './config';
+import { SERVER, MAX_WIDTH, ADMIN_COOKIE_NAME, USER_COOKIE_NAME } from './config';
 
 const style: React.CSSProperties = {
   display: 'flex',
@@ -45,6 +45,7 @@ export interface GamePlayerData {
 
 export interface AppState {
   username?: string;
+  isAdmin?: boolean;
   inGame?: GamePlayerData;
 }
 
@@ -53,7 +54,11 @@ class App extends React.Component {
 
   constructor(prop: any) {
     super(prop);
-    this.state = { username: Cookies.get(USER_COOKIE_NAME) };
+    const state: AppState = { username: Cookies.get(USER_COOKIE_NAME) };
+    const isAdmin = Cookies.get(ADMIN_COOKIE_NAME);
+    if (isAdmin) state.isAdmin = !!isAdmin;
+
+    this.state = state;
   }
 
   async componentDidMount() {
@@ -99,7 +104,7 @@ class App extends React.Component {
           {this.state.username === '' && <Redirect to={'/logout'} />}
           {!this.state.inGame && (
             <div style={style}>
-              <ITCGHeader username={this.state.username} />
+              <ITCGHeader username={this.state.username} isAdmin={this.state.isAdmin} />
               <div style={{ maxWidth: MAX_WIDTH, width: '100%' }}>
                 <Switch>
                   <Route exact path={'/'}>

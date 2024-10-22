@@ -13,6 +13,7 @@ export const SERVER_AUTH_HEADER = 'ServerAuth';
 export const SERVER_CLIENT_HEADER = 'CanonicalUserID';
 export const AUTH_COOKIE_NAME = 'token';
 export const USER_COOKIE_NAME = 'user';
+export const ADMIN_COOKIE_NAME = 'admin';
 
 export const SERVER_ID = uuidv4();
 
@@ -82,7 +83,12 @@ export function verifyJWT(token: string): string {
   return decode.id;
 }
 
-export function setCookies(ctx: RouterContext, username: string, id: string) {
+export function setCookies(
+  ctx: RouterContext,
+  username: string,
+  id: string,
+  admin?: boolean
+) {
   ctx.cookies.set(AUTH_COOKIE_NAME, signJWT(id), {
     sameSite: 'lax',
     maxAge: 31536000000,
@@ -94,6 +100,15 @@ export function setCookies(ctx: RouterContext, username: string, id: string) {
     httpOnly: false,
     maxAge: 31536000000,
   });
+  if (admin) {
+    ctx.cookies.set(ADMIN_COOKIE_NAME, 'yes', {
+      sameSite: 'lax',
+      domain: CLIENT,
+      secure: false,
+      httpOnly: false,
+      maxAge: 31536000000,
+    });
+  }
   ctx.body = 200;
 }
 
