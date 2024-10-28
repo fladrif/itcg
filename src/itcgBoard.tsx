@@ -4,6 +4,7 @@ import { Tooltip } from 'react-tooltip';
 
 import { GameState, PlayerSettings } from './game';
 import { getTargetLocations, Location, mayFinished } from './target';
+import { USE_AUDIO } from './config';
 
 import { ITCGAudio } from './itcgAudio';
 import { ITCGCharacter } from './itcgCharacter';
@@ -221,7 +222,7 @@ export class ITCGBoard extends React.Component<BoardProps<GameState>> {
       [Location.Temporary, Location.OppTemporary].includes(loc)
     );
 
-    const audio = <ITCGAudio soundOpts={this.state.soundOpts} />;
+    const audio = USE_AUDIO ? <ITCGAudio soundOpts={this.state.soundOpts} /> : undefined;
     const tooltips = (
       <>
         <Tooltip id="expanded-card" style={tooltipStyle} />
