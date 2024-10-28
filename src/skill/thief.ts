@@ -1,4 +1,4 @@
-import { CardClasses, CardTypes } from '../card';
+import { CardClasses, CardSubTypes, CardTypes } from '../card';
 import { Location } from '../target';
 
 import { Skill } from './types';
@@ -52,6 +52,28 @@ export const l30tstab: Skill[] = [
           quantity: 1,
         },
         {
+          location: Location.OppCharacter,
+          quantity: 1,
+        },
+      ],
+    },
+  },
+];
+
+export const l40tslash: Skill[] = [
+  {
+    requirements: { level: 40, class: { [CardClasses.Thief]: 1 } },
+    action: 'damage',
+    opts: { damage: 20 },
+    targets: {
+      xor: [
+        {
+          type: CardTypes.Monster,
+          location: Location.OppField,
+          quantity: 1,
+        },
+        {
+          type: CardTypes.Character,
           location: Location.OppCharacter,
           quantity: 1,
         },
@@ -418,5 +440,37 @@ export const swipe: Skill[] = [
     requirements: { level: 0 },
     noReset: true,
     opts: { randomDiscard: true },
+  },
+];
+
+export const l20ttmastermind: Skill[] = [
+  {
+    requirements: { level: 20, class: { [CardClasses.Thief]: 2 } },
+    action: 'play',
+    targets: {
+      xor: [
+        {
+          level: 'CurrentLevel',
+          location: Location.Hand,
+          type: CardTypes.Item,
+          subtype: [CardSubTypes.weapon],
+          quantity: 1,
+        },
+        {
+          level: 'CurrentLevel',
+          location: Location.Hand,
+          type: CardTypes.Tactic,
+          subtype: [CardSubTypes.strategy],
+          quantity: 1,
+        },
+        {
+          level: 'CurrentLevel',
+          location: Location.Hand,
+          type: CardTypes.Monster,
+          subtype: [CardSubTypes.undead],
+          quantity: 1,
+        },
+      ],
+    },
   },
 ];

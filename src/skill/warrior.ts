@@ -424,3 +424,14 @@ export const l70wwwspawnequip100: Skill[] = [
     },
   },
 ];
+
+export const l50wwwbloodthirsty: Skill[] = [
+  {
+    requirements: { level: 50, class: { [CardClasses.Warrior]: 3 } },
+    action: 'bloodthirsty',
+    targets: {
+      location: Location.CharAction,
+      quantity: 1,
+    },
+  },
+];
