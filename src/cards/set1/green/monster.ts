@@ -85,7 +85,7 @@ export const hector: Omit<Monster, 'key' | 'owner'> = {
   canonicalName: 'hector',
   name: 'Hector',
   image: 'Hector',
-  level: 50,
+  level: 55,
   attack: 50,
   health: 50,
   skill: skillRef('l60bbspawn70'),
