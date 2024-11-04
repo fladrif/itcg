@@ -14,6 +14,7 @@
 /src/images/*.jpg
 /src/images/*.png
 config.json
+prod-config.json
 
 # misc
 .DS_Store

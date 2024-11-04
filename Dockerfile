@@ -18,7 +18,7 @@ COPY src src
 COPY public public
 COPY tsconfig.json tsconfig.json
 COPY database.json database.json
-COPY config.json config.json
+COPY prod-config.json config.json
 
 RUN npm run build
 RUN cd server && npm run build-server
