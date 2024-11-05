@@ -19,7 +19,7 @@ import { ITCGMenu } from './itcgMenu';
 import { ITCGMenuBox, MenuBoxOpts } from './itcgMenuBox';
 import { ITCGStats } from './itcgStats';
 
-import bgi from './images/red-scene.svg';
+import { redScene } from './images/redScene';
 
 export interface State extends PlayerSettings {
   dialogBox?: DialogBoxOpts;
@@ -34,7 +34,7 @@ const containerStyle: React.CSSProperties = {
   height: '100vh',
   gridTemplateAreas:
     "'odiscard ohand menu char' 'ochar ostat ostat char' 'ochar field field char' 'ochar stat stat char' 'ochar hand interface discard'",
-  backgroundImage: `url(${bgi})`,
+  backgroundImage: `url("${redScene}")`,
   backgroundRepeat: 'no-repeat',
   backgroundSize: 'cover',
 };

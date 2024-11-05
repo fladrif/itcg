@@ -107,7 +107,12 @@ export class ITCGHeader extends React.Component<HeaderProps> {
       <nav style={baseStyle} className="border fixed split-nav border-3">
         <div className="nav-brand" style={headerStyle}>
           <a href="/">
-            <img src={header} style={headerImageStyle} />
+            <img
+              src={header}
+              style={headerImageStyle}
+              rel="preload"
+              alt="Stylized sketch card back"
+            />
           </a>
         </div>
         <div className="collapsible">
