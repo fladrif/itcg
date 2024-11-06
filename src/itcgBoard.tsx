@@ -31,7 +31,7 @@ const containerStyle: React.CSSProperties = {
   position: 'relative',
   gridTemplateColumns: '15% 60% 10% 15%',
   gridTemplateRows: '20% 5% 50% 5% 20%',
-  height: '100vh',
+  height: '100dvh',
   gridTemplateAreas:
     "'odiscard ohand menu char' 'ochar ostat ostat char' 'ochar field field char' 'ochar stat stat char' 'ochar hand interface discard'",
   backgroundImage: `url("${redScene}")`,

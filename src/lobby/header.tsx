@@ -118,8 +118,9 @@ export class ITCGHeader extends React.Component<HeaderProps> {
         <div className="collapsible">
           <input id="collapsible1" type="checkbox" name="collapsible1" />
           <label htmlFor="collapsible1">
-            <div className="bar1">-</div>
-            <div className="bar3">-</div>
+            <div className="bar1"></div>
+            <div className="bar2"></div>
+            <div className="bar3"></div>
           </label>
           <div className="collapsible-body">
             {!loggedIn && this.loggedOutMenu()}
