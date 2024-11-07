@@ -77,7 +77,7 @@ export class ITCGHeader extends React.Component<HeaderProps> {
     return (
       <>
         <li>
-          <a href="/admin">Stats</a>
+          <a href="/stats">Stats</a>
         </li>
       </>
     );

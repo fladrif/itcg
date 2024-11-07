@@ -120,7 +120,7 @@ class App extends React.Component {
                   <Route path={'/decks'}>
                     {this.state.username && <ITCGDeck server={SERVER} />}
                   </Route>
-                  <Route path={'/admin'}>
+                  <Route path={'/stats'}>
                     {this.state.username && <ITCGAdmin server={SERVER} />}
                   </Route>
                   <Route path={'/howtoplay'}>
