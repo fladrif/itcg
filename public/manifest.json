@@ -1,21 +1,51 @@
 {
-  "short_name": "MapleStory iTCG",
-  "name": "Play MapleStory iTCG online",
+  "short_name": "MS iTCG",
+  "name": "Play MapleStory iTCG Online",
   "icons": [
     {
       "src": "favicon.ico",
-      "sizes": "64x64 32x32 24x24 16x16",
+      "sizes": "16x16",
+      "purpose": "maskable",
       "type": "image/x-icon"
     },
     {
-      "src": "logo.jpg",
-      "type": "image/jpg",
-      "sizes": "452x630"
+      "src": "logo-120-mask.png",
+      "type": "image/png",
+      "purpose": "maskable",
+      "sizes": "120x120"
     },
     {
-      "src": "logo.png",
+      "src": "logo-180-mask.png",
       "type": "image/png",
-      "sizes": "894x894"
+      "purpose": "maskable",
+      "sizes": "180x180"
+    },
+    {
+      "src": "logo-192-mask.png",
+      "type": "image/png",
+      "purpose": "maskable",
+      "sizes": "192x192"
+    },
+    {
+      "src": "logo-512-mask.png",
+      "type": "image/png",
+      "purpose": "maskable",
+      "sizes": "512x512"
+    },
+    {
+      "src": "logo-180.png",
+      "type": "image/png",
+      "sizes": "180x180"
+    },
+    {
+      "src": "logo-192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "logo-512.png",
+      "type": "image/png",
+      "sizes": "512x512"
     }
   ],
   "start_url": ".",
