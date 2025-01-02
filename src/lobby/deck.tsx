@@ -63,7 +63,7 @@ export class ITCGDeck extends React.Component<DeckProp> {
       <div className="sm-3 col">
         <div className="card" key="new" style={CardStyle}>
           <div className="card-body">
-            <h2 className="card-title">New Deck</h2>
+            <h3 className="card-title">New Deck</h3>
             <button onClick={() => this.buildDeck()}>Create</button>
           </div>
         </div>
@@ -79,8 +79,8 @@ export class ITCGDeck extends React.Component<DeckProp> {
         <div className="card" key={deck.id} style={CardStyle}>
           {!deck.modify && <div className="card-header">public</div>}
           <div className="card-body">
-            <h2 className="card-title">{deck.name}</h2>
-            <h3 className="card-subtitle">{deck.deck_list.character.name}</h3>
+            <h3 className="card-title">{deck.name}</h3>
+            <h4 className="card-subtitle">{deck.deck_list.character.name}</h4>
             <div className="card-text">{parseDeckList(deck.deck_list)}</div>
             {deck.modify && <button onClick={() => this.buildDeck(deck.id)}>edit</button>}
           </div>
