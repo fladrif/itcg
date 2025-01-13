@@ -654,10 +654,10 @@ export class ITCGHowToPlay extends React.Component {
             <a href="#part">Parts of a Card</a>
           </li>
           <li>
-            <a href="#play">Drawing & Playing Cards</a>
+            <a href="#turn">Parts of the Turn</a>
           </li>
           <li>
-            <a href="#turn">Parts of the Turn</a>
+            <a href="#play">Drawing & Playing Cards</a>
           </li>
           <li>
             <a href="#dmg">Dealing Damage</a>
@@ -672,11 +672,11 @@ export class ITCGHowToPlay extends React.Component {
         <div className="container-md" id="part">
           {this.partsOfCard()}
         </div>
-        <div className="container-md" id="play">
-          {this.cards()}
-        </div>
         <div className="container-md" id="turn">
           {this.partsOfTurn()}
+        </div>
+        <div className="container-md" id="play">
+          {this.cards()}
         </div>
         <div className="container-md" id="dmg">
           {this.damage()}
