@@ -131,7 +131,7 @@ export class ITCGFrontPage extends React.Component {
       <div style={baseStyle}>
         <div style={{ textAlign: 'center', marginBottom: '5%' }}>
           <h1 style={{ marginBottom: '0' }}>MapleStory iTCG</h1>
-          <p>Web browser application to play the MapleStory trading card game</p>
+          <p>Play the MapleStory trading card game on your web browser</p>
           <div style={{ maxWidth: '1150px' }} className="row">
             <img
               className="border-4"
