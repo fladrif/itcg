@@ -389,14 +389,6 @@ export class ITCGHowToPlay extends React.Component {
             the card in this portion will determine how it can be played. Ignore the
             bottom section of the card when a card is played this way.
           </p>
-          <p>
-            For <b>Monster</b> cards, their attack power and health are also included in
-            this section. Its attack is the first number in blue, and their health is the
-            second number in red.
-          </p>
-          <p>
-            Additional rules text for the card will be located in the box below the art.
-          </p>
         </>
       ),
       image: (
@@ -414,11 +406,6 @@ export class ITCGHowToPlay extends React.Component {
             The bottom section of the card is relevant when it is used to level up. When
             done so the top section is placed beneath the rest of the cards used to level
             up your <b>Character</b> and subsequently ignored.
-          </p>
-          <p>
-            This section includes the <b>Class</b> of the card, a symbol indicating that
-            the <b>Character</b> level has increased by 10, and the ability the{' '}
-            <b>Character</b> gains.
           </p>
         </>
       ),
@@ -638,7 +625,7 @@ export class ITCGHowToPlay extends React.Component {
         <>
           <p>
             If a player controls 2 <b>Monster</b>s, a 50 damage <b>Tactic</b> will only
-            deal 20 damage to the <b>Character</b>, and a <b>Monster</b> with 20 attack
+            deal 30 damage to the <b>Character</b>, and a <b>Monster</b> with 20 attack
             will deal 0 damage.
           </p>
           <p>
