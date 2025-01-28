@@ -470,7 +470,7 @@ function rainofarrows(fnCtx: FuncContext, opts: ActionOpts): any {
 
   const damage = resolveDamage(G.player[opts.source.owner], opts.damage);
 
-  const decision: () => Decision = () => {
+  const decision: (id?: number) => Decision = (id?) => {
     return {
       action: 'damage',
       opts: {
@@ -491,6 +491,9 @@ function rainofarrows(fnCtx: FuncContext, opts: ActionOpts): any {
           },
         ],
       },
+      dialogPrompt: id
+        ? `Choose the ${id}${id == 2 ? 'nd' : id == 3 ? 'rd' : 'th'} target`
+        : 'Choose a target',
       finished: false,
       noReset: true,
       key: getRandomKey(),
@@ -498,7 +501,9 @@ function rainofarrows(fnCtx: FuncContext, opts: ActionOpts): any {
   };
 
   if (oppCards > 1) {
-    G.stack!.queuedDecisions.push(...[...Array(oppCards - 1)].map(() => decision()));
+    G.stack!.queuedDecisions.push(
+      ...[...Array(oppCards - 1)].map((_val, index) => decision(index + 2))
+    );
   }
   upsertStack(fnCtx, [decision()]);
 }
@@ -564,7 +569,7 @@ function roar(fnCtx: FuncContext, opts: ActionOpts): any {
     key: getRandomKey(),
   };
 
-  const decision: () => Decision = () => {
+  const decision: (id?: number) => Decision = (id?) => {
     return {
       action: 'damage',
       opts: {
@@ -596,6 +601,9 @@ function roar(fnCtx: FuncContext, opts: ActionOpts): any {
           },
         ],
       },
+      dialogPrompt: id
+        ? `Choose the ${id}${id == 2 ? 'nd' : id == 3 ? 'rd' : 'th'} target`
+        : 'Choose a target',
       finished: false,
       noReset: true,
       key: getRandomKey(),
@@ -603,7 +611,9 @@ function roar(fnCtx: FuncContext, opts: ActionOpts): any {
   };
 
   if (numMonsters > 1) {
-    G.stack!.queuedDecisions.push(...[...Array(numMonsters - 1)].map(() => decision()));
+    G.stack!.queuedDecisions.push(
+      ...[...Array(numMonsters - 1)].map((_val, index) => decision(index + 2))
+    );
   }
   upsertStack(fnCtx, [firstDec]);
 }
