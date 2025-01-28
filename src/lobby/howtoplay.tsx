@@ -5,6 +5,8 @@ import inactiveImg from '../images/phase-inactive.png';
 import levelImg from '../images/phase-level.png';
 import activateImg from '../images/phase-activate.png';
 import attackImg from '../images/phase-attack.png';
+import partsOfCardImg from '../images/partsofcard.png';
+import shieldExmp from '../images/dmgshield.png';
 
 import { toCard, toGrid } from './utils';
 
@@ -368,6 +370,16 @@ export class ITCGHowToPlay extends React.Component {
   }
 
   partsOfCard() {
+    const introImg = toCard({
+      title: '',
+      body: <></>,
+      image: (
+        <div className="align-middle shadow">
+          <img src={partsOfCardImg}></img>
+        </div>
+      ),
+    });
+
     const top = toCard({
       title: 'Play the Top',
       body: (
@@ -444,6 +456,7 @@ export class ITCGHowToPlay extends React.Component {
     return (
       <>
         <h3>Parts of a Card</h3>
+        <div className="col">{introImg}</div>
         {toGrid([top, skillCol])}
       </>
     );
@@ -616,11 +629,16 @@ export class ITCGHowToPlay extends React.Component {
 
     const dexp = toCard({
       title: 'Damage Example',
+      image: (
+        <div className="align-middle shadow margin-top">
+          <img src={shieldExmp}></img>
+        </div>
+      ),
       body: (
         <>
           <p>
-            If a player controls 1 <b>Monster</b>, a 20 damage <b>Tactic</b> will only
-            deal 10 damage to the <b>Character</b>, and a <b>Monster</b> with 10 attack
+            If a player controls 2 <b>Monster</b>s, a 50 damage <b>Tactic</b> will only
+            deal 20 damage to the <b>Character</b>, and a <b>Monster</b> with 20 attack
             will deal 0 damage.
           </p>
           <p>
